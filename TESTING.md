@@ -1,6 +1,6 @@
 # Testing Discipline
 
-## TDD Default (Karpathy Rule 4 in practice)
+## TDD (Test-Driven Development — write the test before the code) Default
 
 For any bug fix or new feature:
 1. Write a failing test that reproduces the bug or specifies the feature.
@@ -28,15 +28,9 @@ Project test/lint commands live in the project's `ARCHITECTURE.md` or `CLAUDE.md
 
 ## UI Verification (Mandatory for any frontend change)
 
-**Before coding any GUI/UI change:** see `~/.claude/UI_MOCKUPS.md`. 5–8 mockup variations required before production code.
+**Before coding any GUI/UI change:** see `~/.claude/UI_MOCKUPS.md` for how many mockups to make before production code.
 
-After production code:
-1. Ensure dev server running (use the project's documented dev command — see project `CLAUDE.md` or `ARCHITECTURE.md`).
-2. Load page via `preview_start` / reload via `preview_eval`.
-3. Check `preview_console_logs` for errors.
-4. `preview_snapshot` to verify content/structure.
-5. `preview_screenshot` only for visual changes (heavier).
-6. For interactions: `preview_click` / `preview_fill` then re-snapshot.
+After writing production code: start the dev server, open the page in a browser, and confirm it works as expected before claiming done.
 
 **Never claim "done" on a UI change without browser-level verification.**
 

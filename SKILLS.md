@@ -8,9 +8,9 @@
 
 ## Per-Project vs Global
 
-Karpathy + Boris Cherny recommend installing skills **per-project** rather than globally. Global skills bloat every session's prompt by ~30–40k tokens. Per-project installs cost nothing when not in use.
+Industry guidance (from engineers like Andrej Karpathy and Boris Cherny) recommends installing skills **per-project** rather than globally. Global skills bloat every session's prompt by ~30–40k tokens (tokens are the chunks Claude reads — more tokens = slower, more expensive sessions). Per-project installs cost nothing when not in use.
 
-**Simplicity self-check before installing (Karpathy Rule 2):** install only what the task asks for. No skill packs "just in case," no configurability you didn't request, no abstraction for a single use. Ask "would a senior engineer say this is overcomplicated?" — if yes, don't install it.
+**Simplicity self-check before installing:** install only what the task asks for. No skill packs "just in case," no configurability you didn't request, no abstraction for a single use. Ask "would a senior engineer say this is overcomplicated?" — if yes, don't install it.
 
 ## Daily-Driver Skills
 
@@ -20,11 +20,11 @@ Karpathy + Boris Cherny recommend installing skills **per-project** rather than 
 | `grill-me` | Pre-build planning interview — extracts decisions before any code |
 | `diagnose` | 6-phase bug diagnosis — minimize/hypothesize/instrument/fix |
 | `tdd` | Vertical-slice TDD — one test → impl → green → repeat; forbids all-tests-first |
-| `forge` | Full pipeline: grill-me → Opus plan → approval → TDD → Sonnet build → prove |
+| `forge` | Full pipeline: interview → plan → tests → code → proof. Nothing ships half-baked. |
 | `code-health` | Three-phase health: Fallow (dead-code/dupes/security) → Ponytail (YAGNI review) → Improve (plan) |
-| `code-review` | 3-pass diff review: correctness → over-engineering → Karpathy filters |
+| `code-review` | 3-pass diff review: correctness → over-engineering → engineering filters (scope check + simplicity check) |
 | `ui-ux` | Design intelligence — 161 palettes, 99 UX guidelines, font pairings, chart types |
-| `ui-wild` | Radical redesign: 10 Opus designers compete, anti-slop judge, mockup approval gate |
+| `ui-wild` | Radical redesign: 10 Opus designers compete, a judge agent that rejects generic AI output, mockup approval gate |
 
 ## Symlinks vs Real Skill Dirs
 
