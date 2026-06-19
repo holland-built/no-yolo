@@ -1,10 +1,20 @@
 #!/usr/bin/env bash
 # setup.sh — idempotent post-clone setup for ~/.claude (no-yolo)
-# Run once after cloning: bash ~/.claude/setup.sh
+#
+# Usage:
+#   bash ~/.claude/setup.sh           # full install — tools, CLI plugins, skill symlinks
+#   bash ~/.claude/setup.sh --md-only # rules only — no tools, skill triggers stripped from CLAUDE.md
+#
 set -euo pipefail
 
 CLAUDE_DIR="${HOME}/.claude"
+MODE="full"
+[[ "${1:-}" == "--md-only" ]] && MODE="md-only"
 
+echo "==> Mode: $MODE"
+echo ""
+
+# ── Step 1: settings.json ────────────────────────────────────────────────────
 echo "==> 1. settings.json"
 if [ -f "$CLAUDE_DIR/settings.json" ]; then
   echo "    settings.json already exists — skipping copy"
@@ -14,6 +24,7 @@ else
 fi
 echo "    ACTION REQUIRED: edit settings.json — update node path and add your MCP servers"
 
+# ── Step 2: hook permissions ─────────────────────────────────────────────────
 echo ""
 echo "==> 2. chmod hooks"
 if ls "$CLAUDE_DIR"/hooks/*.sh >/dev/null 2>&1; then
@@ -22,6 +33,50 @@ if ls "$CLAUDE_DIR"/hooks/*.sh >/dev/null 2>&1; then
 else
   echo "    No hook scripts found — skipping"
 fi
+
+# ── MD-only: strip skill triggers from CLAUDE.md, then exit ─────────────────
+if [[ "$MODE" == "md-only" ]]; then
+  echo ""
+  echo "==> 3. Strip skill triggers from CLAUDE.md"
+  echo "    (reads current file — no hardcoded skill names)"
+
+  python3 - "$CLAUDE_DIR/CLAUDE.md" <<'PYEOF'
+import re, sys, pathlib
+
+p = pathlib.Path(sys.argv[1])
+text = p.read_text()
+
+# Remove @memory/CLAUDE.generated.md import line (memory system not included)
+text = re.sub(r'^@memory/CLAUDE\.generated\.md\n?', '', text, flags=re.MULTILINE)
+
+# Remove skill trigger blocks. Each block is exactly:
+#   # skillname                (single lowercase word/hyphens)
+#   - **skillname** ...        (description + trigger)
+#   When the user types ...    (invocation line — may repeat for multi-phrase triggers)
+text = re.sub(
+    r'^# [a-z][a-z0-9-]+\n- \*\*.*\n(?:When the user .*\n?)+',
+    '',
+    text,
+    flags=re.MULTILINE
+)
+
+# Collapse triple+ blank lines left behind
+text = re.sub(r'\n{3,}', '\n\n', text)
+
+p.write_text(text)
+print("    Removed: @memory import + all skill trigger blocks")
+PYEOF
+
+  echo ""
+  echo "==> Done (MD-only)."
+  echo "    Core rules load automatically when you open Claude Code in any project."
+  echo "    Skills folder still present but Claude won't trigger them — safe to ignore or delete."
+  echo ""
+  echo "    To restore full setup later: re-clone and run bash setup.sh"
+  exit 0
+fi
+
+# ── Full install ─────────────────────────────────────────────────────────────
 
 echo ""
 echo "==> 3. CLI tools"
@@ -58,13 +113,13 @@ else
 fi
 
 echo ""
-echo "==> 4. Plugin skills (symlinks into ~/.agents/skills/)"
+echo "==> 4. Plugin skills"
 echo "    Installing ponytail..."
 npx skills@latest add DietrichGebert/ponytail || echo "    ! ponytail install failed"
 echo "    Installing improve..."
 npx skills@latest add shadcn/improve || echo "    ! improve install failed"
 echo ""
-echo "    Note: plugin skills install inside Claude Code (not the terminal):"
+echo "    Note: two more plugins install inside Claude Code (not the terminal):"
 echo "      /plugin marketplace add impeccable     # magazine-style design theme (optional)"
 echo "      /plugin marketplace add JuliusBrussee/caveman  # terse mode (optional)"
 
@@ -72,7 +127,7 @@ echo ""
 echo "==> 5. Environment variables (add to ~/.zshrc or ~/.bash_profile)"
 cat <<'ENVEOF'
 
-    export GROQ_API_KEY=your_key_here      # video-to-kb, graphify (Whisper)
+    export GROQ_API_KEY=your_key_here               # video-to-kb, graphify (Whisper)
     export OBSIDIAN_VAULT="$HOME/path/to/your/vault"  # video-to-kb vault root
 
 ENVEOF
