@@ -58,8 +58,7 @@ npm install -g fallow
 # 4. Install graphify (needed by the forge and graphify commands)
 uv tool install graphify
 
-# 5. Install the borrowed plugin commands (ponytail, improve, and the workflow helpers)
-#    The skills/ folder has shortcuts pointing at ~/.agents/skills/ — this fills that in:
+# 5. Install the borrowed plugin commands
 npx skills@latest add DietrichGebert/ponytail
 npx skills@latest add shadcn/improve
 
@@ -156,7 +155,7 @@ A "skill" is a custom command you trigger with a slash, like `/code-review`. Her
 | `whats-next` | Looks at what you've got in progress (notes, git changes) and either shows unfinished work or a menu of things to start |
 | `eli5` | Explains any command, plan, file, or decision in plain English before you commit to it |
 
-### Borrowed commands (shortcuts to ~/.agents/skills/)
+### Borrowed commands
 
 These come from other people's plugins. The "Install source" column says where to get each one.
 
