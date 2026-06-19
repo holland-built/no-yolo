@@ -20,12 +20,4 @@ my-md|List all markdown files — your global Claude docs and current project ar
 quick-design|Fast 3-variant mockup generator. Extracts real design tokens, spawns conservative/modern/wild variants in parallel, pops in Chrome. Pick before any code is written.
 whats-next|Scans for in-flight work (brainstorms, git, changelog). Shows what's unfinished — or a pick-list of next actions if the slate is clean. Never pushes audit over active work.
 impeccable|Editorial-poster design theme — warm cream and burnt orange aesthetic. Use when you want a premium, graphic magazine feel for your UI.
-verification-before-completion|Before claiming anything is done or fixed — runs verification commands and confirms output. Evidence before assertions.
-requesting-code-review|After completing a task — triggers a structured review pass before merging.
-receiving-code-review|Before implementing review feedback — enforces technical rigor. Don't blindly apply suggestions.
-subagent-driven-development|Executes an implementation plan by fanning out independent tasks to parallel subagents.
-dispatching-parallel-agents|Use when 2+ independent tasks have no shared state — dispatches them concurrently.
-full-output-enforcement|Overrides LLM truncation. Forces complete code output with no placeholders or "..." ellipsis.
-writing-plans|Turns a spec or feature description into a structured multi-step plan before touching code.
-executing-plans|Executes a written plan with review checkpoints — use in a fresh session after writing-plans.
 eli5|Explain anything in plain English before you commit to it.

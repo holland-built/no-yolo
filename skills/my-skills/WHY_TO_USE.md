@@ -13,9 +13,6 @@ ui-ux|161 palettes + 57 font pairings — design decisions have a defensible bas
 ui-wild|Anti-slop judge kills generic AI output. Result doesn't look like every other Claude UI
 video-to-kb|Talks are perishable. One command turns them into permanent, searchable KB nodes
 whats-next|Prevents starting something new while something is already half-done
-dispatching-parallel-agents|Sequential independent tasks waste wall-clock time. This makes them overlap
-executing-plans|Plans rot in files. Checkpoints catch when reality diverges from the plan
-full-output-enforcement|"..." silently corrupts files. Stops truncation before it happens
 impeccable|Default Claude UI looks like defaults. This gives it a distinctive editorial identity
 improve|Never touches code — pure signal. Tells you what's wrong without risk of a bad auto-fix
 ponytail|The instinct to abstract too early is universal. This actively resists it
@@ -23,9 +20,4 @@ ponytail-audit|Finds the abstraction that seemed smart 6 months ago and now nobo
 ponytail-debt|Shortcuts without a ledger become forgotten landmines
 ponytail-help|Fast lookup beats interrupting flow to reread docs
 ponytail-review|Most review tools look for what to add. This one specifically hunts what to remove
-receiving-code-review|Review feedback is often wrong. Enforces "understand before applying"
-requesting-code-review|Structured gate before merge. Catches what you convinced yourself was fine while writing it
-subagent-driven-development|A 10-step plan run sequentially takes 10x longer than needed
-verification-before-completion|"I think it works" ≠ "I ran the command and saw the output"
-writing-plans|Code without a plan has a shape determined by order of typing, not design
 eli5|Stops you from agreeing to something you did not actually understand
