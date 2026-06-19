@@ -9,7 +9,7 @@ Plans live in `<project-root>/brainstorms/` — never here. This file defines wh
 - Architecture decisions
 - Anything you'd otherwise guess at
 
-Trigger: user says "plan X" or task is non-trivial → auto-spawn Opus planner agent before any coding.
+Trigger: user says "plan X" or task is non-trivial → auto-spawn Opus (Claude's bigger, slower model — best for planning) planner agent before any coding.
 
 ## Good Plan Structure
 
@@ -18,21 +18,21 @@ Every plan produced by Opus must contain:
 | Section | What it says |
 |---|---|
 | **Root cause / goal** | `X breaks because Y = Z (file:line)` — grounded in evidence, never in user's words |
-| **Success predicate** | Falsifiable, measurable: a number or boolean. Never "should work." |
+| **Done looks like** | Something you can actually check — a number, a test result, a screenshot. Not "it should work." |
 | **Target file list** | Each file with "already exists — do NOT recreate" note |
-| **Blast radius** | Explicit "do NOT touch" list — files/functions that must stay unchanged |
-| **Regression pre-mortem** | Which existing tests/behaviors this could plausibly break, named before coding |
-| **Ordered steps** | Smallest-reversible-first, each independently verifiable, ~300-word cap per agent |
+| **What this change could break** | Explicit "do NOT touch" list — the files and functions that must stay untouched |
+| **What this could break** | Name existing tests or behaviors that might be affected before writing a line of code |
+| **Ordered steps** | Start with the smallest step that can be verified on its own, each independently verifiable, ~300-word cap per agent |
 
-## Self-Check Pass (Opus, second turn)
+## Self-Check Pass
 
-After drafting a plan, ask: "What is assumed rather than grounded in file:line? What's the strongest reason this plan is wrong or incomplete? What did it miss?" Fold answers in or note why dismissed.
+After writing a plan, ask: what did I assume without checking? What's the most likely way this plan is wrong? Fix it before handing it to anyone.
 
 ## Reject a Plan If
 
 - Cause not grounded in evidence (cites user's words instead of file:line)
-- No measurable success predicate
-- Blast radius unbounded
+- No measurable "done looks like"
+- "What this change could break" is unbounded
 - Any claim cites an API/file not verified to exist
 
 ## Plan File Naming

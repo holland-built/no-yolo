@@ -2,25 +2,16 @@
 
 ## Model Split (Opus plans, Sonnet codes)
 
-Always split by phase — Opus is slow/expensive but plans better; Sonnet is fast/cheap for execution:
+Always split by phase — Opus (the bigger, slower Claude model — best for planning) is slow/expensive but plans better; Sonnet (the faster Claude model — best for coding) is fast/cheap for execution.
 
-```
-Agent(subagent_type="Plan", model="opus", prompt="Design approach for X...")  → plan
-Agent(model="sonnet", prompt="Implement: <plan step>")                        → code
-```
-
-In Workflows:
-```js
-const plan = await agent("Design approach for X", { model: "opus", schema: PLAN_SCHEMA })
-await pipeline(plan.tasks, t => agent(t.prompt, { model: "sonnet" }))
-```
+Use model `opus` for planning agents, `sonnet` for coding agents.
 
 **Invocation triggers (auto-fire Opus planner):**
 - User says "plan X" or "opusplan X"
 - Non-trivial task (multi-file, new feature, architecture decision)
 - Any time you'd otherwise plan inline
 
-## Before Dispatch (Karpathy Rule 1 — Think Before Coding)
+## Before Dispatch (Rule: think before coding)
 
 Before firing any agent, in the dispatch prompt:
 - State assumptions explicitly — don't let the agent infer them silently.
@@ -28,9 +19,9 @@ Before firing any agent, in the dispatch prompt:
 - Push back in the plan if a simpler approach exists than the one requested.
 - Name any confusion before delegating, not after the agent returns.
 
-## Scope per Dispatch (Karpathy Rule 3 — Surgical)
+## Scope per Dispatch (Rule: only touch what you were asked to)
 
-Every dispatch prompt must bound the blast radius:
+Every dispatch prompt must bound how much other code this change could break:
 - Name the exact files the agent may touch; forbid edits outside them.
 - Tell it to match existing style even where it would do otherwise.
 - It may flag unrelated dead code but must not delete it; it must clean up only orphans (imports/vars) its own change made unused.
@@ -50,6 +41,8 @@ Every dispatch prompt must bound the blast radius:
 - Tasks where you already have full context.
 
 ## Daily-Driver Agents (in `~/.claude/agents/`)
+
+These are pre-built helper agent definitions in `~/.claude/agents/`. They work like specialists you can call on — each knows a specific domain.
 
 **Cross-cutting (use most days):**
 - `debugger` — bug hunts (Karpathy "write a failing test")
@@ -72,7 +65,6 @@ Every dispatch prompt must bound the blast radius:
 - `api-designer` — REST/GraphQL design
 - `docker-expert` — containers
 
-(129 other specialist agents are archived under `_archive_2026-05-18/agents/`; restorable with one `mv`.)
 
 ## Skill Alignment
 
@@ -82,6 +74,8 @@ Every dispatch prompt must bound the blast radius:
 - `tdd` — vertical-slice red-green-refactor
 
 ## Agent Teams (expert dispatch)
+
+You can run multiple agents at once. This table shows which ones work well together.
 
 Dispatch the matching team in parallel. Build → review pairs: builder writes, reviewer verifies.
 
@@ -93,4 +87,4 @@ Dispatch the matching team in parallel. Build → review pairs: builder writes, 
 | **Debug** | `debugger`, `performance-engineer` | `qa-expert` | bugs, regressions, perf bottlenecks | Sonnet |
 | **Test** | `test-automator` | `qa-expert` | new test suites, coverage, CI gates | Haiku |
 
-Rules: read target file + imports before dispatching a file-editing agent (cap output ~300 words). For 2+ independent tasks, fan out concurrently — never serialize independent work.
+Rules: read target file + imports before dispatching a file-editing agent (cap output ~300 words). For 2+ independent tasks, run in parallel — never serialize independent work.
