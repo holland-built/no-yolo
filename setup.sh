@@ -65,8 +65,6 @@ echo "    Installing improve..."
 npx skills@latest add shadcn/improve || echo "    ! improve install failed"
 echo ""
 echo "    Note: plugin skills install inside Claude Code (not the terminal):"
-echo "      /plugin marketplace add superpowers    # writing-plans, executing-plans, subagent-driven-development, +"
-echo "      /plugin marketplace add ecc            # ecc:* agent types (optional)"
 echo "      /plugin marketplace add impeccable     # magazine-style design theme (optional)"
 echo "      /plugin marketplace add JuliusBrussee/caveman  # terse mode (optional)"
 

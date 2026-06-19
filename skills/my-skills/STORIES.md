@@ -24,9 +24,6 @@ video-to-kb|Watched a great talk worth keeping? `/video-to-kb [YouTube URL]` tur
 whats-next|Back after a break and don't know where you left off? `/whats-next` scans your work-in-progress and shows what's unfinished — or a clean menu if nothing's pending.
 
 # ── Section 2 — Plugin skills ─────────────────────────────────────────────────
-dispatching-parallel-agents|Got several unrelated jobs? `/dispatching-parallel-agents` runs them all at once instead of one by one, so you wait less.
-executing-plans|Already wrote a plan? `/executing-plans` runs it with check-ins along the way, catching it early when reality drifts from the plan. Use in a fresh session.
-full-output-enforcement|When the AI gets lazy and writes "..." instead of real code, `/full-output-enforcement` forces the whole thing. Those "..." quietly break files.
 impeccable|Want a premium magazine look, not plain default web? `/impeccable` applies a warm cream and burnt-orange editorial style. Gives your UI a real identity.
 improve|Want an honest audit before fixing anything? `/improve` surveys the project and hands you a ranked to-do list. Never touches code — pure advice, zero risk.
 ponytail|About to overbuild something simple? `/ponytail [what you're building]` forces the laziest thing that actually works — strips out extra layers and ceremony.
@@ -34,11 +31,6 @@ ponytail-audit|`/ponytail-audit` scans the whole project for over-engineered cod
 ponytail-debt|Took shortcuts on purpose and tagged them? `/ponytail-debt` gathers them into one list so they don't become forgotten landmines.
 ponytail-help|Forgot a ponytail command? `/ponytail-help` is the quick cheat-sheet.
 ponytail-review|PR feels too big? `/ponytail-review` reads the diff and tells you what to cut — most tools suggest what to add, this one hunts what to remove.
-receiving-code-review|Got review comments? `/receiving-code-review` makes you understand each one before applying it — because reviewer feedback is often wrong.
-requesting-code-review|Finished something and want a formal gate before merging? `/requesting-code-review` runs a structured pass and catches what you convinced yourself was fine.
-subagent-driven-development|Plan with lots of independent steps? `/subagent-driven-development` splits them across parallel workers — a 10-step job doesn't take 10x as long.
-verification-before-completion|About to say "done"? `/verification-before-completion` actually runs the check and shows the output first. "I think it works" isn't proof.
-writing-plans|Starting anything non-trivial? `/writing-plans [the task]` turns it into a clear step-by-step plan before you touch code, so the code has a real shape.
 
 # ── Section 3 — Relationships (prefix rel:) ───────────────────────────────────
 rel:code-health|Runs four tools in order for you — fallow, then the ponytail checks, then improve — so you don't run each by hand. One command, full cleanup pass.

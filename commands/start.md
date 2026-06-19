@@ -22,7 +22,7 @@ description: Start coding session with all my rules — pass goal as argument
 
 7. **UI/GUI changes need mockups first** — see `~/.claude/UI_MOCKUPS.md`. Run `/quick-design [description]` for 3 variants before writing production code.
 
-8. **Verify before claiming done** — run `/verification-before-completion` before any "done" claim. Evidence before assertions.
+8. **Verify before claiming done** — actually run the checks, show the output. Evidence before assertions.
 
 9. **End of session** — run `/log` to capture session notes.
 
