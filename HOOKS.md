@@ -9,7 +9,6 @@ Hook scripts in `~/.claude/hooks/` run automatically at harness events — thing
 - **caveman-mode-tracker.js** — tracks caveman mode state across messages.
 - **caveman-stats.js** — reports token savings from caveman mode.
 - **caveman-statusline.sh / .ps1** — shows caveman state in the status bar (cross-platform).
-- **log-learnings-stop.sh** — appends session insights to the learnings log on session stop.
 - **reflect-claude-md-stop.sh** — end-of-session reflection; logs learnings when Claude Code exits.
 - **statusline.sh** — displays context usage, your 5-hour usage limit, and your 7-day usage limit in the Claude Code status bar.
 
@@ -18,10 +17,6 @@ Hook scripts in `~/.claude/hooks/` run automatically at harness events — thing
 `caveman-*` scripts implement an opt-in terse output mode (cuts tokens ~75%).
 Toggle: `/caveman lite|full|ultra` or say "stop caveman" to disable.
 Skill: `caveman:caveman`. State: `.caveman-active`.
-
-## The /log command
-
-`/log` records a learning or decision to the session log — surfaces it for future sessions via `log-learnings`. Find it in `~/.claude/commands/`.
 
 ## Setup
 
