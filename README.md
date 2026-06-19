@@ -12,7 +12,7 @@ Claude Code is a command-line tool where you talk to Claude to write and edit co
 - A set of rules Claude reads at the start of every session (`CLAUDE.md` plus a few topic files). These enforce strict habits that make Claude actually useful: think and plan before writing code, only change the exact lines you asked for, and use the expensive model to plan while a cheaper model does the typing
 - 16 custom commands I wrote, plus 7 more borrowed from plugins (run `/my-skills` to see the real, up-to-date count)
 - Definitions for helper agents, custom slash commands, and automation scripts
-- A memory system: small notes I write in `facts/` get compiled into one file, so Claude keeps remembering my preferences even when it forgets everything else between sessions
+- A self-learning memory system: when Claude does something you like or hate, you write a short note in `memory/facts/`. Run `/memory-compile` and it compiles into one file Claude reads at the start of every session — so it learns your preferences over time without you repeating yourself
 
 ---
 
@@ -20,9 +20,11 @@ Claude Code is a command-line tool where you talk to Claude to write and edit co
 
 Things you need installed before this setup works. The command after each one checks whether you already have it:
 
-- Claude Code itself: `claude --version`
+- [Claude Code](https://docs.anthropic.com/en/docs/claude-code) itself: `claude --version`. Claude Code is a command-line tool for talking to Claude to write and edit code. You can find it at [claude.ai/code](https://claude.ai/code) or install it from the docs.
 - The GitHub command-line tool, signed in: `gh auth status`
 - Node.js available in your terminal (the automation scripts need it): `node --version`
+- (Note: `~` in all paths below means your home directory — `/Users/yourname` on Mac)
+- uv (Python tool runner — needed for graphify): check with `uv --version`, install at https://docs.astral.sh/uv/
 - git
 
 ---
@@ -68,7 +70,8 @@ chmod +x ~/.claude/hooks/*.sh
 # 3. Install fallow (needed by the code-health command)
 npm install -g fallow
 
-# 4. Install graphify (needed by the forge and graphify commands)
+# 4. Install graphify — builds a knowledge graph of your codebase.
+#    Run it once per project to avoid re-reading all files every session.
 uv tool install graphify
 
 # 5. Install the borrowed plugin commands
@@ -84,21 +87,23 @@ npx skills@latest add shadcn/improve
 | Impeccable | Magazine-style design theme (optional) | `/plugin marketplace add impeccable` |
 | Caveman | Makes Claude reply in fewer words (optional) | `/plugin marketplace add JuliusBrussee/caveman` |
 
+**After installing, verify it worked:** open Claude Code and run `/my-skills` — you should see a table of commands. If the table appears, the setup is complete.
+
 ### Outside tools you may need
 
 Some commands call other programs on your computer. Install whichever ones you plan to use:
 
 | Tool | Used by | Install |
 |---|---|---|
-| **fallow** | `code-health` | `npm install -g fallow` |
-| **graphify** | `forge`, `graphify` | `uv tool install graphify` |
-| **gh** (GitHub CLI) | `code-review` | `brew install gh && gh auth login` |
-| **Graphviz** | `drawio-skill` | `brew install graphviz` |
-| **draw.io** CLI | `drawio-skill` | `brew install --cask drawio` |
-| **Groq Whisper** | `video-to-kb`, `graphify` | Set `GROQ_API_KEY` in your shell — uses `groq_quota.py` in `skills/graphify/` |
-| **Chrome** (no window) | `quick-design`, `forge` | Already on most machines; or `brew install --cask google-chrome` |
-| **Playwright** | `forge` | Comes via an MCP plugin — add the `playwright` MCP server to `settings.json` |
+| [gh (GitHub CLI)](https://cli.github.com/) | `code-review` | `brew install gh && gh auth login` |
+| [Graphviz](https://graphviz.org/) | `drawio-skill` | `brew install graphviz` |
+| [draw.io](https://www.drawio.com/) CLI | `drawio-skill` | `brew install --cask drawio` |
+| [Groq Whisper](https://console.groq.com/) | `video-to-kb`, `graphify` | Set `GROQ_API_KEY` in your shell — uses `groq_quota.py` in `skills/graphify/` |
+| [Chrome](https://www.google.com/chrome/) (headless — runs without opening a visible browser window) | `quick-design`, `forge` | Already on most machines; or `brew install --cask google-chrome` |
+| [Playwright](https://playwright.dev/) | `forge` | Comes via an MCP plugin — add the `playwright` MCP server to `settings.json` |
 | **shadcn MCP** | `ui-ux` | Add the `shadcn` MCP server to `settings.json` |
+
+> **What's an MCP server?** MCP (Model Context Protocol) is a standard for giving Claude extra tools — like the ability to control a browser or search a codebase. You connect one by adding a config block to `settings.json`. See the [Claude MCP docs](https://docs.anthropic.com/en/docs/claude-code/mcp) for how.
 
 ### Environment variables
 
@@ -106,8 +111,8 @@ These are secret keys and paths you save in your shell profile (`~/.zshrc` or `~
 
 | Variable | Used by | Notes |
 |---|---|---|
-| `GROQ_API_KEY` | `video-to-kb`, `graphify` | For Groq Whisper, which turns audio into text — get a key at console.groq.com |
-| `OBSIDIAN_VAULT` | `video-to-kb` | Where your notes folder lives; defaults to `~/Documents/Obsidian` if you don't set it |
+| `GROQ_API_KEY` | `video-to-kb`, `graphify` | For Groq Whisper, which turns audio into text — get a key at [console.groq.com](https://console.groq.com/) |
+| `OBSIDIAN_VAULT` | `video-to-kb` | Where your Obsidian vault lives — Obsidian is a local notes app (obsidian.md). video-to-kb files research notes here so you can ask Claude about them later. Defaults to `~/Documents/Obsidian` if you don't set it |
 
 ```bash
 export GROQ_API_KEY=your_key_here
@@ -134,11 +139,11 @@ What each file and folder is for:
 | `CODE_REVIEW.md` | Rules for reviewing code |
 | `UI_MOCKUPS.md` | Rules for designing screens before building them |
 | `SKILL_RECOMMENDATIONS.md` | A wishlist of new commands to maybe add (just notes, not turned on) |
-| `memory/` | Where learned preferences live — `facts/` is the real source, `CLAUDE.generated.md` is the compiled result. See `MEMORY.md` |
+| `memory/` | Where your saved preferences live — `facts/` is the real source, `CLAUDE.generated.md` is the compiled result. See `MEMORY.md` |
 | `skills/` | 16 commands I wrote plus 7 shortcuts to borrowed ones — see the list below |
 | `agents/` | Definitions for helper agents |
 | `commands/` | Custom slash commands |
-| `hooks/` | Automation scripts: caveman mode, a learnings logger, a reflect step, and the status line. See `HOOKS.md` |
+| `hooks/` | Automation scripts: caveman mode (terse replies), a session-reflect step, and the status line. See `HOOKS.md` |
 | `settings.example.json` | A starter settings file with no secrets — copy it to `settings.json` and fill in your own |
 
 ---
@@ -156,7 +161,7 @@ A "skill" is a custom command you trigger with a slash, like `/code-review`. Her
 | `diagnose` | A 6-step way to find the real cause of a bug — when you're stuck, it walks you through it step by step |
 | `drawio-skill` | Draws diagrams (architecture, flowcharts, database tables, UML). Saves them as PNG, SVG, or PDF |
 | `forge` | Builds a whole feature start to finish: gather requirements, plan it, mock up the screens, write tests first, build it, then prove it works |
-| `graphify` | Lets you ask questions about a codebase, like "what calls this function?" |
+| `graphify` | Builds a knowledge graph of your codebase once, then answers questions like "what calls this function?" from the graph instead of re-reading every file — saves tokens on large codebases and gives faster, more complete answers |
 | `grill-me` | Interviews you before any code gets written — one question at a time until every tricky case is sorted out |
 | `my-md` | Lists every markdown file — both the global `~/.claude/` docs and the ones in your current project |
 | `my-skills` | This very list. Shows the commands I wrote and the borrowed ones, plus how they connect and what they depend on |
@@ -164,23 +169,19 @@ A "skill" is a custom command you trigger with a slash, like `/code-review`. Her
 | `tdd` | Keeps you honest about test-driven development: write a failing test, make it pass, clean up, repeat |
 | `ui-ux` | Design know-how: 161 color palettes, 57 font pairings, 99 design guidelines, 25 chart types |
 | `ui-wild` | A bold redesign: 10 designer "personalities" compete, a judge throws out the generic ones, and you pick the winner |
-| `video-to-kb` | Turns a video into text and files it into an Obsidian notes folder |
+| `video-to-kb` | Transcribes a YouTube video (or any video file) using Groq Whisper, then saves the transcript and a structured summary into your Obsidian notes folder — useful for researching topics from YouTube before asking Claude to help you apply what you learned |
 | `whats-next` | Looks at what you've got in progress (notes, git changes) and either shows unfinished work or a menu of things to start |
 | `eli5` | Explains any command, plan, file, or decision in plain English before you commit to it |
 
 ### Borrowed commands
 
-These come from other people's plugins. The "Install source" column says where to get each one.
+These come from other people's plugins. One install command gets you all 5 ponytail commands.
 
-| Skill | What it does | Install source |
+| Skill | What it does | Install |
 |---|---|---|
-| `ponytail` | Pushes for the simplest thing that works and deletes needless complexity | `npx skills@latest add DietrichGebert/ponytail` |
-| `ponytail-audit` | Scans a whole repo for over-complication — a ranked list of what to delete or simplify | `npx skills@latest add DietrichGebert/ponytail` |
-| `ponytail-debt` | Gathers `ponytail:` notes left in the code into one running list | `npx skills@latest add DietrichGebert/ponytail` |
-| `ponytail-review` | Reviews a set of changes to find what to delete, not what to add | `npx skills@latest add DietrichGebert/ponytail` |
-| `ponytail-help` | A quick reference card for all the ponytail commands | `npx skills@latest add DietrichGebert/ponytail` |
-| `improve` | Surveys a codebase and writes a ranked improvement plan — but never changes anything itself | `npx skills@latest add shadcn/improve` |
-| `impeccable` | A magazine-style design look — warm cream and burnt orange — for building screens | `/plugin marketplace add impeccable` (Claude marketplace) |
+| `ponytail` + 4 sub-commands | Push for the simplest thing that works, scan for over-complication, gather TODO notes, review changes for deletions, quick reference card — one install gets all five | `npx skills@latest add DietrichGebert/ponytail` |
+| `improve` | Surveys a codebase and writes a ranked improvement plan — never changes anything itself | `npx skills@latest add shadcn/improve` |
+| `impeccable` | A magazine-style design look — warm cream and burnt orange — for building screens | `/plugin marketplace add impeccable` (run inside Claude Code) |
 
 ---
 
@@ -189,7 +190,7 @@ These come from other people's plugins. The "Install source" column says where t
 `CLAUDE.md` is the first file Claude reads, and by its own rule it holds *only* pointers — nothing else. All it contains is references to other files and the trigger words for each command.
 
 - `@CORE_RULES.md` — the 5 core rules (plan first; keep it simple; only touch what you were asked to; aim at a clear goal; use the expensive model to plan and the cheaper one to type)
-- `@memory/CLAUDE.generated.md` — the compiled list of learned preferences from `memory/facts/`
+- `@memory/CLAUDE.generated.md` — your compiled preferences from `memory/facts/`
 - It sends Claude to the right file by topic: Planning → `PLANNING.md`, Testing → `TESTING.md`, screens → `UI_MOCKUPS.md`, and so on
 - Command triggers — each command gets its own `# name` block with the plain-English phrases that turn it on
 
@@ -243,7 +244,7 @@ When the user types `/<name>`, invoke the Skill tool with `skill: "<name>"` befo
 
 ---
 
-## Update memory / learned preferences
+## Update memory preferences
 
 How to teach Claude a new preference:
 
@@ -262,5 +263,5 @@ Some things are deliberately left out of this repo, and why:
 |---|---|
 | `settings.json` | Specific to one machine (node paths, your personal MCP servers) — use `settings.example.json` as a starting point |
 | `plugins/` | Third-party marketplaces; each lives in its own repo |
-| Plugin shortcuts (`ponytail*/`, `improve`, `impeccable`, etc.) | These are shortcuts to `~/.agents/skills/` — install them from their own repos (see "After cloning" above) |
+| Plugin shortcuts (`ponytail*/`, `improve`, `impeccable`, etc.) | Symlinks (shortcuts) pointing to `~/.agents/skills/` where plugins install to. Clone them via the install commands above — they won't be in the repo itself |
 | `cache/`, `sessions/`, `history.jsonl`, logs | Temporary runtime files — not part of the configuration |
