@@ -74,7 +74,6 @@ echo "==> 5. Environment variables (add to ~/.zshrc or ~/.bash_profile)"
 cat <<'ENVEOF'
 
     export GROQ_API_KEY=your_key_here      # video-to-kb, graphify (Whisper)
-    export GEMINI_API_KEY=your_key_here    # graphify multimodal extraction
     export OBSIDIAN_VAULT="$HOME/path/to/your/vault"  # video-to-kb vault root
 
 ENVEOF
