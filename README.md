@@ -317,6 +317,48 @@ Never hand-edit `memory/CLAUDE.generated.md` directly — it gets overwritten ev
 
 ---
 
+## Caveman mode — shorter replies
+
+Caveman mode makes Claude reply in very short sentences, dropping filler words. Useful when you're in a long session and want to save time and tokens.
+
+**Turn it on** (type inside Claude Code):
+```
+/caveman lite    # slightly shorter
+/caveman full    # terse — fragments OK, articles dropped
+/caveman ultra   # bare minimum words
+```
+
+**Turn it off:**
+```
+stop caveman
+```
+
+The mode stays on until you turn it off, even across multiple messages. A small indicator in the status bar (bottom of the screen) shows whether it's active.
+
+---
+
+## The status bar (the line at the bottom of Claude Code)
+
+Claude Code shows a status bar at the bottom of the screen. This setup adds extra info to it:
+
+```
+~  no-yolo  main  ●  42% ctx  2.1h/5h  18h/7d  [CAVEMAN:full]
+```
+
+Reading left to right:
+- `~` — your home directory (this is where `~/.claude/` lives)
+- `no-yolo` — the current project folder name
+- `main` — the current git branch
+- `●` — there are uncommitted changes (no dot = clean)
+- `42% ctx` — how full Claude's working memory is. Above 60%, run `/compact` to trim it
+- `2.1h/5h` — how much of your 5-hour usage limit you've used today
+- `18h/7d` — how much of your 7-day usage limit you've used this week
+- `[CAVEMAN:full]` — caveman mode is on at "full" level (only shows when active)
+
+The status bar is driven by `hooks/statusline.sh`. It runs after every response. If something looks wrong, check that file.
+
+---
+
 ## What's excluded
 
 Some things are deliberately left out of this repo, and why:
