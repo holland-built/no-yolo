@@ -10,7 +10,7 @@ Claude Code is a command-line tool where you talk to Claude to write and edit co
 
 - The whole `~/.claude/` folder, tracked in git — everything Claude Code reads on every session
 - A set of rules Claude reads at the start of every session (`CLAUDE.md` plus a few topic files). These enforce strict habits that make Claude actually useful: think and plan before writing code, only change the exact lines you asked for, and use the expensive model to plan while a cheaper model does the typing
-- 16 custom commands I wrote, plus 15 more borrowed from plugins (run `/my-skills` to see the real, up-to-date count)
+- 16 custom commands I wrote, plus 7 more borrowed from plugins (run `/my-skills` to see the real, up-to-date count)
 - Definitions for helper agents, custom slash commands, and automation scripts
 - A memory system: small notes I write in `facts/` get compiled into one file, so Claude keeps remembering my preferences even when it forgets everything else between sessions
 
@@ -24,8 +24,6 @@ Things you need installed before this setup works. The command after each one ch
 - The GitHub command-line tool, signed in: `gh auth status`
 - Node.js available in your terminal (the automation scripts need it): `node --version`
 - git
-- **ECC plugin pack** (optional — adds `ecc:*` agent types like `ecc:code-reviewer`, `ecc:architect`, `ecc:planner`): inside Claude Code, run `/plugin marketplace add ecc`
-- **Superpowers plugin** (adds the workflow skills: `writing-plans`, `executing-plans`, `subagent-driven-development`, and 5 more): inside Claude Code, run `/plugin marketplace add superpowers`
 
 ---
 
@@ -65,16 +63,14 @@ uv tool install graphify
 npx skills@latest add DietrichGebert/ponytail
 npx skills@latest add shadcn/improve
 
-# 6. Install plugin skills — run these inside Claude Code (not in the terminal):
-#    Caveman mode (terse replies, optional):
-#      /plugin marketplace add JuliusBrussee/caveman
-#    Superpowers (writing-plans, executing-plans, subagent-driven-development, and 5 more workflow skills):
-#      /plugin marketplace add superpowers
-#    ECC (optional — ecc:* agent types like code-reviewer, architect, planner):
-#      /plugin marketplace add ecc
-#    Impeccable (magazine-style design theme, optional):
-#      /plugin marketplace add impeccable
 ```
+
+**Step 6 — plugin skills** (these commands run *inside Claude Code*, not in the terminal):
+
+| Plugin | What it adds | Command to install |
+|---|---|---|
+| Impeccable | Magazine-style design theme (optional) | `/plugin marketplace add impeccable` |
+| Caveman | Makes Claude reply in fewer words (optional) | `/plugin marketplace add JuliusBrussee/caveman` |
 
 ### Outside tools you may need
 
@@ -127,7 +123,7 @@ What each file and folder is for:
 | `UI_MOCKUPS.md` | Rules for designing screens before building them |
 | `SKILL_RECOMMENDATIONS.md` | A wishlist of new commands to maybe add (just notes, not turned on) |
 | `memory/` | Where learned preferences live — `facts/` is the real source, `CLAUDE.generated.md` is the compiled result. See `MEMORY.md` |
-| `skills/` | 16 commands I wrote plus 15 shortcuts to borrowed ones — see the list below |
+| `skills/` | 16 commands I wrote plus 7 shortcuts to borrowed ones — see the list below |
 | `agents/` | Definitions for helper agents |
 | `commands/` | Custom slash commands |
 | `hooks/` | Automation scripts: caveman mode, a learnings logger, a reflect step, and the status line. See `HOOKS.md` |
@@ -173,14 +169,6 @@ These come from other people's plugins. The "Install source" column says where t
 | `ponytail-help` | A quick reference card for all the ponytail commands | `npx skills@latest add DietrichGebert/ponytail` |
 | `improve` | Surveys a codebase and writes a ranked improvement plan — but never changes anything itself | `npx skills@latest add shadcn/improve` |
 | `impeccable` | A magazine-style design look — warm cream and burnt orange — for building screens | `/plugin marketplace add impeccable` (Claude marketplace) |
-| `verification-before-completion` | Before saying "done," actually run the checks first — proof before claims | symlinked from `~/.agents/skills/` (workflow helper pack) |
-| `requesting-code-review` | After finishing a task — a structured review pass before merging | symlinked from `~/.agents/skills/` (workflow helper pack) |
-| `receiving-code-review` | Before acting on review feedback — think it through, don't just blindly apply it | symlinked from `~/.agents/skills/` (workflow helper pack) |
-| `subagent-driven-development` | Splits independent tasks out to several helper agents working at once | symlinked from `~/.agents/skills/` (workflow helper pack) |
-| `dispatching-parallel-agents` | When 2+ tasks don't depend on each other — run them at the same time | symlinked from `~/.agents/skills/` (workflow helper pack) |
-| `full-output-enforcement` | Stops Claude from cutting code short — forces complete output, bans "fill this in later" placeholders | symlinked from `~/.agents/skills/` (workflow helper pack) |
-| `writing-plans` | Turns a spec into a clear step-by-step plan before any code is written | symlinked from `~/.agents/skills/` (workflow helper pack) |
-| `executing-plans` | Runs a written plan in a fresh session, with checkpoints to review along the way | symlinked from `~/.agents/skills/` (workflow helper pack) |
 
 ---
 
