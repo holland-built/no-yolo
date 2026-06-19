@@ -1,0 +1,69 @@
+# secrets
+.credentials.json
+settings.local.json
+*.local.json
+
+# machine-specific config (ship settings.example.json instead)
+settings.json
+
+# third-party plugins (own repos)
+plugins/
+
+# external symlinked skills
+skills/improve
+skills/ponytail
+skills/ponytail-audit
+skills/ponytail-debt
+skills/ponytail-help
+skills/ponytail-review
+skills/video-to-kb
+skills/impeccable
+skills/verification-before-completion
+skills/requesting-code-review
+skills/receiving-code-review
+skills/subagent-driven-development
+skills/dispatching-parallel-agents
+skills/full-output-enforcement
+skills/writing-plans
+skills/executing-plans
+
+# runtime / session
+projects/
+sessions/
+session-data/
+session-env/
+shell-snapshots/
+file-history/
+ide/
+metrics/
+
+# caches
+cache/
+paste-cache/
+
+# ephemeral work
+plans/
+tasks/
+proposals/
+brainstorms/
+
+# archives / trash
+_archive_*/
+backups/
+.skill-trash/
+
+# logs
+history.jsonl
+*.log
+
+# runtime markers
+.caveman-active
+.last-cleanup
+.last-update-result.json
+.learnings-turn-counter
+.reflect-turn-counter
+mcp-health-cache.json
+mcp-needs-auth-cache.json
+
+# OS
+.DS_Store
