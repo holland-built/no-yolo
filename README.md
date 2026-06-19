@@ -91,12 +91,10 @@ These are secret keys and paths you save in your shell profile (`~/.zshrc` or `~
 | Variable | Used by | Notes |
 |---|---|---|
 | `GROQ_API_KEY` | `video-to-kb`, `graphify` | For Groq Whisper, which turns audio into text — get a key at console.groq.com |
-| `GEMINI_API_KEY` | `graphify` | For Gemini, which reads images and other media — get a key at aistudio.google.com |
 | `OBSIDIAN_VAULT` | `video-to-kb` | Where your notes folder lives; defaults to `~/Documents/Obsidian` if you don't set it |
 
 ```bash
 export GROQ_API_KEY=your_key_here
-export GEMINI_API_KEY=your_key_here
 export OBSIDIAN_VAULT="$HOME/path/to/your/vault"
 ```
 
