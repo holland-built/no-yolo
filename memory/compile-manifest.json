@@ -1,0 +1,14 @@
+{
+  "compiled": "2026-06-18T13:40:01",
+  "global_facts": {
+    "pattern-agent-read-before-dispatch": "3c896a9c8458",
+    "user-auto-commit-on-push": "f203df316e36",
+    "user-kb-best-practices": "71da5046c0be",
+    "user-no-confirmation-questions": "a2d5c47900c2",
+    "user-output-format-bullets": "f0322770b20a",
+    "user-single-paste-prompts": "98ea5c932f4d",
+    "user-subagent-execution": "116f6a7ec5cd"
+  },
+  "active_count": 7,
+  "warnings": []
+}
