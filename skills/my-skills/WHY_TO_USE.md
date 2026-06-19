@@ -21,3 +21,4 @@ ponytail-debt|Shortcuts without a ledger become forgotten landmines
 ponytail-help|Fast lookup beats interrupting flow to reread docs
 ponytail-review|Most review tools look for what to add. This one specifically hunts what to remove
 eli5|Stops you from agreeing to something you did not actually understand
+debate|Because you have blind spots. Five different expert lenses surface contradictions and the one question you haven't asked yet.

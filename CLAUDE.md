@@ -89,3 +89,6 @@ When the user types `/whats-next`, says "what's next", "what should I do", or "n
 # eli5
 - **eli5** (`~/.claude/skills/eli5/SKILL.md`) - explain anything in plain English before you commit to it. Trigger: `/eli5`
 When the user types `/eli5`, invoke the Skill tool with `skill: "eli5"` before doing anything else.
+# debate
+- **debate** (`~/.claude/skills/debate/SKILL.md`) - 5-expert perspective framework for any topic: UI choices, wording decisions, research questions. Practitioner + Academic + Skeptic + Economist + Historian → contradiction map → synthesis → peer review. Trigger: `/debate`
+When the user types `/debate`, says "debate this", "5 perspectives on", "stress test this decision", or "research brief on", invoke the Skill tool with `skill: "debate"` before doing anything else.

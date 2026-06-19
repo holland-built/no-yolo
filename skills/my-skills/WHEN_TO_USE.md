@@ -21,3 +21,4 @@ ponytail-debt|Tracking shortcuts you deferred intentionally
 ponytail-help|Forgot a ponytail command
 ponytail-review|PR is too big — gut-check what's unnecessary
 eli5|Before running anything you are not 100% sure about
+debate|Before committing to a UI direction, wording choice, or architecture decision. When you want stress-testing, not validation.
