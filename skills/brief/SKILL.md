@@ -1,5 +1,5 @@
 ---
-name: debate
+name: brief
 description: 5-expert perspective research brief on any topic — UI choices, wording decisions, or research questions. Practitioner + Academic + Skeptic + Economist + Historian, then contradiction map, synthesis, and peer review.
 user-invocable: true
 ---

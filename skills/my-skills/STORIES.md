@@ -7,7 +7,7 @@
 
 # ── Section 1 — Your skills ──────────────────────────────────────────────────
 eli5|Not sure what you're about to do? `/eli5 [skill name, plan, or command]` explains it in plain English — what it does, what actually runs, and anything that could bite you. Like having someone in the room saying "wait, do you actually understand this?"
-debate|Not sure which option is actually better? `/debate [topic or decision]` runs 5 expert perspectives (Practitioner, Academic, Skeptic, Economist, Historian), maps where they contradict each other, synthesizes a research briefing, then peer-reviews its own findings. Use it when you're about to commit to a direction and want someone to push back first.
+brief|Not sure which option is actually better? `/debate [topic or decision]` runs 5 expert perspectives (Practitioner, Academic, Skeptic, Economist, Historian), maps where they contradict each other, synthesizes a research briefing, then peer-reviews its own findings. Use it when you're about to commit to a direction and want someone to push back first.
 code-health|Your project collects junk over time. This checks it and shows what's dead, bloated, or wasteful. Run `/code-health` before a big cleanup — most projects have 20-30% you can just delete.
 code-review|Before you merge new code, this reads it and catches bugs and bloat you stopped seeing because you wrote it. Run `/code-review` on a diff or PR. Hunts code that shouldn't exist, not just typos.
 diagnose|Stuck on a bug for 20+ minutes, poking randomly? `/diagnose [the bug]` walks it step by step until it finds the real cause. Stops the guess-and-check spiral.
