@@ -41,7 +41,7 @@ Every dispatch prompt must bound the blast radius:
 - **Independent searches** across 2+ areas of the codebase → parallel `Explore` agents (max 3).
 - **Tasks that bloat main context** with tool output → delegate (subagent returns a summary, not raw output).
 - **Multi-perspective design decisions** → 2–3 `Plan` agents in parallel (model: "opus").
-- **Implementation of approved plans** → Sonnet subagents or `subagent-driven-development` skill.
+- **Implementation of approved plans** → Sonnet subagents.
 
 ## When NOT to delegate
 
