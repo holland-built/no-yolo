@@ -21,4 +21,4 @@ ponytail-debt|`/ponytail-debt`
 ponytail-help|`/ponytail-help`
 ponytail-review|`/ponytail-review` — point at the diff
 eli5|`/eli5 [skill name, plan, or command]`
-debate|/debate [topic] — or paste in the options you're deciding between. Works on any question, plan, or decision.
+brief|/debate [topic] — or paste in the options you're deciding between. Works on any question, plan, or decision.
