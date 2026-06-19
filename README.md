@@ -44,6 +44,19 @@ gh repo clone holland-built/no-yolo ~/claude-config
 
 ### After cloning
 
+Two modes. Pick one:
+
+```bash
+bash ~/.claude/setup.sh           # full install — tools, CLI plugins, skill symlinks
+bash ~/.claude/setup.sh --md-only # rules only — no tools needed, skill triggers stripped from CLAUDE.md
+```
+
+**Full install** steps through tools (fallow, graphify, gh, Graphviz) and plugin skills (ponytail, improve), then tells you which two plugins to add inside Claude Code.
+
+**MD-only** skips all tool installs. It runs a Python script that reads your current `CLAUDE.md` and dynamically removes every skill trigger block and the memory import — so the rules work out of the box with no dead-end references. Dynamic means it stays correct if you add or remove skills later.
+
+Full install details:
+
 ```bash
 # 1. Copy the settings template, then edit your copy
 cp ~/.claude/settings.example.json ~/.claude/settings.json
