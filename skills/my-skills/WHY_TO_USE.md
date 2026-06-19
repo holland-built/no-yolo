@@ -1,0 +1,31 @@
+code-health|Finds real waste fast — most codebases have 20-30% deletable code
+code-review|Catches what you're blind to after writing it. Karpathy filter hunts code that shouldn't exist
+diagnose|Forces systematic evidence-gathering instead of guess-and-check
+drawio-skill|Diagrams that take an hour in Miro take 2 minutes
+forge|Nothing ships without a plan, tests, and proof. No more "works on my machine" done claims
+graphify|Answers "what breaks if I change X?" in seconds instead of reading 40 files
+grill-me|First-attempt success jumps from ~70% to ~90% when decisions are front-loaded
+my-md|One command to see everything. Prevents losing work to forgotten files
+my-skills|You forget you have tools. This is the map
+quick-design|See three real options before writing a line of CSS. Conservative/modern/wild gives real range
+tdd|The RED test is proof you actually fixed it. Without it you're asserting, not proving
+ui-ux|161 palettes + 57 font pairings — design decisions have a defensible basis
+ui-wild|Anti-slop judge kills generic AI output. Result doesn't look like every other Claude UI
+video-to-kb|Talks are perishable. One command turns them into permanent, searchable KB nodes
+whats-next|Prevents starting something new while something is already half-done
+dispatching-parallel-agents|Sequential independent tasks waste wall-clock time. This makes them overlap
+executing-plans|Plans rot in files. Checkpoints catch when reality diverges from the plan
+full-output-enforcement|"..." silently corrupts files. Stops truncation before it happens
+impeccable|Default Claude UI looks like defaults. This gives it a distinctive editorial identity
+improve|Never touches code — pure signal. Tells you what's wrong without risk of a bad auto-fix
+ponytail|The instinct to abstract too early is universal. This actively resists it
+ponytail-audit|Finds the abstraction that seemed smart 6 months ago and now nobody understands
+ponytail-debt|Shortcuts without a ledger become forgotten landmines
+ponytail-help|Fast lookup beats interrupting flow to reread docs
+ponytail-review|Most review tools look for what to add. This one specifically hunts what to remove
+receiving-code-review|Review feedback is often wrong. Enforces "understand before applying"
+requesting-code-review|Structured gate before merge. Catches what you convinced yourself was fine while writing it
+subagent-driven-development|A 10-step plan run sequentially takes 10x longer than needed
+verification-before-completion|"I think it works" ≠ "I ran the command and saw the output"
+writing-plans|Code without a plan has a shape determined by order of typing, not design
+eli5|Stops you from agreeing to something you did not actually understand

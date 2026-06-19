@@ -1,0 +1,31 @@
+code-health|Before a big refactor or after a long sprint
+code-review|Before merging any non-trivial change
+diagnose|Stuck on a bug > 20 min with no clear cause
+drawio-skill|Explaining a system or documenting a design
+forge|Starting any non-trivial feature from scratch
+graphify|Unfamiliar codebase or tracing an unexpected dependency
+grill-me|Fuzzy requirements, multiple valid approaches
+my-md|New to a project or after a long break
+my-skills|Forgot what skills exist
+quick-design|Any UI change — see it before you build it
+tdd|Bug fixes, new features, anywhere tests matter
+ui-ux|Planning or reviewing UI without touching code yet
+ui-wild|Existing UI needs a real redesign, not a tweak
+video-to-kb|Good talk or tutorial worth keeping permanently
+whats-next|Session start — orient before picking what to do
+dispatching-parallel-agents|Tasks have no shared state and can run at the same time
+executing-plans|After writing-plans produces a plan — use in a fresh session
+full-output-enforcement|Model starts truncating or writing "..." in code
+impeccable|Want a premium magazine feel, not default web look
+improve|Want an outside-in audit before deciding what to fix
+ponytail|About to over-engineer something
+ponytail-audit|Major cleanup, debt paydown, or before a refactor
+ponytail-debt|Tracking shortcuts you deferred intentionally
+ponytail-help|Forgot a ponytail command
+ponytail-review|PR is too big — gut-check what's unnecessary
+receiving-code-review|Got review comments, don't want to blindly apply them
+requesting-code-review|Before merging — want a formal gate
+subagent-driven-development|Implementation plan with 3+ independent steps
+verification-before-completion|About to say "done" — confirm it actually works
+writing-plans|Before touching code on anything non-trivial
+eli5|Before running anything you are not 100% sure about
