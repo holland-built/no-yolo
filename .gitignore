@@ -16,16 +16,7 @@ skills/ponytail-audit
 skills/ponytail-debt
 skills/ponytail-help
 skills/ponytail-review
-skills/video-to-kb
 skills/impeccable
-skills/verification-before-completion
-skills/requesting-code-review
-skills/receiving-code-review
-skills/subagent-driven-development
-skills/dispatching-parallel-agents
-skills/full-output-enforcement
-skills/writing-plans
-skills/executing-plans
 
 # runtime / session
 projects/
@@ -51,6 +42,8 @@ brainstorms/
 _archive_*/
 backups/
 .skill-trash/
+skills/*/_claude_bak/
+skills/learned/
 
 # logs
 history.jsonl

@@ -1,8 +1,10 @@
 # Memory System
 
-Learned preferences live as small fact files and compile into one generated import.
+Learned preferences live as small fact files and compile into one generated file that Claude reads at the start of every session — so it remembers your preferences even after a conversation ends.
 
 ## The loop
+
+Think of it like a preference notepad: you write a note, run a compile step, and from then on Claude reads it automatically.
 
 1. **Source of truth:** `memory/facts/<id>.md` — one fact per file.
 2. **Compile:** run `/memory-compile` in Claude Code → regenerates `memory/CLAUDE.generated.md`.
@@ -26,6 +28,10 @@ name: short-kebab-slug
 description: one-line summary — what this preference is
 metadata:
   type: user | feedback | project | reference
+  # user     — who you are and how you work
+  # feedback — things Claude did wrong or right that it should remember
+  # project  — what's happening in a specific project (deadlines, goals, decisions)
+  # reference — where to find things (Linear board, Slack channel, dashboard URL)
 ---
 
 Body: the preference or rule. For feedback/project types, include **Why:** and **How to apply:** lines.

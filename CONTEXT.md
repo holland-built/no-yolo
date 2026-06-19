@@ -2,7 +2,9 @@
 
 ## Token Budget Awareness
 
-Global skills + hooks burn ~30–40k tokens before the first message. Be intentional about what loads.
+Claude has a context window — think of it like working memory. When it fills up, earlier messages get dropped. Managing tokens keeps your session sharp.
+
+Global skills + hooks use ~30–40k tokens (chunks of text) before you type your first message. Be intentional about what loads.
 
 Prefer **per-project** skill installs over global. Global skills bloat every session's prompt.
 
@@ -16,7 +18,7 @@ Prefer **per-project** skill installs over global. Global skills bloat every ses
 
 - Prefer `Explore` subagent over inline file reads when output is large.
 - Delegate research to subagents — they return digests, not raw output.
-- For UI work, prefer `preview_snapshot` (text) over `preview_screenshot` (heavier).
+- For UI work, use text-based checks before screenshots — they're faster.
 
 ## Long-running work
 
@@ -27,5 +29,7 @@ Prefer **per-project** skill installs over global. Global skills bloat every ses
 - `/loop <interval> <cmd>` for repeated checks (cache TTL is 5 min — pick 60–270s or 1200s+, not 300s). *(if available in your harness)*
 
 ## Cache discipline
+
+Anthropic saves (caches) your conversation for 5 minutes to speed up responses. If you pause longer than that, the cache clears and the next response is slower.
 
 Anthropic prompt cache TTL = 5 min. Long sleeps past 300s lose cache. When polling, either stay under 270s or commit to 1200s+ between checks.
