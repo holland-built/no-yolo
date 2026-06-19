@@ -24,7 +24,8 @@ Things you need installed before this setup works. The command after each one ch
 - The GitHub command-line tool, signed in: `gh auth status`
 - Node.js available in your terminal (the automation scripts need it): `node --version`
 - git
-- **ECC plugin pack** (optional — adds extra agent types named with an `ecc:` prefix): install it through the Claude Code plugin marketplace. You don't need it for any of the commands I wrote above.
+- **ECC plugin pack** (optional — adds `ecc:*` agent types like `ecc:code-reviewer`, `ecc:architect`, `ecc:planner`): inside Claude Code, run `/plugin marketplace add ecc`
+- **Superpowers plugin** (adds the workflow skills: `writing-plans`, `executing-plans`, `subagent-driven-development`, and 5 more): inside Claude Code, run `/plugin marketplace add superpowers`
 
 ---
 
@@ -64,8 +65,15 @@ uv tool install graphify
 npx skills@latest add DietrichGebert/ponytail
 npx skills@latest add shadcn/improve
 
-# 6. (Optional) Install caveman mode — a switch that makes Claude reply in fewer words
-# Inside Claude Code, run: /plugin marketplace add JuliusBrussee/caveman
+# 6. Install plugin skills — run these inside Claude Code (not in the terminal):
+#    Caveman mode (terse replies, optional):
+#      /plugin marketplace add JuliusBrussee/caveman
+#    Superpowers (writing-plans, executing-plans, subagent-driven-development, and 5 more workflow skills):
+#      /plugin marketplace add superpowers
+#    ECC (optional — ecc:* agent types like code-reviewer, architect, planner):
+#      /plugin marketplace add ecc
+#    Impeccable (magazine-style design theme, optional):
+#      /plugin marketplace add impeccable
 ```
 
 ### Outside tools you may need
