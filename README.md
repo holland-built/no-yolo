@@ -175,7 +175,9 @@ A "skill" is a custom command you trigger with a slash, like `/code-review`. Her
 | `ui-wild` | A bold redesign: 10 designer "personalities" compete, a judge throws out the generic ones, and you pick the winner |
 | `video-to-kb` | Transcribes a YouTube video (or any video file) using Groq Whisper, then saves the transcript and a structured summary into your Obsidian notes folder — useful for researching topics from YouTube before asking Claude to help you apply what you learned |
 | `whats-next` | Looks at what you've got in progress (notes, git changes) and either shows unfinished work or a menu of things to start |
+| `debate` | Five experts argue your topic (Practitioner, Academic, Skeptic, Economist, Historian), map where they contradict each other, then synthesize a research briefing and peer-review their own findings — use it before committing to any direction |
 | `eli5` | Explains any command, plan, file, or decision in plain English before you commit to it |
+| `update` | Checks if your setup is out of date, shows a plain-English summary of what changed, and lets you apply updates, roll back, or restore a removed skill |
 
 ### Borrowed commands
 
