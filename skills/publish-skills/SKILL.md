@@ -19,6 +19,18 @@ git -C ~/.claude status --short
 
 Print the list. If nothing changed, output: "Nothing to publish. Working tree clean." and stop.
 
+## Step 1b — Audit mode
+
+If `$ARGUMENTS` is `audit`, run a full history scan instead of publishing:
+
+```bash
+git -C ~/.claude log --all -p | grep -nE \
+  "/Users/[a-zA-Z0-9_-]+|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}|provenance:|session: [a-f0-9-]{36}|password|secret|api[_-]?key|token" \
+  | head -40
+```
+
+Show results with commit context. If nothing found: "History clean — no personal data patterns found." Then stop.
+
 ## Step 2 — Personal file guard (HARD block)
 
 Scan the changed file list for any of these paths. If ANY match → STOP immediately, do not commit:
@@ -37,6 +49,17 @@ Scan the changed file list for any of these paths. If ANY match → STOP immedia
 - `paste-cache/`
 
 Output: "BLOCKED — personal files in diff: [list them]. Fix before publishing."
+
+## Step 2.5 — Content scan (HARD block)
+
+Grep actual diff content — not just filenames:
+
+```bash
+git -C ~/.claude diff HEAD -- skills/ CLAUDE.md CORE_RULES.md UI_MOCKUPS.md PLANNING.md TESTING.md SUBAGENTS.md CONTEXT.md SKILLS.md CODE_REVIEW.md HOOKS.md MEMORY.md NO_YOLO.md setup.sh settings.example.json hooks/ README.md SKILL_RECOMMENDATIONS.md | grep -E "^\+" | grep -vE "^\+\+\+" | grep -E \
+  "/Users/[a-zA-Z0-9_-]+|provenance:|session: [a-f0-9-]{36}|password\s*[:=]|secret\s*[:=]|api[_-]?key\s*[:=]|AKIA[0-9A-Z]{16}"
+```
+
+If ANY line matches → STOP. Output: "BLOCKED — personal data in diff content: [show matched lines]. Fix before publishing."
 
 ## Step 3 — Filter to safe files
 
