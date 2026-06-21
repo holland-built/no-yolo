@@ -226,13 +226,19 @@ cd ~/.claude && git pull
 
 That's it. Claude Code reads the files fresh on every session, so changes take effect next time you open Claude Code.
 
-**After pulling, re-run setup only if tools were added:**
+**After pulling, check if anything new needs installing:**
+```bash
+cd ~/.claude && git log --oneline -5
+```
+
+That shows the last 5 changes. If any line mentions "feat", "add", or a tool name (like "graphify" or "ponytail"), re-run setup:
+
 ```bash
 bash ~/.claude/setup.sh           # re-installs tools + plugin skills (full)
 bash ~/.claude/setup.sh --md-only # rules only — no tools, no plugins
 ```
 
-You don't need to re-run setup every pull — only when the commit notes say a new tool or plugin was added.
+If the log only shows "docs", "fix", or "refactor" — no setup needed, the pull is enough.
 
 ---
 
