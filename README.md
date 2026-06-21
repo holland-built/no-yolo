@@ -24,7 +24,6 @@ Things you need installed before this setup works. The command after each one ch
 - The GitHub command-line tool, signed in: `gh auth status`
 - Node.js available in your terminal (the automation scripts need it): `node --version`
 - (Note: `~` in all paths below means your home directory — `/Users/yourname` on Mac)
-- uv (Python tool runner — needed for graphify): check with `uv --version`, install at https://docs.astral.sh/uv/
 - git
 
 ---
@@ -53,7 +52,7 @@ bash ~/.claude/setup.sh           # full install — tools, CLI plugins, skill s
 bash ~/.claude/setup.sh --md-only # rules only — no tools needed, skill triggers stripped from CLAUDE.md
 ```
 
-**Full install** steps through tools (fallow, graphify, gh, Graphviz) and plugin skills (ponytail, improve), then tells you which two plugins to add inside Claude Code.
+**Full install** steps through tools (fallow, gh, Graphviz) and plugin skills (ponytail, improve), then tells you which two plugins to add inside Claude Code.
 
 **MD-only** skips all tool installs. It runs a Python script that reads your current `CLAUDE.md` and dynamically removes every skill trigger block and the memory import — so the rules work out of the box with no dead-end references. Dynamic means it stays correct if you add or remove skills later.
 
@@ -71,12 +70,7 @@ chmod +x ~/.claude/hooks/*.sh
 #    Used by /code-health. Skip if you don't plan to use that command.
 npm install -g fallow
 
-# 4. Install graphify — maps your whole codebase into a searchable graph.
-#    Instead of Claude reading every file on every question, it reads the graph once.
-#    Saves money and time on large projects. Skip if your projects are small.
-uv tool install graphify
-
-# 5. Install the borrowed plugin commands — simplicity checker and improvement planner.
+# 4. Install the borrowed plugin commands — simplicity checker and improvement planner.
 #    ponytail: flags code that's more complicated than it needs to be
 #    improve: surveys your whole codebase and writes a prioritized cleanup list
 npx skills@latest add DietrichGebert/ponytail
@@ -84,7 +78,7 @@ npx skills@latest add shadcn/improve
 
 ```
 
-**Step 6 — plugin skills** (these commands run *inside Claude Code*, not in the terminal):
+**Step 5 — plugin skills** (these commands run *inside Claude Code*, not in the terminal):
 
 | Plugin | What it adds | Command to install |
 |---|---|---|
@@ -102,7 +96,7 @@ Some commands call other programs on your computer. Install whichever ones you p
 | [gh (GitHub CLI)](https://cli.github.com/) | Lets Claude push code, open pull requests, and read GitHub issues on your behalf | `code-review` | `brew install gh && gh auth login` |
 | [Graphviz](https://graphviz.org/) | Draws the actual diagram files that `drawio-skill` creates | `drawio-skill` | `brew install graphviz` |
 | [draw.io](https://www.drawio.com/) CLI | Opens and exports the diagrams drawio-skill makes | `drawio-skill` | `brew install --cask drawio` |
-| [Groq Whisper](https://console.groq.com/) | Turns speech into text — needed to transcribe YouTube videos or voice notes | `video-to-kb`, `graphify` | Get a free API key at console.groq.com, then set `GROQ_API_KEY` in your shell |
+| [Groq Whisper](https://console.groq.com/) | Turns speech into text — needed to transcribe YouTube videos or voice notes | `video-to-kb` | Get a free API key at console.groq.com, then set `GROQ_API_KEY` in your shell |
 | [Chrome](https://www.google.com/chrome/) (headless) | Lets Claude take screenshots of mockups and web pages without you opening a browser | `quick-design`, `forge` | Already on most machines; or `brew install --cask google-chrome` |
 | [Playwright](https://playwright.dev/) | Lets Claude actually click around in a browser to test your web app | `forge` | Add the `playwright` MCP server to `settings.json` — see MCP note below |
 | shadcn MCP | Lets Claude look up shadcn component docs and add components to your project | `ui-ux` | Add the `shadcn` MCP server to `settings.json` |
@@ -115,12 +109,10 @@ These are secret keys and paths you save in your shell profile (`~/.zshrc` or `~
 
 | Variable | Used by | Notes |
 |---|---|---|
-| `GROQ_API_KEY` | `video-to-kb`, `graphify` | For Groq Whisper, which turns audio into text — get a key at [console.groq.com](https://console.groq.com/) |
-| `OBSIDIAN_VAULT` | `video-to-kb` | Where your Obsidian vault lives — Obsidian is a local notes app (obsidian.md). video-to-kb files research notes here so you can ask Claude about them later. Defaults to `~/Documents/Obsidian` if you don't set it |
+| `GROQ_API_KEY` | `video-to-kb` | For Groq Whisper, which turns audio into text — get a key at [console.groq.com](https://console.groq.com/) |
 
 ```bash
 export GROQ_API_KEY=your_key_here
-export OBSIDIAN_VAULT="$HOME/path/to/your/vault"
 ```
 
 > ⚠️ **Security note:** `settings.json` lets Claude run `Bash(security find-generic-password *)` and `Bash(sshpass *)` without asking you first. The first one can read any password saved in the macOS Keychain; the second can type SSH passwords for you. Before using this setup on a machine you share with others, tighten these patterns so they only match the specific things you intend.
@@ -165,7 +157,6 @@ A "skill" is a custom command you trigger with a slash, like `/code-review`. Her
 | `diagnose` | A 6-step way to find the real cause of a bug — when you're stuck, it walks you through it step by step |
 | `drawio-skill` | Draws diagrams (architecture, flowcharts, database tables, UML). Saves them as PNG, SVG, or PDF |
 | `forge` | Builds a whole feature start to finish: gather requirements, plan it, mock up the screens, write tests first, build it, then prove it works |
-| `graphify` | Builds a knowledge graph of your codebase once, then answers questions like "what calls this function?" from the graph instead of re-reading every file — saves tokens on large codebases and gives faster, more complete answers |
 | `grill-me` | Interviews you before any code gets written — one question at a time until every tricky case is sorted out |
 | `my-md` | Lists every markdown file — both the global `~/.claude/` docs and the ones in your current project |
 | `my-skills` | This very list. Shows the commands I wrote and the borrowed ones, plus how they connect and what they depend on |
@@ -173,9 +164,9 @@ A "skill" is a custom command you trigger with a slash, like `/code-review`. Her
 | `tdd` | Keeps you honest about test-driven development: write a failing test, make it pass, clean up, repeat |
 | `ui-ux` | Design know-how: 161 color palettes, 57 font pairings, 99 design guidelines, 25 chart types |
 | `ui-wild` | A bold redesign: 10 designer "personalities" compete, a judge throws out the generic ones, and you pick the winner |
-| `video-to-kb` | Transcribes a YouTube video (or any video file) using Groq Whisper, then saves the transcript and a structured summary into your Obsidian notes folder — useful for researching topics from YouTube before asking Claude to help you apply what you learned |
+| `video-to-kb` | *(Optional — requires Obsidian + Groq API key)* Transcribes a YouTube video using Groq Whisper and saves a structured summary into your Obsidian notes folder |
 | `whats-next` | Looks at what you've got in progress (notes, git changes) and either shows unfinished work or a menu of things to start |
-| `debate` | Five experts argue your topic (Practitioner, Academic, Skeptic, Economist, Historian), map where they contradict each other, then synthesize a research briefing and peer-review their own findings — use it before committing to any direction |
+| `debate` | Your product team argues the decision — Senior Dev, Junior Dev, Sales Engineer, DevOps, Sales Leader, Eng Leader — then maps contradictions, synthesizes a briefing, and ends with one clear YES/NO/CONDITIONAL verdict |
 | `eli5` | Explains any command, plan, file, or decision in plain English before you commit to it |
 | `update` | Checks if your setup is out of date, shows a plain-English summary of what changed, and lets you apply updates, roll back, or restore a removed skill |
 

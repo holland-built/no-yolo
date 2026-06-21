@@ -95,3 +95,15 @@ For each perspective output:
 3. **Bias check** — which perspective dominated the synthesis? Was one voice overrepresented?
 4. **Missing perspective** — is there a 7th angle that would change the conclusions?
 5. **Overall grade** — if a Stanford professor reviewed this, what grade and what would they fix?
+
+### Step 6 — Final Decision
+
+Do not run a new analysis. Collapse the synthesis from Steps 3–5 into one verdict and one reason. Output exactly one line, nothing after it:
+
+> **Decision: [YES / NO / CONDITIONAL]** — [the single reason that outweighs everything else]
+
+Rules:
+- Pick ONE: YES, NO, or CONDITIONAL. Never "it depends."
+- Give exactly one sentence — the single reason that outweighs all others, drawn from the strongest finding in Step 4 and its Step 5 confidence score.
+- If CONDITIONAL, the reason must name the one condition that flips it to YES.
+- No hedging, no caveats, no second sentence.
