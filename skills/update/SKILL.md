@@ -109,50 +109,68 @@ Do NOT show raw git diff output. Translate everything.
 
 ### Step 7 — if argument is `full`
 
-Confirm first:
+**First: check for unsaved local changes (safety step)**
+
+```bash
+cd ~/.claude && DIRTY=$(git status --porcelain)
+```
+
+If DIRTY is non-empty:
+- Tell user in plain English: "You have local changes I'm setting aside safely before updating."
+- Run: `git stash push -m "pre-update stash $(date +%Y-%m-%d)"`
+- After pull completes: `git stash pop`
+- If stash pop has conflicts: "Some of your local changes conflicted with the update. Your originals are in git stash — run `git stash pop` in your terminal to review."
+
+Then confirm:
 ```
 Pulling all updates and re-running setup. This takes about 30 seconds. Continue? (y/n)
 ```
 
-Wait for confirmation, then run:
+Wait for confirmation, then:
 ```bash
-cd ~/.claude && git pull origin main && bash ~/.claude/setup.sh
+cd ~/.claude && git pull --ff-only origin main && bash ~/.claude/setup.sh
 ```
 
-After: show plain-English summary of what changed (same format as Step 4).
+If `git pull --ff-only` fails: tell user "The update couldn't be applied cleanly. Run `/update rollback` to start fresh." Do NOT force the pull.
+
+After: show plain-English summary of what changed. Tell user: "Reopen Claude Code to pick up the changes."
 
 ### Step 8 — if argument is `rules`
 
-Same as full but:
+Same dirty-check stash guard as Step 7, then:
 ```bash
-cd ~/.claude && git pull origin main && bash ~/.claude/setup.sh --md-only
+cd ~/.claude && git pull --ff-only origin main && bash ~/.claude/setup.sh --md-only
 ```
 
 Tell user: "Rules updated. Tool installs skipped. Reopen Claude Code to pick up changes."
 
 ### Step 9 — if argument is `rollback`
 
+**First: same dirty-check guard as Step 7.** If DIRTY non-empty: "You have unsaved local changes. Rolling back would delete them. Type `cancel` to stop." Wait for response.
+
+**Create a restore point before touching anything:**
 ```bash
-git log --oneline -5
+git tag claude-restore-$(date +%Y%m%d-%H%M%S)
 ```
+Tell user: "Saved a restore point — if anything goes wrong you can always get back to right now."
 
-Show last 5 states as a numbered list with plain-English dates ("3 days ago", "last week"):
-
+Show last 5 states as a numbered list with plain-English dates:
 ```
 Your recent setup history:
   1. Today (current) — added /brief skill, updated PLANNING.md
-  2. 3 days ago — fixed README typos  
+  2. 3 days ago — fixed README typos
   3. Last week — added graphify token-saving docs
-  
+
 Which one do you want to go back to? (type the number)
 ```
 
-After user picks:
+After user picks, use `git revert` (keeps history, safe) NOT `git reset --hard` (permanent, destructive):
 ```bash
-git reset --hard <chosen-hash>
+git revert --no-commit <hash-range>
+git commit -m "rollback: reverted to <chosen-date>"
 ```
 
-Warn: "This cannot be undone without re-pulling. Your local changes (if any) will be lost."
+Tell user: "Rolled back. Nothing permanently deleted — your history is preserved. Reopen Claude Code to pick up the changes."
 
 ### Step 10 — if argument is `restore <skill-name>`
 
