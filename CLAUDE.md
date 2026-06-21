@@ -90,8 +90,8 @@ When the user types `/whats-next`, says "what's next", "what should I do", or "n
 - **eli5** (`~/.claude/skills/eli5/SKILL.md`) - explain anything in plain English before you commit to it. Trigger: `/eli5`
 When the user types `/eli5`, invoke the Skill tool with `skill: "eli5"` before doing anything else.
 # debate
-- **debate** (`~/.claude/skills/debate/SKILL.md`) - 5-expert perspective framework for any topic: UI choices, wording decisions, research questions. Practitioner + Academic + Skeptic + Economist + Historian → contradiction map → synthesis → peer review. Trigger: `/debate`
-When the user types `/debate`, says "debate this", "5 perspectives on", "stress test this decision", or "research brief on", invoke the Skill tool with `skill: "debate"` before doing anything else.
+- **debate** (`~/.claude/skills/debate/SKILL.md`) - 6-persona product-team debate: Senior Dev, Junior Dev, Sales Engineer, DevOps, Sales Leader, Eng Leader → contradiction map → synthesis → peer review. Works on architecture, UI/UX, or feature-priority calls. Trigger: `/debate`
+When the user types `/debate`, says "debate this", "stress test this decision", "get the team on this", or "should we build this", invoke the Skill tool with `skill: "debate"` before doing anything else.
 # update
 - **update** (`~/.claude/skills/update/SKILL.md`) - check for updates, preview what changed, apply full or rules-only update, rollback, or restore a removed skill. Trigger: `/update`
 When the user types `/update`, says "check for updates", "am I out of date", "what's new", "update my setup", or "rollback", invoke the Skill tool with `skill: "update"` before doing anything else.
