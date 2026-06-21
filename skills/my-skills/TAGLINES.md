@@ -21,5 +21,5 @@ quick-design|Fast 3-variant mockup generator. Extracts real design tokens, spawn
 whats-next|Scans for in-flight work (brainstorms, git, changelog). Shows what's unfinished — or a pick-list of next actions if the slate is clean. Never pushes audit over active work.
 impeccable|Editorial-poster design theme — warm cream and burnt orange aesthetic. Use when you want a premium, graphic magazine feel for your UI.
 eli5|Explain anything in plain English before you commit to it.
-debate|Five experts argue your topic. You get the contradictions, the synthesis, and a self-graded briefing. Works on UI choices, wording, plans, or any research question.
+debate|Your product team argues the decision. Six domain personas — Senior Dev, Junior Dev, Sales Engineer, DevOps, Sales Leader, Eng Leader — surface the contradictions, then synthesize and grade their own briefing. Works on architecture, UI/UX, or what to build next.
 update|Check if your setup is out of date, preview what changed in plain English, apply full or rules-only updates, rollback, or restore a removed skill.

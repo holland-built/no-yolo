@@ -1,59 +1,75 @@
 ---
-name: brief
-description: 5-expert perspective research brief on any topic — UI choices, wording decisions, or research questions. Practitioner + Academic + Skeptic + Economist + Historian, then contradiction map, synthesis, and peer review.
+name: debate
+description: 6-persona product-team debate on any software decision — architecture, UI/UX, or feature priority. Senior Dev + Junior Dev + Sales Engineer + DevOps + Sales Leader + Eng Leader, then contradiction map, synthesis, and peer review.
 user-invocable: true
 ---
 
 # debate
 
-Five experts argue your topic. You get the contradictions, the synthesis, and a self-graded briefing.
+Your product team argues your decision. You get the contradictions, the synthesis, and a self-graded briefing.
 
 ## Use cases
 
-- Pick between competing UI designs or layouts
-- Test wording / copy options
-- Research a topic before committing to a direction
-- Stress-test a decision or plan
+- Pick between competing architectures or UI designs
+- Decide what to build next (feature prioritization)
+- Test wording / copy / UX flow options
+- Stress-test a technical or product decision before committing
 
 ## How to run
 
 ### Step 1 — Parse the argument
 
-If no argument: ask "What topic, decision, or question do you want to debate?"
+If no argument: ask "What decision, design, or feature do you want the team to debate?"
 
 The argument can be:
-- A topic: "microservices vs monolith"
-- A decision: "which of these 3 UI mockups is better"
-- A question: "should we rewrite this in TypeScript"
-- A document or plan (if user pastes it in)
+- An architecture call: "microservices vs monolith for this service"
+- A UI/UX choice: "which of these 3 dashboard layouts is better"
+- A prioritization call: "build SSO or the reporting API next"
+- A document, mockup, or plan (if user pastes it in)
 
-### Step 2 — Five perspectives
+### Step 2 — Six perspectives
 
-Run all 5 in parallel as subagents (model: "opus") or inline if context is tight. Each expert answers:
+Run all 6 in parallel as subagents (model: "opus") or inline if context is tight. Each persona answers their 3 questions, then delivers their unique angle.
 
-**THE PRACTITIONER** — works with this daily
-- What do they know that academics miss?
-- What practical realities are usually ignored?
+**THE SENIOR DEV** — guards the technical standard AND the design bar
+- Does this hold up under load, edge cases, and the next 2 years of changes?
+- Is this the simplest correct design, or are we adding accidental complexity?
+- Does this meet our polish bar — consistent, modern, zero AI slop — or are we shipping something that looks generated?
+- *Only they would say:* "This compiles and it's still not good enough — here's the standard it has to clear before it ships."
 
-**THE ACADEMIC** — has studied this for years
-- What does the peer-reviewed evidence actually say?
-- Where does evidence contradict popular belief?
+**THE JUNIOR DEV** — the new-user lens, simplicity enforcer
+- Could someone who's never seen this codebase understand it in a week?
+- What's the part of this I'd be scared to touch, and why?
+- Is there a smaller, more obvious way to do this that we're overlooking?
+- *Only they would say:* "I don't get why we need this — and if I don't, neither will the next new hire or the new user."
 
-**THE SKEPTIC** — thinks the mainstream view is wrong
-- What is the strongest counterargument?
-- What evidence do proponents conveniently ignore?
+**THE SALES ENGINEER** — translates user needs into the platform story
+- What actual customer problem does this solve, in their words not ours?
+- How do I demo this to a prospect without it breaking or needing an asterisk?
+- Does this fit how customers already use the platform, or does it force a new mental model?
+- *Only they would say:* "Customers aren't asking for this — here's the request behind the request they're actually making."
 
-**THE ECONOMIST** — follows the money
-- Who profits from the current narrative?
-- What financial incentives shape the research?
+**THE DEVOPS ENGINEER** — deployment, reliability, who runs this at 3am
+- How does this get deployed, observed, and rolled back when it breaks?
+- What's the failure mode, and who gets paged when it happens?
+- What new operational cost (infra, on-call, maintenance) are we signing up for forever?
+- *Only they would say:* "It works on your machine; tell me how it dies in production and who fixes it at 3am."
 
-**THE HISTORIAN** — has seen similar patterns before
-- What historical parallels exist?
-- What can we learn from how those played out?
+**THE SALES LEADER** — revenue, ROI, customer promises
+- What's the revenue or retention impact, and how soon do we see it?
+- What have we already promised customers that this does or doesn't deliver?
+- Is this the highest-ROI thing the team could be doing right now?
+- *Only they would say:* "I can sell this — or I can't — and here's the deal it wins or loses us this quarter."
+
+**THE ENGINEERING LEADER** — team feasibility, debt, roadmap
+- Can the team actually build and maintain this with who and what we have?
+- What technical debt does this create or pay down, and is the trade worth it?
+- What does saying yes to this cost us elsewhere on the roadmap?
+- *Only they would say:* "Capacity is the real constraint — here's what we'd have to drop or delay to make room for this."
 
 For each perspective output:
 - Core position (2 sentences)
-- Strongest supporting evidence
+- Strongest supporting argument
 - The one thing only they would say
 
 ### Step 3 — Contradiction map
@@ -68,7 +84,7 @@ For each perspective output:
 
 1. **One-paragraph summary** — brief a CEO in 60 seconds, nuance not headline
 2. **5 key findings** — ranked by reliability; note which perspectives support/challenge each
-3. **Hidden connection** — one non-obvious link that only shows up across all 5 perspectives
+3. **Hidden connection** — one non-obvious link that only shows up across all 6 perspectives
 4. **Actionable insight** — what should someone in the user's role actually DO differently? Specific.
 5. **Frontier question** — the one question that, if answered, would change everything
 
@@ -77,5 +93,5 @@ For each perspective output:
 1. **Confidence scores** — rate each of the 5 key findings 1–10 for reliability, explain each
 2. **Weakest link** — least confident claim; what info would verify it?
 3. **Bias check** — which perspective dominated the synthesis? Was one voice overrepresented?
-4. **Missing perspective** — is there a 6th angle that would change the conclusions?
+4. **Missing perspective** — is there a 7th angle that would change the conclusions?
 5. **Overall grade** — if a Stanford professor reviewed this, what grade and what would they fix?
