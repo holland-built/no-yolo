@@ -22,3 +22,4 @@ whats-next|Scans for in-flight work (brainstorms, git, changelog). Shows what's 
 impeccable|Editorial-poster design theme — warm cream and burnt orange aesthetic. Use when you want a premium, graphic magazine feel for your UI.
 eli5|Explain anything in plain English before you commit to it.
 brief|Five experts argue your topic. You get the contradictions, the synthesis, and a self-graded briefing. Works on UI choices, wording, plans, or any research question.
+update|Check if your setup is out of date, preview what changed in plain English, apply full or rules-only updates, rollback, or restore a removed skill.

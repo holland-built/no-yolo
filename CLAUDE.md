@@ -92,3 +92,6 @@ When the user types `/eli5`, invoke the Skill tool with `skill: "eli5"` before d
 # brief
 - **brief** (`~/.claude/skills/brief/SKILL.md`) - 5-expert perspective framework for any topic: UI choices, wording decisions, research questions. Practitioner + Academic + Skeptic + Economist + Historian → contradiction map → synthesis → peer review. Trigger: `/brief`
 When the user types `/brief`, says "debate this", "5 perspectives on", "stress test this decision", or "research brief on", invoke the Skill tool with `skill: "brief"` before doing anything else.
+# update
+- **update** (`~/.claude/skills/update/SKILL.md`) - check for updates, preview what changed, apply full or rules-only update, rollback, or restore a removed skill. Trigger: `/update`
+When the user types `/update`, says "check for updates", "am I out of date", "what's new", "update my setup", or "rollback", invoke the Skill tool with `skill: "update"` before doing anything else.
