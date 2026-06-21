@@ -21,5 +21,5 @@ ponytail-debt|Tracking shortcuts you deferred intentionally
 ponytail-help|Forgot a ponytail command
 ponytail-review|PR is too big — gut-check what's unnecessary
 eli5|Before running anything you are not 100% sure about
-brief|Before committing to a UI direction, wording choice, or architecture decision. When you want stress-testing, not validation.
+debate|Before committing to a UI direction, wording choice, or architecture decision. When you want stress-testing, not validation.
 update|Before pulling changes to your ~/.claude setup. Also after an update that broke something, or when you want to recover a skill that was removed.

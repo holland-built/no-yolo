@@ -21,5 +21,5 @@ ponytail-debt|`/ponytail-debt`
 ponytail-help|`/ponytail-help`
 ponytail-review|`/ponytail-review` — point at the diff
 eli5|`/eli5 [skill name, plan, or command]`
-brief|/debate [topic] — or paste in the options you're deciding between. Works on any question, plan, or decision.
+debate|/debate [topic] — or paste in the options you're deciding between. Works on any question, plan, or decision.
 update|/update — check status. /update preview — full changelog. /update full — apply everything. /update rules — rules only. /update rollback — undo. /update restore <name> — recover deleted skill.
