@@ -49,7 +49,7 @@ State the token block in ONE line before proceeding: `Tokens: [list of vars foun
 
 ## Step 2 — Fan out 3 parallel agents
 
-Spawn all 3 in ONE parallel call. Each writes its own file: `mockups/quick-<slug>/v1.html`, `v2.html`, `v3.html`.
+Spawn all 3 in ONE parallel call. Each writes its own file: `.mockups/quick-<slug>/v1.html`, `v2.html`, `v3.html`.
 
 `<slug>` = kebab-case of the feature description. `<date>` = today.
 
@@ -60,10 +60,10 @@ Give each agent:
 - Hard rule: use ONLY the provided tokens for colors/fonts/spacing
 
 ### Agent brief — v1 (Conservative)
-> Build a clean, safe implementation. Familiar layout patterns users already know. Prioritize clarity and predictability. Use cards or a simple list layout. No surprises. Apply the design tokens for all colors, fonts, and spacing.
+> Build a clean, safe implementation. Familiar layout patterns users already know. Prioritize clarity and predictability. Use a structured table, row-list, or timeline — no card boxes. No surprises. Apply the design tokens for all colors, fonts, and spacing.
 
 ### Agent brief — v2 (Modern / Polished)
-> Build a refined, contemporary design. Strong visual hierarchy, generous whitespace, clear CTA prominence. Could use subtle gradients, layered cards, or a split-pane layout. Still recognizable but elevated. Apply the design tokens.
+> Build a refined, contemporary design. Strong visual hierarchy, generous whitespace, clear CTA prominence. Use a split-pane layout, editorial typography hierarchy, or data-dense row structure — no floating card boxes. Still recognizable but elevated. Apply the design tokens.
 
 ### Agent brief — v3 (Wild)
 > Throw out convention. Pick a completely different layout paradigm — examples: command-line terminal aesthetic, full-bleed hero sections with oversized type, data-dense Bloomberg grid, floating action panels, single-column with bold section breaks, bento-grid cards, magazine-style editorial layout. It must look like a different product team designed it. Still apply the design tokens (same colors/fonts) but use them in a radically different spatial arrangement.
@@ -76,9 +76,29 @@ Each agent output spec:
 
 ---
 
+## Step 2.5 — Slop self-check (HARD gate — before showing user)
+
+After all 3 agents complete, self-check each variant against the slop fingerprint. If a variant's PRIMARY design expression matches any item — kill it, respawn that agent with: "Your concept matched [specific pattern]. Change the layout paradigm entirely." Min 1 non-slop survivor required for this set of 3.
+
+**Slop fingerprint — instant reject:**
+- Card grid (same `.card` box repeated N times)
+- Accordion-only with no other structure
+- Floating cards on a slightly different background as the only device
+- Looks like a Tailwind UI, shadcn, or Material UI starter
+- Rounded corners (>8px) as the primary softening device
+- Badge/pill stat rows as the only data visualization
+- Sans-serif + size-only hierarchy (no weight contrast, spacing, or color differentiation)
+- Sidebar nav with icon + label rows as the structural feature
+- Hero section with centered headline + subtext + CTA button
+- Gradient CTA buttons
+- Glassmorphism blur panels
+- Any layout that could describe 2+ other variants in this same set
+
+---
+
 ## Step 3 — Build combined view
 
-After all 3 agents complete, write `mockups/quick-<slug>/all.html`:
+After all 3 agents complete, write `.mockups/quick-<slug>/all.html`:
 
 Structure: sticky top nav with `v1 | v2 | v3` jump links, then each variant in a labeled section with a one-line description. Mark recommended with ★.
 
@@ -87,15 +107,15 @@ Structure: sticky top nav with `v1 | v2 | v3` jump links, then each variant in a
 ## Step 4 — Pop in Chrome (MANDATORY — both steps)
 
 ```bash
-open "mockups/quick-<slug>/all.html"
+open ".mockups/quick-<slug>/all.html"
 ```
 
 Then screenshot:
 ```bash
 "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" \
   --headless --disable-gpu --window-size=1400,900 \
-  --screenshot="mockups/quick-<slug>/all.png" \
-  "file://$PWD/mockups/quick-<slug>/all.html"
+  --screenshot=".mockups/quick-<slug>/all.png" \
+  "file://$PWD/.mockups/quick-<slug>/all.html"
 ```
 
 Show the screenshot inline. Then print the variant table:

@@ -8,6 +8,23 @@ No exceptions for new components, redesigns, layout changes, or visual refactors
 
 **At least 1–2 of the variations must be wildly different** — different layout paradigm, opposite density, unexpected color treatment, or unconventional structure. Safe incremental variations only reveal safe incremental taste. Wild variations reveal where the real ceiling is.
 
+## Slop prohibition (applies to every mockup, every skill)
+
+Before presenting mockups to the user, self-check every variant against the slop fingerprint. If a variant matches — kill it, regenerate it with a structurally different paradigm. For sets of 3: minimum 1 non-slop survivor. For sets of 5+: minimum 2.
+
+**Slop fingerprint — instant reject if the variant's PRIMARY design expression is:**
+- Card grid (same `.card` box repeated N times, slightly different content)
+- Accordion-only (all groups collapsed behind a chevron, no other structure)
+- Floating cards on a darker/lighter background as the only device
+- Looks like a Tailwind UI, shadcn, or Material UI starter template
+- Sidebar nav with icon + label rows as the structural feature (unless the app already uses this)
+- Rounded corners (>8px) as the only softening device, applied everywhere
+- Badge/pill stat rows as the only data visualization
+- Sans-serif + size-only hierarchy (no weight contrast, spacing, or color differentiation)
+- Any layout that could describe 3+ other variants in the same set
+
+**Not slop** — structurally distinct paradigms: terminal/CLI, Bloomberg data grid, editorial/magazine, bento grid, command palette, split-pane reference, single-column full-bleed, floating action panel, timeline, kanban.
+
 ## ALWAYS: pop it in Chrome + keep a master index
 
 Two hard rules, every time a mockup is created or changed:
