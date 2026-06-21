@@ -216,6 +216,26 @@ There are three Claude models. They cost different amounts and are good at diffe
 
 ---
 
+## Keeping your setup up to date
+
+To pull the latest changes from this repo into your `~/.claude/` folder:
+
+```bash
+cd ~/.claude && git pull
+```
+
+That's it. Claude Code reads the files fresh on every session, so changes take effect next time you open Claude Code.
+
+**After pulling, re-run setup only if tools were added:**
+```bash
+bash ~/.claude/setup.sh           # re-installs tools + plugin skills (full)
+bash ~/.claude/setup.sh --md-only # rules only — no tools, no plugins
+```
+
+You don't need to re-run setup every pull — only when the commit notes say a new tool or plugin was added.
+
+---
+
 ## Set up a new project
 
 After cloning this repo, do this in each new project folder you work in:
