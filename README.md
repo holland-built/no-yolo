@@ -218,27 +218,28 @@ There are three Claude models. They cost different amounts and are good at diffe
 
 ## Keeping your setup up to date
 
-To pull the latest changes from this repo into your `~/.claude/` folder:
+Open Claude Code in any folder and run:
 
-```bash
-cd ~/.claude && git pull
+```
+/update
 ```
 
-That's it. Claude Code reads the files fresh on every session, so changes take effect next time you open Claude Code.
+That's it. No git knowledge needed. It checks if you're behind, shows what's new and what's being removed — before changing anything.
 
-**After pulling, check if anything new needs installing:**
-```bash
-cd ~/.claude && git log --oneline -5
-```
+**What `/update` can do:**
 
-That shows the last 5 changes. If any line mentions "feat", "add", or a tool name (like "graphify" or "ponytail"), re-run setup:
+| Command | What happens |
+|---|---|
+| `/update` | Check if you're behind — shows what's new, what's removed, options menu |
+| `/update preview` | Full plain-English changelog, nothing changed yet |
+| `/update full` | Pull everything + re-run setup (~30 seconds) |
+| `/update rules` | Pull rules only — no tool installs |
+| `/update rollback` | Undo the last update, go back to what you had |
+| `/update restore <name>` | Bring back a skill that was removed in an update |
 
-```bash
-bash ~/.claude/setup.sh           # re-installs tools + plugin skills (full)
-bash ~/.claude/setup.sh --md-only # rules only — no tools, no plugins
-```
+**How it works:** `/update` fetches the latest version from GitHub without changing anything, then shows you a plain-English summary: "You'd get 2 new skills, 1 rule changed, 1 skill removed." You decide what to do next.
 
-If the log only shows "docs", "fix", or "refactor" — no setup needed, the pull is enough.
+Changes take effect the next time you open Claude Code.
 
 ---
 
