@@ -9,3 +9,6 @@ SKILLS.md|How the skill and plugin system works — what a SKILL.md does, how tr
 SUBAGENTS.md|Rules for dispatching parallel agents — when to fan out, how to coordinate, what to watch out for. Open this before running a multi-agent task.
 TESTING.md|The testing discipline — when to write tests, what counts as proof something works, TDD rules. Open this if you're about to skip a test.
 UI_MOCKUPS.md|Rules for creating UI mockup variations before building any UI change — the 5-8 variation requirement, what each variant must cover. Open this before any visual design work.
+HOOKS.md|Documents the hook scripts in ~/.claude/hooks/ — scripts that fire automatically at harness events (session start/stop, before a tool runs). Open this to understand or add automated behaviors.
+MEMORY.md|Explains the memory system — preferences stored as small fact files that compile into one generated file Claude reads at session start, so preferences persist across conversations.
+NO_YOLO.md|Skill authoring rules for when working in ~/.claude as the no-yolo repo — write for strangers, eli5 output standard, no-slop rules, what files are safe to publish.
