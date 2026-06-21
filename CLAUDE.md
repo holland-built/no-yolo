@@ -39,6 +39,7 @@ If you are about to add anything else — STOP. Find or create the right MD file
 - Skill improvement ideas → `~/.claude/SKILL_RECOMMENDATIONS.md`
 - Memory system → `~/.claude/MEMORY.md`
 - Hooks → `~/.claude/HOOKS.md`
+- Skill authoring (no-yolo) → `~/.claude/NO_YOLO.md`
 
 ---
 
@@ -95,3 +96,6 @@ When the user types `/debate`, says "debate this", "stress test this decision", 
 # update
 - **update** (`~/.claude/skills/update/SKILL.md`) - check for updates, preview what changed, apply full or rules-only update, rollback, or restore a removed skill. Trigger: `/update`
 When the user types `/update`, says "check for updates", "am I out of date", "what's new", "update my setup", or "rollback", invoke the Skill tool with `skill: "update"` before doing anything else.
+# publish-skills
+- **publish-skills** (`~/.claude/skills/publish-skills/SKILL.md`) - safely commit and push skill changes to github.com/holland-built/no-yolo. Guards against personal file leaks. Trigger: `/publish-skills`
+When the user types `/publish-skills`, says "push skills", or "publish to no-yolo", invoke the Skill tool with `skill: "publish-skills"` before doing anything else.

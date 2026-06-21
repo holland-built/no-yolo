@@ -107,3 +107,16 @@ Rules:
 - Give exactly one sentence — the single reason that outweighs all others, drawn from the strongest finding in Step 4 and its Step 5 confidence score.
 - If CONDITIONAL, the reason must name the one condition that flips it to YES.
 - No hedging, no caveats, no second sentence.
+
+### Step 7 — ELI5 Summary
+
+After the decision line, add a plain-English summary using exactly this structure:
+
+**What this is:**
+2–3 sentences. Explain the decision topic and conclusion like the reader has never heard of it. What problem was being debated? What did the team decide?
+
+**What actually happens if you follow this:**
+3–5 bullets. Concrete actions. Real verbs. "You write X", "You switch to Y when Z", "You avoid W because V."
+
+**Watch out for:**
+Only include if the decision has an irreversible, costly, or team-visible consequence. One line per risk. Skip this section entirely if nothing qualifies — no "nothing to worry about."
