@@ -32,6 +32,9 @@ metrics/
 cache/
 paste-cache/
 
+# personal / private
+memory/
+
 # ephemeral work
 plans/
 tasks/

@@ -90,26 +90,74 @@ Skip entirely for backend-only changes.
 
 **Before building:** Extract the app's real design tokens from the project's CSS (`:root` variables, font-family declarations, color palette, spacing scale). Every variant MUST use these tokens verbatim — no made-up hex codes or font names.
 
-1. Build **exactly 10 variants** as individual files `mockups/<slug>/<slug>-v1.html` … `v10.html`:
-   - **v1–v7**: incremental range from conservative to polished, all using real design tokens
-   - **v8–v10**: WILDLY different designs — completely different layout paradigm, spatial arrangement, or visual language. Examples: command-line terminal aesthetic, card-grid instead of list, floating action panel, split-pane, full-bleed sections with bold typography, minimal single-column, data-dense Bloomberg-style. These must look like a different product team designed them — NOT just a color tweak of v1. Still use the app's actual font stack and color variables (the tokens), but apply them in a radically different structure.
+### Step A — Generate 10 variants
 
-2. Build ONE combined page `mockups/<slug>/<slug>-all.html` — all 10 variants stacked vertically in a single scrollable page. Each gets a labeled section (`v1`, `v2` …) with a one-line description. Mark the recommended variant with a visible **"★ Recommended"** badge. Use the real design tokens throughout. This is the review surface.
+Build **exactly 10 variants** as individual files `.mockups/<slug>/<slug>-v1.html` … `v10.html` (fan out in ONE parallel call):
+- **v1–v7**: a range from conservative to polished, all using real design tokens. Each must use a DISTINCT layout paradigm — not just the same card grid with different spacing.
+- **v8–v10**: WILDLY different designs — completely different layout paradigm, spatial arrangement, or visual language. Examples: command-line terminal aesthetic, full-bleed hero with bold type, data-dense Bloomberg grid, floating action panel, bento-grid, magazine editorial. These must look like a different product team designed them — NOT a card-grid or accordion variation.
 
-3. **MANDATORY — do both, neither is skippable:**
-   - `open "mockups/<slug>/<slug>-all.html"` — pop it in the browser (hover states, animations live)
-   - `"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless --disable-gpu --window-size=1400,900 --screenshot=mockups/<slug>/<slug>-all.png "file://$PWD/mockups/<slug>/<slug>-all.html"` — screenshot for inline display
+### Step B — Slop judge pass (HARD gate — minimum 6 survivors required)
 
-4. Show the combined screenshot inline. Then output the variant table:
+After all 10 are built, spawn ONE judge agent with all 10 HTML files. Instructions:
+> "You are an adversarial design critic. Read each variant's HTML. Reject any variant that matches ANY pattern in the slop fingerprint list below. Also reject any variant whose layout is functionally identical to another variant already in the list (deduplicate). Return the survivors with a one-line reason each survived."
 
-| Variant | Description | Pick |
-|---|---|---|
-| v1–v7 | incremental / polished | |
-| v8 | wildly different — describe the paradigm | |
-| v9 | wildly different — describe the paradigm | |
-| v10 | wildly different — describe the paradigm | ★ recommended |
+**Slop fingerprint — instant reject if ANY of these match:**
+- Card grid as primary layout (3+ column card deck, the same `.card` box repeated N times with slightly different content)
+- Accordion-only pattern with no other structural differentiation (all groups collapsed behind a chevron, nothing else going on)
+- Floating white/dark cards on a slightly different background as the only visual device
+- Looks like it could be a Tailwind UI, shadcn, or Material UI starter template
+- Blue, purple, or teal as the ONLY accent color with zero typographic contrast
+- Rounded corners (>8px) as the primary design expression
+- Sans-serif body with no typographic hierarchy beyond size
+- Sidebar nav with icon + label rows as the page's structural feature
+- Progress bars or pill badges as the primary data visualization
+- Hollow outline icons as the only iconography
+- Gradient CTA buttons (blue-to-purple, teal-to-green, etc.)
+- Hero section with centered headline + subtext + CTA button
+- "Glassmorphism" blur panels as decoration
+- Animations that serve no information purpose (fade-in on scroll, entrance bounces)
+- Footer with 4 columns of links
+- "Trusted by X companies" logo strip / social proof row
+- Testimonial cards with avatar + star rating + quote
+- Pricing table with exactly 3 tiers (Starter / Pro / Enterprise)
+- "Get started free" or "Start for free" as primary CTA copy
+- Dark mode that's just navy (#1a1a2e) — not true dark
+- Sticky nav that changes opacity or color on scroll
+- "How it works" section with numbered circle steps
+- Empty state with centered illustration + "No [items] yet" text
+- Search bar as a full-width rounded pill
+- Feature grid: icon + title + 2-line description, 3 equal columns
+- Full-width image banner with dark overlay + white centered headline
+- Skeleton loader placeholders pulsing gray
+- Avatar overlap stack showing "+3 users" / member count
+- Dropdown menus: white background + subtle box-shadow only
+- Tag/chip badges with colored backgrounds as only category visualization
+- Table rows that highlight on hover with light blue only
+- Success toast: bottom-right corner, green checkmark icon
+- Monochrome icon set where every icon has identical visual weight
+- "Learn more →" as generic link text
+- Modal or drawer sliding in from the right with an × close button
 
-5. Stop and ask: **"Which mockup variant? (or redirect)"**
+If **fewer than 6 variants survive**, respawn the rejected ones with instruction: "Your last concept matched [specific slop pattern]. Go structurally different — change the layout paradigm entirely, not just the color."
+
+Only survivors proceed to the combined view.
+
+### Step C — Combined view + screenshot
+
+Build ONE combined page `.mockups/<slug>/<slug>-all.html` — survivors only, stacked vertically. Each section: variant label + one-line description + iframe. Mark recommended with ★.
+
+**MANDATORY — do both:**
+- `open ".mockups/<slug>/<slug>-all.html"`
+- `"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless --disable-gpu --window-size=1400,900 --screenshot=.mockups/<slug>/<slug>-all.png "file://$PWD/.mockups/<slug>/<slug>-all.html"`
+
+Show screenshot inline. Output variant table:
+
+| Variant | Description | Survived judge? | Pick |
+|---|---|---|---|
+| vN | paradigm description | Yes — reason | |
+| vN | wildly different paradigm | Yes — reason | ★ recommended |
+
+Stop and ask: **"Which mockup variant? (or redirect)"**
 Do NOT proceed until user names a variant. Lock the chosen variant — Sonnet builds to match it exactly.
 Mockup files stay in `mockups/<slug>/` until after phase 6; delete only after prove passes.
 
@@ -184,7 +232,7 @@ Print a markdown table summarizing everything completed this forge run:
 | Evidence | Reproduction + located root cause (file:line) + success predicate | `brainstorms/<slug>-diagnosis-<date>.md` | — |
 | Grill-me | Key decisions made | `brainstorms/<slug>-<date>.md` | — |
 | Opus plan | N steps planned | `brainstorms/<slug>-plan-<date>.md` | — |
-| UI mockups | Variant vN approved / skipped | `mockups/<slug>/` or n/a | — |
+| UI mockups | Variant vN approved / skipped | `.mockups/<slug>/` or n/a | — |
 | TDD | N behaviors, N tests written | list test files | N green |
 | Sonnet build | N agents, N files edited | list each file | — |
 | Fix loop | N iterations / not needed | list files if any | — |
