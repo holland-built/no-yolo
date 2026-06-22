@@ -28,3 +28,8 @@
 - updated hooks/reflect-claude-md-stop.sh — brainstorms safety net for memory reminders
 - updated my-skills STORIES.md + TAGLINES.md — all new skills registered
 - updated my-md GLOBAL_DESCRIPTIONS.md — ANTISLOP.md, CONTEXT_VOCAB.md, learnings.md added
+- fixed CLAUDE.md — corrected stale skill descriptions for my-skills, code-review, whats-next, quick-design, ship, md-check; removed trigger collision between ui and ui-wild
+- added --drift mode to md-check — LLM judge cross-checks CLAUDE.md descriptions against SKILL.md source of truth
+- wired drift check into ship Phase 1d — runs on every publish as warn-only gate
+- updated my-skills STORIES.md — corrected impeccable entry (design system author, not aesthetic applicator)
+- updated impeccable SKILL.md — accurate description + trigger conditions moved from CLAUDE.md into skill frontmatter
