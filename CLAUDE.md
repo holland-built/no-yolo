@@ -35,6 +35,7 @@ If you are about to add anything else — STOP. Find or create the right MD file
 - Subagents + Agent Teams → `~/.claude/SUBAGENTS.md`
 - Context hygiene → `~/.claude/CONTEXT.md`
 - Skills & plugins → `~/.claude/SKILLS.md`
+- Shared vocabulary → `~/.claude/CONTEXT_VOCAB.md`
 - Code review discipline → `~/.claude/CODE_REVIEW.md`
 - Skill improvement ideas → `~/.claude/SKILL_RECOMMENDATIONS.md`
 - Memory system → `~/.claude/MEMORY.md`
@@ -96,6 +97,32 @@ When the user types `/debate`, says "debate this", "stress test this decision", 
 # update
 - **update** (`~/.claude/skills/update/SKILL.md`) - check for updates, preview what changed, apply full or rules-only update, rollback, or restore a removed skill. Trigger: `/update`
 When the user types `/update`, says "check for updates", "am I out of date", "what's new", "update my setup", or "rollback", invoke the Skill tool with `skill: "update"` before doing anything else.
-# publish-skills
-- **publish-skills** (`~/.claude/skills/publish-skills/SKILL.md`) - safely commit and push skill changes to github.com/holland-built/no-yolo. Guards against personal file leaks. Trigger: `/publish-skills`
-When the user types `/publish-skills`, says "push skills", or "publish to no-yolo", invoke the Skill tool with `skill: "publish-skills"` before doing anything else.
+# ship
+- **ship** (`~/.claude/skills/ship/SKILL.md`) - quality gates (md-check + antislop + eli5, warn-only) → dated changelog → leak-guarded commit + push to no-yolo. Trigger: `/ship`
+When the user types `/ship`, says "push skills", "publish to no-yolo", or "ship my work", invoke the Skill tool with `skill: "ship"` before doing anything else.
+# skill-discovery
+When the user says "find skill for X", "what skill handles X", "which skill does X", or "what should I use for X", read `~/.claude/skills/my-skills/TAGLINES.md`, match X against the taglines, and return the single best-matching skill plus its trigger command. This is a routing rule, not a skill — do not invoke the Skill tool.
+# plan-feature
+- **plan-feature** (`~/.claude/skills/plan-feature/SKILL.md`) - evidence → grill-me → Opus plan → approval gate; stops before any code. The no-code gate. Trigger: `/plan-feature`
+When the user types `/plan-feature` or says "plan this feature", invoke the Skill tool with `skill: "plan-feature"` before doing anything else.
+# build-feature
+- **build-feature** (`~/.claude/skills/build-feature/SKILL.md`) - reads approved plan → mockup gate → TDD → build → regression → prove. Trigger: `/build-feature`
+When the user types `/build-feature` or says "build the plan", invoke the Skill tool with `skill: "build-feature"` before doing anything else.
+# debug-debate
+- **debug-debate** (`~/.claude/skills/debug-debate/SKILL.md`) - 6 repo-aware Opus personas argue bug root causes → contradiction map → diagnosis + next diagnostic step. No fix — diagnosis only. Trigger: `/debug-debate`
+When the user types `/debug-debate`, says "argue about this bug", "what's breaking and why", or "debate the bug", invoke the Skill tool with `skill: "debug-debate"` before doing anything else.
+# last-30
+- **last-30** (`~/.claude/skills/last-30/SKILL.md`) - pulls trending content from GitHub/HN/YouTube/X filtered to last 30 days only. Trigger: `/last-30`
+When the user types `/last-30`, says "what's trending in", "last 30 days", or "what's hot right now", invoke the Skill tool with `skill: "last-30"` before doing anything else.
+# md-check
+- **md-check** (`~/.claude/skills/md-check/SKILL.md`) - MD hygiene: line counts, topic-overlap, duplicate-rule detection; on-demand audit or pre-creation gate. Trigger: `/md-check`
+When the user types `/md-check`, says "check md files" or "md hygiene", invoke the Skill tool with `skill: "md-check"` before doing anything else.
+# prompt-scan
+- **prompt-scan** (`~/.claude/skills/prompt-scan/SKILL.md`) - reads all system prompt files + fetches current model release notes → appends dated section to ~/.claude/learnings.md. Feeds /better_prompt. Trigger: `/prompt-scan`
+When the user types `/prompt-scan`, says "scan my prompts", or "refresh learnings", invoke the Skill tool with `skill: "prompt-scan"` before doing anything else.
+# better_prompt
+- **better_prompt** (`~/.claude/skills/better-prompt/SKILL.md`) - reads learnings.md, diagnoses a rough prompt, rewrites it with concrete target + scope + success criterion + correct skill route. Trigger: `/better_prompt`
+When the user types `/better_prompt`, says "sharpen this prompt", or "improve my prompt", invoke the Skill tool with `skill: "better_prompt"` before doing anything else.
+# antislop
+- **antislop** (`~/.claude/skills/antislop/SKILL.md`) - diagnose AI writing/GUI slop tells against ANTISLOP.md; violations table + verdict, no rewrite. Trigger: `/antislop`
+When the user types `/antislop`, says "check for slop", or "is this AI slop", invoke the Skill tool with `skill: "antislop"` before doing anything else.

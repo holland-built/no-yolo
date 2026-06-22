@@ -54,6 +54,8 @@ Then produce a **final summary** in the brainstorm file:
 - Open flags (things to look up or ask a stakeholder)
 - Recommended next steps
 
+**Gate:** Interview complete. Call `/plan-feature` to proceed. Do NOT write any code from this output alone — the brainstorm file is input to planning, not a build spec.
+
 ---
 
 **Rule:** The fix for misalignment is friction applied to *you*, not the model. Friction here = questions you answer before a line of code is written. Front-loading this jumps first-iteration success from ~70% to ~90%.

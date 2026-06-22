@@ -9,6 +9,7 @@ No exceptions for new components, redesigns, layout changes, or visual refactors
 **At least 1–2 of the variations must be wildly different** — different layout paradigm, opposite density, unexpected color treatment, or unconventional structure. Safe incremental variations only reveal safe incremental taste. Wild variations reveal where the real ceiling is.
 
 ## Slop prohibition (applies to every mockup, every skill)
+> Canonical GUI slop list: `~/.claude/ANTISLOP.md ## GUI Slop`. Run `/antislop` to check any output.
 
 Before presenting mockups to the user, self-check every variant against the slop fingerprint. If a variant matches — kill it, regenerate it with a structurally different paradigm. For sets of 3: minimum 1 non-slop survivor. For sets of 5+: minimum 2.
 

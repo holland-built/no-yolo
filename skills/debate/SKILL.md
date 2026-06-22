@@ -29,7 +29,7 @@ The argument can be:
 
 ### Step 2 — Six perspectives
 
-Run all 6 in parallel as subagents (model: "opus") or inline if context is tight. Each persona answers their 3 questions, then delivers their unique angle.
+Run all 6 in parallel as subagents (model: opus). Never inline — parallel is mandatory to prevent personas biasing each other. Each persona answers their 3 questions, then delivers their unique angle.
 
 **THE SENIOR DEV** — guards the technical standard AND the design bar
 - Does this hold up under load, edge cases, and the next 2 years of changes?
