@@ -26,7 +26,8 @@ Check the argument the user passed. If it is `deep`, run all 4 sections. Otherwi
 stories="$HOME/.claude/skills/my-skills/STORIES.md"
 when="$HOME/.claude/skills/my-skills/WHEN_TO_USE.md"
 why="$HOME/.claude/skills/my-skills/WHY_TO_USE.md"
-wrap() { printf '%s' "$1" | fold -s -w 72 | awk '{printf "%s%s", sep, $0; sep="<br>"}'; }
+printf '| Skill | What it does | When to use | Why vs manual |\n'
+printf '| --- | --- | --- | --- |\n'
 for d in ~/.claude/skills/*/; do
   [ -L "${d%/}" ] && continue
   name=$(basename "$d")
@@ -37,11 +38,11 @@ for d in ~/.claude/skills/*/; do
   [ -z "$story" ] && story="⚠️ missing"
   [ -z "$when_val" ] && when_val="—"
   [ -z "$why_val" ] && why_val="—"
-  printf '%s\t%s\t%s\t%s\n' "$name" "$(wrap "$story")" "$(wrap "$when_val")" "$(wrap "$why_val")"
+  printf '| %s | %s | %s | %s |\n' "$name" "$story" "$when_val" "$why_val"
 done
 ```
 
-Emit as `| Skill | What it does | When to use | Why vs manual |` markdown table. Use stored text exactly — do NOT rephrase.
+Print the bash output verbatim — it is a complete GFM markdown table. Do NOT rephrase or reformat.
 
 ### Section 2 — Installed / plugin skills
 
@@ -49,7 +50,8 @@ Emit as `| Skill | What it does | When to use | Why vs manual |` markdown table.
 stories="$HOME/.claude/skills/my-skills/STORIES.md"
 when="$HOME/.claude/skills/my-skills/WHEN_TO_USE.md"
 why="$HOME/.claude/skills/my-skills/WHY_TO_USE.md"
-wrap() { printf '%s' "$1" | fold -s -w 72 | awk '{printf "%s%s", sep, $0; sep="<br>"}'; }
+printf '| Skill | What it does | When to use | Why vs manual |\n'
+printf '| --- | --- | --- | --- |\n'
 for d in ~/.claude/skills/*/; do
   [ -L "${d%/}" ] || continue
   name=$(basename "$d")
@@ -59,11 +61,11 @@ for d in ~/.claude/skills/*/; do
   [ -z "$story" ] && story="⚠️ missing"
   [ -z "$when_val" ] && when_val="—"
   [ -z "$why_val" ] && why_val="—"
-  printf '%s\t%s\t%s\t%s\n' "$name" "$(wrap "$story")" "$(wrap "$when_val")" "$(wrap "$why_val")"
+  printf '| %s | %s | %s | %s |\n' "$name" "$story" "$when_val" "$why_val"
 done
 ```
 
-Emit as `| Skill | What it does | When to use | Why vs manual |` markdown table. If no plugin skills, omit section. Use stored text exactly — do NOT rephrase.
+Print the bash output verbatim — it is a complete GFM markdown table. If no plugin skills found, omit section.
 
 ### Section 3 — Relationships (what each skill leans on) — deep mode only
 
