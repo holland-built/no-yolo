@@ -12,3 +12,6 @@ UI_MOCKUPS.md|Rules for creating UI mockup variations before building any UI cha
 HOOKS.md|Documents the hook scripts in ~/.claude/hooks/ — scripts that fire automatically at harness events (session start/stop, before a tool runs). Open this to understand or add automated behaviors.
 MEMORY.md|Explains the memory system — preferences stored as small fact files that compile into one generated file Claude reads at session start, so preferences persist across conversations.
 NO_YOLO.md|Skill authoring rules for when working in ~/.claude as the no-yolo repo — write for strangers, eli5 output standard, no-slop rules, what files are safe to publish.
+ANTISLOP.md|25 AI writing tells (filler openers, em-dash spam, forbidden words) + GUI slop patterns. Canonical extraction target for /prompt-scan and /antislop.
+CONTEXT_VOCAB.md|Shared vocabulary — name a concept here once, reference it in prompts to cut token cost. Has ~/.claude system terms; add project-specific terms while working, delete after.
+learnings.md|Compiled prompt conventions written by /prompt-scan. Feeds /better_prompt. Appends dated sections on each run — never overwrites prior entries.

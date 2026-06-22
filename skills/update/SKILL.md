@@ -84,6 +84,33 @@ Format output:
 
 If nothing is removed: skip the ⚠️ section entirely.
 
+### Step 4.5 — plugin status
+
+Read installed plugins (read-only — never auto-update):
+
+```bash
+python3 - "$HOME/.claude/plugins/installed_plugins.json" <<'PYEOF'
+import json, sys, os
+p = sys.argv[1]
+if not os.path.exists(p):
+    print("No plugins installed."); raise SystemExit
+try:
+    plugins = json.load(open(p)).get("plugins", {})
+except Exception:
+    print("installed_plugins.json unreadable."); raise SystemExit
+if not plugins:
+    print("No plugins installed."); raise SystemExit
+for name, entries in plugins.items():
+    e = entries[0] if entries else {}
+    print(f"{name}\t{e.get('version','?')}\t{e.get('scope','?')}")
+PYEOF
+```
+
+Show as a table: **Plugin | Installed version | Scope**. Flag any row whose version is `unknown` or `?` as ⚠️ "may be stale — reinstall to pin a version".
+
+Then output verbatim:
+> To check for plugin updates, run `/plugin list` inside Claude Code, then `/plugin update <name>` for any that are outdated. Plugins can't be updated from outside the session.
+
 ### Step 5 — offer options (when run with no argument)
 
 After showing the summary, output:

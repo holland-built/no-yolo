@@ -40,6 +40,22 @@ OUTPUT_FILE="$PROPOSALS_DIR/session-$DATE.md"
   echo "---"
 } >> "$OUTPUT_FILE"
 
+# Brainstorms-today safety net — reminds about memory if forge/plan ran today
+BRAINSTORMS_DIR="$HOME/.claude/brainstorms"
+SENTINEL="$HOME/.claude/.memory-prompt-$(date +%Y-%m-%d)"
+if [ -d "$BRAINSTORMS_DIR" ] && [ ! -f "$SENTINEL" ]; then
+  TODAY_FILES=$(find "$BRAINSTORMS_DIR" -name "*-plan-*.md" -newer "$COUNTER_FILE" 2>/dev/null | head -1 || true)
+  if [ -n "$TODAY_FILES" ]; then
+    touch "$SENTINEL"
+    {
+      echo ""
+      echo "## Memory reminder $(date '+%H:%M')"
+      echo "Forge/plan run detected today — save key decisions to memory + run /memory-compile"
+      echo "---"
+    } >> "$OUTPUT_FILE"
+  fi
+fi
+
 # Always output {} — never additionalContext
 echo "{}"
 exit 0
