@@ -18,32 +18,32 @@ Project-specific rules belong in that project's `CLAUDE.md`
 
 ## Core Rules
 
-@CORE_RULES.md
+@docs/CORE_RULES.md
 
-@SKILL_TRIGGERS.md
+@docs/SKILL_TRIGGERS.md
 
 ---
 
 ## HARD RULE — This file is a pointer only
 
 No content except file imports and the workflow pointer table.
-Skill triggers live in `SKILL_TRIGGERS.md` — add new ones there, not here.
+Skill triggers live in `docs/SKILL_TRIGGERS.md` — add new ones there, not here.
 If you are about to add anything else — STOP. Find or create the right MD file and point to it instead.
 
 ## Workflow
 
-- Planning → `~/.claude/PLANNING.md`
-- Testing → `~/.claude/TESTING.md`
-- UI/GUI changes → `~/.claude/UI_MOCKUPS.md`
-- Subagents + Agent Teams → `~/.claude/SUBAGENTS.md`
-- Context hygiene → `~/.claude/CONTEXT.md`
-- Skills & plugins → `~/.claude/SKILLS.md`
-- Shared vocabulary → `~/.claude/CONTEXT_VOCAB.md`
-- Code review discipline → `~/.claude/CODE_REVIEW.md`
-- Skill improvement ideas → `~/.claude/SKILL_RECOMMENDATIONS.md`
-- Memory system → `~/.claude/MEMORY.md`
-- Hooks → `~/.claude/HOOKS.md`
-- Skill authoring (no-yolo) → `~/.claude/NO_YOLO.md`
+- Planning → `~/.claude/docs/PLANNING.md`
+- Testing → `~/.claude/docs/TESTING.md`
+- UI/GUI changes → `~/.claude/docs/UI_MOCKUPS.md`
+- Subagents + Agent Teams → `~/.claude/docs/SUBAGENTS.md`
+- Context hygiene → `~/.claude/docs/CONTEXT.md`
+- Skills & plugins → `~/.claude/docs/SKILLS.md`
+- Shared vocabulary → `~/.claude/docs/CONTEXT_VOCAB.md`
+- Code review discipline → `~/.claude/docs/CODE_REVIEW.md`
+- Skill improvement ideas → `~/.claude/docs/SKILL_RECOMMENDATIONS.md`
+- Memory system → `~/.claude/docs/MEMORY.md`
+- Hooks → `~/.claude/docs/HOOKS.md`
+- Skill authoring (no-yolo) → `~/.claude/docs/NO_YOLO.md`
 
 ---
 

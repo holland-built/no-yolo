@@ -16,7 +16,7 @@ Arguments: $ARGUMENTS
 
 ## Phase 0 — Load Review Discipline
 
-Read `~/.claude/CODE_REVIEW.md` before doing anything else. These are the active filters for this review.
+Read `~/.claude/docs/CODE_REVIEW.md` before doing anything else. These are the active filters for this review.
 
 ## Phase 1 — Get the Diff
 

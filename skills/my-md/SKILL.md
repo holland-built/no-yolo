@@ -3,6 +3,7 @@ name: my-md
 description: List all markdown files in two sections — global Claude config (~/.claude/) and current project. Shows filename + what it does. Activate on "/my-md", "list md files", "show markdown files".
 user-invocable: true
 argument-hint: ""
+model: haiku
 allowed-tools:
   - Bash
 ---
@@ -16,7 +17,7 @@ No deep mode — it's a flat file list, nothing to go deeper on.
 
 ```bash
 descs="$HOME/.claude/skills/my-md/GLOBAL_DESCRIPTIONS.md"
-for f in ~/.claude/*.md; do
+for f in ~/.claude/*.md ~/.claude/docs/*.md; do
   [ -f "$f" ] || continue
   name=$(basename "$f")
   desc=$(grep "^$name|" "$descs" 2>/dev/null | cut -d'|' -f2-)
