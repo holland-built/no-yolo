@@ -3,6 +3,8 @@
 ## 2026-06-22
 
 - added /ship skill — replaces publish-skills with quality-gated publish (md-check + antislop + eli5 + changelog)
+- updated my-skills SKILL.md — pipe table output (4 columns: skill, what, when, why); removed broken wrap() + html br approach
+- fixed remember-that SKILL.md description — "view" → "extract from context" (drift fix)
 - added /antislop skill — AI writing/GUI slop detection against ANTISLOP.md
 - added /better-prompt skill — rewrites rough prompts using learnings.md
 - added /prompt-scan skill — scans system prompt files + model release notes → learnings.md
