@@ -34,7 +34,7 @@ video-to-kb|Watched a great talk worth keeping? `/video-to-kb [YouTube URL]` tur
 whats-next|Back after a break and don't know where you left off? `/whats-next` scans your work-in-progress and shows what's unfinished — or a clean menu if nothing's pending.
 
 # ── Section 2 — Plugin skills ─────────────────────────────────────────────────
-impeccable|Want a premium magazine look, not plain default web? `/impeccable` applies a warm cream and burnt-orange editorial style. Gives your UI a real identity.
+impeccable|Building a net-new site and want slop kept out from day one? `/impeccable` generates a complete design system spec — tokens, component rules (all states), a11y criteria, anti-patterns, and a QA checklist. Every rule is testable and anchored to a real value.
 improve|Want an honest audit before fixing anything? `/improve` surveys the project and hands you a ranked to-do list. Never touches code — pure advice, zero risk.
 ponytail|About to overbuild something simple? `/ponytail [what you're building]` forces the laziest thing that actually works — strips out extra layers and ceremony.
 ponytail-audit|`/ponytail-audit` scans the whole project for over-engineered code and ranks what to simplify. Finds the clever thing from 6 months ago nobody understands now.

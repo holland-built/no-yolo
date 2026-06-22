@@ -1,6 +1,6 @@
 ---
 name: ship
-description: Quality-gated publish to github.com/holland-built/no-yolo. Runs md-check + antislop + eli5 warnings, writes a dated changelog entry, then guards against personal-data leaks and pushes. Activate on "/ship", "push skills", "publish to no-yolo", "ship my work".
+description: Quality-gated publish to github.com/holland-built/no-yolo. Runs md-check + antislop + eli5 + drift-check warnings, writes a dated changelog entry, then guards against personal-data leaks and pushes. Activate on "/ship", "push skills", "publish to no-yolo", "ship my work".
 user-invocable: true
 argument-hint: "[optional commit message]"
 allowed-tools:
@@ -40,6 +40,9 @@ If violations found: print `| File | Tell | Excerpt |` table. Do NOT stop.
 ### 1c. eli5 check
 Read `~/.claude/README.md`. For each `##` section heading: does the first sentence use unexplained jargon or acronyms?
 Flag any in a one-line table: `| Section | Jargon |`. Do NOT stop.
+
+### 1d. Drift check
+Invoke `md-check --drift` via the Skill tool. For any DRIFT or WRONG verdicts: print the full drift table as a warning. Do NOT stop.
 
 ---
 
