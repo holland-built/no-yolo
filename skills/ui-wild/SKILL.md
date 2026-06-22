@@ -165,6 +165,8 @@ Write to `.mockups/ui-wild/approved-tokens.md`. This is the spec Sonnet builds t
 **Before dispatching any agent** — read the target surface's current component file + direct imports.
 
 Dispatch Sonnet agents (max 5 at once) with:
+- "MUST read your target file + its direct imports before any edit — no edit before read"
+- "scope: presentation layer only — no logic, no data, no API"
 - Target file (absolute path)
 - "Already exists — do NOT recreate: [file]"
 - "Match approved mockup variant [vN] exactly — tokens in `.mockups/ui-wild/approved-tokens.md`"
