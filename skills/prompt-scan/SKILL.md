@@ -22,13 +22,13 @@ Read each file in order. If a file is missing, note "(file absent)" for that sec
 | Step | File | What to extract |
 |------|------|-----------------|
 | 1 | `~/.claude/CLAUDE.md` | All `# <skill>` trigger blocks + pointer table |
-| 2 | `~/.claude/CORE_RULES.md` | All 5 Karpathy rules verbatim |
+| 2 | `~/.claude/docs/CORE_RULES.md` | All 5 Karpathy rules verbatim |
 | 3 | `~/.claude/memory/CLAUDE.generated.md` | All compiled working preferences + patterns |
-| 4 | `~/.claude/HOOKS.md` | Active hook names + behaviors |
-| 5 | `~/.claude/SKILLS.md` | Daily-driver skill table |
-| 6 | `~/.claude/NO_YOLO.md` | Authoring standards (eli5, token economy, new-skill checklist) |
-| 7 | `~/.claude/UI_MOCKUPS.md` | Slop fingerprint list (lines with banned patterns) |
-| 8 | `~/.claude/ANTISLOP.md` | Extra slop rules (skip if absent) |
+| 4 | `~/.claude/docs/HOOKS.md` | Active hook names + behaviors |
+| 5 | `~/.claude/docs/SKILLS.md` | Daily-driver skill table |
+| 6 | `~/.claude/docs/NO_YOLO.md` | Authoring standards (eli5, token economy, new-skill checklist) |
+| 7 | `~/.claude/docs/UI_MOCKUPS.md` | Slop fingerprint list (lines with banned patterns) |
+| 8 | `~/.claude/docs/ANTISLOP.md` | Extra slop rules (skip if absent) |
 
 ---
 

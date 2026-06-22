@@ -3,6 +3,7 @@ name: antislop
 description: Diagnose AI writing/GUI slop tells in any text, code, or UI output. Checks input against ANTISLOP.md writing tells + GUI slop list. Outputs violations table + CLEAN/SLOP-DETECTED verdict. Diagnosis only — no rewrite. Activate on "/antislop", "check for slop", "is this AI slop".
 user-invocable: true
 argument-hint: "[text, code, or output to check]"
+model: haiku
 allowed-tools:
   - Read
   - Bash
@@ -14,7 +15,7 @@ Check `$ARGUMENTS` for AI slop tells.
 
 ## Step 1 — Load checklists
 
-Read `~/.claude/ANTISLOP.md`.
+Read `~/.claude/docs/ANTISLOP.md`.
 
 Extract:
 - **Writing tells**: all bullets under `## Writing Tells (25)` — each is a pattern name + examples

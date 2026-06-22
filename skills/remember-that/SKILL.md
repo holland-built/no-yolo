@@ -3,6 +3,7 @@ name: remember-that
 description: Unified memory manager - add facts, extract from context, delete, move, audit, compile
 user-invocable: true
 argument-hint: "<fact> | d <id> | m <id> | audit | compile | (empty=extract from context)"
+model: haiku
 allowed-tools:
   - Bash
   - Read

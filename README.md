@@ -124,26 +124,29 @@ What each file and folder is for:
 
 | Path | Purpose |
 |---|---|
-| `CLAUDE.md` | The main rules file Claude reads first. It only holds pointers — it loads memory and sends Claude to the right topic file |
-| `CORE_RULES.md` | The 5 core working rules — pulled in by CLAUDE.md |
-| `PLANNING.md` | Rules for how to plan work |
-| `TESTING.md` | Rules for how to test |
-| `SUBAGENTS.md` | How and when to hand work off to helper agents |
-| `CONTEXT.md` | Rules for keeping Claude's working memory clean |
-| `SKILLS.md` | Rules for using skills and plugins |
-| `CODE_REVIEW.md` | Rules for reviewing code |
-| `UI_MOCKUPS.md` | Rules for designing screens before building them |
-| `ANTISLOP.md` | 25 AI writing tells + GUI slop patterns — canonical reference for `/antislop` and `/ship` |
-| `CONTEXT_VOCAB.md` | Shared vocabulary table — name concepts once, reference in prompts for lower token cost |
-| `DAILY_CHANGELOG.md` | Public changelog — `/ship` appends a dated entry here before pushing |
-| `SKILL_RECOMMENDATIONS.md` | A wishlist of new commands to maybe add (just notes, not turned on) |
-| `NO_YOLO.md` | How to author a new skill — the checklist |
-| `memory/` | Where your saved preferences live — `facts/` is the real source, `CLAUDE.generated.md` is the compiled result. See `MEMORY.md` |
-| `skills/` | 27 commands plus 7 shortcuts to borrowed ones — see the list below |
+| `CLAUDE.md` | The main rules file Claude reads first. It only holds pointers — loads memory and sends Claude to the right topic file |
+| `docs/CORE_RULES.md` | The 5 core working rules — pulled in by CLAUDE.md |
+| `docs/PLANNING.md` | Rules for how to plan work |
+| `docs/TESTING.md` | Rules for how to test |
+| `docs/SUBAGENTS.md` | How and when to hand work off to helper agents |
+| `docs/CONTEXT.md` | Rules for keeping Claude's working memory clean |
+| `docs/SKILLS.md` | Rules for using skills and plugins |
+| `docs/CODE_REVIEW.md` | Rules for reviewing code |
+| `docs/UI_MOCKUPS.md` | Rules for designing screens before building them |
+| `docs/ANTISLOP.md` | 25 AI writing tells + GUI slop patterns — canonical reference for `/antislop` and `/ship` |
+| `docs/CONTEXT_VOCAB.md` | Shared vocabulary table — name concepts once, reference in prompts for lower token cost |
+| `docs/DAILY_CHANGELOG.md` | Public changelog — `/ship` appends a dated entry here before pushing |
+| `docs/SKILL_RECOMMENDATIONS.md` | A wishlist of new commands to maybe add (just notes, not turned on) |
+| `docs/NO_YOLO.md` | How to author a new skill — the checklist |
+| `docs/HOOKS.md` | Docs for the automation hooks |
+| `docs/MEMORY.md` | Docs for the memory system |
+| `docs/SKILL_TRIGGERS.md` | Trigger rules for every skill — CLAUDE.md points here |
+| `memory/` | Saved preferences — `facts/` is source of truth, `CLAUDE.generated.md` is compiled result |
+| `skills/` | Your skills plus symlinks to borrowed ones |
 | `agents/` | Definitions for helper agents |
-| `commands/` | Custom slash commands |
-| `hooks/` | Automation scripts: caveman mode (terse replies), a session-reflect step, and the status line. See `HOOKS.md` |
-| `settings.example.json` | A starter settings file with no secrets — copy it to `settings.json` and fill in your own |
+| `commands/` | Legacy slash commands (caveman, memory-compile, watch) |
+| `hooks/` | Automation scripts: caveman mode, session-reflect, status line |
+| `settings.example.json` | Starter settings with no secrets — copy to `settings.json` and fill in |
 
 ---
 
@@ -197,7 +200,7 @@ These come from other people's plugins. One install command gets you all 5 ponyt
 
 `CLAUDE.md` is the first file Claude reads, and by its own rule it holds *only* pointers — nothing else. All it contains is references to other files and the trigger words for each command.
 
-- `@CORE_RULES.md` — the 5 core rules (plan first; keep it simple; only touch what you were asked to; aim at a clear goal; use the expensive model to plan and the cheaper one to type)
+- `@docs/CORE_RULES.md` — the 5 core rules (plan first; keep it simple; only touch what you were asked to; aim at a clear goal; use the expensive model to plan and the cheaper one to type)
 - `@memory/CLAUDE.generated.md` — your compiled preferences from `memory/facts/`
 - It sends Claude to the right file by topic: Planning → `PLANNING.md`, Testing → `TESTING.md`, screens → `UI_MOCKUPS.md`, and so on
 - Command triggers — each command gets its own `# name` block with the plain-English phrases that turn it on
@@ -321,7 +324,7 @@ When the user types `/<name>`, invoke the Skill tool with `skill: "<name>"` befo
 
 5. Run `/ship` to publish. It adds a changelog entry and pushes to git.
 
-See `NO_YOLO.md` for the full authoring checklist.
+See `docs/NO_YOLO.md` for the full authoring checklist.
 
 ---
 

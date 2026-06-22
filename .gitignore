@@ -32,8 +32,9 @@ metrics/
 cache/
 paste-cache/
 
-# personal / private
-memory/
+# personal / private (project-scoped memories live in projects/ — already ignored)
+memory/compile-manifest.json
+memory/facts/
 
 # ephemeral work
 plans/

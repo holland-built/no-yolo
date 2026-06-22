@@ -212,7 +212,7 @@ Confirm the phase-0/phase-2 **success predicate** holds against reality — the 
 
 **Critical-path smoke test (mandatory):** before declaring done, exercise the project's critical path end to end (detected during stack setup — e.g. your app's primary user flow: checkout → payment → confirmation) and confirm it still works. A change can pass its own test yet break the money path; this catches that before a customer does. Drive it in the browser (Playwright) or via the path's API/CLI; show the observed result.
 
-Then append to `DAILY_CHANGELOG.md` under `## <date> — <feature>` a table: `File | Line(s) | Change`, citing before→after numbers.
+Then append to `docs/DAILY_CHANGELOG.md` under `## <date> — <feature>` a table: `File | Line(s) | Change`, citing before→after numbers.
 
 Task is NOT done until: success predicate met + stress test/repro survived + **regression test committed and green** + **critical path smoke-tested** + changelog appended + full suite green.
 
@@ -229,7 +229,7 @@ Print a markdown table summarizing everything completed this forge run:
 | Sonnet build | N agents, N files edited | list each file | — |
 | Fix loop | N iterations / not needed | list files if any | — |
 | Quality gates | lint/typecheck + dup-scan + secret-scan + review (+ security/a11y/perf if triggered) | — | clean / triaged |
-| Prove | success predicate met + stress/repro survived + regression test committed + critical path smoke-tested | test file + `DAILY_CHANGELOG.md` | all green |
+| Prove | success predicate met + stress/repro survived + regression test committed + critical path smoke-tested | test file + `docs/DAILY_CHANGELOG.md` | all green |
 
 ## Memory Checkpoint
 
