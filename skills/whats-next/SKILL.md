@@ -3,6 +3,7 @@ name: whats-next
 description: Session-aware next-action engine. Checks pending task queue first — if tasks exist, runs the next one. If queue empty, scans current project and proposes creative improvements. Never shows a static menu. Activate on "/whats-next", "what's next", "what should I do", "now what".
 user-invocable: true
 argument-hint: ""
+model: haiku
 allowed-tools:
   - Bash
   - Read
