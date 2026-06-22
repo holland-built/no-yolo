@@ -1,8 +1,8 @@
 ---
 name: md-check
-description: MD hygiene audit — line-count, topic-overlap, and duplicate-rule detection across ~/.claude/ markdown files. On-demand full audit or pre-creation gate before writing a new MD. Activate on "/md-check", "check md files", "md hygiene", "check for duplicate docs".
+description: MD hygiene audit — line-count, topic-overlap, duplicate-rule detection, and --drift mode to catch stale CLAUDE.md skill descriptions vs SKILL.md source of truth. On-demand audit, pre-creation gate, or drift check. Activate on "/md-check", "check md files", "md hygiene", "check for duplicate docs".
 user-invocable: true
-argument-hint: "[--pre <proposed-filename>] (omit for full audit)"
+argument-hint: "[--pre <proposed-filename>] [--drift] (omit for full audit)"
 allowed-tools:
   - Bash
   - Read
@@ -11,7 +11,9 @@ allowed-tools:
 
 Mode: $ARGUMENTS
 
-If `$ARGUMENTS` starts with `--pre` → run Pre-creation mode. Otherwise → run On-demand audit.
+If `$ARGUMENTS` starts with `--pre` → run Pre-creation mode.
+If `$ARGUMENTS` is `--drift` → run Drift Check mode.
+Otherwise → run On-demand audit.
 
 ---
 
@@ -66,6 +68,44 @@ Status vocab: `OK` / `OVERSIZE` (>200 lines) / `DUP-RULE` / `OVERLAP`
 |-----------------------|-------------|-------------|
 
 No merge candidates or duplicate rules → print: `✓ No overlaps or duplicates found.`
+
+---
+
+## Drift Check Mode (`/md-check --drift`)
+
+Checks that every skill description in CLAUDE.md accurately matches the source-of-truth in its SKILL.md.
+
+### Step 1 — Extract skill blocks from CLAUDE.md
+```bash
+grep -E "^\- \*\*[a-z]" ~/.claude/CLAUDE.md
+```
+For each line matching `- **skill-name** (path/to/SKILL.md) - description text`, parse:
+- skill name (between `**`)
+- SKILL.md path (between `(` and `)`)
+- description text (after the final ` - `)
+
+Skip blocks that have no description (pointer-only blocks like impeccable after cleanup).
+
+### Step 2 — Read each SKILL.md frontmatter description
+For each skill with a resolvable path, read the `description:` field from SKILL.md frontmatter using the Read tool.
+
+### Step 3 — LLM judge per skill
+For each skill, compare the CLAUDE.md description against the SKILL.md `description` field.
+Verdict rules:
+- `OK` — CLAUDE.md description is accurate, even if shorter/more terse
+- `DRIFT` — CLAUDE.md omits a key behavior, contradicts SKILL.md, or describes a removed feature
+- `WRONG` — CLAUDE.md description is factually incorrect (opposite of what SKILL.md says)
+
+One-line reason required for any non-OK verdict.
+
+### Step 4 — Output table
+```
+| Skill | CLAUDE.md says | SKILL.md says | Verdict |
+|-------|----------------|---------------|---------|
+```
+- Only include rows with DRIFT or WRONG verdicts — skip OK rows to keep output tight
+- If all OK: print `✓ No drift detected.`
+- Count: `X skills checked, Y drifted`
 
 ---
 
