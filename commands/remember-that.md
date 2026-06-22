@@ -1,70 +1,145 @@
 ---
-description: Capture a preference/fact into the memory store (auto-detects project vs global) and recompile
-argument-hint: <the thing to remember>
+description: Unified memory manager — add, view, delete, move, audit, compile
+argument-hint: [<fact> | (empty)=table | d <id> | m <id> | audit | compile]
 ---
 
-The user wants to permanently remember: **$ARGUMENTS**
+Argument: **$ARGUMENTS**
 
-## Step 1 — Infer tier
+---
+
+## Step 1 — Establish context (always run first)
 
 ```bash
 CWD=$(pwd)
 SLUG=$(echo "$CWD" | sed 's|/|-|g; s|\.|-|g')
-# Is this a project dir? (has .git or known project indicators)
-git -C "$CWD" rev-parse --git-dir 2>/dev/null && echo "HAS_GIT=true" || echo "HAS_GIT=false"
-echo "slug=$SLUG"
+HAS_GIT=$(git -C "$CWD" rev-parse --git-dir 2>/dev/null && echo true || echo false)
+echo "cwd=$CWD slug=$SLUG git=$HAS_GIT"
+echo "--- GLOBAL ---"
+ls ~/.claude/memory/facts/*.md 2>/dev/null || echo "(none)"
+echo "--- PROJECT FORMAL ---"
+ls ~/.claude/projects/$SLUG/memory/facts/*.md 2>/dev/null || echo "(none)"
+echo "--- PROJECT AUTO ---"
+ls ~/.claude-work/projects/$SLUG/memory/*.md 2>/dev/null | grep -v "MEMORY.md\|SCHEMA.md" || echo "(none)"
 ```
 
-- `HAS_GIT=true` → infer `tier=project`
-- Otherwise → infer `tier=user`
+---
 
-## Step 2 — Show confirm line (REQUIRED — never skip)
+## Step 2 — Route on argument
 
-- `tier=project`: output exactly: `Saving to project memory for '<slug>' — confirm? (Y / g=save globally instead)`
-- `tier=user`: output exactly: `Saving to global memory — confirm? (Y / p=save to project '<slug>' instead)`
+Match **first token** in this order:
 
-Wait for user response. Adjust tier if they override with `g` or `p`.
+| First token | Action |
+|---|---|
+| *(empty)* | TABLE |
+| `d` + second token present | DELETE `<id>` |
+| `m` + second token present | MOVE `<id>` |
+| `audit` (exact, only token) | AUDIT |
+| `compile` (exact, only token) | COMPILE |
+| anything else | ADD (strip optional leading `a ` from fact text) |
 
-## Step 3 — Classify the fact
+**Edge case:** if argument is exactly one of the reserved words (`audit`, `compile`) but the user seems to want it saved as a fact, ask: `"audit" — run audit, or save as fact? (audit / save)`. Wait for answer.
 
-- `type`: `user` | `feedback` (a working preference) | `pattern` (a reusable technique) | `reference` (a pointer/ruleset)
+---
 
-## Step 4 — Check for duplicates / changes
+## ADD
 
-Search the target store:
-- `tier=user` → `~/.claude/memory/facts/`
-- `tier=project` → `~/.claude/projects/$SLUG/memory/facts/`
+1. **Infer tier**: `HAS_GIT=true` → `tier=project`; else `tier=user`
 
-Rules:
-- Exact match exists → tell the user, do nothing.
-- Refines an existing fact → update that fact (`updated:` date, append to body).
-- Contradicts an active fact → DO NOT overwrite. Create with `status: needs-review` + `conflicts-with:`, ask user to confirm supersede or drop.
+2. **Confirm (REQUIRED — never skip)**:
+   - `tier=project` → output: `Saving to project memory for '<slug>' — confirm? (Y / g=save globally instead)`
+   - `tier=user` → output: `Saving to global memory — confirm? (Y / p=save to project '<slug>' instead)`
+   - Wait. Honor `g` or `p` override to flip tier.
 
-## Step 5 — Write the fact
+3. **Dup check** in target store (`~/.claude/memory/facts/` or `~/.claude/projects/$SLUG/memory/facts/`):
+   - Exact match → tell user, stop.
+   - Refines existing → update that file: append to body, bump `updated:`.
+   - Contradicts active → write new fact with `status: needs-review` + `conflicts-with: <id>`. Stop and ask user to resolve.
 
-- `tier=user` → `~/.claude/memory/facts/<id>.md`
-- `tier=project` → `~/.claude/projects/$SLUG/memory/facts/<id>.md` (create dirs if needed)
+4. **Classify** `type`: `user` | `feedback` | `pattern` | `reference`
 
-Required frontmatter: `id, tier, type, name, description, status: active, captured: <today>, updated: <today>, confidence: 1.0, provenance (session + date), supersedes: [], superseded-by: null`
+5. **Write** `<id>.md` to target store (create dirs if needed). Use the full schema from `~/.claude/memory/SCHEMA.md`. Required frontmatter fields: `id, tier, type, name, description, status: active, captured: <today>, updated: <today>, confidence: 1.0, provenance (session + date), supersedes: [], superseded-by: null`.
 
-`description` is the one-liner the compiler lifts into the view — make it crisp and actionable.
+   Body: full statement. For `feedback`/`pattern`: add **Why:** and **How to apply:** lines. Link related facts with `[[id]]`.
 
-Body: full statement; for feedback/pattern add **Why:** and **How to apply:**. Link related facts with `[[id]]`.
+6. **Compile**: `python3 ~/.claude/memory/bin/memory_compile.py`
 
-## Step 6 — Compile
+7. **Confirm**: `Saved <id> (tier=<tier>) — live next session.`
+
+---
+
+## TABLE
+
+Show two tables, then stop:
+
+**Global facts** (`~/.claude/memory/facts/`)
+
+| id | type | status | description |
+|----|------|--------|-------------|
+
+**Project facts for `<slug>`**
+(formal `facts/` + read-only auto-memory files — do not write to auto-memory)
+
+| id / file | source | status | summary |
+|-----------|--------|--------|---------|
+
+Then: `Actions: <fact>  d <id>  m <id>  audit  compile`
+
+---
+
+## DELETE
+
+1. Find fact file by id (search global + project stores).
+2. Confirm: `Mark <id> as superseded? Removes from compiled views. (Y/n)` — wait.
+3. On Y: set `status: superseded`, `updated: <today>` in frontmatter. Do NOT delete the file.
+4. Compile.
+5. Confirm: `<id> marked superseded — removed from next session.`
+
+---
+
+## MOVE
+
+1. Find fact by id. Note current tier.
+2. Target = opposite tier.
+3. Confirm: `Move <id> from <current-tier> → <target-tier>? (Y/n)` — wait.
+4. On Y:
+   - Write fact to new location with `tier` updated.
+   - Mark old file `status: superseded`, `superseded-by: <id>`.
+5. Compile.
+6. Confirm: `<id> moved to <target-tier> — live next session.`
+
+---
+
+## AUDIT
+
+Read all facts (global + all project stores). Output table:
+
+| id | issue | detail |
+|----|-------|--------|
+| … | stale-path | references path that no longer exists |
+| … | possible-duplicate | near-identical name+type as `<other-id>` |
+| … | superseded | file still on disk, safe to archive |
+| … | old | captured >180 days ago — still relevant? |
+| … | needs-review | unresolved conflict — blocks compile |
+
+Footer: `Use /remember-that d <id> to suppress, m <id> to relocate.`
+
+Read-only — no writes.
+
+---
+
+## COMPILE
 
 ```bash
 python3 ~/.claude/memory/bin/memory_compile.py
 ```
 
-If it aborts on `needs-review`, surface the conflict and STOP.
+Show output. Done.
 
-## Step 7 — Confirm to user
+---
 
-Bulleted:
-- fact id
-- tier (global or project `<slug>`)
-- "live next session"
-- any conflict needing resolution
+## Rules (always apply)
 
-Never edit `CLAUDE.generated.md` directly — it is rebuilt from facts.
+- Never edit `CLAUDE.generated.md` directly — it is rebuilt by compile.
+- Never skip the confirm step on any write, move, or delete.
+- Auto-memory files (`~/.claude-work/projects/*/memory/`) are read-only — show in table only. To promote to formal store, use ADD.
+- If compile aborts on `needs-review`, surface the conflict and STOP.
