@@ -1,6 +1,13 @@
 ---
-description: Unified memory manager — extract from context, add, view, delete, move, audit, compile
-argument-hint: [<fact> | (empty)=extract+propose | d <id> | m <id> | audit | compile]
+name: remember-that
+description: Unified memory manager - add, view, delete, move, audit, compile facts
+user-invocable: true
+argument-hint: "<fact> | d <id> | m <id> | audit | compile | (empty=extract from context)"
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
 ---
 
 Argument: **$ARGUMENTS**

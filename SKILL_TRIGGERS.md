@@ -63,3 +63,6 @@ When the user types `/better_prompt`, says "sharpen this prompt", or "improve my
 # antislop
 - **antislop** (`~/.claude/skills/antislop/SKILL.md`) - diagnose AI writing/GUI slop tells against ANTISLOP.md; violations table + verdict, no rewrite. Trigger: `/antislop`
 When the user types `/antislop`, says "check for slop", or "is this AI slop", invoke the Skill tool with `skill: "antislop"` before doing anything else.
+# remember-that
+- **remember-that** (`~/.claude/skills/remember-that/SKILL.md`) - unified memory manager: add facts, extract from context, delete, move, audit, compile. Trigger: `/remember-that`
+When the user types `/remember-that`, says "remember that", "save this to memory", or "forget that", invoke the Skill tool with `skill: "remember-that"` before doing anything else.
