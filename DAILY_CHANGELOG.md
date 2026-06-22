@@ -33,3 +33,8 @@
 - wired drift check into ship Phase 1d — runs on every publish as warn-only gate
 - updated my-skills STORIES.md — corrected impeccable entry (design system author, not aesthetic applicator)
 - updated impeccable SKILL.md — accurate description + trigger conditions moved from CLAUDE.md into skill frontmatter
+- converted /remember-that from commands/ to skills/ — now shows blue, added trigger to SKILL_TRIGGERS.md
+- deleted /start command — unused
+- deleted build-feature and plan-feature skills — superseded by /forge
+- deleted graphify skill — removed from setup
+- updated my-skills STORIES.md — added remember-that story
