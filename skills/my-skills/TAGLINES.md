@@ -3,10 +3,10 @@ code-review|Review a PR or diff before merging. Catches bugs, bloat, and things 
 diagnose|Stuck on a bug? Walks through root-cause analysis step by step until cause is found.
 drawio-skill|Generate diagrams — architecture, flowcharts, ER, UML, sequence. Outputs PNG/SVG/PDF.
 forge|Build a feature end-to-end: requirements → plan → UI mockup → code → tests → proof it works.
-graphify|Ask questions about a codebase. "What calls X?" "What depends on Y?" Uses a knowledge graph.
 grill-me|Interview yourself about a plan before writing any code. Forces edge cases and decisions up front.
 my-skills|This menu.
 tdd|Write a failing test first, then make it pass. Enforces red→green→refactor discipline.
+ui|UI entry point. Type /ui or /ux — get a numbered menu and route to the right tool: design knowledge, quick mockups, radical redesign, or editorial theme.
 ui-ux|Design help before touching code: color palettes, font pairings, UX guidelines, chart types.
 ui-wild|Radical redesign: 10 AI designers compete, a judge kills the generic ones, you pick a winner.
 video-to-kb|Turn a YouTube video into a note in your Obsidian knowledge base.
