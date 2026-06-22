@@ -3,6 +3,7 @@ name: eli5
 description: Explain anything in plain English before you commit to it. Paste a skill name, plan, command, or decision and get a plain-English breakdown. No jargon. Activate on "/eli5".
 user-invocable: true
 argument-hint: "[skill name, plan text, command, or file path]"
+model: haiku
 allowed-tools:
   - Bash
   - Read

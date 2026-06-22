@@ -3,6 +3,7 @@ name: md-check
 description: MD hygiene audit — line-count, topic-overlap, duplicate-rule detection, and --drift mode to catch stale CLAUDE.md skill descriptions vs SKILL.md source of truth. On-demand audit, pre-creation gate, or drift check. Activate on "/md-check", "check md files", "md hygiene", "check for duplicate docs".
 user-invocable: true
 argument-hint: "[--pre <proposed-filename>] [--drift] (omit for full audit)"
+model: haiku
 allowed-tools:
   - Bash
   - Read
@@ -21,7 +22,7 @@ Otherwise → run On-demand audit.
 
 ### Step 1 — Inventory
 ```bash
-find "$HOME/.claude" -maxdepth 1 -name "*.md" | sort | xargs wc -l 2>/dev/null
+{ find "$HOME/.claude" -maxdepth 1 -name "*.md"; find "$HOME/.claude/docs" -maxdepth 1 -name "*.md" 2>/dev/null; } | sort | xargs wc -l 2>/dev/null
 ```
 Flag any file over 200 lines as `OVERSIZE`.
 
@@ -126,7 +127,7 @@ Output — exactly one verdict line:
 - `DUPLICATE-DETECTED: <path>#<section> — <reason>` — content duplicates an existing section
 
 Then one line of reasoning, e.g.:
-`MERGE-INTO-EXISTING: ~/.claude/UI_MOCKUPS.md — "antislop" maps to existing "Slop fingerprint" section (header match)`
+`MERGE-INTO-EXISTING: ~/.claude/docs/UI_MOCKUPS.md — "antislop" maps to existing "Slop fingerprint" section (header match)`
 
 ---
 

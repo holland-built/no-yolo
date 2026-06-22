@@ -28,12 +28,12 @@ If clean: print "Nothing to ship. Working tree clean." and STOP.
 
 ### 1a. Size check
 ```bash
-wc -l ~/.claude/*.md ~/.claude/skills/*/SKILL.md 2>/dev/null | sort -rn | head -20
+wc -l ~/.claude/*.md ~/.claude/docs/*.md ~/.claude/skills/*/SKILL.md 2>/dev/null | sort -rn | head -20
 ```
 Table any file with >200 lines: `| File | Lines |`. Print warning. Do NOT stop.
 
 ### 1b. Antislop scan
-Read `~/.claude/ANTISLOP.md` — extract all bullets under `## Writing Tells (25)`.
+Read `~/.claude/docs/ANTISLOP.md` — extract all bullets under `## Writing Tells (25)`.
 Scan `~/.claude/README.md` and `~/.claude/CLAUDE.md` for tell matches.
 If violations found: print `| File | Tell | Excerpt |` table. Do NOT stop.
 
@@ -54,7 +54,7 @@ git -C ~/.claude diff HEAD --stat
 git -C ~/.claude diff HEAD --name-only
 ```
 
-Append to `~/.claude/DAILY_CHANGELOG.md` (create file if missing):
+Append to `~/.claude/docs/DAILY_CHANGELOG.md` (create file if missing):
 
 ```
 ## YYYY-MM-DD
@@ -86,7 +86,7 @@ If any line matches → STOP: `BLOCKED — personal data in diff: [matched lines
 
 ### 3c. Stage
 ```bash
-git -C ~/.claude add skills/ *.md hooks/ setup.sh DAILY_CHANGELOG.md .gitignore 2>/dev/null
+git -C ~/.claude add skills/ *.md docs/ hooks/ setup.sh .gitignore 2>/dev/null
 ```
 
 ### 3d. Commit
@@ -122,7 +122,7 @@ if git -C ~/.claude tag | grep -q "^$TAG$"; then
 fi
 
 # Extract today's section from DAILY_CHANGELOG.md as release notes
-NOTES=$(awk "/^## $DATE/{found=1; next} found && /^## /{exit} found{print}" "$HOME/.claude/DAILY_CHANGELOG.md")
+NOTES=$(awk "/^## $DATE/{found=1; next} found && /^## /{exit} found{print}" "$HOME/.claude/docs/DAILY_CHANGELOG.md")
 
 # Tag and release
 git -C ~/.claude tag "$TAG"
