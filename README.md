@@ -10,7 +10,7 @@ Claude Code is a command-line tool where you talk to Claude to write and edit co
 
 - The whole `~/.claude/` folder, tracked in git — everything Claude Code reads on every session
 - A set of rules Claude reads at the start of every session (`CLAUDE.md` plus a few topic files). These enforce strict habits that make Claude actually useful: think and plan before writing code, only change the exact lines you asked for, and use the expensive model to plan while a cheaper model does the typing
-- 27 custom commands, plus 7 more borrowed from plugins (run `/my-skills` to see the real, up-to-date count)
+- 25 custom commands, plus 7 more borrowed from plugins (run `/my-skills` to see the real, up-to-date count)
 - Definitions for helper agents, custom slash commands, and automation scripts
 - A memory system that learns your preferences over time. The easy way: just say "remember that I prefer X" and Claude saves it for you automatically. The power-user way: edit small note files in `memory/facts/` and run `/memory-compile` — useful when you want your preferences committed to git so they sync to all your machines
 
@@ -155,14 +155,12 @@ A "skill" is a custom command you trigger with a slash, like `/code-review`. Her
 
 | Skill | What it does |
 |---|---|
-| `plan-feature` | Plan a feature without writing any code — gathers evidence, interviews you with grill-me, writes an Opus plan, and stops at approval. Produces a handoff file for `/build-feature` |
-| `build-feature` | Build from an approved plan — reads the handoff from `/plan-feature`, runs mockup gate → TDD → Sonnet build → regression → proof. Won't run without an approved plan |
 | `debug-debate` | 6 Opus personas argue the root cause of your bug in parallel, map contradictions, give most likely cause with file:line, and one concrete next diagnostic step. Diagnosis only, no code changed |
 | `code-health` | A 4-step checkup of your code: review the changes, run static analysis, look for over-complication, then suggest a cleanup plan |
 | `code-review` | Reviews a pull request or a set of changes: first for bugs, then for over-complication, then for unrelated edits that shouldn't be there |
 | `diagnose` | A 6-step way to find the real cause of a bug — when you're stuck, it walks you through it step by step |
 | `drawio-skill` | Draws diagrams (architecture, flowcharts, database tables, UML). Saves them as PNG, SVG, or PDF |
-| `forge` | Builds a whole feature start to finish — now a thin wrapper calling `/plan-feature` then `/build-feature` in sequence |
+| `forge` | Builds a whole feature start to finish: gather evidence, plan with Opus, approve, UI mockup gate, write tests first, build with Sonnet, then prove it works |
 | `graphify` | Ask questions about a codebase in plain English — "what uses this?", "what depends on Y?" Uses a knowledge graph |
 | `grill-me` | Interviews you before any code gets written — one question at a time until every tricky case is sorted out |
 | `my-md` | Lists every markdown file — both the global `~/.claude/` docs and the ones in your current project |

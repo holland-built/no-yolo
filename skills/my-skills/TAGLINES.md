@@ -24,8 +24,6 @@ eli5|Explain anything in plain English before you commit to it.
 debate|Your product team argues the decision. Six domain personas — Senior Dev, Junior Dev, Sales Engineer, DevOps, Sales Leader, Eng Leader — surface the contradictions, then synthesize and grade their own briefing. Works on architecture, UI/UX, or what to build next. Ends with one clear YES/NO/CONDITIONAL decision, not "it depends."
 update|Check if your setup is out of date, preview what changed in plain English, apply full or rules-only updates, rollback, or restore a removed skill.
 ship|Quality-gate, changelog, and publish to no-yolo in one command. Warns on slop and bloat, blocks personal-data leaks, then pushes.
-plan-feature|Plan a feature before writing any code. Evidence → grill-me interview → Opus plan → approval gate. Produces a handoff file for /build-feature.
-build-feature|Build from an approved plan. Reads the handoff file from /plan-feature and runs mockup gate → TDD → build → regression → prove. Won't run without an approved plan.
 debug-debate|6 Opus personas argue the root cause of your bug in parallel. Contradiction map, most likely cause with file:line, one concrete next diagnostic step.
 last-30|Pull what's actually trending right now — last 30 days only — from GitHub, HN, YouTube, and X. Research starting point, not a final answer.
 md-check|Audit your ~/.claude docs for bloat and overlap. Flags files over 200 lines, finds two files saying the same thing, blocks new file creation if a match exists.

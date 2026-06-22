@@ -102,12 +102,6 @@ When the user types `/update`, says "check for updates", "am I out of date", "wh
 When the user types `/ship`, says "push skills", "publish to no-yolo", or "ship my work", invoke the Skill tool with `skill: "ship"` before doing anything else.
 # skill-discovery
 When the user says "find skill for X", "what skill handles X", "which skill does X", or "what should I use for X", read `~/.claude/skills/my-skills/TAGLINES.md`, match X against the taglines, and return the single best-matching skill plus its trigger command. This is a routing rule, not a skill — do not invoke the Skill tool.
-# plan-feature
-- **plan-feature** (`~/.claude/skills/plan-feature/SKILL.md`) - evidence → grill-me → Opus plan → approval gate; stops before any code. The no-code gate. Trigger: `/plan-feature`
-When the user types `/plan-feature` or says "plan this feature", invoke the Skill tool with `skill: "plan-feature"` before doing anything else.
-# build-feature
-- **build-feature** (`~/.claude/skills/build-feature/SKILL.md`) - reads approved plan → mockup gate → TDD → build → regression → prove. Trigger: `/build-feature`
-When the user types `/build-feature` or says "build the plan", invoke the Skill tool with `skill: "build-feature"` before doing anything else.
 # debug-debate
 - **debug-debate** (`~/.claude/skills/debug-debate/SKILL.md`) - 6 repo-aware Opus personas argue bug root causes → contradiction map → diagnosis + next diagnostic step. No fix — diagnosis only. Trigger: `/debug-debate`
 When the user types `/debug-debate`, says "argue about this bug", "what's breaking and why", or "debate the bug", invoke the Skill tool with `skill: "debug-debate"` before doing anything else.
