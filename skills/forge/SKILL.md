@@ -15,25 +15,35 @@ allowed-tools:
 
 Feature: $ARGUMENTS
 
-Run all phases IN ORDER. Every gate is hard — do not skip ahead.
+`forge` is the full pipeline: `/plan-feature` → `/build-feature` in sequence. For partial runs use those skills directly.
 
-**Agent rule:** Never write code inline. All planning → Opus agent. All implementation → Sonnet agent(s). Independent steps always fan out concurrently. Coordinator reads + dispatches only.
-
-**Uncertainty rule:** At any phase, if intent is unclear or a decision wasn't covered in grill-me — stop. Ask the question. Do not guess, assume, or proceed. Treat unanswered questions the same as a failed gate.
-
-**Evidence rule:** The user's description is a HYPOTHESIS, never ground truth. Opus plans only as well as the evidence it's handed. Every plan must be built from FACTS gathered first (measurements, `file:line`, graph queries, test output, schema) — never from the raw description. A plan citing the user's words instead of the codebase is a failed gate.
+**Agent rule:** Never write code inline. All planning → Opus agent. All implementation → Sonnet agent(s). Coordinator reads + dispatches only.
 
 ## Routing — pick the right tool BEFORE running the pipeline
-Forge is the heavyweight full-feature pipeline. Don't run all of it for everything:
-- **Spatial/layout bug** (overlap, clip, horizontal scrollbar, truncation, panel-combination breakage, fixed-width starvation) → use the Phase 0A methodology below (Playwright DOM measurement). Trivial fix path if cause is already measured.
-- **Color/typography/token/spacing nits** (static, visible in default state) → NOT forge. Pick:
-  - **"What should this look like?"** (palette choice, typography system, style planning, design direction, "which variant?") → `/ui-ux` first. It has 161 palettes, 99 UX guidelines, 57 font pairings — design brain BEFORE code.
-  - **"I know what to change, apply it."** (fix this token, polish this component, tighten spacing on a running app) → `/impeccable` *(requires impeccable plugin)*. Live browser, surgical edits, iterates on real pixels.
-- **Visual/aesthetic redesign** (new look, needs options) → forge WITH the mockup gate (3.5).
-- **Trivial fix** (1–2 files, mechanical, cause already known with evidence) → fast path: phase 0 evidence → skip grill-me + mockup gate → build → phase 6 prove. Skip the ceremony.
-- **Code quality / dead code / over-engineering / YAGNI audit** → STOP, run `/code-health` instead. It sequences Fallow (static analysis, all commands) → Ponytail (YAGNI/anti-complexity review) → Improve (plan-only, token waste + over-engineering). Not forge.
-- **Genuine multi-step feature / behavior change** → full pipeline below.
+- **Spatial/layout bug** (overlap, clip, truncation) → use `/plan-feature` with Phase 0A (Playwright DOM measurement). Trivial fix path if cause already measured.
+- **Color/typography/token/spacing nits** → NOT forge. Use `/ui-ux` (design direction) or `/impeccable` (surgical token edits on running app).
+- **Visual/aesthetic redesign** → forge WITH the mockup gate.
+- **Trivial fix** (1–2 files, cause already known) → fast path: `/plan-feature` with phase 0 only → skip grill-me → approve → `/build-feature`.
+- **Code quality / dead code / YAGNI audit** → STOP, run `/code-health` instead.
+- **Plan only, no code yet** → use `/plan-feature` alone.
+- **Plan already approved, build now** → use `/build-feature <slug>` directly.
+- **Genuine multi-step feature** → full pipeline below.
+
 State which path you're taking in one line before proceeding.
+
+## Full Pipeline
+
+Compute `<slug>` = kebab of `$ARGUMENTS`. `<date>` = today.
+
+### Step 1 — Plan phase (phases 0–3)
+Execute the full `/plan-feature` skill with `$ARGUMENTS`. This runs evidence → grill-me → Opus plan → approval gate. On approval it writes `brainstorms/<slug>-plan-<date>.md` with `## HANDOFF status: approved`.
+
+Do NOT proceed to Step 2 until the user has approved the plan and the HANDOFF block is written.
+
+### Step 2 — Build phase (phases 3.5–7)
+Execute the full `/build-feature` skill with `<slug>` as the argument. It reads `brainstorms/<slug>-plan-<date>.md`, verifies the HANDOFF status, and runs mockup gate → TDD → build → regression → quality gates → prove → summary.
+
+The slug computed in Step 1 is passed directly — no ambiguity in plan file resolution.
 
 ## Stack — auto-detect (do this FIRST, silently)
 This skill is project-agnostic. Before phase 0, detect the project's commands and record them for use throughout the run:
@@ -238,3 +248,11 @@ Print a markdown table summarizing everything completed this forge run:
 | Fix loop | N iterations / not needed | list files if any | — |
 | Quality gates | lint/typecheck + dup-scan + secret-scan + review (+ security/a11y/perf if triggered) | — | clean / triaged |
 | Prove | success predicate met + stress/repro survived + regression test committed + critical path smoke-tested | test file + `DAILY_CHANGELOG.md` | all green |
+
+## Memory Checkpoint
+
+After the build phase completes, ask exactly once:
+
+> **Anything from this forge run worth saving to memory?** A non-obvious decision, a surprise/gotcha, or a reusable pattern. Reply with the fact or type `skip`.
+
+If user replies with content: create `~/.claude-work/projects/-Users-sholland/memory/facts/<slug>-<date>.md` (same format as build-feature checkpoint). Append line to MEMORY.md index. Tell user to run `/memory-compile`. If `skip` → end silently.

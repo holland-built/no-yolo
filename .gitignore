@@ -53,6 +53,8 @@ history.jsonl
 *.log
 
 # runtime markers
+.pending-tasks.md
+learnings.md
 .caveman-active
 .last-cleanup
 .last-update-result.json

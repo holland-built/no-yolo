@@ -305,12 +305,6 @@ This Skill is not needed in the following situations:
 - `drill-down-consistency` - Drill-down interactions must maintain a clear back-path and hierarchy breadcrumb
 - `time-scale-clarity` - Time series charts must clearly label time granularity (day/week/month) and allow switching
 
-## How to Use
-
-Search specific domains using the CLI tool below.
-
----
-
 ## Prerequisites
 
 Check if Python is installed:
@@ -478,44 +472,6 @@ python3 ~/.agents/skills/ui-ux-pro-max/scripts/search.py "<keyword>" --stack rea
 
 ---
 
-## Example Workflow
-
-**User request:** "Make an AI search homepage."
-
-### Step 1: Analyze Requirements
-- Product type: Tool (AI search engine)
-- Target audience: C-end users looking for fast, intelligent search
-- Style keywords: modern, minimal, content-first, dark mode
-- Stack: React Native
-
-### Step 2: Generate Design System (REQUIRED)
-
-```bash
-python3 ~/.agents/skills/ui-ux-pro-max/scripts/search.py "AI search tool modern minimal" --design-system -p "AI Search"
-```
-
-**Output:** Complete design system with pattern, style, colors, typography, effects, and anti-patterns.
-
-### Step 3: Supplement with Detailed Searches (as needed)
-
-```bash
-# Get style options for a modern tool product
-python3 ~/.agents/skills/ui-ux-pro-max/scripts/search.py "minimalism dark mode" --domain style
-
-# Get UX best practices for search interaction and loading
-python3 ~/.agents/skills/ui-ux-pro-max/scripts/search.py "search loading animation" --domain ux
-```
-
-### Step 4: Stack Guidelines
-
-```bash
-python3 ~/.agents/skills/ui-ux-pro-max/scripts/search.py "list performance navigation" --stack react-native
-```
-
-**Then:** Synthesize design system + detailed searches and implement the design.
-
----
-
 ## Output Formats
 
 The `--design-system` flag supports two output formats:
@@ -550,17 +506,6 @@ python3 ~/.agents/skills/ui-ux-pro-max/scripts/search.py "fintech crypto" --desi
 | Navigation feels confusing | Quick Reference §9: `nav-hierarchy` + `bottom-nav-limit` + `back-behavior` |
 | Layout breaks on small screens | Quick Reference §5: `mobile-first` + `breakpoint-consistency` |
 | Performance / jank | Quick Reference §3: `virtualize-lists` + `main-thread-budget` + `debounce-throttle` |
-
-### Pre-Delivery Checklist
-
-- Run `--domain ux "animation accessibility z-index loading"` as a UX validation pass before implementation
-- Run through Quick Reference **§1–§3** (CRITICAL + HIGH) as a final review
-- Test on 375px (small phone) and landscape orientation
-- Verify behavior with **reduced-motion** enabled and **Dynamic Type** at largest size
-- Check dark mode contrast independently (don't assume light mode values work)
-- Confirm all touch targets ≥44pt and no content hidden behind safe areas
-
----
 
 ## Common Rules for Professional UI
 

@@ -124,7 +124,35 @@ echo "      /plugin marketplace add impeccable     # magazine-style design theme
 echo "      /plugin marketplace add JuliusBrussee/caveman  # terse mode (optional)"
 
 echo ""
-echo "==> 5. Environment variables (add to ~/.zshrc or ~/.bash_profile)"
+echo "==> 5. Plugins (Claude Code marketplace)"
+PLUGINS_JSON="$CLAUDE_DIR/plugins/installed_plugins.json"
+if [ -f "$PLUGINS_JSON" ] && command -v python3 >/dev/null 2>&1; then
+  python3 - "$PLUGINS_JSON" <<'PYEOF'
+import json, sys
+try:
+    plugins = json.load(open(sys.argv[1])).get("plugins", {})
+except (ValueError, OSError):
+    print("    ! installed_plugins.json is unreadable — skipping"); sys.exit(0)
+if not plugins:
+    print("    No plugins installed yet."); sys.exit(0)
+print(f"    Found {len(plugins)} installed plugins:")
+print(f"    {'NAME':<42} {'VERSION':<14} SCOPE")
+for name, entries in plugins.items():
+    e = entries[0] if entries else {}
+    print(f"    {name:<42} {e.get('version','?'):<14} {e.get('scope','?')}")
+PYEOF
+else
+  echo "    No installed_plugins.json found — install recommended plugins inside Claude Code:"
+  echo "      /plugin marketplace add JuliusBrussee/caveman       # terse mode"
+  echo "      /plugin marketplace add ecc-plugins/ecc             # agent types + code review"
+  echo "      /plugin marketplace add karpathy/karpathy-skills     # Karpathy skill set"
+  echo "      /plugin marketplace add design-plugins/design-and-refine  # UI design"
+  echo "      /plugin marketplace add AgriciDaniel/claude-obsidian # Obsidian integration"
+fi
+echo "    To check for plugin updates: run /plugin list in Claude Code, then /plugin update <name>"
+
+echo ""
+echo "==> 6. Environment variables (add to ~/.zshrc or ~/.bash_profile)"
 cat <<'ENVEOF'
 
     export GROQ_API_KEY=your_key_here               # video-to-kb, graphify (Whisper)
