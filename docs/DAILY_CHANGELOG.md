@@ -8,6 +8,9 @@
 - updated my-skills TAGLINES.md — trimmed all entries to ≤60 chars
 - added model: haiku to 7 lightweight skills — antislop, eli5, md-check, my-md, my-skills, remember-that, whats-next
 - added /ship skill — replaces publish-skills with quality-gated publish (md-check + antislop + eli5 + changelog)
+- deleted 16 root MDs (now live in docs/ from prior commit)
+- added memory/ safe subset to git — SCHEMA.md, CLAUDE.generated.md, bin/*.py (facts/ stays gitignored due to provenance UUIDs)
+- updated .gitignore — memory/ now partially tracked; compile-manifest.json and facts/ excluded
 - updated my-skills SKILL.md — pipe table output (4 columns: skill, what, when, why); removed broken wrap() + html br approach
 - fixed remember-that SKILL.md description — "view" → "extract from context" (drift fix)
 - added /antislop skill — AI writing/GUI slop detection against ANTISLOP.md
