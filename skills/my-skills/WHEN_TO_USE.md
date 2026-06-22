@@ -20,6 +20,15 @@ ponytail-audit|Major cleanup, debt paydown, or before a refactor
 ponytail-debt|Tracking shortcuts you deferred intentionally
 ponytail-help|Forgot a ponytail command
 ponytail-review|PR is too big — gut-check what's unnecessary
+antislop|Before shipping any user-facing text or README — or when output feels generic
+better-prompt|When a prompt keeps returning shallow or off-target results
+debug-debate|Stuck on a bug with multiple plausible theories and no clear winner
 eli5|Before running anything you are not 100% sure about
+last-30|Starting research on a topic and want signal from the past month, not all-time rankings
+md-check|Before adding a new doc, or when ~/.claude notes feel bloated and repetitive
+prompt-scan|After a new Claude model ships, or first-time setup before using /better-prompt
+remember-that|End of a session with useful decisions or preferences worth keeping
+ship|Done editing skills and ready to publish to no-yolo
+ui|Any UI task — when you're not sure which UI skill to reach for
 debate|Before committing to an architecture, UI/UX direction, or what-to-build-next call. When you want the whole team — dev, ops, and sales — stress-testing it, not validating it.
 update|Before pulling changes to your ~/.claude setup. Also after an update that broke something, or when you want to recover a skill that was removed.
