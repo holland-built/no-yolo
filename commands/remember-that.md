@@ -1,6 +1,6 @@
 ---
-description: Unified memory manager — add, view, delete, move, audit, compile
-argument-hint: [<fact> | (empty)=table | d <id> | m <id> | audit | compile]
+description: Unified memory manager — extract from context, add, view, delete, move, audit, compile
+argument-hint: [<fact> | (empty)=extract+propose | d <id> | m <id> | audit | compile]
 ---
 
 Argument: **$ARGUMENTS**
@@ -30,7 +30,7 @@ Match **first token** in this order:
 
 | First token | Action |
 |---|---|
-| *(empty)* | TABLE |
+| *(empty)* | EXTRACT |
 | `d` + second token present | DELETE `<id>` |
 | `m` + second token present | MOVE `<id>` |
 | `audit` (exact, only token) | AUDIT |
@@ -67,22 +67,27 @@ Match **first token** in this order:
 
 ---
 
-## TABLE
+## EXTRACT (no-args default)
 
-Show two tables, then stop:
+1. **Scan recent conversation context** — identify facts worth saving: decisions made, preferences stated, patterns discovered, architecture choices, constraints established. Ignore ephemeral task detail.
 
-**Global facts** (`~/.claude/memory/facts/`)
+2. **Propose each candidate** one at a time:
+   - Infer tier: inside a project repo (`HAS_GIT=true`) → `project`; else `global`
+   - Output exactly this block per candidate:
+     ```
+     Found: "<crisp one-line description of the fact>"
+     tier: global | project (<slug>)   type: feedback | pattern | user | reference
+     Save? (Y / g=global / p=project / skip / done)
+     ```
+   - Wait for response. On Y or tier override → run ADD flow for that fact. On `skip` → next candidate. On `done` → stop proposing.
 
-| id | type | status | description |
-|----|------|--------|-------------|
+3. If no candidates found: output `Nothing new to save from this session.`
 
-**Project facts for `<slug>`**
-(formal `facts/` + read-only auto-memory files — do not write to auto-memory)
-
-| id / file | source | status | summary |
-|-----------|--------|--------|---------|
-
-Then: `Actions: <fact>  d <id>  m <id>  audit  compile`
+4. After all candidates processed (or `done`), always show the action menu grayed out:
+   ```
+   ─────────────────────────────────────────────
+   Other actions: /remember-that <fact>  d <id>  m <id>  audit  compile
+   ```
 
 ---
 
