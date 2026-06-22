@@ -20,6 +20,15 @@ ponytail-audit|Finds the abstraction that seemed smart 6 months ago and now nobo
 ponytail-debt|Shortcuts without a ledger become forgotten landmines
 ponytail-help|Fast lookup beats interrupting flow to reread docs
 ponytail-review|Most review tools look for what to add. This one specifically hunts what to remove
+antislop|AI writing has 25 known tell patterns. This catches them before they reach users
+better-prompt|A prompt with a named target + scope + success criterion returns 3x better results
+debug-debate|Six competing theories surface the one you missed. Contradiction map shows where to look
 eli5|Stops you from agreeing to something you did not actually understand
+last-30|GitHub stars and HN posts from 3 years ago are noise. Last 30 days is actual traction
+md-check|Duplicate rules in two files = the wrong one gets followed. Overlap detection prevents this
+prompt-scan|Without a learnings snapshot, /better-prompt rewrites blindly. This gives it real context
+remember-that|Preferences decay between sessions. This makes them permanent without manual file editing
+ship|Leak guard + quality gates run automatically. One command replaces 5 manual steps
+ui|Single entry point prevents the wrong skill for the job — routes to the right one every time
 debate|Because no single role sees the whole picture. Six product-team lenses — code, ops, and revenue — surface the contradictions and the one question you haven't asked yet.
 update|Because pulling blindly can remove things you rely on. See first, then decide.

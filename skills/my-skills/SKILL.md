@@ -13,8 +13,8 @@ Two modes:
 - **Default** (`/my-skills`) — Sections 1 + 2 only: your skills and plugin skills. Fast daily reference.
 - **Deep** (`/my-skills deep`) — All 4 sections: adds Relationships and Bolt-ons.
 
-All sections rendered as 2-column markdown tables: **Skill/Tool** | **The whole story**.
-Stories are pre-baked in STORIES.md — emit them exactly as stored, no rephrasing or synthesis.
+All sections rendered as 4-column markdown tables: **Skill** | **What it does** | **When to use** | **Why vs manual**.
+Data is pre-baked in STORIES.md, WHEN_TO_USE.md, WHY_TO_USE.md — emit exactly as stored, no rephrasing.
 
 Check the argument the user passed. If it is `deep`, run all 4 sections. Otherwise run only Sections 1 and 2.
 
@@ -24,32 +24,46 @@ Check the argument the user passed. If it is `deep`, run all 4 sections. Otherwi
 
 ```bash
 stories="$HOME/.claude/skills/my-skills/STORIES.md"
+when="$HOME/.claude/skills/my-skills/WHEN_TO_USE.md"
+why="$HOME/.claude/skills/my-skills/WHY_TO_USE.md"
+wrap() { printf '%s' "$1" | fold -s -w 72 | awk '{printf "%s%s", sep, $0; sep="<br>"}'; }
 for d in ~/.claude/skills/*/; do
   [ -L "${d%/}" ] && continue
   name=$(basename "$d")
   [ "$(ls -A "$d" 2>/dev/null)" ] || continue
   story=$(grep "^$name|" "$stories" 2>/dev/null | cut -d'|' -f2-)
-  [ -z "$story" ] && story="⚠️ missing story — add to STORIES.md"
-  printf '%s\t%s\n' "$name" "$story"
+  when_val=$(grep "^$name|" "$when" 2>/dev/null | cut -d'|' -f2-)
+  why_val=$(grep "^$name|" "$why" 2>/dev/null | cut -d'|' -f2-)
+  [ -z "$story" ] && story="⚠️ missing"
+  [ -z "$when_val" ] && when_val="—"
+  [ -z "$why_val" ] && why_val="—"
+  printf '%s\t%s\t%s\t%s\n' "$name" "$(wrap "$story")" "$(wrap "$when_val")" "$(wrap "$why_val")"
 done
 ```
 
-Emit as `| Skill | The whole story |` markdown table. Use stored text exactly — do NOT rephrase.
+Emit as `| Skill | What it does | When to use | Why vs manual |` markdown table. Use stored text exactly — do NOT rephrase.
 
 ### Section 2 — Installed / plugin skills
 
 ```bash
 stories="$HOME/.claude/skills/my-skills/STORIES.md"
+when="$HOME/.claude/skills/my-skills/WHEN_TO_USE.md"
+why="$HOME/.claude/skills/my-skills/WHY_TO_USE.md"
+wrap() { printf '%s' "$1" | fold -s -w 72 | awk '{printf "%s%s", sep, $0; sep="<br>"}'; }
 for d in ~/.claude/skills/*/; do
   [ -L "${d%/}" ] || continue
   name=$(basename "$d")
   story=$(grep "^$name|" "$stories" 2>/dev/null | cut -d'|' -f2-)
-  [ -z "$story" ] && story="⚠️ missing story — add to STORIES.md"
-  printf '%s\t%s\n' "$name" "$story"
+  when_val=$(grep "^$name|" "$when" 2>/dev/null | cut -d'|' -f2-)
+  why_val=$(grep "^$name|" "$why" 2>/dev/null | cut -d'|' -f2-)
+  [ -z "$story" ] && story="⚠️ missing"
+  [ -z "$when_val" ] && when_val="—"
+  [ -z "$why_val" ] && why_val="—"
+  printf '%s\t%s\t%s\t%s\n' "$name" "$(wrap "$story")" "$(wrap "$when_val")" "$(wrap "$why_val")"
 done
 ```
 
-Emit as `| Skill | The whole story |` markdown table. If no plugin skills, omit section. Use stored text exactly — do NOT rephrase.
+Emit as `| Skill | What it does | When to use | Why vs manual |` markdown table. If no plugin skills, omit section. Use stored text exactly — do NOT rephrase.
 
 ### Section 3 — Relationships (what each skill leans on) — deep mode only
 
