@@ -15,8 +15,6 @@ code-review|Before you merge new code, this reads it and catches bugs and bloat 
 diagnose|Stuck on a bug for 20+ minutes, poking randomly? `/diagnose [the bug]` walks it step by step until it finds the real cause. Stops the guess-and-check spiral.
 drawio-skill|Need a picture of how something works? `/drawio-skill [describe it]` draws it — flowchart, architecture, sequence — and saves a PNG/SVG/PDF. An hour of fiddling becomes two minutes.
 forge|Building a feature from scratch? `/forge [feature]` runs the whole pipeline — plan, design, code, tests, proof — with gates you can't skip. Nothing ships half-baked. Now a thin wrapper: calls /plan-feature then /build-feature in sequence.
-plan-feature|Got a feature to build but not ready to write code? `/plan-feature [feature]` does the planning half only — gathers evidence, interviews you, writes an Opus plan, and stops the moment you approve it. The plan file is your contract. Run /build-feature when ready to build.
-build-feature|Have an approved plan and ready to build? `/build-feature [slug]` picks up where /plan-feature stopped — mockup gate, TDD, Sonnet build, regression loop, quality gates, proof. Requires an approved plan file; fails clearly if you try to run it cold.
 debug-debate|Stuck on a bug and not sure what's really broken? `/debug-debate [bug]` reads your code and runs 6 Opus personas in parallel — each arguing a different theory of what's wrong. You get a contradiction map, the most likely root cause with a file:line citation, and one concrete diagnostic step to run next. Diagnosis only, no code changed.
 last-30|Want to know what's actually gaining traction right now, not what was popular last year? `/last-30 [topic]` pulls the last 30 days of signal from GitHub, Hacker News, YouTube, and X — trending repos, top discussions, recent talks. Filters out old results. Starting point for research, not a final answer.
 md-check|Your ~/.claude notes piling up and starting to repeat each other? `/md-check` lists every doc with its size, flags anything over 200 lines, and spots two files saying the same thing so you can merge them. Other skills call it with --pre before creating a new note, so you never end up with two files on one topic.
@@ -47,9 +45,7 @@ ponytail-review|PR feels too big? `/ponytail-review` reads the diff and tells yo
 # ── Section 3 — Relationships (prefix rel:) ───────────────────────────────────
 rel:code-health|Runs four tools in order for you — fallow, then the ponytail checks, then improve — so you don't run each by hand. One command, full cleanup pass.
 rel:code-review|Pulls the real diff with gh, then runs ponytail-review on it — so it catches what you deleted, not just what you added.
-rel:forge|The big one — calls grill-me, tdd, ui-ux, code-review, code-health, impeccable, and browser tests, with Opus planning and Sonnet building. Chains every quality gate so you can't skip steps.
-rel:plan-feature|Stands alone as the planning half — calls grill-me, runs an Opus planner, writes the approved plan file. /forge calls it as Step 1.
-rel:build-feature|Reads the plan file written by /plan-feature — runs mockup gate, TDD, Sonnet build agents, regression loop, quality gates, prove. /forge calls it as Step 2.
+rel:forge|Full pipeline inline — evidence → grill-me → Opus plan → approval gate → mockup gate → TDD → Sonnet build → regression → quality gates → prove. Every gate is hard. Opus plans, Sonnet builds, no shortcuts.
 rel:debug-debate|Stands alone — reads the codebase itself before spawning 6 parallel Opus personas. No setup needed beyond a bug description.
 rel:last-30|Uses WebSearch and the exa MCP plugin to hit 4 sources in parallel. Requires exa plugin in settings.json for best results.
 rel:md-check|Stands alone — pure shell + Read. No setup. Other skills can call it with --pre flag as a pre-creation gate.

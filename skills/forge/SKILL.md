@@ -15,35 +15,17 @@ allowed-tools:
 
 Feature: $ARGUMENTS
 
-`forge` is the full pipeline: `/plan-feature` → `/build-feature` in sequence. For partial runs use those skills directly.
-
 **Agent rule:** Never write code inline. All planning → Opus agent. All implementation → Sonnet agent(s). Coordinator reads + dispatches only.
 
 ## Routing — pick the right tool BEFORE running the pipeline
-- **Spatial/layout bug** (overlap, clip, truncation) → use `/plan-feature` with Phase 0A (Playwright DOM measurement). Trivial fix path if cause already measured.
+- **Spatial/layout bug** (overlap, clip, truncation) → Phase 0A (Playwright DOM measurement). Trivial fix path if cause already measured.
 - **Color/typography/token/spacing nits** → NOT forge. Use `/ui-ux` (design direction) or `/impeccable` (surgical token edits on running app).
 - **Visual/aesthetic redesign** → forge WITH the mockup gate.
-- **Trivial fix** (1–2 files, cause already known) → fast path: `/plan-feature` with phase 0 only → skip grill-me → approve → `/build-feature`.
+- **Trivial fix** (1–2 files, cause already known) → fast path: phase 0 only → skip grill-me → approve → build.
 - **Code quality / dead code / YAGNI audit** → STOP, run `/code-health` instead.
-- **Plan only, no code yet** → use `/plan-feature` alone.
-- **Plan already approved, build now** → use `/build-feature <slug>` directly.
 - **Genuine multi-step feature** → full pipeline below.
 
 State which path you're taking in one line before proceeding.
-
-## Full Pipeline
-
-Compute `<slug>` = kebab of `$ARGUMENTS`. `<date>` = today.
-
-### Step 1 — Plan phase (phases 0–3)
-Execute the full `/plan-feature` skill with `$ARGUMENTS`. This runs evidence → grill-me → Opus plan → approval gate. On approval it writes `brainstorms/<slug>-plan-<date>.md` with `## HANDOFF status: approved`.
-
-Do NOT proceed to Step 2 until the user has approved the plan and the HANDOFF block is written.
-
-### Step 2 — Build phase (phases 3.5–7)
-Execute the full `/build-feature` skill with `<slug>` as the argument. It reads `brainstorms/<slug>-plan-<date>.md`, verifies the HANDOFF status, and runs mockup gate → TDD → build → regression → quality gates → prove → summary.
-
-The slug computed in Step 1 is passed directly — no ambiguity in plan file resolution.
 
 ## Stack — auto-detect (do this FIRST, silently)
 This skill is project-agnostic. Before phase 0, detect the project's commands and record them for use throughout the run:
