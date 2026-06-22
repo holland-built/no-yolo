@@ -58,18 +58,18 @@ If you are about to add anything else — STOP. Find or create the right MD file
 Toggle: `/caveman lite|full|ultra` or say "stop caveman" to disable.
 Skill: `caveman:caveman`. State: `.caveman-active`.
 Keep these scripts unless caveman mode is no longer wanted.
-# graphify
-- **graphify** (`~/.claude/skills/graphify/SKILL.md`) - any input to knowledge graph. Trigger: `/graphify`
-When the user types `/graphify`, invoke the Skill tool with `skill: "graphify"` before doing anything else.
 # code-health
 - **code-health** (`~/.claude/skills/code-health/SKILL.md`) - three-phase codebase health pass: Fallow (all commands) → Ponytail → Improve. All output as tables. Trigger: `/code-health`
 When the user types `/code-health`, invoke the Skill tool with `skill: "code-health"` before doing anything else.
 # my-skills
 - **my-skills** - list all skills you authored + curated. Trigger: `/my-skills`
 When the user types `/my-skills`, invoke the Skill tool with `skill: "my-skills"` before doing anything else.
+# ui
+- **ui** (`~/.claude/skills/ui/SKILL.md`) - UI entry point: numbered menu routes to ui-ux / quick-design / ui-wild / impeccable. Trigger: `/ui`, `/ux`
+When the user types `/ui`, `/ux`, says "design something", "design this", "show me options", "mockup this", "design options", "go wild on the UI", or "redesign this", invoke the Skill tool with `skill: "ui"` before doing anything else.
 # ui-wild
 - **ui-wild** (`~/.claude/skills/ui-wild/SKILL.md`) - radical UI/UX redesign: 10 Opus personas, judge pass kills AI slop, mockup approval gate, surgical code safety, regression gate. Trigger: `/ui-wild`
-When the user types `/ui-wild`, says "go wild on the UI", "redesign this", "ui bananas", or "fresh design", invoke the Skill tool with `skill: "ui-wild"` before doing anything else.
+When the user types `/ui-wild`, invoke the Skill tool with `skill: "ui-wild"` before doing anything else.
 # code-review
 - **code-review** (`~/.claude/skills/code-review/SKILL.md`) - diff review with Karpathy surgical + simplicity filters. Trigger: `/code-review`
 When the user types `/code-review`, invoke the Skill tool with `skill: "code-review"` before doing anything else.

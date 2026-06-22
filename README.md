@@ -161,12 +161,12 @@ A "skill" is a custom command you trigger with a slash, like `/code-review`. Her
 | `diagnose` | A 6-step way to find the real cause of a bug — when you're stuck, it walks you through it step by step |
 | `drawio-skill` | Draws diagrams (architecture, flowcharts, database tables, UML). Saves them as PNG, SVG, or PDF |
 | `forge` | Builds a whole feature start to finish: gather evidence, plan with Opus, approve, UI mockup gate, write tests first, build with Sonnet, then prove it works |
-| `graphify` | Ask questions about a codebase in plain English — "what uses this?", "what depends on Y?" Uses a knowledge graph |
 | `grill-me` | Interviews you before any code gets written — one question at a time until every tricky case is sorted out |
 | `my-md` | Lists every markdown file — both the global `~/.claude/` docs and the ones in your current project |
 | `my-skills` | This very list. Shows the commands I wrote and the borrowed ones, plus how they connect and what they depend on |
 | `quick-design` | Makes 3 quick screen mockups using your project's real colors and fonts — a safe one, a modern one, and a bold one — and opens them in Chrome |
 | `tdd` | Keeps you honest about test-driven development: write a failing test, make it pass, clean up, repeat |
+| `ui` | Entry point for all UI work — type `/ui` or `/ux`, get a numbered menu, route to the right tool. No memorization required |
 | `ui-ux` | Design know-how: 161 color palettes, 57 font pairings, 99 design guidelines, 25 chart types |
 | `ui-wild` | A bold redesign: 10 designer "personalities" compete, a judge throws out the generic ones, and you pick the winner |
 | `video-to-kb` | *(Optional — requires Obsidian + Groq API key)* Transcribes a YouTube video using Groq Whisper and saves a structured summary into your Obsidian notes folder |
