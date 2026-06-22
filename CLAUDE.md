@@ -62,31 +62,30 @@ Keep these scripts unless caveman mode is no longer wanted.
 - **code-health** (`~/.claude/skills/code-health/SKILL.md`) - three-phase codebase health pass: Fallow (all commands) → Ponytail → Improve. All output as tables. Trigger: `/code-health`
 When the user types `/code-health`, invoke the Skill tool with `skill: "code-health"` before doing anything else.
 # my-skills
-- **my-skills** - list all skills you authored + curated. Trigger: `/my-skills`
+- **my-skills** - list skills you authored (not plugin packs) + relationship map. Trigger: `/my-skills`
 When the user types `/my-skills`, invoke the Skill tool with `skill: "my-skills"` before doing anything else.
 # ui
 - **ui** (`~/.claude/skills/ui/SKILL.md`) - UI entry point: numbered menu routes to ui-ux / quick-design / ui-wild / impeccable. Trigger: `/ui`, `/ux`
-When the user types `/ui`, `/ux`, says "design something", "design this", "show me options", "mockup this", "design options", "go wild on the UI", or "redesign this", invoke the Skill tool with `skill: "ui"` before doing anything else.
+When the user types `/ui`, `/ux`, says "design something", "design this", "show me options", "mockup this", or "design options", invoke the Skill tool with `skill: "ui"` before doing anything else.
 # ui-wild
 - **ui-wild** (`~/.claude/skills/ui-wild/SKILL.md`) - radical UI/UX redesign: 10 Opus personas, judge pass kills AI slop, mockup approval gate, surgical code safety, regression gate. Trigger: `/ui-wild`
 When the user types `/ui-wild`, invoke the Skill tool with `skill: "ui-wild"` before doing anything else.
 # code-review
-- **code-review** (`~/.claude/skills/code-review/SKILL.md`) - diff review with Karpathy surgical + simplicity filters. Trigger: `/code-review`
+- **code-review** (`~/.claude/skills/code-review/SKILL.md`) - three-pass diff review: correctness/bugs, over-engineering (ponytail), Karpathy surgical+simplicity. Trigger: `/code-review`
 When the user types `/code-review`, invoke the Skill tool with `skill: "code-review"` before doing anything else.
 # ui-ux
 - **ui-ux** - design intelligence: 50+ styles, 161 palettes, 57 font pairings, 99 UX guidelines, 25 chart types across 10 stacks. Use for: plan/design/review/fix UI before or without code. Upstream of impeccable. Trigger: `/ui-ux`
 When the user types `/ui-ux`, says "design this", "plan the UI", "review the UX", or asks about styles/palettes/typography choices, invoke the Skill tool with `skill: "ui-ux"` before doing anything else.
 # impeccable
-- **impeccable** (`~/.claude/skills/impeccable/SKILL.md`) - editorial-poster design theme: warm cream + burnt orange aesthetic for UI generation. Use when applying a premium, magazine-style visual brand. Trigger: `/impeccable`
-When the user types `/impeccable` or asks for "editorial poster style", "warm cream design", "burnt orange aesthetic", invoke the Skill tool with `skill: "impeccable"` before doing anything else.
+When the user types `/impeccable`, invoke the Skill tool with `skill: "impeccable"` before doing anything else.
 # my-md
 - **my-md** (`~/.claude/skills/my-md/SKILL.md`) - list all markdown files: global ~/.claude/ docs + current project artifacts. Trigger: `/my-md`
 When the user types `/my-md`, says "list md files", or "show markdown files", invoke the Skill tool with `skill: "my-md"` before doing anything else.
 # quick-design
-- **quick-design** (`~/.claude/skills/quick-design/SKILL.md`) - fast 3-variant mockup generator using real design tokens. Trigger: `/quick-design`
+- **quick-design** (`~/.claude/skills/quick-design/SKILL.md`) - 3 parallel agents (conservative/modern/wild) using real tokens, Chrome popup, hard approval gate before any code written. Trigger: `/quick-design`
 When the user types `/quick-design`, says "show me options", "mockup this", or "design options", invoke the Skill tool with `skill: "quick-design"` before doing anything else.
 # whats-next
-- **whats-next** (`~/.claude/skills/whats-next/SKILL.md`) - context scanner: shows in-flight work or clean-slate menu. Trigger: `/whats-next`
+- **whats-next** (`~/.claude/skills/whats-next/SKILL.md`) - checks task queue first, runs next task; if empty, scans project and proposes. Never shows a static menu. Trigger: `/whats-next`
 When the user types `/whats-next`, says "what's next", "what should I do", or "now what", invoke the Skill tool with `skill: "whats-next"` before doing anything else.
 # eli5
 - **eli5** (`~/.claude/skills/eli5/SKILL.md`) - explain anything in plain English before you commit to it. Trigger: `/eli5`
@@ -98,7 +97,7 @@ When the user types `/debate`, says "debate this", "stress test this decision", 
 - **update** (`~/.claude/skills/update/SKILL.md`) - check for updates, preview what changed, apply full or rules-only update, rollback, or restore a removed skill. Trigger: `/update`
 When the user types `/update`, says "check for updates", "am I out of date", "what's new", "update my setup", or "rollback", invoke the Skill tool with `skill: "update"` before doing anything else.
 # ship
-- **ship** (`~/.claude/skills/ship/SKILL.md`) - quality gates (md-check + antislop + eli5, warn-only) → dated changelog → leak-guarded commit + push to no-yolo. Trigger: `/ship`
+- **ship** (`~/.claude/skills/ship/SKILL.md`) - quality gates (md-check + antislop + eli5 + drift check, warn-only) → dated changelog → leak-guarded commit + push to no-yolo. Trigger: `/ship`
 When the user types `/ship`, says "push skills", "publish to no-yolo", or "ship my work", invoke the Skill tool with `skill: "ship"` before doing anything else.
 # skill-discovery
 When the user says "find skill for X", "what skill handles X", "which skill does X", or "what should I use for X", read `~/.claude/skills/my-skills/TAGLINES.md`, match X against the taglines, and return the single best-matching skill plus its trigger command. This is a routing rule, not a skill — do not invoke the Skill tool.
@@ -109,7 +108,7 @@ When the user types `/debug-debate`, says "argue about this bug", "what's breaki
 - **last-30** (`~/.claude/skills/last-30/SKILL.md`) - pulls trending content from GitHub/HN/YouTube/X filtered to last 30 days only. Trigger: `/last-30`
 When the user types `/last-30`, says "what's trending in", "last 30 days", or "what's hot right now", invoke the Skill tool with `skill: "last-30"` before doing anything else.
 # md-check
-- **md-check** (`~/.claude/skills/md-check/SKILL.md`) - MD hygiene: line counts, topic-overlap, duplicate-rule detection; on-demand audit or pre-creation gate. Trigger: `/md-check`
+- **md-check** (`~/.claude/skills/md-check/SKILL.md`) - MD hygiene: line counts, topic-overlap, duplicate-rule detection, and `--drift` mode to catch stale CLAUDE.md descriptions. Trigger: `/md-check`
 When the user types `/md-check`, says "check md files" or "md hygiene", invoke the Skill tool with `skill: "md-check"` before doing anything else.
 # prompt-scan
 - **prompt-scan** (`~/.claude/skills/prompt-scan/SKILL.md`) - reads all system prompt files + fetches current model release notes → appends dated section to ~/.claude/learnings.md. Feeds /better_prompt. Trigger: `/prompt-scan`
