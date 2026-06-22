@@ -38,3 +38,6 @@
 - deleted build-feature and plan-feature skills — superseded by /forge
 - deleted graphify skill — removed from setup
 - updated my-skills STORIES.md — added remember-that story
+- updated my-skills SKILL.md — 4-column table with when/why, line-wrap via fold+awk
+- updated my-skills WHEN_TO_USE.md — added 10 missing skills
+- updated my-skills WHY_TO_USE.md — added 10 missing skills
