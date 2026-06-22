@@ -103,12 +103,44 @@ git -C ~/.claude push origin main
 
 ---
 
-## Step 4 — Confirm
+## Step 4 — GitHub release
+
+Create a dated release using the changelog entry as notes.
+
+```bash
+DATE=$(date +%Y-%m-%d)
+TAG="v$DATE"
+
+# If tag already exists (re-running ship same day) — delete and recreate
+if git -C ~/.claude tag | grep -q "^$TAG$"; then
+  gh release delete "$TAG" --repo holland-built/no-yolo --yes 2>/dev/null || true
+  git -C ~/.claude tag -d "$TAG" 2>/dev/null || true
+  git -C ~/.claude push origin ":refs/tags/$TAG" 2>/dev/null || true
+fi
+
+# Extract today's section from DAILY_CHANGELOG.md as release notes
+NOTES=$(awk "/^## $DATE/{found=1; next} found && /^## /{exit} found{print}" "$HOME/.claude/DAILY_CHANGELOG.md")
+
+# Tag and release
+git -C ~/.claude tag "$TAG"
+git -C ~/.claude push origin "$TAG"
+gh release create "$TAG" \
+  --repo holland-built/no-yolo \
+  --title "$TAG" \
+  --notes "$NOTES"
+```
+
+If `gh` is not installed or not authenticated: print `⚠️ GitHub release skipped — run gh auth login` and continue.
+
+---
+
+## Step 5 — Confirm
 
 Print:
 ```
 Shipped to github.com/holland-built/no-yolo
 
 Committed: [list of files]
+Release: [tag] — github.com/holland-built/no-yolo/releases/tag/[tag]
 Changelog: [the dated entry just written]
 ```
