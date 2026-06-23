@@ -76,6 +76,8 @@ bash ~/.claude/setup.sh --md-only # rules only — no tools installed
 
 **--md-only mode** does steps 1 and 2 only, then runs a Python script that strips every skill trigger block out of `CLAUDE.md`. Use this if you want the rules but not the full toolchain — Claude won't reference skills that aren't installed, so nothing breaks. The strip is dynamic: it reads the current file, so it stays correct even if you add or remove skills later.
 
+**Started with --md-only and want tools later?** Just re-run: `bash ~/.claude/setup.sh` — it skips anything already installed.
+
 ### Step 3 — Two optional plugins inside Claude Code
 
 After setup.sh finishes, open Claude Code and run these if you want them:
@@ -437,3 +439,23 @@ Some things are deliberately left out of this repo, and why:
 | `.pending-tasks.md` | Session task queue used by `/whats-next` — local only, not shared |
 | `learnings.md` | Written by `/prompt-scan` — accumulates model release notes + prompt diagnostics over time. Local only |
 | `cache/`, `sessions/`, `history.jsonl`, logs | Temporary runtime files — not part of the configuration |
+
+---
+
+## Uninstall
+
+To remove individual tools installed by setup.sh:
+
+| What to remove | Command |
+|---|---|
+| fallow | `npm uninstall -g fallow` |
+| graphify | `uv tool uninstall graphify` |
+| ponytail | `npx skills@latest remove DietrichGebert/ponytail` |
+| improve | `npx skills@latest remove shadcn/improve` |
+| Claude Code plugins | `/plugin remove <name>` inside Claude Code |
+
+To remove the whole setup (your backup is at `~/.claude.bak` if you used the install command):
+
+```bash
+rm -rf ~/.claude
+```
