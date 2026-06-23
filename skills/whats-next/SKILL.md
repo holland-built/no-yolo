@@ -74,7 +74,7 @@ Based on what you see, generate **3 creative, project-specific suggestions** —
 
 Format:
 ```
-> Queue empty. Here's what looks interesting:
+> Queue empty. Here's what I found:
 
 1. **[specific thing]** — [why it matters]. Run: `/skill [args]`
 2. **[specific thing]** — [why it matters]. Run: `/skill [args]`
