@@ -12,7 +12,7 @@ When the user types `/code-health`, invoke the Skill tool with `skill: "code-hea
 - **my-skills** - list skills you authored (not plugin packs) + relationship map. Trigger: `/my-skills`
 When the user types `/my-skills`, invoke the Skill tool with `skill: "my-skills"` before doing anything else.
 # ui
-- **ui** (`~/.claude/skills/ui/SKILL.md`) - UI entry point: numbered menu routes to ui-ux / quick-design / ui-wild / impeccable. Trigger: `/ui`, `/ux`
+- **ui** (`~/.claude/skills/ui/SKILL.md`) - UI entry point: numbered menu routes to ui-ux / quick-design / ui-wild. Trigger: `/ui`, `/ux`
 When the user types `/ui`, `/ux`, says "design something", "design this", "show me options", "mockup this", or "design options", invoke the Skill tool with `skill: "ui"` before doing anything else.
 # ui-wild
 - **ui-wild** (`~/.claude/skills/ui-wild/SKILL.md`) - radical UI/UX redesign: 10 Opus personas, judge pass kills generic AI output, mockup approval gate before any code. Trigger: `/ui-wild`
@@ -23,8 +23,6 @@ When the user types `/code-review`, invoke the Skill tool with `skill: "code-rev
 # ui-ux
 - **ui-ux** - design intelligence: 50+ styles, 161 palettes, 57 font pairings, 99 UX guidelines, 25 chart types across 10 stacks. Use for: plan/design/review/fix UI before or without code. Trigger: `/ui-ux`
 When the user types `/ui-ux`, says "design this", "plan the UI", "review the UX", or asks about styles/palettes/typography choices, invoke the Skill tool with `skill: "ui-ux"` before doing anything else.
-# impeccable
-When the user types `/impeccable`, invoke the Skill tool with `skill: "impeccable"` before doing anything else.
 # my-md
 - **my-md** (`~/.claude/skills/my-md/SKILL.md`) - list all markdown files: global ~/.claude/ docs + current project artifacts. Trigger: `/my-md`
 When the user types `/my-md`, says "list md files", or "show markdown files", invoke the Skill tool with `skill: "my-md"` before doing anything else.

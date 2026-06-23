@@ -9,7 +9,7 @@ My personal Claude Code setup, saved in git. Fork it and you get a working setup
 Claude Code is a command-line tool where you talk to Claude to write and edit code. It reads a folder called `~/.claude/` every time it starts. This repo *is* that folder, saved in git. Here's what's inside:
 
 - **Rules** Claude reads at the start of every session. Enforces strict habits: plan before coding, only touch the exact lines you asked for, use the right model for the right job.
-- **27 custom commands**, plus 8 borrowed from plugins — type `/name` to run one, like `/code-review` or `/build`. Run `/my-skills` for the full list.
+- **27 custom commands**, plus 7 borrowed from plugins — type `/name` to run one, like `/code-review` or `/build`. Run `/my-skills` for the full list.
 - **Memory** that learns your preferences. Say "remember that I prefer X" and Claude saves it automatically — carries forward to every future session.
 
 ---
@@ -75,7 +75,6 @@ After setup.sh finishes, open Claude Code and run these if you want them:
 
 | Plugin | What it adds | Command (run inside Claude Code) |
 |---|---|---|
-| Impeccable | Magazine-style design theme for UI work | `/plugin marketplace add impeccable` |
 | Caveman | Makes Claude reply in fewer words — saves tokens on long sessions | `/plugin marketplace add JuliusBrussee/caveman` |
 
 ### Step 4 — Verify
@@ -156,19 +155,21 @@ What each file and folder is for:
 
 A "skill" is a custom command you trigger with a slash, like `/code-review`. Here's everything available.
 
-### Building a UI? Start with `/build`
+### Frontend design — plan the look, generate mockups, write the code
+
+Four skills cover the full frontend design workflow: explore directions, lock a design language, generate mockups, and build — all with approval gates so no code gets written until you've seen what it looks like.
 
 **One command does everything:** `/build` plans the feature, generates 10 UI mockup variants, filters out generic-looking ones, asks you to pick one, then writes the code. You never need to think about the other design commands to get a good UI.
 
 The other commands let you go deeper before running `/build`:
 
-| Command | Why you'd run it first |
-|---|---|
-| `/ui-ux` | `/build`'s 10 mockups are unconstrained by default — run `/ui-ux` first to set your brand colors, fonts, and layout rules so the variants stay on-brand instead of generic |
-| `/quick-design` | Cheaper than the full mockup gate — run this to shortlist a direction (3 options, fast) before committing to the full `/build` pipeline |
-| `/impeccable` | Want a complete design system spec (tokens, a11y, QA checklist) in a specific cream/orange editorial style — run this before `/build` if that brand fits |
+| Command | What it does | How it feeds into `/build` |
+|---|---|---|
+| `/quick-design` | Generates 3 mockup options fast, no feature needed — pick a direction before committing | Visual reference only — you decide what to carry forward |
+| `/ui-ux --persist` | Locks your design language (colors, fonts, spacing) into `design-system/MASTER.md` | **Direct handoff** — `/build` reads `MASTER.md` automatically and constrains all 10 mockup variants to your design system |
 
-Run any of these first, then hand off to `/build` — or skip straight to `/build` and it handles the mockup step automatically.
+Run `/ui-ux --persist` before `/build` for on-brand mockups. Skip it and `/build` falls back to your project's existing CSS tokens.
+
 
 ### Commands in this setup
 
@@ -183,11 +184,11 @@ Run any of these first, then hand off to `/build` — or skip straight to `/buil
 | `/plan` | Interviews you before any code gets written — one question at a time until every tricky case is sorted out | — |
 | `/my-md` | Lists every markdown file — both the global `~/.claude/` docs and the ones in your current project | — |
 | `/my-skills` | This very list. Shows the commands I wrote and the borrowed ones, plus how they connect and what they depend on | `fast` (2-col) · `deep` (4-col + relationships) |
-| `/quick-design` | Makes 3 quick screen mockups using your project's real colors and fonts — a safe one, a modern one, and a bold one — and opens them in Chrome | — |
+| `/quick-design` | 3 fast mockups (conservative / modern / wild) using your project's real CSS tokens — Sonnet, cheap, opens in Chrome. Use when you want a quick direction before committing to `/build` | — |
 | `/tdd` | Keeps you honest about test-driven development: write a failing test, make it pass, clean up, repeat | — |
-| `/ui` | Entry point for all UI work — type `/ui` or `/ux`, get a numbered menu, route to the right tool. No memorization required | routes to: /ui-ux, /quick-design, /ui-wild, /impeccable |
+| `/ui` | Entry point for all UI work — type `/ui` or `/ux`, get a numbered menu, route to the right tool. No memorization required | routes to: /ui-ux, /quick-design, /ui-wild |
 | `/ui-ux` | Design know-how: 161 color palettes, 57 font pairings, 99 design guidelines, 25 chart types | also reachable via `/ui` |
-| `/ui-wild` | A bold redesign: 10 designer "personalities" compete, a judge throws out the generic ones, and you pick the winner | also reachable via `/ui` |
+| `/ui-wild` | 10 Opus personas (brutalist, editorial, Bloomberg terminal, etc.) each design from scratch — judge kills generic ones, you pick. Slow and expensive but genuinely radical. Use when `/quick-design` isn't wild enough | also reachable via `/ui` |
 | `/video-to-kb` | *(Optional — requires Obsidian + Groq API key)* Watch a YouTube video and get a structured wiki page injected into your Obsidian vault automatically — transcript, summary, key claims | — |
 | `/whats-next` | Reads session task queue (`~/.claude/.pending-tasks.md`) and runs next task; creative project-specific suggestions when queue is empty | — |
 | `/debate` | Your product team argues the decision — Senior Dev, Junior Dev, Sales Engineer, DevOps, Sales Leader, Eng Leader — then maps contradictions, synthesizes a briefing, and ends with one clear YES/NO/CONDITIONAL verdict | — |
@@ -209,7 +210,6 @@ These come from other people's plugins. One install command gets you all 6 trim 
 |---|---|---|
 | `trim` + 5 sub-commands | Push for the simplest thing that works, scan for over-complication, gather TODO notes, review changes for deletions, quick reference card — one install gets all six | `npx skills@latest add holland-built/trim` |
 | `/improve` | Surveys a codebase and writes a ranked improvement plan — never changes anything itself | `npx skills@latest add shadcn/improve` |
-| `/impeccable` | Generates a design system spec (tokens, component rules, a11y, QA checklist) in a cream/orange editorial style — a specific branded aesthetic, not a generic style layer | `/plugin marketplace add impeccable` (run inside Claude Code) |
 
 ---
 
@@ -391,7 +391,7 @@ Some things are deliberately left out of this repo, and why:
 |---|---|
 | `settings.json` | Specific to your machine — has your Node.js path and any MCP servers you added. Use `settings.example.json` as a starting point, then copy and edit it (setup.sh step 1). Never commit this file — it may contain API keys |
 | `plugins/` | Third-party marketplaces; each lives in its own repo |
-| Plugin shortcuts (`trim*/`, `improve`, `impeccable`, etc.) | Symlinks (shortcuts) pointing to `~/.agents/skills/` where plugins install to. Clone them via the install commands above — they won't be in the repo itself |
+| Plugin shortcuts (`trim*/`, `improve`, etc.) | Symlinks (shortcuts) pointing to `~/.agents/skills/` where plugins install to. Clone them via the install commands above — they won't be in the repo itself |
 | `.pending-tasks.md` | Session task queue used by `/whats-next` — local only, not shared |
 | `learnings.md` | Written by `/prompt-scan` — accumulates model release notes + prompt diagnostics over time. Local only |
 | `cache/`, `sessions/`, `history.jsonl`, logs | Temporary runtime files — not part of the configuration |
