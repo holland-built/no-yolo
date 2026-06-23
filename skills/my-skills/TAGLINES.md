@@ -31,3 +31,4 @@ antislop|Check text/UI for AI-slop tells. Violations table + verdict.
 prompt-scan|Scan prompt files + model release notes → learnings.md.
 better-prompt|Sharpen a rough prompt with target + scope + criterion.
 remember-that|Save, extract, delete, move, audit facts across sessions.
+trim-gain|Shows trim's measured impact: less code, less cost, more speed.

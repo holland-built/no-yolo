@@ -8,11 +8,13 @@ When working here, you are authoring public skills — write for a stranger, not
 - **eli5 output** — every skill's output must be readable by someone who has never used Claude Code. No jargon without explanation. If it needs a glossary, rewrite it.
 - **No AI slop** — all mockup-generating skills enforce the slop fingerprint (see `UI_MOCKUPS.md`). Never ship a card-grid or accordion-only design.
 - **Token economy** — skill files are scannable, not essays. Steps over paragraphs. Tables over lists of sentences.
+- **Description = trigger condition** — the `description` field in SKILL.md frontmatter must tell Claude WHEN to fire and WHO it serves, not summarize what the skill is. Pattern: "Use this skill when the user asks to [exact phrases]."
+- **Gotchas grow organically** — only add gotchas that actually happened in testing; never pre-load them. Skills start small and improve as real failures accumulate.
 - **New skill checklist** — every new skill needs:
-  - `skills/<name>/SKILL.md` (the skill itself)
+  - `skills/<name>/SKILL.md` (the skill itself; description = trigger condition)
   - Entry in `skills/my-skills/STORIES.md`
   - Row in `README.md` skill table
-  - Trigger line in `CLAUDE.md` (if user-invocable)
+  - Trigger line in `SKILL_TRIGGERS.md` (if user-invocable)
 
 ## What is safe to publish
 

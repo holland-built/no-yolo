@@ -20,3 +20,4 @@ README_FORMAT.md|Spec file listing the 15 required README section headings. /shi
 SKILL_TRIGGERS.md|Source of truth for every skill trigger rule — what phrases fire which skill. CLAUDE.md imports this. Edit here, not in CLAUDE.md directly.
 MEMORY_USAGE.md|Teammate onboarding for the memory system — how to add, delete, and compile preferences. Safe to share; no personal facts in here.
 .pending-tasks.md|Session task queue. /whats-next reads this first and runs the next unchecked item. Add tasks here to queue work across sessions.
+HOOKS_INTERNALS.md|Developer reference for the 4 caveman hook JS modules — what each does, when it fires, exports, and security notes.
