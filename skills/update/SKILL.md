@@ -154,20 +154,101 @@ Pulling all updates and re-running setup. This takes about 30 seconds. Continue?
 ```
 
 Wait for confirmation, then:
+
 ```bash
-cd ~/.claude && git pull --ff-only origin main && bash ~/.claude/setup.sh
+cd ~/.claude
+# Recompute AHEAD (bash blocks are separate invocations — Step 2's variable is gone)
+AHEAD=$(git rev-list origin/main..HEAD --count 2>/dev/null || echo 0)
+
+# Detect fork and set SYNC_REF in one block so the variable is available below
+ORIGIN_URL=$(git remote get-url origin 2>/dev/null || echo "")
+IS_FORK=false
+SYNC_REF=origin/main
+if ! echo "$ORIGIN_URL" | grep -q "holland-built/no-yolo"; then
+  IS_FORK=true
+  # Ensure upstream remote exists and points to the right place
+  EXISTING=$(git remote get-url upstream 2>/dev/null || echo "")
+  if [ -z "$EXISTING" ]; then
+    git remote add upstream https://github.com/holland-built/no-yolo.git
+  elif [ "$EXISTING" != "https://github.com/holland-built/no-yolo.git" ]; then
+    git remote set-url upstream https://github.com/holland-built/no-yolo.git
+  fi
+  git fetch upstream main
+  SYNC_REF=upstream/main
+fi
 ```
 
-If `git pull --ff-only` fails: tell user "The update couldn't be applied cleanly. Run `/update rollback` to start fresh." Do NOT force the pull.
+**If AHEAD = 0** (no local commits):
+```bash
+git merge --ff-only "$SYNC_REF" && bash ~/.claude/setup.sh
+```
 
-After: show plain-English summary of what changed. Tell user: "Reopen Claude Code to pick up the changes."
+**If AHEAD > 0** (user has their own commits — rebase instead of fast-forward):
+Tell user in plain English: "You have [N] local commit(s). Rebasing them on top of the latest updates instead of a simple pull."
+
+```bash
+# Capture conflict files BEFORE aborting (git rebase --abort resets state)
+CONFLICTS=""
+git rebase "$SYNC_REF"
+REBASE_EXIT=$?
+if [ $REBASE_EXIT -ne 0 ]; then
+  CONFLICTS=$(git diff --name-only --diff-filter=U 2>/dev/null)
+  git rebase --abort
+fi
+```
+
+If rebase failed (REBASE_EXIT non-zero):
+- Tell user: "The rebase didn't apply cleanly. Your commits are untouched — nothing was lost."
+- List the conflicting files (from CONFLICTS variable)
+- Print: "To resolve manually: `git fetch [upstream or origin] main && git rebase [upstream/main or origin/main]`, fix the conflicts in each file shown above, then `git rebase --continue`."
+- STOP. Do not run setup.sh.
+
+If rebase succeeded:
+- Run `bash ~/.claude/setup.sh`
+- If IS_FORK is true: tell user "Rebase complete. If you've already pushed your branch to GitHub, you'll need to force-push: `git push --force origin main`"
+
+After success: show plain-English summary of what changed. Tell user: "Reopen Claude Code to pick up the changes."
 
 ### Step 8 — if argument is `rules`
 
 Same dirty-check stash guard as Step 7, then:
 ```bash
-cd ~/.claude && git pull --ff-only origin main && bash ~/.claude/setup.sh --md-only
+cd ~/.claude
+AHEAD=$(git rev-list origin/main..HEAD --count 2>/dev/null || echo 0)
+ORIGIN_URL=$(git remote get-url origin 2>/dev/null || echo "")
+IS_FORK=false
+SYNC_REF=origin/main
+if ! echo "$ORIGIN_URL" | grep -q "holland-built/no-yolo"; then
+  IS_FORK=true
+  EXISTING=$(git remote get-url upstream 2>/dev/null || echo "")
+  if [ -z "$EXISTING" ]; then
+    git remote add upstream https://github.com/holland-built/no-yolo.git
+  elif [ "$EXISTING" != "https://github.com/holland-built/no-yolo.git" ]; then
+    git remote set-url upstream https://github.com/holland-built/no-yolo.git
+  fi
+  git fetch upstream main
+  SYNC_REF=upstream/main
+fi
 ```
+
+**If AHEAD = 0:**
+```bash
+git merge --ff-only "$SYNC_REF" && bash ~/.claude/setup.sh --md-only
+```
+
+**If AHEAD > 0:**
+Tell user: "You have [N] local commit(s). Rebasing on top of latest rules."
+```bash
+CONFLICTS=""
+git rebase "$SYNC_REF"
+REBASE_EXIT=$?
+if [ $REBASE_EXIT -ne 0 ]; then
+  CONFLICTS=$(git diff --name-only --diff-filter=U 2>/dev/null)
+  git rebase --abort
+fi
+```
+If rebase failed: tell user their commits are untouched, list conflicting files, print manual resolve instructions. STOP.
+If rebase succeeded: run `bash ~/.claude/setup.sh --md-only`. If IS_FORK is true: tell user "Rebase complete. If you've already pushed your branch to GitHub, you'll need to force-push: `git push --force origin main`"
 
 Tell user: "Rules updated. Tool installs skipped. Reopen Claude Code to pick up changes."
 

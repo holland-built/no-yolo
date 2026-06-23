@@ -17,7 +17,14 @@ Rough prompt: $ARGUMENTS
 Read `~/.claude/learnings.md`.
 
 If missing or empty → stop:
-> `Run /prompt-scan first to build the reference.`
+> `⚠️ learnings.md not found — run /prompt-scan first to build the reference.`
+
+If present, check file age:
+```bash
+find ~/.claude/learnings.md -mtime +90 2>/dev/null | grep -q . && echo "STALE" || echo "OK"
+```
+If STALE → warn (do NOT stop):
+> `⚠️ learnings.md is over 90 days old — consider running /prompt-scan to refresh (a new Claude model may have shipped).`
 
 If present: parse into working memory:
 - Output conventions (§1)
