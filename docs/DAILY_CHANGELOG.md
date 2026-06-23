@@ -11,6 +11,9 @@
 - updated .gitignore — ignores both ponytail-* (currently installed) and trim-* (post-reinstall) symlinks
 - updated /ship — dynamic skill count patch in README (step 3c.5), summary header + repo description update in release notes (step 4)
 - restructured README — prerequisites converted to table, sections reordered (Set up a new project after Install, CLAUDE.md chain moved to bottom), broken cross-reference fixed
+- rewrote README intro, What this is, Set up a new project — shorter, eli5, less jargon
+- fixed README Add a new skill step 3 — wrong file (CLAUDE.md → SKILL_TRIGGERS.md)
+- trimmed README fork sync, security note, directory layout, keeping up to date, update memory sections
 - updated docs/README_FORMAT.md — section order updated to match restructured README
 - ingested YouTube "How Anthropic Employees ACTUALLY Use Claude Skills" — raw KB file + wiki source page + topic page updated with 4-bucket taxonomy and folder structure
 - rewrote description fields in 27 skills — all now lead with "Use this skill when" trigger condition
