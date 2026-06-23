@@ -45,16 +45,39 @@ This guards against the model misremembering early answers as the context window
 
 ## When to stop
 
-Stop grilling when:
-1. Every significant branch of the decision tree has a committed answer, OR
-2. The user says "done" or "enough"
+Ask exactly as many questions as needed — no fixed count. 2 may be enough for a simple task; 15 may be needed for a complex system. Stop when the decision tree has no open branches.
 
-Then produce a **final summary** in the brainstorm file:
-- All committed decisions
-- Open flags (things to look up or ask a stakeholder)
-- Recommended next steps
+When you believe every significant branch is resolved, **seek explicit agreement before proceeding.**
 
-**Gate:** Interview complete. Call `/plan-feature` to proceed. Do NOT write any code from this output alone — the brainstorm file is input to planning, not a build spec.
+Output this structure exactly — no prose outside it:
+
+```
+**What we're building:**
+[2–3 plain English sentences. What problem does this solve? What does it actually touch on the computer? No jargon.]
+
+**What actually happens:**
+- [concrete step — real verb, real file/system]
+- [concrete step]
+- [concrete step]
+
+**Watch out for:**
+[Only if something is irreversible, visible to others, or can't be undone. One line each. Skip section if nothing qualifies.]
+
+**Decisions locked:**
+- [decision]: [answer]
+- [decision]: [answer]
+
+**Open flags:**
+- [thing to look up before forge runs]
+
+Are we aligned? (yes / keep going / fix X)
+```
+
+- User says **yes** → write final summary to brainstorm file + gate
+- User says **keep going** or corrects something → continue grilling, re-surface summary when ready
+- Never self-declare complete — always wait for explicit "yes"
+
+**Gate:** Agreement confirmed. Run `/forge` with the topic. Do NOT write any code from this output alone.
 
 ---
 

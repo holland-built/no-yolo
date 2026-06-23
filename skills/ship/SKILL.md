@@ -1,6 +1,6 @@
 ---
 name: ship
-description: Quality-gated publish to github.com/holland-built/no-yolo. Runs md-check + antislop + eli5 + drift-check warnings, writes a dated changelog entry, then guards against personal-data leaks and pushes. Activate on "/ship", "push skills", "publish to no-yolo", "ship my work".
+description: Quality-gated publish to github.com/holland-built/no-yolo. Runs md-check + antislop + eli5 + drift-check warnings, validates README structure (hard block), writes a dated changelog entry, then guards against personal-data leaks and pushes. Activate on "/ship", "push skills", "publish to no-yolo", "ship my work".
 user-invocable: true
 argument-hint: "[optional commit message]"
 allowed-tools:
@@ -73,7 +73,7 @@ Rules:
 
 ### 3a. Personal-file guard (HARD BLOCK)
 If any changed path matches these → STOP, do not commit:
-`memory/` `brainstorms/` `plans/` `proposals/` `projects/` `sessions/` `settings.json` `settings.local.json` `history.jsonl` `*.log` `cache/` `paste-cache/`
+`memory/facts/` `brainstorms/` `plans/` `proposals/` `projects/` `sessions/` `settings.json` `settings.local.json` `history.jsonl` `*.log` `cache/` `paste-cache/`
 
 Output: `BLOCKED — personal files in diff: [list them]. Fix before shipping.`
 
@@ -84,12 +84,17 @@ git -C ~/.claude diff HEAD | grep -E "^\+" | grep -vE "^\+\+\+" | grep -E \
 ```
 If any line matches → STOP: `BLOCKED — personal data in diff: [matched lines]. Fix before shipping.`
 
-### 3c. Stage
+### 3c. README format check (HARD BLOCK)
+Read `~/.claude/docs/README_FORMAT.md`. Extract every line that starts with `## ` as a required section heading.
+Read `~/.claude/README.md`. For each required heading, check it appears verbatim in README.md.
+If any required heading is missing or renamed → STOP: `BLOCKED — README missing required section: [heading]. Fix README or update README_FORMAT.md before shipping.`
+
+### 3d. Stage
 ```bash
 git -C ~/.claude add skills/ *.md docs/ hooks/ setup.sh .gitignore 2>/dev/null
 ```
 
-### 3d. Commit
+### 3e. Commit
 Use `$ARGUMENTS` as commit message if provided. Otherwise auto-generate:
 - Format: `[verb] [skill names]: [one-line description]`
 - Examples: `add /ship, /antislop, /prompt-scan: quality-gated publish + slop detection`
@@ -99,7 +104,7 @@ Always append footer:
 Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
 ```
 
-### 3e. Push
+### 3f. Push
 ```bash
 git -C ~/.claude push origin main
 ```
