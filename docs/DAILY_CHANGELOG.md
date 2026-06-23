@@ -120,3 +120,10 @@
 - updated docs/NO_YOLO.md — fixed new-skill checklist (trigger line now in SKILL_TRIGGERS.md not CLAUDE.md), added description-as-trigger-condition rule and gotchas-grow-organically rule
 - added .agents/ and skills-lock.json to .gitignore — npm artifacts from skills@latest install
 - wired trim-* symlinks into ~/.claude/skills/ — trim, trim-audit, trim-debt, trim-gain, trim-help, trim-review now show in /my-skills plugin section
+- removed GitHub MCP from Outside Tools table (no skill uses gh MCP — skills use gh CLI directly)
+- removed Environment variables section from README — GROQ_API_KEY already in video-to-kb row
+- rewrote README security note — describes actual risks (curl/docker/kill wildcards + skipDangerousModePermissionPrompt)
+- fixed settings.example.json — skipDangerousModePermissionPrompt changed true→false (safe default for public example)
+- removed github from MCP example in Set up a new project — only playwright is commonly needed
+- added design pipeline subsection to Skills inventory — explains /ui-ux → /quick-design → /impeccable → /build chain
+- updated /build skills table row — clarifies automatic 10-variant mockup gate before any code is written
