@@ -101,3 +101,8 @@
 - created docs/MEMORY_USAGE.md — teammate onboarding guide for the memory system (7 sections: what it does, where it lives, 4 types, file format, workflow, what not to save, git rules)
 - added docs/MEMORY_USAGE.md row to README.md directory table
 - refactored hooks/caveman-mode-tracker.js — extracted 4 top-level functions (detectNLActivation, handleStatsCommand, parseSlashCommand, detectNLDeactivation, emitReinforcement), on('end') callback shrunk from 114 to 12 lines
+- trimmed skills/update/SKILL.md from 296 to 228 lines — extracted shared dirty-check + fork/rebase block into "Shared: sync-and-run", Steps 7 and 8 now reference it with only setup command differing
+- created docs/HOOKS_INTERNALS.md — developer reference for 4 caveman hook modules (caveman-config, caveman-activate, caveman-mode-tracker, caveman-stats): hook event, what it does, exports, security notes
+- updated my-md GLOBAL_DESCRIPTIONS.md — added HOOKS_INTERNALS.md entry
+- updated docs/SKILLS.md — added Skill Taxonomy (4 buckets: utility/verification/data-enrichment/orchestration) and Skill Folder Structure sections
+- updated docs/NO_YOLO.md — fixed new-skill checklist (trigger line now in SKILL_TRIGGERS.md not CLAUDE.md), added description-as-trigger-condition rule and gotchas-grow-organically rule
