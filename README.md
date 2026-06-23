@@ -21,7 +21,7 @@ Claude Code is a command-line tool where you talk to Claude to write and edit co
 | [Claude Code](https://claude.ai/code) | Required | `claude --version` | [docs.anthropic.com](https://docs.anthropic.com/en/docs/claude-code) |
 | **git** | Required | `git --version` | Pre-installed on Mac; Linux: `sudo apt install git` |
 | **Node.js** | Required | `node --version` | [nodejs.org](https://nodejs.org/) |
-| **gh** (GitHub CLI) | Optional | `gh auth status` | `brew install gh && gh auth login` |
+| **gh** (GitHub CLI) | Optional — needed for `/ship` | `gh auth status` | `brew install gh && gh auth login` |
 
 `~` in all paths means your home directory — Mac: `/Users/<username>`, Linux: `/home/<username>`.
 
@@ -32,21 +32,12 @@ Claude Code is a command-line tool where you talk to Claude to write and edit co
 
 ### Step 1 — Clone the repo
 
-**If you have `gh` (the GitHub CLI):**
-
-```bash
-mv ~/.claude ~/.claude.bak 2>/dev/null || true
-gh repo clone holland-built/no-yolo ~/.claude
-```
-
-**If you don't have `gh` yet, use plain git:**
-
 ```bash
 mv ~/.claude ~/.claude.bak 2>/dev/null || true
 git clone https://github.com/holland-built/no-yolo.git ~/.claude
 ```
 
-> The `mv` line backs up any existing `~/.claude` folder before overwriting it. If you don't have one, the `|| true` makes it skip silently rather than error.
+> The `mv` line backs up any existing `~/.claude` folder before overwriting it. If you don't have one, the `|| true` makes it skip silently.
 
 **Just want to read it before committing?** Clone it somewhere else first:
 
