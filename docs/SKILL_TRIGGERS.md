@@ -18,7 +18,7 @@ When the user types `/ui`, `/ux`, says "design something", "design this", "show 
 - **ui-wild** (`~/.claude/skills/ui-wild/SKILL.md`) - radical UI/UX redesign: 10 Opus personas, judge pass kills AI slop, mockup approval gate, surgical code safety, regression gate. Trigger: `/ui-wild`
 When the user types `/ui-wild`, invoke the Skill tool with `skill: "ui-wild"` before doing anything else.
 # code-review
-- **code-review** (`~/.claude/skills/code-review/SKILL.md`) - three-pass diff review: correctness/bugs, over-engineering (ponytail), Karpathy surgical+simplicity. Trigger: `/code-review`
+- **code-review** (`~/.claude/skills/code-review/SKILL.md`) - three-pass diff review: correctness/bugs, over-engineering (ponytail), Karpathy surgical+simplicity. Supports `--fix` to apply findings, `--comment` for inline PR comments, effort flags (low/medium/high/max). Trigger: `/code-review`
 When the user types `/code-review`, invoke the Skill tool with `skill: "code-review"` before doing anything else.
 # ui-ux
 - **ui-ux** - design intelligence: 50+ styles, 161 palettes, 57 font pairings, 99 UX guidelines, 25 chart types across 10 stacks. Use for: plan/design/review/fix UI before or without code. Upstream of impeccable. Trigger: `/ui-ux`
@@ -41,7 +41,7 @@ When the user types `/debate`, says "debate this", "stress test this decision", 
 - **update** (`~/.claude/skills/update/SKILL.md`) - check for updates, preview what changed, apply full or rules-only update, rollback, or restore a removed skill. Trigger: `/update`
 When the user types `/update`, says "check for updates", "am I out of date", "what's new", "update my setup", or "rollback", invoke the Skill tool with `skill: "update"` before doing anything else.
 # ship
-- **ship** (`~/.claude/skills/ship/SKILL.md`) - quality gates (md-check + antislop + eli5 + drift check, warn-only) → dated changelog → leak-guarded commit + push to no-yolo. Trigger: `/ship`
+- **ship** (`~/.claude/skills/ship/SKILL.md`) - quality gates (md-check + antislop + eli5 + drift check, warn-only) + README structure hard-block → dated changelog → leak-guarded commit + push to no-yolo. Trigger: `/ship`
 When the user types `/ship`, says "push skills", "publish to no-yolo", or "ship my work", invoke the Skill tool with `skill: "ship"` before doing anything else.
 # skill-discovery
 When the user says "find skill for X", "what skill handles X", "which skill does X", or "what should I use for X", read `~/.claude/skills/my-skills/TAGLINES.md`, match X against the taglines, and return the single best-matching skill plus its trigger command. This is a routing rule, not a skill — do not invoke the Skill tool.
@@ -49,10 +49,10 @@ When the user says "find skill for X", "what skill handles X", "which skill does
 - **debug-debate** (`~/.claude/skills/debug-debate/SKILL.md`) - 6 repo-aware Opus personas argue bug root causes → contradiction map → diagnosis + next diagnostic step. No fix — diagnosis only. Trigger: `/debug-debate`
 When the user types `/debug-debate`, says "argue about this bug", "what's breaking and why", or "debate the bug", invoke the Skill tool with `skill: "debug-debate"` before doing anything else.
 # last-30
-- **last-30** (`~/.claude/skills/last-30/SKILL.md`) - pulls trending content from GitHub/HN/YouTube/X filtered to last 30 days only. Trigger: `/last-30`
+- **last-30** (`~/.claude/skills/last-30/SKILL.md`) - pulls gaining-traction signal (not all-time rankings) from GitHub/HN/YouTube/X filtered to last 30 days only. Trigger: `/last-30`
 When the user types `/last-30`, says "what's trending in", "last 30 days", or "what's hot right now", invoke the Skill tool with `skill: "last-30"` before doing anything else.
 # md-check
-- **md-check** (`~/.claude/skills/md-check/SKILL.md`) - MD hygiene: line counts, topic-overlap, duplicate-rule detection, and `--drift` mode to catch stale CLAUDE.md descriptions. Trigger: `/md-check`
+- **md-check** (`~/.claude/skills/md-check/SKILL.md`) - MD hygiene: line counts, topic-overlap, duplicate-rule detection; `--drift` mode catches stale CLAUDE.md descriptions; `--pre <file>` pre-creation gate. Trigger: `/md-check`
 When the user types `/md-check`, says "check md files" or "md hygiene", invoke the Skill tool with `skill: "md-check"` before doing anything else.
 # prompt-scan
 - **prompt-scan** (`~/.claude/skills/prompt-scan/SKILL.md`) - reads all system prompt files + fetches current model release notes → appends dated section to ~/.claude/learnings.md. Feeds /better_prompt. Trigger: `/prompt-scan`
