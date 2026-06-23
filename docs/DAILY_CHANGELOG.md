@@ -78,3 +78,8 @@
 - added learnings.md (created by /prompt-scan): model delta, skill triggers, slop patterns, output conventions
 - added staleness check to /better_prompt: warns if learnings.md >90 days old
 - fixed /whats-next Step 3: checks git status + unpushed commits before creative suggestions
+- added README Uninstall section — per-tool removal commands + rm -rf ~/.claude with backup note
+- added Uninstall to README_FORMAT.md required sections
+- fixed setup.sh --md-only exit message: correct re-run command (was wrong "re-clone" instruction)
+- added README re-run hint after setup table: --md-only users can upgrade to full install anytime
+- fixed /whats-next output: "looks interesting" → "I found"
