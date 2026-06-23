@@ -11,7 +11,7 @@ When working here, you are authoring public skills — write for a stranger, not
 - **Description = trigger condition** — the `description` field in SKILL.md frontmatter must tell Claude WHEN to fire and WHO it serves, not summarize what the skill is. Pattern: "Use this skill when the user asks to [exact phrases]."
 - **Gotchas grow organically** — only add gotchas that actually happened in testing; never pre-load them. Skills start small and improve as real failures accumulate.
 - **New skill checklist** — every new skill needs:
-  - `skills/<name>/SKILL.md` (the skill itself; description = trigger condition)
+  - `skills/<name>/SKILL.md` with `user-invocable: true` in frontmatter (required for blue slash command in UI; description = trigger condition)
   - Entry in `skills/my-skills/STORIES.md`
   - Row in `README.md` skill table
   - Trigger line in `SKILL_TRIGGERS.md` (if user-invocable)
