@@ -19,3 +19,4 @@ This file defines the required structure of `README.md`. The `/ship` skill reads
 ## Caveman mode — shorter replies
 ## The status bar (the line at the bottom of Claude Code)
 ## What's excluded
+## Uninstall

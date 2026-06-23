@@ -72,7 +72,7 @@ PYEOF
   echo "    Core rules load automatically when you open Claude Code in any project."
   echo "    Skills folder still present but Claude won't trigger them — safe to ignore or delete."
   echo ""
-  echo "    To restore full setup later: re-clone and run bash setup.sh"
+  echo "    To install tools later: run bash ~/.claude/setup.sh (safe to re-run — skips anything already installed)"
   exit 0
 fi
 
