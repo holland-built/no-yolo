@@ -99,6 +99,12 @@ Read `~/.claude/docs/README_FORMAT.md`. Extract every line that starts with `## 
 Read `~/.claude/README.md`. For each required heading, check it appears verbatim in README.md.
 If any required heading is missing or renamed → STOP: `BLOCKED — README missing required section: [heading]. Fix README or update README_FORMAT.md before shipping.`
 
+### 3c.5 README skill count patch
+```bash
+CUSTOM=$(for d in ~/.claude/skills/*/; do [ -L "${d%/}" ] || echo x; done | wc -l | tr -d ' ')
+sed -i '' "s/[0-9][0-9]* custom commands/$CUSTOM custom commands/" ~/.claude/README.md
+```
+
 ### 3d. Stage
 ```bash
 git -C ~/.claude add skills/ *.md docs/ hooks/ setup.sh .gitignore 2>/dev/null
@@ -136,8 +142,21 @@ if git -C ~/.claude tag | grep -q "^$TAG$"; then
   git -C ~/.claude push origin ":refs/tags/$TAG" 2>/dev/null || true
 fi
 
-# Extract today's section from DAILY_CHANGELOG.md as release notes
-NOTES=$(awk "/^## $DATE/{found=1; next} found && /^## /{exit} found{print}" "$HOME/.claude/docs/DAILY_CHANGELOG.md")
+# Extract today's changelog bullets
+BULLETS=$(awk "/^## $DATE/{found=1; next} found && /^## /{exit} found && /^- /{print}" "$HOME/.claude/docs/DAILY_CHANGELOG.md")
+BULLET_COUNT=$(echo "$BULLETS" | grep -c "^-" 2>/dev/null || echo 0)
+NEW_SKILLS=$(echo "$BULLETS" | grep -oE "added /[a-z-]+" | wc -l | tr -d ' ')
+
+# Build one-sentence summary header
+if [ "$NEW_SKILLS" -gt 0 ]; then
+  SUMMARY="Added $NEW_SKILLS skill(s), $BULLET_COUNT change(s) total."
+else
+  SUMMARY="$BULLET_COUNT change(s)."
+fi
+
+NOTES="$SUMMARY
+
+$BULLETS"
 
 # Tag and release
 git -C ~/.claude tag "$TAG"
@@ -146,6 +165,11 @@ gh release create "$TAG" \
   --repo holland-built/no-yolo \
   --title "$TAG" \
   --notes "$NOTES"
+
+# Update GitHub repo description with current skill count
+CUSTOM=$(for d in ~/.claude/skills/*/; do [ -L "${d%/}" ] || echo x; done | wc -l | tr -d ' ')
+gh repo edit holland-built/no-yolo \
+  --description "Personal Claude Code setup: $CUSTOM skills, memory system, quality gates. Fork to get a working setup instantly." 2>/dev/null || true
 ```
 
 If `gh` is not installed or not authenticated: print `⚠️ GitHub release skipped — run gh auth login` and continue.
