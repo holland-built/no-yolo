@@ -129,3 +129,10 @@
 - updated /build skills table row — clarifies automatic 10-variant mockup gate before any code is written
 - fixed 3 drift entries in SKILL_TRIGGERS.md: code-health Fallow description, ui-wild removed false claims, update description matches rollback/restore
 - updated update/SKILL.md description — mentions rollback and restore-removed-skill
+- fixed impeccable descriptions in README (pipeline table + inventory row) — clarifies it's a specific branded aesthetic, not a generic style layer
+- updated design pipeline section — /build is now the hero, step-by-step table reframed as "why go deeper" with concrete reasons per command
+- updated /code-health inventory row — calls out it runs trim + improve so users don't run those separately
+- added / prefix to all skill names in inventory table
+- fixed settings.example.json directory layout description — says setup.sh copies it automatically (was "copy manually")
+- added README skill table format rule to NO_YOLO.md checklist — backtick + slash prefix required
+- removed "Upstream of impeccable" from ui-ux trigger description in SKILL_TRIGGERS.md

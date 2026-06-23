@@ -21,7 +21,7 @@ When the user types `/ui-wild`, invoke the Skill tool with `skill: "ui-wild"` be
 - **code-review** (`~/.claude/skills/code-review/SKILL.md`) - three-pass diff review: correctness/bugs, over-engineering (trim), Karpathy surgical+simplicity. Supports `--fix` to apply findings, `--comment` for inline PR comments, effort flags (low/medium/high/max). Trigger: `/code-review`
 When the user types `/code-review`, invoke the Skill tool with `skill: "code-review"` before doing anything else.
 # ui-ux
-- **ui-ux** - design intelligence: 50+ styles, 161 palettes, 57 font pairings, 99 UX guidelines, 25 chart types across 10 stacks. Use for: plan/design/review/fix UI before or without code. Upstream of impeccable. Trigger: `/ui-ux`
+- **ui-ux** - design intelligence: 50+ styles, 161 palettes, 57 font pairings, 99 UX guidelines, 25 chart types across 10 stacks. Use for: plan/design/review/fix UI before or without code. Trigger: `/ui-ux`
 When the user types `/ui-ux`, says "design this", "plan the UI", "review the UX", or asks about styles/palettes/typography choices, invoke the Skill tool with `skill: "ui-ux"` before doing anything else.
 # impeccable
 When the user types `/impeccable`, invoke the Skill tool with `skill: "impeccable"` before doing anything else.

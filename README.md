@@ -157,7 +157,7 @@ What each file and folder is for:
 | `memory/` | Saved preferences — `facts/` is source of truth, `CLAUDE.generated.md` is compiled result |
 | `skills/` | Your skills plus symlinks to borrowed ones |
 | `hooks/` | Automation scripts: caveman mode, session-reflect, status line |
-| `settings.example.json` | Starter settings with no secrets — copy to `settings.json` and fill in |
+| `settings.example.json` | Starter settings with no secrets — `setup.sh` copies this to `settings.json` automatically |
 
 ---
 
@@ -165,49 +165,50 @@ What each file and folder is for:
 
 A "skill" is a custom command you trigger with a slash, like `/code-review`. Here's everything available.
 
-### Building a UI? Use the design pipeline
+### Building a UI? Start with `/build`
 
-Four commands work together in order — each one does one job:
+**One command does everything:** `/build` plans the feature, generates 10 UI mockup variants, filters out generic-looking ones, asks you to pick one, then writes the code. You never need to think about the other design commands to get a good UI.
 
-| Step | Command | What it does |
-|---|---|---|
-| 1 | `/ui-ux` | Pick colors, fonts, and layout rules before writing a line of code |
-| 2 | `/quick-design` | Generates 3 mockups (safe / modern / bold) and opens them in Chrome for approval |
-| 3 | `/impeccable` | Applies a polished visual style (warm cream, burnt orange) to your approved mockup |
-| 4 | `/build` | Writes the code — but first automatically runs the mockup gate (10 design variants, slop filter, approval required before any code is written) |
+The other commands let you go deeper before running `/build`:
 
-You can start at any step. If you just want to build without thinking about design, `/build` still makes you approve a mockup — you just skip steps 1–3.
+| Command | Why you'd run it first |
+|---|---|
+| `/ui-ux` | `/build`'s 10 mockups are unconstrained by default — run `/ui-ux` first to set your brand colors, fonts, and layout rules so the variants stay on-brand instead of generic |
+| `/quick-design` | Cheaper than the full mockup gate — run this to shortlist a direction (3 options, fast) before committing to the full `/build` pipeline |
+| `/impeccable` | Want a complete design system spec (tokens, a11y, QA checklist) in a specific cream/orange editorial style — run this before `/build` if that brand fits |
+
+Run any of these first, then hand off to `/build` — or skip straight to `/build` and it handles the mockup step automatically.
 
 ### Commands in this setup
 
 | Skill | What it does | Modes & flags |
 |---|---|---|
-| `debug-debate` | 6 Opus personas argue the root cause of your bug in parallel, map contradictions, give most likely cause with file:line, and one concrete next diagnostic step. Diagnosis only, no code changed | — |
-| `code-health` | A 4-step checkup of your code: review the changes, run static analysis, look for over-complication, then suggest a cleanup plan | `--auto` (skip gates, unattended) |
-| `code-review` | Reviews a pull request or a set of changes: first for bugs, then for over-complication, then for unrelated edits that shouldn't be there | `--fix` (auto-apply) · `--comment` (inline comments) · `--effort low\|medium\|high\|max` (depth) |
-| `diagnose` | A 6-step way to find the real cause of a bug — when you're stuck, it walks you through it step by step | — |
-| `drawio-skill` | Draws diagrams (architecture, flowcharts, database tables, UML). Saves them as PNG, SVG, or PDF | — |
-| `build` | Builds a whole feature start to finish: gather evidence, plan with Opus, approve, then automatically runs a 10-variant UI mockup gate (slop-filtered, requires approval) before writing any code — tests first, build with Sonnet, then prove it works | — |
-| `plan` | Interviews you before any code gets written — one question at a time until every tricky case is sorted out | — |
-| `my-md` | Lists every markdown file — both the global `~/.claude/` docs and the ones in your current project | — |
-| `my-skills` | This very list. Shows the commands I wrote and the borrowed ones, plus how they connect and what they depend on | `fast` (2-col) · `deep` (4-col + relationships) |
-| `quick-design` | Makes 3 quick screen mockups using your project's real colors and fonts — a safe one, a modern one, and a bold one — and opens them in Chrome | — |
-| `tdd` | Keeps you honest about test-driven development: write a failing test, make it pass, clean up, repeat | — |
-| `ui` | Entry point for all UI work — type `/ui` or `/ux`, get a numbered menu, route to the right tool. No memorization required | routes to: /ui-ux, /quick-design, /ui-wild, /impeccable |
-| `ui-ux` | Design know-how: 161 color palettes, 57 font pairings, 99 design guidelines, 25 chart types | also reachable via `/ui` |
-| `ui-wild` | A bold redesign: 10 designer "personalities" compete, a judge throws out the generic ones, and you pick the winner | also reachable via `/ui` |
-| `video-to-kb` | *(Optional — requires Obsidian + Groq API key)* Watch a YouTube video and get a structured wiki page injected into your Obsidian vault automatically — transcript, summary, key claims | — |
-| `whats-next` | Reads session task queue (`~/.claude/.pending-tasks.md`) and runs next task; creative project-specific suggestions when queue is empty | — |
-| `debate` | Your product team argues the decision — Senior Dev, Junior Dev, Sales Engineer, DevOps, Sales Leader, Eng Leader — then maps contradictions, synthesizes a briefing, and ends with one clear YES/NO/CONDITIONAL verdict | — |
+| `/debug-debate` | 6 Opus personas argue the root cause of your bug in parallel, map contradictions, give most likely cause with file:line, and one concrete next diagnostic step. Diagnosis only, no code changed | — |
+| `/code-health` | Runs `trim` + `improve` in one pass: static analysis, then trims over-complication, then a ranked improvement plan. No need to run those borrowed commands separately | `--auto` (skip gates, unattended) |
+| `/code-review` | Reviews a pull request or a set of changes: first for bugs, then for over-complication, then for unrelated edits that shouldn't be there | `--fix` (auto-apply) · `--comment` (inline comments) · `--effort low\|medium\|high\|max` (depth) |
+| `/diagnose` | A 6-step way to find the real cause of a bug — when you're stuck, it walks you through it step by step | — |
+| `/drawio-skill` | Draws diagrams (architecture, flowcharts, database tables, UML). Saves them as PNG, SVG, or PDF | — |
+| `/build` | Builds a whole feature start to finish: gather evidence, plan with Opus, approve, then automatically runs a 10-variant UI mockup gate (slop-filtered, requires approval) before writing any code — tests first, build with Sonnet, then prove it works | — |
+| `/plan` | Interviews you before any code gets written — one question at a time until every tricky case is sorted out | — |
+| `/my-md` | Lists every markdown file — both the global `~/.claude/` docs and the ones in your current project | — |
+| `/my-skills` | This very list. Shows the commands I wrote and the borrowed ones, plus how they connect and what they depend on | `fast` (2-col) · `deep` (4-col + relationships) |
+| `/quick-design` | Makes 3 quick screen mockups using your project's real colors and fonts — a safe one, a modern one, and a bold one — and opens them in Chrome | — |
+| `/tdd` | Keeps you honest about test-driven development: write a failing test, make it pass, clean up, repeat | — |
+| `/ui` | Entry point for all UI work — type `/ui` or `/ux`, get a numbered menu, route to the right tool. No memorization required | routes to: /ui-ux, /quick-design, /ui-wild, /impeccable |
+| `/ui-ux` | Design know-how: 161 color palettes, 57 font pairings, 99 design guidelines, 25 chart types | also reachable via `/ui` |
+| `/ui-wild` | A bold redesign: 10 designer "personalities" compete, a judge throws out the generic ones, and you pick the winner | also reachable via `/ui` |
+| `/video-to-kb` | *(Optional — requires Obsidian + Groq API key)* Watch a YouTube video and get a structured wiki page injected into your Obsidian vault automatically — transcript, summary, key claims | — |
+| `/whats-next` | Reads session task queue (`~/.claude/.pending-tasks.md`) and runs next task; creative project-specific suggestions when queue is empty | — |
+| `/debate` | Your product team argues the decision — Senior Dev, Junior Dev, Sales Engineer, DevOps, Sales Leader, Eng Leader — then maps contradictions, synthesizes a briefing, and ends with one clear YES/NO/CONDITIONAL verdict | — |
 | `eli5` | Explains any command, plan, file, or decision in plain English before you commit to it | — |
-| `antislop` | Paste any text and get a violations table — forbidden words, filler openers, em-dash spam, GUI clichés — with excerpts and one-line fixes. CLEAN or SLOP-DETECTED verdict. Diagnosis only | — |
-| `prompt-scan` | Reads all system prompt files plus current model release notes and appends a dated snapshot to `learnings.md`. Required before `/better_prompt` | — |
-| `better_prompt` | Reads `learnings.md`, diagnoses a rough prompt for missing target/scope/criterion, rewrites it with all three plus the right skill route. Requires `/prompt-scan` to have run first | — |
+| `/antislop` | Paste any text and get a violations table — forbidden words, filler openers, em-dash spam, GUI clichés — with excerpts and one-line fixes. CLEAN or SLOP-DETECTED verdict. Diagnosis only | — |
+| `/prompt-scan` | Reads all system prompt files plus current model release notes and appends a dated snapshot to `learnings.md`. Required before `/better_prompt` | — |
+| `/better_prompt` | Reads `learnings.md`, diagnoses a rough prompt for missing target/scope/criterion, rewrites it with all three plus the right skill route. Requires `/prompt-scan` to have run first | — |
 | `last-30` | Pulls the last 30 days of signal from GitHub, HN, YouTube, and X — trending repos, top discussions, recent talks. Filters out old results | — |
-| `md-check` | Lists every `~/.claude/` doc with its size, flags anything over 200 lines, and spots two files saying the same thing so you can merge them | `--pre FILENAME` (check before creating) · `--drift` (check CLAUDE.md descriptions) |
-| `ship` | Quality-gate, changelog, and publish to `no-yolo` in one command. Warns on slop and bloat, blocks personal-data leaks, writes a dated changelog entry, pushes, then creates a dated GitHub release | — |
-| `skill-audit` | Audits your skill library across 4 dimensions: bucket fit (utility/verification/data enrichment/orchestration), component gaps (scripts/assets/config.json), missing verifiers, and trigger condition quality. Writes a full report. Also builds new verifiers and surfaces gotcha gaps on demand | `--audit` · `--build-verifier <skill>` · `--gotchas` |
-| `update` | Checks if your setup is out of date, shows a plain-English summary of what changed, and lets you apply updates, roll back, or restore a removed skill | `preview` (see what changed) · `full` (pull+install) · `rules` (pull rules only) · `rollback` (undo last) · `restore NAME` (bring back deleted skill) |
+| `/md-check` | Lists every `~/.claude/` doc with its size, flags anything over 200 lines, and spots two files saying the same thing so you can merge them | `--pre FILENAME` (check before creating) · `--drift` (check CLAUDE.md descriptions) |
+| `/ship` | Quality-gate, changelog, and publish to `no-yolo` in one command. Warns on slop and bloat, blocks personal-data leaks, writes a dated changelog entry, pushes, then creates a dated GitHub release | — |
+| `/skill-audit` | Audits your skill library across 4 dimensions: bucket fit (utility/verification/data enrichment/orchestration), component gaps (scripts/assets/config.json), missing verifiers, and trigger condition quality. Writes a full report. Also builds new verifiers and surfaces gotcha gaps on demand | `--audit` · `--build-verifier <skill>` · `--gotchas` |
+| `/update` | Checks if your setup is out of date, shows a plain-English summary of what changed, and lets you apply updates, roll back, or restore a removed skill | `preview` (see what changed) · `full` (pull+install) · `rules` (pull rules only) · `rollback` (undo last) · `restore NAME` (bring back deleted skill) |
 
 ### Borrowed commands
 
@@ -216,8 +217,8 @@ These come from other people's plugins. One install command gets you all 6 trim 
 | Skill | What it does | Install |
 |---|---|---|
 | `trim` + 5 sub-commands | Push for the simplest thing that works, scan for over-complication, gather TODO notes, review changes for deletions, quick reference card — one install gets all six | `npx skills@latest add holland-built/trim` |
-| `improve` | Surveys a codebase and writes a ranked improvement plan — never changes anything itself | `npx skills@latest add shadcn/improve` |
-| `impeccable` | A magazine-style design look — warm cream and burnt orange — for building screens | `/plugin marketplace add impeccable` (run inside Claude Code) |
+| `/improve` | Surveys a codebase and writes a ranked improvement plan — never changes anything itself | `npx skills@latest add shadcn/improve` |
+| `/impeccable` | Generates a design system spec (tokens, component rules, a11y, QA checklist) in a cream/orange editorial style — a specific branded aesthetic, not a generic style layer | `/plugin marketplace add impeccable` (run inside Claude Code) |
 
 ---
 

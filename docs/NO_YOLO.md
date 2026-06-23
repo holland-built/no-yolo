@@ -13,7 +13,7 @@ When working here, you are authoring public skills — write for a stranger, not
 - **New skill checklist** — every new skill needs:
   - `skills/<name>/SKILL.md` with `user-invocable: true` in frontmatter (required for blue slash command in UI; description = trigger condition)
   - Entry in `skills/my-skills/STORIES.md`
-  - Row in `README.md` skill table
+  - Row in `README.md` skill table — format: `` | `/name` | what it does | modes & flags | `` (backtick + slash prefix required)
   - Trigger line in `SKILL_TRIGGERS.md` (if user-invocable)
 
 ## What is safe to publish
