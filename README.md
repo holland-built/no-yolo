@@ -196,6 +196,22 @@ These come from other people's plugins. One install command gets you all 5 ponyt
 
 ---
 
+## Skills with modes
+
+Some skills accept arguments or modes that change what they do:
+
+| Skill | Modes / flags |
+|---|---|
+| `/ui` | Routes to: `/ui-ux`, `/quick-design`, `/ui-wild`, `/impeccable` |
+| `/update` | `preview` · `full` · `rules` · `rollback` · `restore <name>` |
+| `/my-skills` | `fast` · `deep` |
+| `/md-check` | `--pre <filename>` · `--drift` |
+| `/code-review` | `--fix` · `--comment` · `--effort low\|medium\|high\|max` |
+| `/code-health` | `--auto` |
+| `/remember-that` | `d <id>` · `m <id>` · `audit` · `compile` |
+
+---
+
 ## The CLAUDE.md instruction chain
 
 `CLAUDE.md` is the first file Claude reads, and by its own rule it holds *only* pointers — nothing else. All it contains is references to other files and the trigger words for each command.
