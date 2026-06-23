@@ -135,7 +135,7 @@
     "enabled": true,
     "mode": "tap"
   },
-  "skipDangerousModePermissionPrompt": true,
+  "skipDangerousModePermissionPrompt": false,
   "skipWorkflowUsageWarning": true,
   "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": true,
