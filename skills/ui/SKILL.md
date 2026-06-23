@@ -1,6 +1,6 @@
 ---
 name: ui
-description: UI entry point — shows the 4 UI paths and routes to the right one. Activate on "/ui", "/ux", "design something", "design this", "show me options", "mockup this", "design options", "go wild on the UI", "redesign this".
+description: Use this skill when the user types /ui or /ux, says 'design something', 'design this', 'show me options', 'mockup this', or 'design options'. UI entry point — routes to ui-ux, quick-design, ui-wild, or impeccable.
 user-invocable: true
 argument-hint: "[optional: what you're designing or which mode]"
 allowed-tools: []

@@ -1,6 +1,6 @@
 ---
 name: my-md
-description: List all markdown files in two sections — global Claude config (~/.claude/) and current project. Shows filename + what it does. Activate on "/my-md", "list md files", "show markdown files".
+description: Use this skill when the user types /my-md, says 'list md files', or 'show markdown files'. Lists all markdown files in ~/.claude/ and current project with what each does.
 user-invocable: true
 argument-hint: ""
 model: haiku

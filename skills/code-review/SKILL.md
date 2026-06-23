@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: Three-pass diff review — correctness/bugs, over-engineering (trim-review), Karpathy surgical+simplicity filters. Applies CODE_REVIEW.md on every run. Pass --fix to apply findings, --comment to post as inline PR comments. Effort: low/medium = fewer high-confidence findings; high/max = broader coverage.
+description: Use this skill when the user types /code-review, asks to review a diff, PR, or file for bugs/over-engineering. Three-pass review: correctness/bugs, over-engineering (trim-review), Karpathy surgical+simplicity filters. Supports --fix and --comment flags.
 user-invocable: true
 argument-hint: "[--fix] [--comment] [--effort low|medium|high|max]"
 allowed-tools:

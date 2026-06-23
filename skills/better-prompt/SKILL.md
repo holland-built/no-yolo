@@ -1,6 +1,6 @@
 ---
 name: better-prompt
-description: Rewrite a rough prompt to be sharper and aligned with learned conventions. Reads ~/.claude/learnings.md (written by /prompt-scan). Activate on "/better_prompt", "sharpen this prompt", "improve my prompt".
+description: Use this skill when the user types /better_prompt, says 'sharpen this prompt', or 'improve my prompt'. Rewrites a rough prompt against learned conventions from learnings.md.
 user-invocable: true
 argument-hint: "[rough prompt text to sharpen]"
 allowed-tools:
