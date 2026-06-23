@@ -51,3 +51,11 @@
 - updated my-skills SKILL.md — 4-column table with when/why, line-wrap via fold+awk
 - updated my-skills WHEN_TO_USE.md — added 10 missing skills
 - updated my-skills WHY_TO_USE.md — added 10 missing skills
+
+## 2026-06-23
+
+- added docs/README_FORMAT.md — spec file listing 15 required README section headings; /ship reads this to validate structure
+- added "Skills with modes" section to README.md — table of 7 skills with flags/routes (/ui, /update, /my-skills, /md-check, /code-review, /code-health, /remember-that)
+- added Phase 3c README format hard-block to /ship — commits blocked if any required README section is missing or renamed
+- updated ship/SKILL.md description — reflects new README format validation gate
+- updated memory/CLAUDE.generated.md — compiled new eli5-on-output feedback rule
