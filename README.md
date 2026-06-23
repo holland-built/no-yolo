@@ -10,7 +10,7 @@ Claude Code is a command-line tool where you talk to Claude to write and edit co
 
 - The whole `~/.claude/` folder, tracked in git — everything Claude Code reads on every session
 - A set of rules Claude reads at the start of every session (`CLAUDE.md` plus a few topic files). These enforce strict habits that make Claude actually useful: think and plan before writing code, only change the exact lines you asked for, and use the expensive model to plan while a cheaper model does the typing
-- 25 custom commands, plus 7 more borrowed from plugins (run `/my-skills` to see the real, up-to-date count). A skill is a command you run by typing `/name` — like `/code-review` or `/build`.
+- 27 custom commands, plus 7 more borrowed from plugins (run `/my-skills` to see the real, up-to-date count). A skill is a command you run by typing `/name` — like `/code-review` or `/build`.
 - Definitions for helper agents, custom slash commands, and automation scripts
 - A memory system that learns your preferences over time. The easy way: just say "remember that I prefer X" and Claude saves it for you automatically. The power-user way: edit small note files in `memory/facts/` and run `/memory-compile` — useful when you want your preferences committed to git so they sync to all your machines
 
