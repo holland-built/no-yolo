@@ -10,7 +10,7 @@ Claude Code is a command-line tool where you talk to Claude to write and edit co
 
 - The whole `~/.claude/` folder, tracked in git — everything Claude Code reads on every session
 - A set of rules Claude reads at the start of every session (`CLAUDE.md` plus a few topic files). These enforce strict habits that make Claude actually useful: think and plan before writing code, only change the exact lines you asked for, and use the expensive model to plan while a cheaper model does the typing
-- 25 custom commands, plus 7 more borrowed from plugins (run `/my-skills` to see the real, up-to-date count). A skill is a command you run by typing `/name` — like `/code-review` or `/forge`.
+- 25 custom commands, plus 7 more borrowed from plugins (run `/my-skills` to see the real, up-to-date count). A skill is a command you run by typing `/name` — like `/code-review` or `/build`.
 - Definitions for helper agents, custom slash commands, and automation scripts
 - A memory system that learns your preferences over time. The easy way: just say "remember that I prefer X" and Claude saves it for you automatically. The power-user way: edit small note files in `memory/facts/` and run `/memory-compile` — useful when you want your preferences committed to git so they sync to all your machines
 
@@ -22,7 +22,7 @@ Things you need installed before this setup works. The command after each one ch
 
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) itself: `claude --version`. Claude Code is a command-line tool for talking to Claude to write and edit code. You can find it at [claude.ai/code](https://claude.ai/code) or install it from the docs.
 - **git** — used to clone this repo and by skills like `/update`, `/ship`, and `/code-review` that push code or read your project's history. Check: `git --version`. On Mac it's already installed; on Linux: `sudo apt install git`.
-- **Node.js** — the automation scripts and some tool installs (fallow, ponytail) need it. Check: `node --version`. Install at [nodejs.org](https://nodejs.org/) if missing.
+- **Node.js** — the automation scripts and some tool installs (fallow, trim) need it. Check: `node --version`. Install at [nodejs.org](https://nodejs.org/) if missing.
 - **gh (optional but recommended)** — the GitHub CLI. Lets Claude push code, open pull requests, and read issues on your behalf. Used by `/ship` and `/code-review`. Check: `gh auth status`. Install: `brew install gh && gh auth login`. You can skip this and use plain `git clone` for the install step — but you'll need it later if you use those skills.
 - (Note: `~` in all paths below means your home directory — on Mac that's `/Users/<username>`, on Linux `/home/<username>`)
 
@@ -70,7 +70,7 @@ bash ~/.claude/setup.sh --md-only # rules only — no tools installed
 | 1. settings.json | Copies `settings.example.json` → `settings.json`. Skips if you already have one. Prints a reminder to edit the Node.js path and add your MCP servers | Required — Claude Code won't load without it |
 | 2. Hook permissions | Runs `chmod +x` on all `hooks/*.sh` so the automation scripts can execute | Required |
 | 3. CLI tools | Checks for `fallow`, `graphify`, `gh`, and `Graphviz`. Installs fallow and graphify if missing; prints the install command for anything else it can't auto-install | Optional — only needed if you use those specific skills |
-| 4. Plugin skills (terminal) | Installs `ponytail` and `improve` via `npx skills@latest add` | Optional — skip if you don't need those commands |
+| 4. Plugin skills (terminal) | Installs `trim` and `improve` via `npx skills@latest add` | Optional — skip if you don't need those commands |
 | 5. Plugin skills (Claude Code) | Lists already-installed Claude Code plugins, or prints the commands to run inside Claude Code to install the recommended ones | Informational only — you run these inside Claude Code, not here |
 | 6. Environment variables | Prints the `export` lines to copy into your `~/.zshrc` or `~/.bash_profile` | Optional — only needed for `video-to-kb` and graphify |
 
@@ -107,8 +107,8 @@ These are not installed by setup.sh. Install whichever ones match the skills you
 | [Graphviz](https://graphviz.org/) | Draws diagram files | `drawio-skill` | `brew install graphviz` |
 | [draw.io](https://www.drawio.com/) CLI | Opens and exports diagrams | `drawio-skill` | `brew install --cask drawio` |
 | [Groq Whisper](https://console.groq.com/) | Transcribes YouTube videos or voice notes to text | `video-to-kb` | Get a free API key at console.groq.com, then add `export GROQ_API_KEY=your_key` to `~/.zshrc` |
-| [Chrome](https://www.google.com/chrome/) (headless) | Takes screenshots of mockups without opening a browser window | `quick-design`, `forge` | Already on most machines; or `brew install --cask google-chrome` |
-| [Playwright](https://playwright.dev/) | Lets Claude click around in a browser to test your web app | `forge` | Add the `playwright` MCP server to `settings.json` — see MCP note below |
+| [Chrome](https://www.google.com/chrome/) (headless) | Takes screenshots of mockups without opening a browser window | `quick-design`, `build` | Already on most machines; or `brew install --cask google-chrome` |
+| [Playwright](https://playwright.dev/) | Lets Claude click around in a browser to test your web app | `build` | Add the `playwright` MCP server to `settings.json` — see MCP note below |
 | shadcn MCP | Lets Claude look up shadcn component docs and add components | `ui-ux` | Add the `shadcn` MCP server to `settings.json` |
 
 > **What's an MCP server?** MCP (Model Context Protocol) is a standard for giving Claude extra tools — like the ability to control a browser or search a codebase. You wire one up by adding a config block to `settings.json`. See the [Claude MCP docs](https://docs.anthropic.com/en/docs/claude-code/mcp) for how.
@@ -175,8 +175,8 @@ A "skill" is a custom command you trigger with a slash, like `/code-review`. Her
 | `code-review` | Reviews a pull request or a set of changes: first for bugs, then for over-complication, then for unrelated edits that shouldn't be there | `--fix` (auto-apply) · `--comment` (inline comments) · `--effort low\|medium\|high\|max` (depth) |
 | `diagnose` | A 6-step way to find the real cause of a bug — when you're stuck, it walks you through it step by step | — |
 | `drawio-skill` | Draws diagrams (architecture, flowcharts, database tables, UML). Saves them as PNG, SVG, or PDF | — |
-| `forge` | Builds a whole feature start to finish: gather evidence, plan with Opus, approve, UI mockup gate, write tests first, build with Sonnet, then prove it works | — |
-| `grill-me` | Interviews you before any code gets written — one question at a time until every tricky case is sorted out | — |
+| `build` | Builds a whole feature start to finish: gather evidence, plan with Opus, approve, UI mockup gate, write tests first, build with Sonnet, then prove it works | — |
+| `plan` | Interviews you before any code gets written — one question at a time until every tricky case is sorted out | — |
 | `my-md` | Lists every markdown file — both the global `~/.claude/` docs and the ones in your current project | — |
 | `my-skills` | This very list. Shows the commands I wrote and the borrowed ones, plus how they connect and what they depend on | `fast` (2-col) · `deep` (4-col + relationships) |
 | `quick-design` | Makes 3 quick screen mockups using your project's real colors and fonts — a safe one, a modern one, and a bold one — and opens them in Chrome | — |
@@ -198,11 +198,11 @@ A "skill" is a custom command you trigger with a slash, like `/code-review`. Her
 
 ### Borrowed commands
 
-These come from other people's plugins. One install command gets you all 5 ponytail commands.
+These come from other people's plugins. One install command gets you all 5 trim commands.
 
 | Skill | What it does | Install |
 |---|---|---|
-| `ponytail` + 4 sub-commands | Push for the simplest thing that works, scan for over-complication, gather TODO notes, review changes for deletions, quick reference card — one install gets all five | `npx skills@latest add DietrichGebert/ponytail` |
+| `trim` + 4 sub-commands | Push for the simplest thing that works, scan for over-complication, gather TODO notes, review changes for deletions, quick reference card — one install gets all five | `npx skills@latest add holland-built/trim` |
 | `improve` | Surveys a codebase and writes a ranked improvement plan — never changes anything itself | `npx skills@latest add shadcn/improve` |
 | `impeccable` | A magazine-style design look — warm cream and burnt orange — for building screens | `/plugin marketplace add impeccable` (run inside Claude Code) |
 
@@ -436,7 +436,7 @@ Some things are deliberately left out of this repo, and why:
 |---|---|
 | `settings.json` | Specific to your machine — has your Node.js path and any MCP servers you added. Use `settings.example.json` as a starting point, then copy and edit it (step 1 of "Full install details" above). Never commit this file — it may contain API keys |
 | `plugins/` | Third-party marketplaces; each lives in its own repo |
-| Plugin shortcuts (`ponytail*/`, `improve`, `impeccable`, etc.) | Symlinks (shortcuts) pointing to `~/.agents/skills/` where plugins install to. Clone them via the install commands above — they won't be in the repo itself |
+| Plugin shortcuts (`trim*/`, `improve`, `impeccable`, etc.) | Symlinks (shortcuts) pointing to `~/.agents/skills/` where plugins install to. Clone them via the install commands above — they won't be in the repo itself |
 | `.pending-tasks.md` | Session task queue used by `/whats-next` — local only, not shared |
 | `learnings.md` | Written by `/prompt-scan` — accumulates model release notes + prompt diagnostics over time. Local only |
 | `cache/`, `sessions/`, `history.jsonl`, logs | Temporary runtime files — not part of the configuration |
@@ -451,7 +451,7 @@ To remove individual tools installed by setup.sh:
 |---|---|
 | fallow | `npm uninstall -g fallow` |
 | graphify | `uv tool uninstall graphify` |
-| ponytail | `npx skills@latest remove DietrichGebert/ponytail` |
+| trim | `npx skills@latest remove holland-built/trim` |
 | improve | `npx skills@latest remove shadcn/improve` |
 | Claude Code plugins | `/plugin remove <name>` inside Claude Code |
 

@@ -1,6 +1,6 @@
 ---
-name: forge
-description: Full feature-build pipeline orchestrator — evidence → grill-me → Opus plan → approval gate → UI mockup gate → TDD → Sonnet build → regression gate → prove. Routes nits to /impeccable (requires impeccable plugin); runs the full sequence with hard gates for real features. Project-agnostic: auto-detects the stack. Activate on "/forge", "forge", "build this feature end to end".
+name: build
+description: Full feature-build pipeline orchestrator — evidence → plan → Opus plan → approval gate → UI mockup gate → TDD → Sonnet build → regression gate → prove. Routes nits to /impeccable (requires impeccable plugin); runs the full sequence with hard gates for real features. Project-agnostic: auto-detects the stack. Activate on "/build", "build", "build this feature end to end".
 user-invocable: true
 argument-hint: "[describe the feature to build]"
 allowed-tools:
@@ -19,9 +19,9 @@ Feature: $ARGUMENTS
 
 ## Routing — pick the right tool BEFORE running the pipeline
 - **Spatial/layout bug** (overlap, clip, truncation) → Phase 0A (Playwright DOM measurement). Trivial fix path if cause already measured.
-- **Color/typography/token/spacing nits** → NOT forge. Use `/ui-ux` (design direction) or `/impeccable` (surgical token edits on running app).
-- **Visual/aesthetic redesign** → forge WITH the mockup gate.
-- **Trivial fix** (1–2 files, cause already known) → fast path: phase 0 only → skip grill-me → approve → build.
+- **Color/typography/token/spacing nits** → NOT /build. Use `/ui-ux` (design direction) or `/impeccable` (surgical token edits on running app).
+- **Visual/aesthetic redesign** → /build WITH the mockup gate.
+- **Trivial fix** (1–2 files, cause already known) → fast path: phase 0 only → skip plan → approve → build.
 - **Code quality / dead code / YAGNI audit** → STOP, run `/code-health` instead.
 - **Genuine multi-step feature** → full pipeline below.
 
@@ -41,7 +41,7 @@ If a CLAUDE.md or project skill names these, use those values verbatim. State th
 
 `<slug>` = kebab of feature. `<date>` = today.
 
-## 0 — Evidence (BEFORE grill-me — HARD gate for any bug / change to existing code)
+## 0 — Evidence (BEFORE plan — HARD gate for any bug / change to existing code)
 **The bug is not where the symptom shows — it's where the measurement breaks.** Most multi-day loops come from fixing the symptom's location, not the cause's. This phase gathers FACTS so Opus plans against reality, not the user's words. Skip ONLY for greenfield with no existing surface.
 
 Pick the evidence type by task:
@@ -60,7 +60,7 @@ Do NOT plan a fix whose cause you have not located with evidence. Grill-me and O
 Never plan from the raw description. Interview one question at a time using the `AskUserQuestion` tool — present 3–4 clickable options with the recommended answer placed **in the middle** of the list (not first, not last). Walk every branch. Checkpoint each answer to `brainstorms/<slug>-<date>.md` (Decisions / Open flags / Q&A log). Stop when all branches resolved or user says "done".
 
 ## 2 — Opus plan
-Spawn ONE `Agent` (model: opus) with the full grill-me transcript **AND the phase-0 diagnosis** as context. Tell Opus the located root cause is ground truth — fix at the SOURCE, not with a stack of leaf-level patches. The plan MUST contain:
+Spawn ONE `Agent` (model: opus) with the full plan transcript **AND the phase-0 diagnosis** as context. Tell Opus the located root cause is ground truth — fix at the SOURCE, not with a stack of leaf-level patches. The plan MUST contain:
 - **Root cause** restated as `X breaks because Y = Z (file:line)` + the single source change that addresses it
 - **Success predicate** — the falsifiable, measurable condition that proves done (carried from phase 0). Every plan ends in a number or a boolean, never "should work"
 - **Target file list**, each with an "already exists — do NOT recreate" note
@@ -162,7 +162,7 @@ Per behavior: write ONE failing test → run the detected test command (scoped t
 
 **Before dispatching ANY agent** — write a per-agent spec covering:
 - Target file (absolute path)
-- Exact change to make (quote plan step + grill-me context)
+- Exact change to make (quote plan step + plan context)
 - Functions/components adjacent to the edit that must NOT be touched
 - `Already exists — do NOT recreate: <file>` note
 - If ui_change: which mockup variant section/element to match exactly
@@ -173,7 +173,7 @@ Fan out all agents in one parallel call (never one-at-a-time). Every agent MUST:
 - cap output ~300 words
 - if ui_change: match the approved mockup variant exactly
 
-After all agents complete: run the detected build/typecheck command (if any) to catch errors before testing. If the project is containerized, hotpatch with the detected command. If the project has knowledge-graph tooling, refresh it now (e.g. `graphify update .` — AST-only, no API cost) so the next forge run's Phase 0 evidence reads from an accurate graph, not a stale one.
+After all agents complete: run the detected build/typecheck command (if any) to catch errors before testing. If the project is containerized, hotpatch with the detected command. If the project has knowledge-graph tooling, refresh it now (e.g. `graphify update .` — AST-only, no API cost) so the next /build run's Phase 0 evidence reads from an accurate graph, not a stale one.
 
 ## 5.5 — Regression gate + fix loop (HARD)
 After build passes, run the full test suite (detected test command).
@@ -187,7 +187,7 @@ If ANY test fails → enter fix loop. Repeat until green:
 Do NOT proceed to phase 6 with a red suite or failing build.
 
 ## 5.6 — Quality gates (after suite green, before prove)
-Run the ALWAYS gates on every forge run; add CONDITIONAL gates only when the diff touches the named surface. Fan the agent-based gates out in ONE parallel call to keep it fast. Any gate that finds a real issue → fix it (back to phase 5 build) or explicitly triage with reason before proceeding.
+Run the ALWAYS gates on every /build run; add CONDITIONAL gates only when the diff touches the named surface. Fan the agent-based gates out in ONE parallel call to keep it fast. Any gate that finds a real issue → fix it (back to phase 5 build) or explicitly triage with reason before proceeding.
 
 **ALWAYS:**
 - **Lint + typecheck** — run the detected linter + type checker (e.g. `eslint`, `tsc --noEmit` / `npm run build`). Zero new errors. Warnings triaged.
@@ -217,7 +217,7 @@ Then append to `docs/DAILY_CHANGELOG.md` under `## <date> — <feature>` a table
 Task is NOT done until: success predicate met + stress test/repro survived + **regression test committed and green** + **critical path smoke-tested** + changelog appended + full suite green.
 
 ## 7 — Summary
-Print a markdown table summarizing everything completed this forge run:
+Print a markdown table summarizing everything completed this /build run:
 
 | Phase | What happened | Files changed | Tests |
 |---|---|---|---|
@@ -235,6 +235,6 @@ Print a markdown table summarizing everything completed this forge run:
 
 After the build phase completes, ask exactly once:
 
-> **Anything from this forge run worth saving to memory?** A non-obvious decision, a surprise/gotcha, or a reusable pattern. Reply with the fact or type `skip`.
+> **Anything from this /build run worth saving to memory?** A non-obvious decision, a surprise/gotcha, or a reusable pattern. Reply with the fact or type `skip`.
 
 If user replies with content: create `~/.claude-work/projects/-Users-sholland/memory/facts/<slug>-<date>.md` (same format as build-feature checkpoint). Append line to MEMORY.md index. Tell user to run `/memory-compile`. If `skip` → end silently.

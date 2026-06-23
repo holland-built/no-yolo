@@ -51,14 +51,14 @@ Mockups live under `.mockups/<group>/<name>.html` in the current project root. T
 |---|---|---|
 | Quick exploration, no full pipeline | `/quick-design` | 3 (conservative / modern / wild) |
 | Manual or ad-hoc mockup (no skill) | this doc's manual flow | 5–8 |
-| Full feature pipeline | `/forge` | 10 (phase 3.5 gate) |
+| Full feature pipeline | `/build` | 10 (phase 3.5 gate) |
 | Radical redesign, start from scratch | `/ui-wild` | 6+ survivors after judge pass |
 
 Use the manual flow (5–8) when no skill applies. Use the skill count when a skill is invoked — don't override it.
 
 ## How
 
-Use `/forge` for full pipeline (includes 10-variant mockup gate at phase 3.5). Or manually:
+Use `/build` for full pipeline (includes 10-variant mockup gate at phase 3.5). Or manually:
 
 1. Create a single HTML file at `.mockups/mockup-<feature-name>.html` in the current project root.
 2. Include 5–8 distinct variations side-by-side, each labeled (Option A, B, C…). See decision tree above for skill-specific counts.
@@ -117,7 +117,7 @@ Pick 5–8 from this list, depending on what's being designed:
 
 ## Skill Reference
 
-- `/forge` — full pipeline with 10-variant mockup gate (phase 3.5)
+- `/build` — full pipeline with 10-variant mockup gate (phase 3.5)
 - `/ui-wild` — radical redesign: 10 Opus personas + anti-slop judge → 6+ survivors
 - `/quick-design` — 3-variant fast generator (conservative / modern / wild)
 - `/ui-ux` — design intelligence (palettes, font pairings, UX guidelines) — use before building

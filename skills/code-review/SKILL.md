@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: Three-pass diff review — correctness/bugs, over-engineering (ponytail-review), Karpathy surgical+simplicity filters. Applies CODE_REVIEW.md on every run. Pass --fix to apply findings, --comment to post as inline PR comments. Effort: low/medium = fewer high-confidence findings; high/max = broader coverage.
+description: Three-pass diff review — correctness/bugs, over-engineering (trim-review), Karpathy surgical+simplicity filters. Applies CODE_REVIEW.md on every run. Pass --fix to apply findings, --comment to post as inline PR comments. Effort: low/medium = fewer high-confidence findings; high/max = broader coverage.
 user-invocable: true
 argument-hint: "[--fix] [--comment] [--effort low|medium|high|max]"
 allowed-tools:
@@ -37,7 +37,7 @@ Review the diff for:
 
 ### Pass B — Over-Engineering
 
-Invoke `ponytail-review` skill via the Skill tool, passing the diff as context.
+Invoke `trim-review` skill via the Skill tool, passing the diff as context.
 Captures: what to delete, reinvented stdlib, unneeded deps, speculative abstractions.
 
 ### Pass C — Karpathy Filters (from CODE_REVIEW.md)
@@ -59,7 +59,7 @@ Severity + emoji:
 - 🟡 Minor — log for later
 - 🔵 Scope — line not traced to request (surgical violation)
 - ⚪ Simplicity — senior engineer would simplify this
-- 🟣 Complexity — over-engineered, delete or shrink (ponytail)
+- 🟣 Complexity — over-engineered, delete or shrink (trim)
 
 No praise. No summary prose. Findings only. Sort by severity (Critical first).
 

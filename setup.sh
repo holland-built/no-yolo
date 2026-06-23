@@ -114,8 +114,8 @@ fi
 
 echo ""
 echo "==> 4. Plugin skills"
-echo "    Installing ponytail..."
-npx skills@latest add DietrichGebert/ponytail || echo "    ! ponytail install failed"
+echo "    Installing trim..."
+npx skills@latest add holland-built/trim || echo "    ! trim install failed"
 echo "    Installing improve..."
 npx skills@latest add shadcn/improve || echo "    ! improve install failed"
 echo ""
