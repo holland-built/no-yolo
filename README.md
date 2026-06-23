@@ -151,6 +151,7 @@ What each file and folder is for:
 | `docs/NO_YOLO.md` | How to author a new skill — the checklist |
 | `docs/HOOKS.md` | Docs for the automation hooks |
 | `docs/MEMORY.md` | Docs for the memory system |
+| `docs/MEMORY_USAGE.md` | Teammate onboarding for the memory system — how to add, delete, and compile preferences |
 | `docs/SKILL_TRIGGERS.md` | Trigger rules for every skill — CLAUDE.md points here |
 | `memory/` | Saved preferences — `facts/` is source of truth, `CLAUDE.generated.md` is compiled result |
 | `skills/` | Your skills plus symlinks to borrowed ones |
