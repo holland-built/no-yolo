@@ -138,3 +138,9 @@
 - removed "Upstream of impeccable" from ui-ux trigger description in SKILL_TRIGGERS.md
 - simplified install: removed gh clone option, git clone only — gh stays in Prerequisites with "/ship" scope note
 - added one-line gh explanation before clone command (then removed as redundant once options collapsed)
+- removed /impeccable skill entirely — symlink deleted, all README references removed, SKILL_TRIGGERS.md cleared, ui/SKILL.md menu updated to 3 options
+- wired /build mockup gate to read design-system/MASTER.md (written by /ui-ux --persist) — constrains 10 variants to your design system; falls back to CSS tokens
+- updated README frontend design section: renamed heading, added intro paragraph, pipeline table shows real handoff per command
+- updated /quick-design inventory row — explains conservative/modern/wild + Sonnet/cheap vs ui-wild
+- updated /ui-wild inventory row — explains 10 Opus personas, when to use over quick-design
+- updated /ui SKILL.md — removed impeccable route, menu now 3 options, wild variant description updated
