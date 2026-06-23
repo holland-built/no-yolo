@@ -16,7 +16,7 @@ const { readFlag, appendFlag, readHistory, safeWriteFlag } = require('./caveman-
 // 10 tasks, sonnet-4-20250514). Only 'full' has measured data; lite / ultra /
 // wenyan modes show no estimate until benchmarked. Add an entry here when a new
 // run is committed.
-const COMPRESSION = { 'full': 0.65 };
+const FULL_MODE_COMPRESSION = 0.65;
 
 // Approximate Anthropic public output-token pricing, USD per million.
 // Match by model id prefix so this stays correct across point releases
@@ -133,7 +133,7 @@ function summarizeCompressed(pairs) {
 
 // Compute the savings figures we want to log/share for one session snapshot.
 function deriveSavings({ outputTokens, mode, model }) {
-  const ratio = COMPRESSION[mode] != null ? COMPRESSION[mode] : null;
+  const ratio = mode === 'full' ? FULL_MODE_COMPRESSION : null;
   const price = priceForModel(model);
   if (ratio === null) return { estSavedTokens: 0, estSavedUsd: 0 };
   const estNormal = Math.round(outputTokens / (1 - ratio));
@@ -201,7 +201,7 @@ function formatShare({ outputTokens, turns, mode, model }) {
   if (turns === 0) {
     return '🪨 caveman armed but no turns yet — caveman.sh';
   }
-  const ratio = COMPRESSION[mode] != null ? COMPRESSION[mode] : null;
+  const ratio = mode === 'full' ? FULL_MODE_COMPRESSION : null;
   const price = priceForModel(model);
 
   if (ratio !== null) {
@@ -227,7 +227,7 @@ function formatStats({ outputTokens, cacheReadTokens, turns, mode, model, sessio
     return `\nCaveman Stats\n${sep}\nNo conversation yet — stats available after first response.\n${sep}\n`;
   }
 
-  const ratio = COMPRESSION[mode] != null ? COMPRESSION[mode] : null;
+  const ratio = mode === 'full' ? FULL_MODE_COMPRESSION : null;
   const price = priceForModel(model);
 
   let savings;
@@ -341,6 +341,6 @@ if (require.main === module) main();
 
 module.exports = {
   formatStats, formatShare, formatHistory, aggregateHistory, parseDuration, deriveSavings,
-  parseSession, priceForModel, formatUsd, COMPRESSION, MODEL_OUTPUT_PRICE_PER_M,
+  parseSession, priceForModel, formatUsd, FULL_MODE_COMPRESSION, MODEL_OUTPUT_PRICE_PER_M,
   findCompressedPairs, summarizeCompressed, humanizeTokens,
 };
