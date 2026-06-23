@@ -10,6 +10,8 @@
 - fixed grill-me/plan SKILL.md — gate now references /build instead of deleted /plan-feature
 - updated .gitignore — ignores both ponytail-* (currently installed) and trim-* (post-reinstall) symlinks
 - updated /ship — dynamic skill count patch in README (step 3c.5), summary header + repo description update in release notes (step 4)
+- restructured README — prerequisites converted to table, sections reordered (Set up a new project after Install, CLAUDE.md chain moved to bottom), broken cross-reference fixed
+- updated docs/README_FORMAT.md — section order updated to match restructured README
 - ingested YouTube "How Anthropic Employees ACTUALLY Use Claude Skills" — raw KB file + wiki source page + topic page updated with 4-bucket taxonomy and folder structure
 - rewrote description fields in 27 skills — all now lead with "Use this skill when" trigger condition
 - updated docs/SKILLS.md — added 4-bucket taxonomy, folder structure, trigger condition rule, gotchas discipline sections
