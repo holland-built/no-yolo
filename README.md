@@ -18,13 +18,15 @@ Claude Code is a command-line tool where you talk to Claude to write and edit co
 
 ## Prerequisites
 
-Things you need installed before this setup works. The command after each one checks whether you already have it:
+| Tool | Required? | Check | Install |
+|---|---|---|---|
+| [Claude Code](https://claude.ai/code) | Required | `claude --version` | [docs.anthropic.com](https://docs.anthropic.com/en/docs/claude-code) |
+| **git** | Required | `git --version` | Pre-installed on Mac; Linux: `sudo apt install git` |
+| **Node.js** | Required | `node --version` | [nodejs.org](https://nodejs.org/) |
+| **gh** (GitHub CLI) | Optional | `gh auth status` | `brew install gh && gh auth login` |
 
-- [Claude Code](https://docs.anthropic.com/en/docs/claude-code) itself: `claude --version`. Claude Code is a command-line tool for talking to Claude to write and edit code. You can find it at [claude.ai/code](https://claude.ai/code) or install it from the docs.
-- **git** — used to clone this repo and by skills like `/update`, `/ship`, and `/code-review` that push code or read your project's history. Check: `git --version`. On Mac it's already installed; on Linux: `sudo apt install git`.
-- **Node.js** — the automation scripts and some tool installs (fallow, trim) need it. Check: `node --version`. Install at [nodejs.org](https://nodejs.org/) if missing.
-- **gh (optional but recommended)** — the GitHub CLI. Lets Claude push code, open pull requests, and read issues on your behalf. Used by `/ship` and `/code-review`. Check: `gh auth status`. Install: `brew install gh && gh auth login`. You can skip this and use plain `git clone` for the install step — but you'll need it later if you use those skills.
-- (Note: `~` in all paths below means your home directory — on Mac that's `/Users/<username>`, on Linux `/home/<username>`)
+`~` in all paths means your home directory — Mac: `/Users/<username>`, Linux: `/home/<username>`.
+
 
 ---
 
@@ -129,6 +131,43 @@ export GROQ_API_KEY=your_key_here
 
 ---
 
+## Set up a new project
+
+After cloning this repo, do this in each new project folder you work in:
+
+Skills that need a `brainstorms/` folder (for plans and research notes) create it automatically — no manual setup required.
+
+Then copy your settings template once:
+```bash
+cp ~/.claude/settings.example.json ~/.claude/settings.json
+```
+
+Open `settings.json` and make two changes:
+1. Fix the Node.js path — replace the path in `"command"` lines with the output of `which node`
+2. Add any MCP servers you want (see below)
+
+**Adding an MCP server** (this is how you give Claude extra abilities):
+
+Find the `"mcpServers"` section in `settings.json` (or add it if missing) and add a block like this:
+
+```json
+"mcpServers": {
+  "playwright": {
+    "command": "npx",
+    "args": ["-y", "@playwright/mcp@latest"]
+  }
+}
+```
+
+Each MCP server is a tool Claude gets access to. The [Claude MCP docs](https://docs.anthropic.com/en/docs/claude-code/mcp) have a list of available ones. Common ones:
+- `playwright` — control a real browser (test your web app, take screenshots)
+- `shadcn` — look up and add UI components
+- `github` — read and write GitHub issues and pull requests
+
+You don't need any MCP servers to start. Add them when a skill asks for one.
+
+---
+
 ## Directory layout
 
 What each file and folder is for:
@@ -209,19 +248,6 @@ These come from other people's plugins. One install command gets you all 5 trim 
 
 ---
 
-## The CLAUDE.md instruction chain
-
-`CLAUDE.md` is the first file Claude reads, and by its own rule it holds *only* pointers — nothing else. All it contains is references to other files and the trigger words for each command.
-
-- `@docs/CORE_RULES.md` — the 5 core rules (plan first; keep it simple; only touch what you were asked to; aim at a clear goal; use the expensive model to plan and the cheaper one to type)
-- `@memory/CLAUDE.generated.md` — your compiled preferences from `memory/facts/`
-- It sends Claude to the right file by topic: Planning → `PLANNING.md`, Testing → `TESTING.md`, screens → `UI_MOCKUPS.md`, and so on
-- Command triggers — each command gets its own `# name` block with the plain-English phrases that turn it on
-
-Never put real content straight into `CLAUDE.md` — always put it in the right topic file and point to it.
-
----
-
 ## Model guidance
 
 There are three Claude models. They cost different amounts and are good at different things:
@@ -280,43 +306,6 @@ If you **forked** this repo on GitHub and made your own changes, you have two hi
 5. If any of your changes conflict with an upstream change, it cancels cleanly and tells you exactly which files to fix — nothing is lost
 
 **After a successful rebase on a fork:** if you've already pushed your branch to GitHub, you'll need to force-push to update it: `git push --force origin main`. `/update` will remind you.
-
----
-
-## Set up a new project
-
-After cloning this repo, do this in each new project folder you work in:
-
-Skills that need a `brainstorms/` folder (for plans and research notes) create it automatically — no manual setup required.
-
-Then copy your settings template once:
-```bash
-cp ~/.claude/settings.example.json ~/.claude/settings.json
-```
-
-Open `settings.json` and make two changes:
-1. Fix the Node.js path — replace the path in `"command"` lines with the output of `which node`
-2. Add any MCP servers you want (see below)
-
-**Adding an MCP server** (this is how you give Claude extra abilities):
-
-Find the `"mcpServers"` section in `settings.json` (or add it if missing) and add a block like this:
-
-```json
-"mcpServers": {
-  "playwright": {
-    "command": "npx",
-    "args": ["-y", "@playwright/mcp@latest"]
-  }
-}
-```
-
-Each MCP server is a tool Claude gets access to. The [Claude MCP docs](https://docs.anthropic.com/en/docs/claude-code/mcp) have a list of available ones. Common ones:
-- `playwright` — control a real browser (test your web app, take screenshots)
-- `shadcn` — look up and add UI components
-- `github` — read and write GitHub issues and pull requests
-
-You don't need any MCP servers to start. Add them when a skill asks for one.
 
 ---
 
@@ -429,13 +418,26 @@ The status bar is driven by `hooks/statusline.sh`. It runs after every response.
 
 ---
 
+## The CLAUDE.md instruction chain
+
+`CLAUDE.md` is the first file Claude reads, and by its own rule it holds *only* pointers — nothing else. All it contains is references to other files and the trigger words for each command.
+
+- `@docs/CORE_RULES.md` — the 5 core rules (plan first; keep it simple; only touch what you were asked to; aim at a clear goal; use the expensive model to plan and the cheaper one to type)
+- `@memory/CLAUDE.generated.md` — your compiled preferences from `memory/facts/`
+- It sends Claude to the right file by topic: Planning → `PLANNING.md`, Testing → `TESTING.md`, screens → `UI_MOCKUPS.md`, and so on
+- Command triggers — each command gets its own `# name` block with the plain-English phrases that turn it on
+
+Never put real content straight into `CLAUDE.md` — always put it in the right topic file and point to it.
+
+---
+
 ## What's excluded
 
 Some things are deliberately left out of this repo, and why:
 
 | Excluded | Reason |
 |---|---|
-| `settings.json` | Specific to your machine — has your Node.js path and any MCP servers you added. Use `settings.example.json` as a starting point, then copy and edit it (step 1 of "Full install details" above). Never commit this file — it may contain API keys |
+| `settings.json` | Specific to your machine — has your Node.js path and any MCP servers you added. Use `settings.example.json` as a starting point, then copy and edit it (setup.sh step 1). Never commit this file — it may contain API keys |
 | `plugins/` | Third-party marketplaces; each lives in its own repo |
 | Plugin shortcuts (`trim*/`, `improve`, `impeccable`, etc.) | Symlinks (shortcuts) pointing to `~/.agents/skills/` where plugins install to. Clone them via the install commands above — they won't be in the repo itself |
 | `.pending-tasks.md` | Session task queue used by `/whats-next` — local only, not shared |
