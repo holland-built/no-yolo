@@ -85,3 +85,7 @@
 - fixed setup.sh --md-only exit message: correct re-run command (was wrong "re-clone" instruction)
 - added README re-run hint after setup table: --md-only users can upgrade to full install anytime
 - fixed /whats-next output: "looks interesting" → "I found"
+- shrunk skills/ui-ux/SKILL.md from 609 to 261 lines — removed Recommended/Skip sub-blocks, replaced 236-line Quick Reference with 2-line search pointer, simplified Prerequisites, deleted Sticking Points table and Common Rules tables (all duplicated in searchable CSV data)
+- created docs/MEMORY_USAGE.md — teammate onboarding guide for the memory system (7 sections: what it does, where it lives, 4 types, file format, workflow, what not to save, git rules)
+- added docs/MEMORY_USAGE.md row to README.md directory table
+- refactored hooks/caveman-mode-tracker.js — extracted 4 top-level functions (detectNLActivation, handleStatsCommand, parseSlashCommand, detectNLDeactivation, emitReinforcement), on('end') callback shrunk from 114 to 12 lines
