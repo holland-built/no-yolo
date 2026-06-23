@@ -62,3 +62,6 @@
 - merged "Skills with modes" section into inventory table — 3-col (Skill | What it does | Modes & flags), 7 skills get described modes, 18 get dash
 - deleted standalone ## Skills with modes section from README.md
 - removed ## Skills with modes from README_FORMAT.md required sections (14 remain)
+- fixed README Prerequisites: Mac home path corrected to /Users/<username>, Linux /home/<username>
+- added inline skill definition at first use (line 13) — "A skill is a command you run by typing /name"
+- removed manual mkdir brainstorms from "Set up a new project" — skills create it automatically
