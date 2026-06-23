@@ -114,7 +114,7 @@ async function templateInstall(
   return generatePlatformFiles(targetDir, aiType, isGlobal);
 }
 
-export async function initCommand(options: InitOptions): Promise<void> {
+async function initCommand(options: InitOptions): Promise<void> {
   logger.title('UI/UX Pro Max Installer');
 
   let aiType = options.ai;

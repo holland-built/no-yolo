@@ -3,7 +3,7 @@ import ora from 'ora';
 import { fetchReleases } from '../utils/github.js';
 import { logger } from '../utils/logger.js';
 
-export async function versionsCommand(): Promise<void> {
+async function versionsCommand(): Promise<void> {
   const spinner = ora('Fetching available versions...').start();
 
   try {

@@ -60,7 +60,7 @@ async function exists(path: string): Promise<boolean> {
 /**
  * Load platform configuration from JSON file
  */
-export async function loadPlatformConfig(aiType: string): Promise<PlatformConfig> {
+async function loadPlatformConfig(aiType: string): Promise<PlatformConfig> {
   const platformName = AI_TO_PLATFORM[aiType];
   if (!platformName) {
     throw new Error(`Unknown AI type: ${aiType}`);
@@ -74,7 +74,7 @@ export async function loadPlatformConfig(aiType: string): Promise<PlatformConfig
 /**
  * Load all available platform configs
  */
-export async function loadAllPlatformConfigs(): Promise<Map<string, PlatformConfig>> {
+async function loadAllPlatformConfigs(): Promise<Map<string, PlatformConfig>> {
   const configs = new Map<string, PlatformConfig>();
 
   for (const [aiType, platformName] of Object.entries(AI_TO_PLATFORM)) {
@@ -120,7 +120,7 @@ function renderFrontmatter(frontmatter: Record<string, string> | null): string {
  * Render skill file content from template
  * When isGlobal=true, rewrites script paths to use ~/{root}/ prefix
  */
-export async function renderSkillFile(config: PlatformConfig, isGlobal = false): Promise<string> {
+async function renderSkillFile(config: PlatformConfig, isGlobal = false): Promise<string> {
   // Load base template
   let content = await loadTemplate('base/skill-content.md');
 
@@ -184,7 +184,7 @@ async function copyDataAndScripts(targetSkillDir: string): Promise<void> {
  * All platforms use self-contained installation with data and scripts
  * When isGlobal=true, installs to ~/home directory with absolute script paths
  */
-export async function generatePlatformFiles(
+async function generatePlatformFiles(
   targetDir: string,
   aiType: string,
   isGlobal = false
@@ -220,7 +220,7 @@ export async function generatePlatformFiles(
 /**
  * Generate files for all AI types
  */
-export async function generateAllPlatformFiles(targetDir: string, isGlobal = false): Promise<string[]> {
+async function generateAllPlatformFiles(targetDir: string, isGlobal = false): Promise<string[]> {
   const allFolders = new Set<string>();
 
   for (const aiType of Object.keys(AI_TO_PLATFORM)) {
@@ -238,6 +238,6 @@ export async function generateAllPlatformFiles(targetDir: string, isGlobal = fal
 /**
  * Get list of supported AI types
  */
-export function getSupportedAITypes(): string[] {
+function getSupportedAITypes(): string[] {
   return Object.keys(AI_TO_PLATFORM);
 }
