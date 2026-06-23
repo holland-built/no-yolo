@@ -80,7 +80,16 @@ Do NOT write code until the user says yes/go/approved. If they redirect, loop ba
 ## 3.5 — UI mockup gate (ONLY if ui_change: true)
 Skip entirely for backend-only changes.
 
-**Before building:** Extract the app's real design tokens from the project's CSS (`:root` variables, font-family declarations, color palette, spacing scale). Every variant MUST use these tokens verbatim — no made-up hex codes or font names.
+**Before building:** Check for a persisted design system first, then fall back to CSS tokens:
+
+```bash
+[ -f design-system/MASTER.md ] && echo "MASTER_FOUND" || echo "NO_MASTER"
+```
+
+- **If `design-system/MASTER.md` exists** (written by `/ui-ux --persist`): read it — use its color palette, typography, spacing scale, and layout rules as hard constraints for all 10 variants. Print: `Using design system from design-system/MASTER.md`.
+- **If no MASTER.md**: extract tokens from the project's CSS (`:root` variables, font-family declarations, color palette, spacing scale).
+
+Either way, every variant MUST use these tokens verbatim — no made-up hex codes or font names.
 
 ### Step A — Generate 10 variants
 
