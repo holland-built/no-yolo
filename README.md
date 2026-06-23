@@ -10,7 +10,7 @@ Claude Code is a command-line tool where you talk to Claude to write and edit co
 
 - The whole `~/.claude/` folder, tracked in git — everything Claude Code reads on every session
 - A set of rules Claude reads at the start of every session (`CLAUDE.md` plus a few topic files). These enforce strict habits that make Claude actually useful: think and plan before writing code, only change the exact lines you asked for, and use the expensive model to plan while a cheaper model does the typing
-- 25 custom commands, plus 7 more borrowed from plugins (run `/my-skills` to see the real, up-to-date count)
+- 25 custom commands, plus 7 more borrowed from plugins (run `/my-skills` to see the real, up-to-date count). A skill is a command you run by typing `/name` — like `/code-review` or `/forge`.
 - Definitions for helper agents, custom slash commands, and automation scripts
 - A memory system that learns your preferences over time. The easy way: just say "remember that I prefer X" and Claude saves it for you automatically. The power-user way: edit small note files in `memory/facts/` and run `/memory-compile` — useful when you want your preferences committed to git so they sync to all your machines
 
@@ -23,7 +23,7 @@ Things you need installed before this setup works. The command after each one ch
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) itself: `claude --version`. Claude Code is a command-line tool for talking to Claude to write and edit code. You can find it at [claude.ai/code](https://claude.ai/code) or install it from the docs.
 - The GitHub command-line tool, signed in: `gh auth status`
 - Node.js available in your terminal (the automation scripts need it): `node --version`
-- (Note: `~` in all paths below means your home directory — on Mac, that's `/home/<username>`)
+- (Note: `~` in all paths below means your home directory — on Mac that's `/Users/<username>`, on Linux `/home/<username>`)
 - git
 
 ---
@@ -254,10 +254,7 @@ Changes take effect the next time you open Claude Code.
 
 After cloning this repo, do this in each new project folder you work in:
 
-```bash
-# Create the folders Claude looks for
-mkdir -p brainstorms   # where plans and research notes get saved
-```
+Skills that need a `brainstorms/` folder (for plans and research notes) create it automatically — no manual setup required.
 
 Then copy your settings template once:
 ```bash
