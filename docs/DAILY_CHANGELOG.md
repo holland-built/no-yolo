@@ -136,3 +136,5 @@
 - fixed settings.example.json directory layout description — says setup.sh copies it automatically (was "copy manually")
 - added README skill table format rule to NO_YOLO.md checklist — backtick + slash prefix required
 - removed "Upstream of impeccable" from ui-ux trigger description in SKILL_TRIGGERS.md
+- simplified install: removed gh clone option, git clone only — gh stays in Prerequisites with "/ship" scope note
+- added one-line gh explanation before clone command (then removed as redundant once options collapsed)
