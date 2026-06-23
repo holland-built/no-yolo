@@ -12,6 +12,7 @@ This file defines the required structure of `README.md`. The `/ship` skill reads
 ## The CLAUDE.md instruction chain
 ## Model guidance
 ## Keeping your setup up to date
+## Keeping your fork in sync
 ## Set up a new project
 ## Add a new skill
 ## Update memory preferences

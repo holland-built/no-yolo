@@ -21,94 +21,103 @@ Claude Code is a command-line tool where you talk to Claude to write and edit co
 Things you need installed before this setup works. The command after each one checks whether you already have it:
 
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) itself: `claude --version`. Claude Code is a command-line tool for talking to Claude to write and edit code. You can find it at [claude.ai/code](https://claude.ai/code) or install it from the docs.
-- The GitHub command-line tool, signed in: `gh auth status`
-- Node.js available in your terminal (the automation scripts need it): `node --version`
+- **git** — used to clone this repo and by skills like `/update`, `/ship`, and `/code-review` that push code or read your project's history. Check: `git --version`. On Mac it's already installed; on Linux: `sudo apt install git`.
+- **Node.js** — the automation scripts and some tool installs (fallow, ponytail) need it. Check: `node --version`. Install at [nodejs.org](https://nodejs.org/) if missing.
+- **gh (optional but recommended)** — the GitHub CLI. Lets Claude push code, open pull requests, and read issues on your behalf. Used by `/ship` and `/code-review`. Check: `gh auth status`. Install: `brew install gh && gh auth login`. You can skip this and use plain `git clone` for the install step — but you'll need it later if you use those skills.
 - (Note: `~` in all paths below means your home directory — on Mac that's `/Users/<username>`, on Linux `/home/<username>`)
-- git
 
 ---
 
 ## Install on a new machine
 
-### Option A — Make this repo your ~/.claude folder directly (best for a fresh machine)
+### Step 1 — Clone the repo
+
+**If you have `gh` (the GitHub CLI):**
 
 ```bash
 mv ~/.claude ~/.claude.bak 2>/dev/null || true
 gh repo clone holland-built/no-yolo ~/.claude
 ```
 
-### Option B — Clone it somewhere else and just read it for reference
+**If you don't have `gh` yet, use plain git:**
 
 ```bash
-gh repo clone holland-built/no-yolo ~/claude-config
+mv ~/.claude ~/.claude.bak 2>/dev/null || true
+git clone https://github.com/holland-built/no-yolo.git ~/.claude
 ```
 
-### After cloning
+> The `mv` line backs up any existing `~/.claude` folder before overwriting it. If you don't have one, the `|| true` makes it skip silently rather than error.
 
-Two modes. Pick one:
+**Just want to read it before committing?** Clone it somewhere else first:
 
 ```bash
-bash ~/.claude/setup.sh           # full install — tools, CLI plugins, skill symlinks
-bash ~/.claude/setup.sh --md-only # rules only — no tools needed, skill triggers stripped from CLAUDE.md
+git clone https://github.com/holland-built/no-yolo.git ~/claude-config
 ```
 
-**Full install** steps through tools (fallow, gh, Graphviz) and plugin skills (ponytail, improve), then tells you which two plugins to add inside Claude Code.
+### Step 2 — Run setup.sh
 
-**MD-only** skips all tool installs. It runs a Python script that reads your current `CLAUDE.md` and dynamically removes every skill trigger block and the memory import — so the rules work out of the box with no dead-end references. Dynamic means it stays correct if you add or remove skills later.
-
-Full install details:
+`setup.sh` is an automated install script that sets up everything this repo needs. It is safe to re-run — it skips any step that is already done.
 
 ```bash
-# 1. Copy the settings template, then edit your copy
-cp ~/.claude/settings.example.json ~/.claude/settings.json
-# In settings.json: fix the node path and add your own MCP servers
-
-# 2. Make the automation scripts runnable
-chmod +x ~/.claude/hooks/*.sh
-
-# 3. Install fallow — scans your code for dead code, duplicates, and security issues.
-#    Used by /code-health. Skip if you don't plan to use that command.
-npm install -g fallow
-
-# 4. Install the borrowed plugin commands — simplicity checker and improvement planner.
-#    ponytail: flags code that's more complicated than it needs to be
-#    improve: surveys your whole codebase and writes a prioritized cleanup list
-npx skills@latest add DietrichGebert/ponytail
-npx skills@latest add shadcn/improve
+bash ~/.claude/setup.sh           # full install (recommended for most people)
+bash ~/.claude/setup.sh --md-only # rules only — no tools installed
 ```
 
-**Step 5 — plugin skills** (these commands run *inside Claude Code*, not in the terminal):
+**What setup.sh does, step by step:**
 
-| Plugin | What it adds | Command to install |
+| Step | What it does | Notes |
+|------|-------------|-------|
+| 1. settings.json | Copies `settings.example.json` → `settings.json`. Skips if you already have one. Prints a reminder to edit the Node.js path and add your MCP servers | Required — Claude Code won't load without it |
+| 2. Hook permissions | Runs `chmod +x` on all `hooks/*.sh` so the automation scripts can execute | Required |
+| 3. CLI tools | Checks for `fallow`, `graphify`, `gh`, and `Graphviz`. Installs fallow and graphify if missing; prints the install command for anything else it can't auto-install | Optional — only needed if you use those specific skills |
+| 4. Plugin skills (terminal) | Installs `ponytail` and `improve` via `npx skills@latest add` | Optional — skip if you don't need those commands |
+| 5. Plugin skills (Claude Code) | Lists already-installed Claude Code plugins, or prints the commands to run inside Claude Code to install the recommended ones | Informational only — you run these inside Claude Code, not here |
+| 6. Environment variables | Prints the `export` lines to copy into your `~/.zshrc` or `~/.bash_profile` | Optional — only needed for `video-to-kb` and graphify |
+
+**--md-only mode** does steps 1 and 2 only, then runs a Python script that strips every skill trigger block out of `CLAUDE.md`. Use this if you want the rules but not the full toolchain — Claude won't reference skills that aren't installed, so nothing breaks. The strip is dynamic: it reads the current file, so it stays correct even if you add or remove skills later.
+
+### Step 3 — Two optional plugins inside Claude Code
+
+After setup.sh finishes, open Claude Code and run these if you want them:
+
+| Plugin | What it adds | Command (run inside Claude Code) |
 |---|---|---|
-| Impeccable | Magazine-style design theme (optional) | `/plugin marketplace add impeccable` |
-| Caveman | Makes Claude reply in fewer words (optional) | `/plugin marketplace add JuliusBrussee/caveman` |
+| Impeccable | Magazine-style design theme for UI work | `/plugin marketplace add impeccable` |
+| Caveman | Makes Claude reply in fewer words — saves tokens on long sessions | `/plugin marketplace add JuliusBrussee/caveman` |
 
-**After installing, verify it worked:** open Claude Code and run `/my-skills` — you should see a table of commands. If the table appears, the setup is complete.
+### Step 4 — Verify
 
-### Outside tools you may need
+Open Claude Code in any folder and run:
 
-Some commands call other programs on your computer. Install whichever ones you plan to use:
+```
+/my-skills
+```
 
-| Tool | Why you'd want it | Used by | Install |
+You should see a table of commands. If the table appears, setup is complete.
+
+### Outside tools some skills need
+
+These are not installed by setup.sh. Install whichever ones match the skills you plan to use:
+
+| Tool | Why you'd want it | Used by | How to install |
 |---|---|---|---|
-| [gh (GitHub CLI)](https://cli.github.com/) | Lets Claude push code, open pull requests, and read GitHub issues on your behalf | `code-review`, `ship` | `brew install gh && gh auth login` |
-| [Graphviz](https://graphviz.org/) | Draws the actual diagram files that `drawio-skill` creates | `drawio-skill` | `brew install graphviz` |
-| [draw.io](https://www.drawio.com/) CLI | Opens and exports the diagrams drawio-skill makes | `drawio-skill` | `brew install --cask drawio` |
-| [Groq Whisper](https://console.groq.com/) | Turns speech into text — needed to transcribe YouTube videos or voice notes | `video-to-kb` | Get a free API key at console.groq.com, then set `GROQ_API_KEY` in your shell |
-| [Chrome](https://www.google.com/chrome/) (headless) | Lets Claude take screenshots of mockups and web pages without you opening a browser | `quick-design`, `forge` | Already on most machines; or `brew install --cask google-chrome` |
-| [Playwright](https://playwright.dev/) | Lets Claude actually click around in a browser to test your web app | `forge` | Add the `playwright` MCP server to `settings.json` — see MCP note below |
-| shadcn MCP | Lets Claude look up shadcn component docs and add components to your project | `ui-ux` | Add the `shadcn` MCP server to `settings.json` |
+| [gh (GitHub CLI)](https://cli.github.com/) | Lets Claude push code, open pull requests, and read GitHub issues | `code-review`, `ship` | `brew install gh && gh auth login` |
+| [Graphviz](https://graphviz.org/) | Draws diagram files | `drawio-skill` | `brew install graphviz` |
+| [draw.io](https://www.drawio.com/) CLI | Opens and exports diagrams | `drawio-skill` | `brew install --cask drawio` |
+| [Groq Whisper](https://console.groq.com/) | Transcribes YouTube videos or voice notes to text | `video-to-kb` | Get a free API key at console.groq.com, then add `export GROQ_API_KEY=your_key` to `~/.zshrc` |
+| [Chrome](https://www.google.com/chrome/) (headless) | Takes screenshots of mockups without opening a browser window | `quick-design`, `forge` | Already on most machines; or `brew install --cask google-chrome` |
+| [Playwright](https://playwright.dev/) | Lets Claude click around in a browser to test your web app | `forge` | Add the `playwright` MCP server to `settings.json` — see MCP note below |
+| shadcn MCP | Lets Claude look up shadcn component docs and add components | `ui-ux` | Add the `shadcn` MCP server to `settings.json` |
 
-> **What's an MCP server?** MCP (Model Context Protocol) is a standard for giving Claude extra tools — like the ability to control a browser or search a codebase. You connect one by adding a config block to `settings.json`. See the [Claude MCP docs](https://docs.anthropic.com/en/docs/claude-code/mcp) for how.
+> **What's an MCP server?** MCP (Model Context Protocol) is a standard for giving Claude extra tools — like the ability to control a browser or search a codebase. You wire one up by adding a config block to `settings.json`. See the [Claude MCP docs](https://docs.anthropic.com/en/docs/claude-code/mcp) for how.
 
 ### Environment variables
 
-These are secret keys and paths you save in your shell profile (`~/.zshrc` or `~/.bash_profile`) so the tools can find them:
+Secret keys and paths that tools need to find. Add these to your shell profile (`~/.zshrc` or `~/.bash_profile`):
 
-| Variable | Used by | Notes |
+| Variable | Used by | Where to get it |
 |---|---|---|
-| `GROQ_API_KEY` | `video-to-kb` | For Groq Whisper, which turns audio into text — get a key at [console.groq.com](https://console.groq.com/) |
+| `GROQ_API_KEY` | `video-to-kb` | Free at [console.groq.com](https://console.groq.com/) |
 
 ```bash
 export GROQ_API_KEY=your_key_here
@@ -246,7 +255,27 @@ That's it. No git knowledge needed. It checks if you're behind, shows what's new
 
 **How it works:** `/update` fetches the latest version from GitHub without changing anything, then shows you a plain-English summary: "You'd get 2 new skills, 1 rule changed, 1 skill removed." You decide what to do next.
 
+**If you've customized your clone:** `/update full` is still safe to run. It detects any local changes before pulling, stashes them automatically, applies the update, then restores your changes. If anything conflicts, it tells you exactly what and leaves your originals in git stash so nothing is lost.
+
 Changes take effect the next time you open Claude Code.
+
+---
+
+## Keeping your fork in sync
+
+If you cloned this repo directly (not as a fork), `/update full` handles everything automatically.
+
+If you **forked** this repo on GitHub and made your own changes, you have two histories: your customizations, and upstream updates from `holland-built/no-yolo`. `/update full` handles this too — it detects a fork automatically, adds an `upstream` remote pointing to the original repo, and rebases your commits on top of the latest changes.
+
+**What actually happens when you run `/update full` on a fork:**
+
+1. `/update` checks whether your `origin` remote is `holland-built/no-yolo` or your own fork
+2. If it's a fork, it adds an `upstream` remote pointing to `https://github.com/holland-built/no-yolo.git` (only once — skips if already there)
+3. It fetches the latest from upstream
+4. It rebases your commits on top — your changes survive, they just move to sit after the upstream changes
+5. If any of your changes conflict with an upstream change, it cancels cleanly and tells you exactly which files to fix — nothing is lost
+
+**After a successful rebase on a fork:** if you've already pushed your branch to GitHub, you'll need to force-push to update it: `git push --force origin main`. `/update` will remind you.
 
 ---
 

@@ -45,7 +45,18 @@ Stop here — do not proceed to Step 3.
 
 ## Step 3 — Creative suggestion (queue empty)
 
-Queue is empty. Scan the current project for signal:
+Queue is empty. First check for unpushed work — that is always more urgent than creative suggestions:
+
+```bash
+git status --short 2>/dev/null
+git log origin/main..HEAD --oneline 2>/dev/null
+```
+
+If there are uncommitted changes or unpushed commits → surface them immediately:
+> `Unpushed work: [list files or commits]. Run /ship to push.`
+Stop here. Do not proceed to scan below.
+
+If working tree is clean and nothing unpushed, scan for signal:
 
 ```bash
 # What's the project?
