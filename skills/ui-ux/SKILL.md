@@ -1,6 +1,6 @@
 ---
 name: ui-ux
-description: "UI/UX design intelligence — 161 palettes, 57 font pairings, 99 UX guidelines, 25 chart types across 10 stacks. Use to plan, build, review, or improve any UI/UX before or without code. Upstream of impeccable."
+description: Use this skill when the user types /ui-ux, says 'design this', 'plan the UI', 'review the UX', or asks about styles, palettes, or typography. Design intelligence — 161 palettes, 57 font pairings, 99 UX guidelines, 25 chart types across 10 stacks.
 user-invocable: true
 argument-hint: "[design task or component to improve]"
 ---

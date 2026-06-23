@@ -1,6 +1,6 @@
 ---
 name: diagnose
-description: Systematic 6-phase bug diagnosis. Use when debugging any issue: reproduce → minimize → hypothesize → instrument → fix → regression-test. The leverage is phase 1 — building the right feedback loop. Activate on "diagnose", "/diagnose", "debug this", "can't figure out why", "something's broken".
+description: Use this skill when the user types /diagnose, says 'debug this', 'can't figure out why', or 'something's broken'. Systematic 6-phase bug diagnosis: reproduce → minimize → hypothesize → instrument → fix → regression-test.
 user-invocable: true
 argument-hint: "[describe the bug or paste the error]"
 allowed-tools:

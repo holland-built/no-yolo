@@ -82,3 +82,4 @@ bolt:draw.io|Turns diagram instructions into actual pictures (PNG/SVG/PDF) for d
 bolt:Groq Whisper|Transcribes audio and video cheaply for video-to-kb. Set GROQ_API_KEY in your shell. Far cheaper than OpenAI.
 bolt:shadcn MCP|A library of ready-made design components that ui-ux pulls from. Add the shadcn plugin to settings.json. Keeps design grounded in real parts.
 bolt:impeccable|The editorial cream and burnt-orange theme, used by build and ui-wild. Run `/impeccable`. Gives the UI a distinct look.
+skill-audit|Wondering if your skills are well-structured or missing pieces? `/skill-audit` scans your whole library in one pass — buckets every skill into utility/verification/data enrichment/orchestration, flags missing scripts and config files, finds skills that produce output but never check it, and confirms every trigger description is actually a trigger. Writes a full report to brainstorms/. Also builds new verifiers and surfaces gotcha gaps on demand.

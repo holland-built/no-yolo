@@ -1,6 +1,6 @@
 ---
 name: antislop
-description: Diagnose AI writing/GUI slop tells in any text, code, or UI output. Checks input against ANTISLOP.md writing tells + GUI slop list. Outputs violations table + CLEAN/SLOP-DETECTED verdict. Diagnosis only — no rewrite. Activate on "/antislop", "check for slop", "is this AI slop".
+description: Use this skill when the user types /antislop, says 'check for slop', or 'is this AI slop'. Diagnoses AI writing/GUI slop tells against ANTISLOP.md — violations table + CLEAN/SLOP-DETECTED verdict. Diagnosis only — no rewrite.
 user-invocable: true
 argument-hint: "[text, code, or output to check]"
 model: haiku

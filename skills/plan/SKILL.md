@@ -1,6 +1,6 @@
 ---
 name: plan
-description: Pre-build planning interview. Relentlessly extracts what's in your head — design decisions, edge cases, constraints, open questions — one question at a time, before any code. Activate on "/plan", "plan this", "help me think through", "plan before we build", "interview me about".
+description: Use this skill when the user types /plan, says 'plan this', 'help me think through', 'plan before we build', or 'interview me about'. Pre-build planning interview — extracts design decisions, edge cases, constraints one question at a time before any code.
 user-invocable: true
 argument-hint: "[describe the feature, system, or decision to plan]"
 allowed-tools:

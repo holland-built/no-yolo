@@ -1,6 +1,6 @@
 ---
 name: md-check
-description: MD hygiene audit — line-count, topic-overlap, duplicate-rule detection, and --drift mode to catch stale CLAUDE.md skill descriptions vs SKILL.md source of truth. On-demand audit, pre-creation gate, or drift check. Activate on "/md-check", "check md files", "md hygiene", "check for duplicate docs".
+description: Use this skill when the user types /md-check, says 'check md files', or 'md hygiene'. MD hygiene audit: line counts, topic-overlap, duplicate-rule detection, --drift mode for stale descriptions.
 user-invocable: true
 argument-hint: "[--pre <proposed-filename>] [--drift] (omit for full audit)"
 model: haiku

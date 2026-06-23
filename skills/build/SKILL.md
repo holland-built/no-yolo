@@ -1,6 +1,6 @@
 ---
 name: build
-description: Full feature-build pipeline orchestrator — evidence → plan → Opus plan → approval gate → UI mockup gate → TDD → Sonnet build → regression gate → prove. Routes nits to /impeccable (requires impeccable plugin); runs the full sequence with hard gates for real features. Project-agnostic: auto-detects the stack. Activate on "/build", "build", "build this feature end to end".
+description: Use this skill when the user types /build, says 'build', or 'build this feature end to end'. Full feature pipeline: evidence → plan → Opus plan → approval gate → UI mockup gate → TDD → build → regression gate → prove.
 user-invocable: true
 argument-hint: "[describe the feature to build]"
 allowed-tools:

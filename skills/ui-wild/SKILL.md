@@ -1,6 +1,6 @@
 ---
 name: ui-wild
-description: Radical UI/UX redesign skill — ignores current UI completely, spawns 10 Opus designer personas with extreme prejudice against AI slop, judge pass kills anything generic, mockup approval gate before any code touches the codebase. Governing rules: ui-ux skill (99 guidelines, 161 palettes, WCAG AA), Karpathy surgical code safety, /build regression gate. Activate on "/ui-wild", "go wild on the UI", "redesign this", "ui bananas", "fresh design".
+description: Use this skill when the user types /ui-wild, says 'go wild on the UI', 'redesign this', 'ui bananas', or 'fresh design'. Radical redesign: 10 Opus designer personas, judge pass kills generic AI output, mockup approval gate before any code.
 user-invocable: true
 argument-hint: "[surface or feature to redesign, e.g. 'sidebar' or 'dashboard']"
 allowed-tools:
