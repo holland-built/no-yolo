@@ -1,6 +1,6 @@
 ---
 name: my-skills
-description: List the skills you authored (not installed plugin packs) in a table with what each does, plus a relationship map of what each skill calls. Global — any Claude Code session can run it. Activate on "/my-skills", "my skills", "list my skills", "skills I created".
+description: Use this skill when the user types /my-skills, says 'my skills', 'list my skills', or 'skills I created'. Lists authored skills (not plugin packs) in a table plus a relationship map of skill dependencies.
 user-invocable: true
 argument-hint: "[fast | deep]"
 model: haiku

@@ -1,6 +1,6 @@
 ---
 name: last-30
-description: Pull what's trending NOW (last 30 days only) on any topic — GitHub, Hacker News, YouTube, X/Twitter. Returns gaining-traction signal, not all-time rankings. Activate on "/last-30", "what's trending in", "last 30 days", "what's hot right now".
+description: Use this skill when the user types /last-30, says 'what's trending in', 'last 30 days', or 'what's hot right now'. Pulls gaining-traction signal from GitHub, HN, YouTube, X — last 30 days only, not all-time rankings.
 user-invocable: true
 argument-hint: "[topic / library / tool / pattern to research]"
 allowed-tools:

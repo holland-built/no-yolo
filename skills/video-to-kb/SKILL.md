@@ -1,6 +1,6 @@
 ---
 name: video-to-kb
-description: Ingest YouTube/video URLs into the Knowledge Base Obsidian vault. Two-phase: (1) /watch downloads and saves raw transcript to raw/videos/; (2) "process it" runs full wiki ingest. Activate on "watch video", "process video", "ingest video", "/watch <url>". NOT for articles, podcasts, or non-video sources.
+description: Use this skill when the user says 'watch video', 'process video', 'ingest video', or types /watch <url>. Ingests YouTube/video URLs into the Knowledge Base Obsidian vault — two phases: watch saves raw transcript, 'process it' writes wiki pages.
 allowed-tools: Read,Write,Edit,Bash
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: whats-next
-description: Session-aware next-action engine. Checks pending task queue first — if tasks exist, runs the next one. If queue empty, scans current project and proposes creative improvements. Never shows a static menu. Activate on "/whats-next", "what's next", "what should I do", "now what".
+description: Use this skill when the user types /whats-next, says 'what's next', 'what should I do', or 'now what'. Session-aware next-action engine — checks task queue first; if empty, scans project and proposes improvements.
 user-invocable: true
 argument-hint: ""
 model: haiku
