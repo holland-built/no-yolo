@@ -68,7 +68,7 @@ These are pre-built helper agent definitions in `~/.claude/agents/`. They work l
 
 ## Skill Alignment
 
-- `forge` — full feature pipeline (grill-me → Opus plan → TDD → build → prove)
+- `build` — full feature pipeline (plan → Opus plan → TDD → build → prove)
 - `code-review` — PR/diff review gate before merge
 - `diagnose` — systematic bug diagnosis
 - `tdd` — vertical-slice red-green-refactor

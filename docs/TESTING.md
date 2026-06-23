@@ -34,7 +34,7 @@ After writing production code: start the dev server, open the page in a browser,
 
 **Never claim "done" on a UI change without browser-level verification.**
 
-Use skill: `/forge` (phase 6 — prove).
+Use skill: `/build` (phase 6 — prove).
 
 ## When to skip TDD
 

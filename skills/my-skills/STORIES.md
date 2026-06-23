@@ -15,7 +15,7 @@ code-health|Your project collects junk over time. This checks it and shows what'
 code-review|Before you merge new code, this reads it and catches bugs and bloat you stopped seeing because you wrote it. Run `/code-review` on a diff or PR. Hunts code that shouldn't exist, not just typos.
 diagnose|Stuck on a bug for 20+ minutes, poking randomly? `/diagnose [the bug]` walks it step by step until it finds the real cause. Stops the guess-and-check spiral.
 drawio-skill|Need a picture of how something works? `/drawio-skill [describe it]` draws it — flowchart, architecture, sequence — and saves a PNG/SVG/PDF. An hour of fiddling becomes two minutes.
-forge|Building a feature from scratch? `/forge [feature]` runs the whole pipeline — evidence, Opus plan, approval gate, UI mockup gate, TDD, Sonnet build, regression loop, quality gates, prove. Every gate is hard. Nothing ships half-baked.
+build|Building a feature from scratch? `/build [feature]` runs the whole pipeline — evidence, Opus plan, approval gate, UI mockup gate, TDD, Sonnet build, regression loop, quality gates, prove. Every gate is hard. Nothing ships half-baked.
 debug-debate|Stuck on a bug and not sure what's really broken? `/debug-debate [bug]` reads your code and runs 6 Opus personas in parallel — each arguing a different theory of what's wrong. You get a contradiction map, the most likely root cause with a file:line citation, and one concrete diagnostic step to run next. Diagnosis only, no code changed.
 last-30|Want to know what's actually gaining traction right now, not what was popular last year? `/last-30 [topic]` pulls the last 30 days of signal from GitHub, Hacker News, YouTube, and X — trending repos, top discussions, recent talks. Filters out old results. Starting point for research, not a final answer.
 md-check|Your ~/.claude notes piling up and starting to repeat each other? `/md-check` lists every doc with its size, flags anything over 200 lines, and spots two files saying the same thing so you can merge them. Other skills call it with --pre before creating a new note, so you never end up with two files on one topic.
@@ -23,7 +23,7 @@ antislop|Paste any text or UI output and get a table of AI-slop violations — f
 prompt-scan|System prompt files drift — new rules get added, old ones get stale, and /better_prompt needs a reference to work from. `/prompt-scan` reads every global Claude MD file plus the current model's release notes and writes a dated snapshot to learnings.md. Run it once on setup and again whenever a new Claude model ships.
 better-prompt|Rough prompts get rough results. `/better_prompt "[your prompt]"` reads your learnings.md, checks if the prompt has a named target, a scope boundary, and a success criterion, then rewrites it with all three plus the right skill route. Shows before/after with rationale. Requires /prompt-scan to have run at least once.
 better_prompt|Rough prompts get rough results. `/better_prompt "[your prompt]"` reads your learnings.md, checks if the prompt has a named target, a scope boundary, and a success criterion, then rewrites it with all three plus the right skill route. Shows before/after with rationale. Requires /prompt-scan to have run at least once.
-grill-me|Got a fuzzy plan? `/grill-me [plan]` interviews you one question at a time and forces the hard decisions out before you code. First try works far more often (~70% to ~90%).
+plan|Got a fuzzy plan? `/plan [plan]` interviews you one question at a time and forces the hard decisions out before you code. First try works far more often (~70% to ~90%).
 my-md|Lost track of your notes? `/my-md` lists every markdown file — your global Claude docs plus this project's brainstorms and changelogs. One command, see everything.
 my-skills|This menu. `/my-skills` lists every tool you have and what it's for, so you stop forgetting what you built.
 quick-design|Changing how something looks? `/quick-design [the UI]` shows three real options — safe, modern, bold — before you write a line of CSS. Pick, then build.
@@ -37,16 +37,16 @@ whats-next|Back after a break and don't know where you left off? `/whats-next` s
 # ── Section 2 — Plugin skills ─────────────────────────────────────────────────
 impeccable|Building a net-new site and want slop kept out from day one? `/impeccable` generates a complete design system spec — tokens, component rules (all states), a11y criteria, anti-patterns, and a QA checklist. Every rule is testable and anchored to a real value.
 improve|Want an honest audit before fixing anything? `/improve` surveys the project and hands you a ranked to-do list. Never touches code — pure advice, zero risk.
-ponytail|About to overbuild something simple? `/ponytail [what you're building]` forces the laziest thing that actually works — strips out extra layers and ceremony.
-ponytail-audit|`/ponytail-audit` scans the whole project for over-engineered code and ranks what to simplify. Finds the clever thing from 6 months ago nobody understands now.
-ponytail-debt|Took shortcuts on purpose and tagged them? `/ponytail-debt` gathers them into one list so they don't become forgotten landmines.
-ponytail-help|Forgot a ponytail command? `/ponytail-help` is the quick cheat-sheet.
-ponytail-review|PR feels too big? `/ponytail-review` reads the diff and tells you what to cut — most tools suggest what to add, this one hunts what to remove.
+trim|About to overbuild something simple? `/trim [what you're building]` forces the laziest thing that actually works — strips out extra layers and ceremony.
+trim-audit|`/trim-audit` scans the whole project for over-engineered code and ranks what to simplify. Finds the clever thing from 6 months ago nobody understands now.
+trim-debt|Took shortcuts on purpose and tagged them? `/trim-debt` gathers them into one list so they don't become forgotten landmines.
+trim-help|Forgot a trim command? `/trim-help` is the quick cheat-sheet.
+trim-review|PR feels too big? `/trim-review` reads the diff and tells you what to cut — most tools suggest what to add, this one hunts what to remove.
 
 # ── Section 3 — Relationships (prefix rel:) ───────────────────────────────────
-rel:code-health|Runs four tools in order for you — fallow, then the ponytail checks, then improve — so you don't run each by hand. One command, full cleanup pass.
-rel:code-review|Pulls the real diff with gh, then runs ponytail-review on it — so it catches what you deleted, not just what you added.
-rel:forge|Full pipeline inline — evidence → grill-me → Opus plan → approval gate → mockup gate → TDD → Sonnet build → regression → quality gates → prove. Every gate is hard. Opus plans, Sonnet builds, no shortcuts.
+rel:code-health|Runs four tools in order for you — fallow, then the trim checks, then improve — so you don't run each by hand. One command, full cleanup pass.
+rel:code-review|Pulls the real diff with gh, then runs trim-review on it — so it catches what you deleted, not just what you added.
+rel:build|Full pipeline inline — evidence → plan → Opus plan → approval gate → mockup gate → TDD → Sonnet build → regression → quality gates → prove. Every gate is hard. Opus plans, Sonnet builds, no shortcuts.
 rel:debug-debate|Stands alone — reads the codebase itself before spawning 6 parallel Opus personas. No setup needed beyond a bug description.
 rel:last-30|Uses WebSearch and the exa MCP plugin to hit 4 sources in parallel. Requires exa plugin in settings.json for best results.
 rel:md-check|Stands alone — pure shell + Read. No setup. Other skills can call it with --pre flag as a pre-creation gate.
@@ -59,14 +59,14 @@ rel:drawio-skill|Uses the draw.io tool plus Graphviz and Python scripts that aut
 rel:video-to-kb|Uses Groq Whisper to transcribe the video cheaply, then files it into your Obsidian notes. A one-hour talk is done in ~2 minutes.
 rel:tdd|Runs your test command, and if a failing test is confusing it hands off to diagnose automatically — no manual switch.
 rel:diagnose|Stands alone — no setup. Pure step-by-step root-cause debugging.
-rel:grill-me|Uses the question-prompt tool to interview you one item at a time — no dependencies.
+rel:plan|Uses the question-prompt tool to interview you one item at a time — no dependencies.
 rel:ui-ux|Backed by Python scripts that search a real design library (161 palettes, 99 UX rules) plus the shadcn component set — not made-up advice.
 rel:improve|Sends out explorer agents in parallel to survey the codebase, then writes plan files. Never edits code.
-rel:ponytail|Stands alone — no setup. The simplicity enforcer, always available.
-rel:ponytail-audit|Stands alone — no setup. Whole-repo over-engineering hunt.
-rel:ponytail-debt|Stands alone — no setup. Collects your tagged shortcuts into one ledger.
-rel:ponytail-review|Stands alone — no setup. Diff review for what to delete.
-rel:ponytail-help|Stands alone — no setup. The ponytail cheat-sheet.
+rel:trim|Stands alone — no setup. The simplicity enforcer, always available.
+rel:trim-audit|Stands alone — no setup. Whole-repo over-engineering hunt.
+rel:trim-debt|Stands alone — no setup. Collects your tagged shortcuts into one ledger.
+rel:trim-review|Stands alone — no setup. Diff review for what to delete.
+rel:trim-help|Stands alone — no setup. The trim cheat-sheet.
 rel:my-skills|Stands alone — no setup. This inventory tool.
 rel:my-md|Stands alone — no setup. Lists your markdown files.
 rel:quick-design|Runs three designer agents at once and uses headless Chrome to screenshot each mockup, so all three are ready together.
@@ -75,10 +75,10 @@ rel:whats-next|Stands alone, read-only. Scans your in-progress work and git stat
 # ── Section 4 — Bolt-ons (prefix bolt:) ──────────────────────────────────────
 bolt:fallow|Finds code nobody uses — dead leftovers, dupes, junk. code-health runs it before cleanup. Install: `npm install -g fallow`. Free, fast, no AI.
 bolt:gh|GitHub's tool — pulls real PR diffs so code-review reads them without copy-paste. Install: `brew install gh && gh auth login`.
-bolt:Chrome|Takes screenshots of mockups so you see them without opening a browser. Used by quick-design and forge. Usually already installed.
-bolt:Playwright|Drives a browser to measure layouts and run smoke tests for forge. Add the playwright MCP plugin to settings.json. Gives real proof a layout is right.
+bolt:Chrome|Takes screenshots of mockups so you see them without opening a browser. Used by quick-design and build. Usually already installed.
+bolt:Playwright|Drives a browser to measure layouts and run smoke tests for build. Add the playwright MCP plugin to settings.json. Gives real proof a layout is right.
 bolt:Graphviz|The engine that auto-arranges diagram boxes for drawio-skill. Install: `brew install graphviz`. No hand-placing.
 bolt:draw.io|Turns diagram instructions into actual pictures (PNG/SVG/PDF) for drawio-skill. Install: `brew install --cask drawio`.
 bolt:Groq Whisper|Transcribes audio and video cheaply for video-to-kb. Set GROQ_API_KEY in your shell. Far cheaper than OpenAI.
 bolt:shadcn MCP|A library of ready-made design components that ui-ux pulls from. Add the shadcn plugin to settings.json. Keeps design grounded in real parts.
-bolt:impeccable|The editorial cream and burnt-orange theme, used by forge and ui-wild. Run `/impeccable`. Gives the UI a distinct look.
+bolt:impeccable|The editorial cream and burnt-orange theme, used by build and ui-wild. Run `/impeccable`. Gives the UI a distinct look.

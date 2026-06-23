@@ -2,9 +2,9 @@ code-health|`/code-health` — runs automatically on current project
 code-review|`/code-review` — point at a diff or PR URL
 diagnose|`/diagnose [describe the bug]`
 drawio-skill|`/drawio-skill [describe the diagram]`
-forge|`/forge [describe the feature]`
+build|`/build [describe the feature]`
 graphify|`/graphify` — then ask questions in plain English
-grill-me|`/grill-me [describe your plan]`
+plan|`/plan [describe your plan]`
 my-md|`/my-md`
 my-skills|`/my-skills`
 quick-design|`/quick-design [describe the UI]`
@@ -15,11 +15,11 @@ video-to-kb|`/video-to-kb [YouTube URL]`
 whats-next|`/whats-next`
 impeccable|`/impeccable` — then describe the UI to generate
 improve|`/improve` — runs on current project, outputs plan files
-ponytail|`/ponytail [describe what you're building]`
-ponytail-audit|`/ponytail-audit`
-ponytail-debt|`/ponytail-debt`
-ponytail-help|`/ponytail-help`
-ponytail-review|`/ponytail-review` — point at the diff
+trim|`/trim [describe what you're building]`
+trim-audit|`/trim-audit`
+trim-debt|`/trim-debt`
+trim-help|`/trim-help`
+trim-review|`/trim-review` — point at the diff
 eli5|`/eli5 [skill name, plan, or command]`
 debate|/debate [decision] — or paste in the mockups, plan, or options you're deciding between. Works on architecture, UI/UX, or feature-priority calls.
 update|/update — check status. /update preview — full changelog. /update full — apply everything. /update rules — rules only. /update rollback — undo. /update restore <name> — recover deleted skill.

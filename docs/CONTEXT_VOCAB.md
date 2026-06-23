@@ -16,7 +16,7 @@ Shared concept names for this setup. Name a concept here once — then reference
 | fact file | A memory record in `~/.claude-work/projects/-Users-sholland/memory/facts/*.md` |
 | compiled preferences | `memory/CLAUDE.generated.md` — auto-built from fact files by `/memory-compile` |
 | slop | AI-generated visual or prose patterns that look generic/templated — defined in `ANTISLOP.md` |
-| brainstorm file | Planning artifact written to `brainstorms/` by forge/plan-feature/grill-me skills |
+| brainstorm file | Planning artifact written to `brainstorms/` by build/plan skills |
 | gateguard | Pre-edit hook that requires stating facts before modifying key files |
 
 ## Project-specific terms

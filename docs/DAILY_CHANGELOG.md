@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-06-23
+
+- renamed /forge → /build — more obvious name for the full feature-build pipeline
+- renamed /grill-me → /plan — clearer name for the pre-build planning interview
+- forked DietrichGebert/ponytail → holland-built/trim — renamed all 6 sub-skills (trim, trim-audit, trim-debt, trim-gain, trim-help, trim-review), updated comment convention // ponytail: → // trim:
+- updated all references across skills, docs, setup.sh, README, .gitignore to use /build, /plan, and trim
+- fixed grill-me/plan SKILL.md — removed hard 8-question minimum, added eli5-style agreement gate
+- fixed grill-me/plan SKILL.md — gate now references /build instead of deleted /plan-feature
+- updated .gitignore — ignores both ponytail-* (currently installed) and trim-* (post-reinstall) symlinks
+
 ## 2026-06-22
 
 - reorganized docs into docs/ subfolder — moved all .md files from root except CLAUDE.md and README.md

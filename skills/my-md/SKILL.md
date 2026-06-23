@@ -59,4 +59,4 @@ fi
 Emit as `| File | The whole story |` markdown table. Header: `## Project — <pwd>`.
 
 - If output is `NOT_A_PROJECT`: print `> Run /my-md from a project directory, not your home folder.`
-- If no files found: print `> No markdown files in current project. forge and grill-me create them when you run a feature build.`
+- If no files found: print `> No markdown files in current project. /build and /plan create them when you run a feature build.`
