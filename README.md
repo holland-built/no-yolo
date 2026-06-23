@@ -1,6 +1,6 @@
 # no-yolo
 
-This is my personal setup for Claude Code, saved as files you can copy. It includes the rules Claude reads at the start of every session, a set of custom commands ("skills"), helper agents, automation scripts, and a memory system that remembers my preferences. Fork it and you get a working setup right away.
+My personal Claude Code setup, saved in git. Fork it and you get a working setup in minutes — slash commands, strict coding habits, and a memory system that learns your preferences.
 
 ---
 
@@ -8,11 +8,9 @@ This is my personal setup for Claude Code, saved as files you can copy. It inclu
 
 Claude Code is a command-line tool where you talk to Claude to write and edit code. It reads a folder called `~/.claude/` every time it starts. This repo *is* that folder, saved in git. Here's what's inside:
 
-- The whole `~/.claude/` folder, tracked in git — everything Claude Code reads on every session
-- A set of rules Claude reads at the start of every session (`CLAUDE.md` plus a few topic files). These enforce strict habits that make Claude actually useful: think and plan before writing code, only change the exact lines you asked for, and use the expensive model to plan while a cheaper model does the typing
-- 27 custom commands, plus 7 more borrowed from plugins (run `/my-skills` to see the real, up-to-date count). A skill is a command you run by typing `/name` — like `/code-review` or `/build`.
-- Definitions for helper agents, custom slash commands, and automation scripts
-- A memory system that learns your preferences over time. The easy way: just say "remember that I prefer X" and Claude saves it for you automatically. The power-user way: edit small note files in `memory/facts/` and run `/memory-compile` — useful when you want your preferences committed to git so they sync to all your machines
+- **Rules** Claude reads at the start of every session. Enforces strict habits: plan before coding, only touch the exact lines you asked for, use the right model for the right job.
+- **27 custom commands**, plus 7 borrowed from plugins — type `/name` to run one, like `/code-review` or `/build`. Run `/my-skills` for the full list.
+- **Memory** that learns your preferences. Say "remember that I prefer X" and Claude saves it automatically — carries forward to every future session.
 
 ---
 
@@ -127,28 +125,15 @@ Secret keys and paths that tools need to find. Add these to your shell profile (
 export GROQ_API_KEY=your_key_here
 ```
 
-> ⚠️ **Security note:** `settings.json` lets Claude run `Bash(security find-generic-password *)` and `Bash(sshpass *)` without asking you first. The first one can read any password saved in the macOS Keychain; the second can type SSH passwords for you. Before using this setup on a machine you share with others, tighten these patterns so they only match the specific things you intend.
+> ⚠️ **Security note:** The default `settings.json` gives Claude broad bash access, including reading macOS Keychain passwords. On a shared machine, tighten the `Bash(...)` allow-patterns in `settings.json` before use.
 
 ---
 
 ## Set up a new project
 
-After cloning this repo, do this in each new project folder you work in:
+No per-project setup required — skills that need a `brainstorms/` folder create it automatically.
 
-Skills that need a `brainstorms/` folder (for plans and research notes) create it automatically — no manual setup required.
-
-Then copy your settings template once:
-```bash
-cp ~/.claude/settings.example.json ~/.claude/settings.json
-```
-
-Open `settings.json` and make two changes:
-1. Fix the Node.js path — replace the path in `"command"` lines with the output of `which node`
-2. Add any MCP servers you want (see below)
-
-**Adding an MCP server** (this is how you give Claude extra abilities):
-
-Find the `"mcpServers"` section in `settings.json` (or add it if missing) and add a block like this:
+The one thing you may want to add: **MCP servers**. These give Claude extra abilities. Add them to the `"mcpServers"` section of `~/.claude/settings.json`:
 
 ```json
 "mcpServers": {
@@ -159,12 +144,7 @@ Find the `"mcpServers"` section in `settings.json` (or add it if missing) and ad
 }
 ```
 
-Each MCP server is a tool Claude gets access to. The [Claude MCP docs](https://docs.anthropic.com/en/docs/claude-code/mcp) have a list of available ones. Common ones:
-- `playwright` — control a real browser (test your web app, take screenshots)
-- `shadcn` — look up and add UI components
-- `github` — read and write GitHub issues and pull requests
-
-You don't need any MCP servers to start. Add them when a skill asks for one.
+Common ones: `playwright` (browser control), `shadcn` (UI components), `github` (issues + PRs). You don't need any to start — add when a skill asks for one. Full list in the [Claude MCP docs](https://docs.anthropic.com/en/docs/claude-code/mcp).
 
 ---
 
@@ -183,19 +163,12 @@ What each file and folder is for:
 | `docs/SKILLS.md` | Rules for using skills and plugins |
 | `docs/CODE_REVIEW.md` | Rules for reviewing code |
 | `docs/UI_MOCKUPS.md` | Rules for designing screens before building them |
-| `docs/ANTISLOP.md` | 25 AI writing tells + GUI slop patterns — canonical reference for `/antislop` and `/ship` |
-| `docs/CONTEXT_VOCAB.md` | Shared vocabulary table — name concepts once, reference in prompts for lower token cost |
 | `docs/DAILY_CHANGELOG.md` | Public changelog — `/ship` appends a dated entry here before pushing |
-| `docs/SKILL_RECOMMENDATIONS.md` | A wishlist of new commands to maybe add (just notes, not turned on) |
 | `docs/NO_YOLO.md` | How to author a new skill — the checklist |
-| `docs/HOOKS.md` | Docs for the automation hooks |
 | `docs/MEMORY.md` | Docs for the memory system |
-| `docs/MEMORY_USAGE.md` | Teammate onboarding for the memory system — how to add, delete, and compile preferences |
 | `docs/SKILL_TRIGGERS.md` | Trigger rules for every skill — CLAUDE.md points here |
 | `memory/` | Saved preferences — `facts/` is source of truth, `CLAUDE.generated.md` is compiled result |
 | `skills/` | Your skills plus symlinks to borrowed ones |
-| `agents/` | Definitions for helper agents |
-| `commands/` | Legacy slash commands (caveman, memory-compile, watch) |
 | `hooks/` | Automation scripts: caveman mode, session-reflect, status line |
 | `settings.example.json` | Starter settings with no secrets — copy to `settings.json` and fill in |
 
@@ -285,7 +258,7 @@ That's it. No git knowledge needed. It checks if you're behind, shows what's new
 
 **How it works:** `/update` fetches the latest version from GitHub without changing anything, then shows you a plain-English summary: "You'd get 2 new skills, 1 rule changed, 1 skill removed." You decide what to do next.
 
-**If you've customized your clone:** `/update full` is still safe to run. It detects any local changes before pulling, stashes them automatically, applies the update, then restores your changes. If anything conflicts, it tells you exactly what and leaves your originals in git stash so nothing is lost.
+**If you've customized your clone:** `/update full` is safe — it stashes local changes, applies the update, then restores them. Conflicts are shown explicitly; nothing is lost.
 
 Changes take effect the next time you open Claude Code.
 
@@ -295,17 +268,9 @@ Changes take effect the next time you open Claude Code.
 
 If you cloned this repo directly (not as a fork), `/update full` handles everything automatically.
 
-If you **forked** this repo on GitHub and made your own changes, you have two histories: your customizations, and upstream updates from `holland-built/no-yolo`. `/update full` handles this too — it detects a fork automatically, adds an `upstream` remote pointing to the original repo, and rebases your commits on top of the latest changes.
+If you **forked** this repo on GitHub, `/update full` handles that too — it detects a fork, adds an `upstream` remote to the original, and rebases your commits on top of the latest changes. Your customizations survive.
 
-**What actually happens when you run `/update full` on a fork:**
-
-1. `/update` checks whether your `origin` remote is `holland-built/no-yolo` or your own fork
-2. If it's a fork, it adds an `upstream` remote pointing to `https://github.com/holland-built/no-yolo.git` (only once — skips if already there)
-3. It fetches the latest from upstream
-4. It rebases your commits on top — your changes survive, they just move to sit after the upstream changes
-5. If any of your changes conflict with an upstream change, it cancels cleanly and tells you exactly which files to fix — nothing is lost
-
-**After a successful rebase on a fork:** if you've already pushed your branch to GitHub, you'll need to force-push to update it: `git push --force origin main`. `/update` will remind you.
+**After a successful rebase:** force-push to update your fork: `git push --force origin main`. `/update` will remind you.
 
 ---
 
@@ -327,7 +292,7 @@ mkdir ~/.claude/skills/<name>
 <name>|One sentence — when to use it and what it does.
 ```
 
-3. Add a trigger block to `CLAUDE.md`:
+3. Add a trigger block to `docs/SKILL_TRIGGERS.md`:
 
 ```markdown
 # <name>
@@ -364,13 +329,8 @@ This syncs preferences across all your machines via the repo.
 
 1. Create or edit a file in `memory/facts/` — name it anything, like `memory/facts/my-preferences.md`
 2. Run `/memory-compile` inside Claude Code — this rebuilds one combined file Claude reads on startup
-3. Commit both files:
-   ```bash
-   git add memory/facts/ memory/CLAUDE.generated.md
-   git commit -m "remember: I prefer pnpm"
-   git push
-   ```
-4. Pull on your other machines — your preferences are now everywhere
+3. Commit `memory/facts/` and `memory/CLAUDE.generated.md` and push
+4. Pull on your other machines — preferences are now everywhere
 
 Never hand-edit `memory/CLAUDE.generated.md` directly — it gets overwritten every time you compile.
 
