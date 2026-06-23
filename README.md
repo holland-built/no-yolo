@@ -109,23 +109,10 @@ These are not installed by setup.sh. Install whichever ones match the skills you
 | [Groq Whisper](https://console.groq.com/) | Transcribes a YouTube video and saves a structured wiki page into your Obsidian vault | `video-to-kb` | Get a free API key at console.groq.com, then add `export GROQ_API_KEY=your_key` to `~/.zshrc` |
 | [Chrome](https://www.google.com/chrome/) (headless) | Takes screenshots of mockups without opening a browser window | `quick-design`, `build` | Already on most machines; or `brew install --cask google-chrome` |
 | [Playwright](https://playwright.dev/) | Lets Claude click around in a browser to test your web app | `build` | Add the `playwright` MCP server to `settings.json` — see MCP note below |
-| GitHub MCP | Lets Claude read and write GitHub issues, PRs, and comments | `code-review`, `ship` | Add the `github` MCP server to `settings.json` |
 
 > **What's an MCP server?** MCP (Model Context Protocol) is a standard for giving Claude extra tools — like the ability to control a browser or search a codebase. You wire one up by adding a config block to `settings.json`. See the [Claude MCP docs](https://docs.anthropic.com/en/docs/claude-code/mcp) for how.
 
-### Environment variables
-
-Secret keys and paths that tools need to find. Add these to your shell profile (`~/.zshrc` or `~/.bash_profile`):
-
-| Variable | Used by | Where to get it |
-|---|---|---|
-| `GROQ_API_KEY` | `video-to-kb` | Free at [console.groq.com](https://console.groq.com/) |
-
-```bash
-export GROQ_API_KEY=your_key_here
-```
-
-> ⚠️ **Security note:** The default `settings.json` gives Claude broad bash access, including reading macOS Keychain passwords. On a shared machine, tighten the `Bash(...)` allow-patterns in `settings.json` before use.
+> ⚠️ **Security note:** The example `settings.json` allows broad bash commands (`curl`, `docker`, `kill`) and wildcarded filesystem MCP access. It also sets `skipDangerousModePermissionPrompt: false` — change this to `true` in your personal `settings.json` only if you want Claude to skip confirmation prompts. On a shared or sensitive machine, narrow the `Bash(...)` allow-patterns to what you actually need.
 
 ---
 
@@ -144,7 +131,7 @@ The one thing you may want to add: **MCP servers**. These give Claude extra abil
 }
 ```
 
-Common ones: `playwright` (browser control), `github` (issues + PRs). You don't need any to start — add when a skill asks for one. Full list in the [Claude MCP docs](https://docs.anthropic.com/en/docs/claude-code/mcp).
+Common one: `playwright` (browser control for `/build` and `/quick-design`). You don't need any to start — add when a skill asks for one. Full list in the [Claude MCP docs](https://docs.anthropic.com/en/docs/claude-code/mcp).
 
 ---
 
@@ -178,6 +165,19 @@ What each file and folder is for:
 
 A "skill" is a custom command you trigger with a slash, like `/code-review`. Here's everything available.
 
+### Building a UI? Use the design pipeline
+
+Four commands work together in order — each one does one job:
+
+| Step | Command | What it does |
+|---|---|---|
+| 1 | `/ui-ux` | Pick colors, fonts, and layout rules before writing a line of code |
+| 2 | `/quick-design` | Generates 3 mockups (safe / modern / bold) and opens them in Chrome for approval |
+| 3 | `/impeccable` | Applies a polished visual style (warm cream, burnt orange) to your approved mockup |
+| 4 | `/build` | Writes the code — but first automatically runs the mockup gate (10 design variants, slop filter, approval required before any code is written) |
+
+You can start at any step. If you just want to build without thinking about design, `/build` still makes you approve a mockup — you just skip steps 1–3.
+
 ### Commands in this setup
 
 | Skill | What it does | Modes & flags |
@@ -187,7 +187,7 @@ A "skill" is a custom command you trigger with a slash, like `/code-review`. Her
 | `code-review` | Reviews a pull request or a set of changes: first for bugs, then for over-complication, then for unrelated edits that shouldn't be there | `--fix` (auto-apply) · `--comment` (inline comments) · `--effort low\|medium\|high\|max` (depth) |
 | `diagnose` | A 6-step way to find the real cause of a bug — when you're stuck, it walks you through it step by step | — |
 | `drawio-skill` | Draws diagrams (architecture, flowcharts, database tables, UML). Saves them as PNG, SVG, or PDF | — |
-| `build` | Builds a whole feature start to finish: gather evidence, plan with Opus, approve, UI mockup gate, write tests first, build with Sonnet, then prove it works | — |
+| `build` | Builds a whole feature start to finish: gather evidence, plan with Opus, approve, then automatically runs a 10-variant UI mockup gate (slop-filtered, requires approval) before writing any code — tests first, build with Sonnet, then prove it works | — |
 | `plan` | Interviews you before any code gets written — one question at a time until every tricky case is sorted out | — |
 | `my-md` | Lists every markdown file — both the global `~/.claude/` docs and the ones in your current project | — |
 | `my-skills` | This very list. Shows the commands I wrote and the borrowed ones, plus how they connect and what they depend on | `fast` (2-col) · `deep` (4-col + relationships) |
