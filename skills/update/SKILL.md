@@ -1,6 +1,6 @@
 ---
 name: update
-description: Check for, preview, and apply updates to your ~/.claude setup. See what's new, what's removed, and what changed — before or after pulling. Also handles rollback and restoring deleted skills.
+description: Use this skill when the user types /update, says 'check for updates', 'am I out of date', 'what's new', 'update my setup', or 'rollback'. Checks for, previews, and applies updates to ~/.claude setup.
 user-invocable: true
 ---
 

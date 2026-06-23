@@ -1,6 +1,6 @@
 ---
 name: prompt-scan
-description: Scans Claude Code system prompt files + current-model release notes and appends a dated section to learnings.md for /better_prompt to use when rewriting prompts. Run on setup and when a new Claude model ships. Activate on "/prompt-scan", "scan my prompts", "refresh learnings".
+description: Use this skill when the user types /prompt-scan, says 'scan my prompts', or 'refresh learnings'. Scans system prompt files + fetches current model release notes → appends dated section to learnings.md for /better-prompt.
 user-invocable: true
 argument-hint: ""
 allowed-tools:

@@ -9,6 +9,11 @@
 - fixed grill-me/plan SKILL.md — removed hard 8-question minimum, added eli5-style agreement gate
 - fixed grill-me/plan SKILL.md — gate now references /build instead of deleted /plan-feature
 - updated .gitignore — ignores both ponytail-* (currently installed) and trim-* (post-reinstall) symlinks
+- ingested YouTube "How Anthropic Employees ACTUALLY Use Claude Skills" — raw KB file + wiki source page + topic page updated with 4-bucket taxonomy and folder structure
+- rewrote description fields in 27 skills — all now lead with "Use this skill when" trigger condition
+- updated docs/SKILLS.md — added 4-bucket taxonomy, folder structure, trigger condition rule, gotchas discipline sections
+- updated docs/NO_YOLO.md — added trigger-condition and gotchas-grow-organically rules, fixed skill checklist (user-invocable: true, SKILL_TRIGGERS.md)
+- added /skill-audit skill — 3-mode library audit: bucket/component/verifier/trigger audit, build-verifier mode, gotchas mode
 
 ## 2026-06-22
 
@@ -61,9 +66,6 @@
 - updated my-skills SKILL.md — 4-column table with when/why, line-wrap via fold+awk
 - updated my-skills WHEN_TO_USE.md — added 10 missing skills
 - updated my-skills WHY_TO_USE.md — added 10 missing skills
-
-## 2026-06-23
-
 - added docs/README_FORMAT.md — spec file listing 15 required README section headings; /ship reads this to validate structure
 - added "Skills with modes" section to README.md — table of 7 skills with flags/routes (/ui, /update, /my-skills, /md-check, /code-review, /code-health, /remember-that)
 - added Phase 3c README format hard-block to /ship — commits blocked if any required README section is missing or renamed

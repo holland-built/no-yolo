@@ -1,6 +1,6 @@
 ---
 name: debug-debate
-description: 6-persona repo-aware debugging debate — six Opus personas read the code and argue competing root-cause theories, then a contradiction map + most likely cause + next diagnostic step. Diagnosis only, no fix. Activate on "/debug-debate", "argue about this bug", "what's breaking and why", "debate the bug".
+description: Use this skill when the user types /debug-debate, says 'argue about this bug', 'what's breaking and why', or 'debate the bug'. Six repo-aware Opus personas argue competing root-cause theories — contradiction map + most likely cause + next diagnostic step. Diagnosis only, no fix.
 user-invocable: true
 argument-hint: "[describe the bug or unexpected behavior]"
 allowed-tools:

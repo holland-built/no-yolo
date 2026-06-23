@@ -66,3 +66,6 @@ When the user types `/antislop`, says "check for slop", or "is this AI slop", in
 # remember-that
 - **remember-that** (`~/.claude/skills/remember-that/SKILL.md`) - unified memory manager: add facts, extract from context, delete, move, audit, compile. Trigger: `/remember-that`
 When the user types `/remember-that`, says "remember that", "save this to memory", or "forget that", invoke the Skill tool with `skill: "remember-that"` before doing anything else.
+# skill-audit
+- **skill-audit** (`~/.claude/skills/skill-audit/SKILL.md`) - audits ~/.claude/skills/ across 4 dimensions: bucket fit, component gaps, missing verifiers, trigger conditions. Also builds verifiers and surfaces gotcha gaps. Trigger: `/skill-audit`
+When the user types `/skill-audit`, says "audit my skills", "check my skill library", "find skill gaps", or "run skill audit", invoke the Skill tool with `skill: "skill-audit"` before doing anything else.

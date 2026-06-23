@@ -1,6 +1,6 @@
 ---
 name: ship
-description: Quality-gated publish to github.com/holland-built/no-yolo. Runs md-check + antislop + eli5 + drift-check warnings, validates README structure (hard block), writes a dated changelog entry, then guards against personal-data leaks and pushes. Activate on "/ship", "push skills", "publish to no-yolo", "ship my work".
+description: Use this skill when the user types /ship, says 'push skills', 'publish to no-yolo', or 'ship my work'. Quality-gated publish: md-check + antislop + eli5 + drift-check → README validation → changelog entry → commit + push to no-yolo.
 user-invocable: true
 argument-hint: "[optional commit message]"
 allowed-tools:

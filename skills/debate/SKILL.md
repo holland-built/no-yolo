@@ -1,6 +1,6 @@
 ---
 name: debate
-description: 6-persona product-team debate on any software decision — architecture, UI/UX, or feature priority. Senior Dev + Junior Dev + Sales Engineer + DevOps + Sales Leader + Eng Leader, then contradiction map, synthesis, and peer review.
+description: Use this skill when the user types /debate, says 'debate this', 'stress test this decision', 'get the team on this', or 'should we build this'. Six-persona product-team debate — Senior Dev + Junior Dev + Sales Engineer + DevOps + Sales Leader + Eng Leader — contradiction map, synthesis, peer review.
 user-invocable: true
 ---
 

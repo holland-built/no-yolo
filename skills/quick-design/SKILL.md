@@ -1,6 +1,6 @@
 ---
 name: quick-design
-description: Fast 3-variant UI mockup generator. Extracts real design tokens from the project, spawns 3 parallel agents (conservative / modern / wild), pops combined view in Chrome. Hard approval gate before any code is written. Activate on "/quick-design", "show me options", "mockup this", "design options".
+description: Use this skill when the user types /quick-design, says 'show me options', 'mockup this', or 'design options'. Generates 3 parallel UI variants (conservative / modern / wild), opens in Chrome — hard approval gate before any code.
 user-invocable: true
 argument-hint: "[describe the UI you want to design]"
 allowed-tools:

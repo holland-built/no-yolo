@@ -1,6 +1,6 @@
 ---
 name: code-health
-description: Three-phase codebase health pass — Fallow (static analysis, all commands in sequence), Trim (LLM anti-over-engineering review), Improve (shadcn, token waste + YAGNI plan). Each phase gates before the next. All output in table format. Activate on "/code-health", "code health", "run health pass", "fallow pass".
+description: Use this skill when the user types /code-health, says 'code health', 'run health pass', or 'fallow pass'. Three-phase health pass: Fallow (static analysis) → Trim (YAGNI review) → Improve (shadcn, token waste + YAGNI plan). All output as tables.
 user-invocable: true
 argument-hint: "[path/goal, or --auto to skip confirmation gates for AFK use]"
 allowed-tools:
