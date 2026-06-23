@@ -6,7 +6,7 @@
 - **eli5** (`~/.claude/skills/eli5/SKILL.md`) - explain anything in plain English before you commit to it. Trigger: `/eli5`
 When the user types `/eli5`, invoke the Skill tool with `skill: "eli5"` before doing anything else.
 # code-health
-- **code-health** (`~/.claude/skills/code-health/SKILL.md`) - three-phase codebase health pass: Fallow (all commands) → Trim → Improve. All output as tables. Trigger: `/code-health`
+- **code-health** (`~/.claude/skills/code-health/SKILL.md`) - three-phase codebase health pass: Fallow (static analysis) → Trim → Improve. All output as tables. Trigger: `/code-health`
 When the user types `/code-health`, invoke the Skill tool with `skill: "code-health"` before doing anything else.
 # my-skills
 - **my-skills** - list skills you authored (not plugin packs) + relationship map. Trigger: `/my-skills`
@@ -15,7 +15,7 @@ When the user types `/my-skills`, invoke the Skill tool with `skill: "my-skills"
 - **ui** (`~/.claude/skills/ui/SKILL.md`) - UI entry point: numbered menu routes to ui-ux / quick-design / ui-wild / impeccable. Trigger: `/ui`, `/ux`
 When the user types `/ui`, `/ux`, says "design something", "design this", "show me options", "mockup this", or "design options", invoke the Skill tool with `skill: "ui"` before doing anything else.
 # ui-wild
-- **ui-wild** (`~/.claude/skills/ui-wild/SKILL.md`) - radical UI/UX redesign: 10 Opus personas, judge pass kills AI slop, mockup approval gate, surgical code safety, regression gate. Trigger: `/ui-wild`
+- **ui-wild** (`~/.claude/skills/ui-wild/SKILL.md`) - radical UI/UX redesign: 10 Opus personas, judge pass kills generic AI output, mockup approval gate before any code. Trigger: `/ui-wild`
 When the user types `/ui-wild`, invoke the Skill tool with `skill: "ui-wild"` before doing anything else.
 # code-review
 - **code-review** (`~/.claude/skills/code-review/SKILL.md`) - three-pass diff review: correctness/bugs, over-engineering (trim), Karpathy surgical+simplicity. Supports `--fix` to apply findings, `--comment` for inline PR comments, effort flags (low/medium/high/max). Trigger: `/code-review`

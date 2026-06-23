@@ -127,3 +127,5 @@
 - removed github from MCP example in Set up a new project — only playwright is commonly needed
 - added design pipeline subsection to Skills inventory — explains /ui-ux → /quick-design → /impeccable → /build chain
 - updated /build skills table row — clarifies automatic 10-variant mockup gate before any code is written
+- fixed 3 drift entries in SKILL_TRIGGERS.md: code-health Fallow description, ui-wild removed false claims, update description matches rollback/restore
+- updated update/SKILL.md description — mentions rollback and restore-removed-skill
