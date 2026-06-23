@@ -44,6 +44,16 @@ Flag any in a one-line table: `| Section | Jargon |`. Do NOT stop.
 ### 1d. Drift check
 Invoke `md-check --drift` via the Skill tool. For any DRIFT or WRONG verdicts: print the full drift table as a warning. Do NOT stop.
 
+### 1e. GLOBAL_DESCRIPTIONS coverage check
+```bash
+descs="$HOME/.claude/skills/my-md/GLOBAL_DESCRIPTIONS.md"
+{ find "$HOME/.claude" -maxdepth 1 -name "*.md"; find "$HOME/.claude/docs" -maxdepth 1 -name "*.md" 2>/dev/null; } | sort | while IFS= read -r f; do
+  name=$(basename "$f")
+  grep -q "^$name|" "$descs" 2>/dev/null || echo "MISSING: $name"
+done
+```
+If any `MISSING:` lines → print warning table `| File | Status |` with each missing file. Do NOT stop.
+
 ---
 
 ## Phase 2 — Changelog
