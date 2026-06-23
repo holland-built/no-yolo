@@ -11,12 +11,21 @@ plugins/
 
 # external symlinked skills
 skills/improve
+skills/impeccable
+# ponytail-* = old name (pre-rename, still installed locally)
 skills/ponytail
 skills/ponytail-audit
 skills/ponytail-debt
+skills/ponytail-gain
 skills/ponytail-help
 skills/ponytail-review
-skills/impeccable
+# trim-* = new name (after reinstall from holland-built/trim)
+skills/trim
+skills/trim-audit
+skills/trim-debt
+skills/trim-gain
+skills/trim-help
+skills/trim-review
 
 # runtime / session
 projects/

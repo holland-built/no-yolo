@@ -33,7 +33,7 @@ Mark the task `- [x]` in `~/.claude/.pending-tasks.md` (Edit the file first so i
 
 Read the task description and execute it:
 
-- If task names a skill (e.g. `/forge`, `/plan-feature`) → invoke that skill with the task's arguments
+- If task names a skill (e.g. `/build`, `/plan`) → invoke that skill with the task's arguments
 - If task is a build task (e.g. "build X", "implement Y") → spawn Opus planner then Sonnet agents per CORE_RULES rule 5
 - If task is mechanical (trim file, rename, move) → do it inline with Read+Edit
 

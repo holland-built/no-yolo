@@ -1,6 +1,6 @@
 ---
-name: grill-me
-description: Pre-build planning interview. Relentlessly extracts what's in your head — design decisions, edge cases, constraints, open questions — one question at a time, before any code. Activate on "grill me", "/grill-me", "help me think through", "plan before we build", "interview me about".
+name: plan
+description: Pre-build planning interview. Relentlessly extracts what's in your head — design decisions, edge cases, constraints, open questions — one question at a time, before any code. Activate on "/plan", "plan this", "help me think through", "plan before we build", "interview me about".
 user-invocable: true
 argument-hint: "[describe the feature, system, or decision to plan]"
 allowed-tools:
@@ -68,7 +68,7 @@ Output this structure exactly — no prose outside it:
 - [decision]: [answer]
 
 **Open flags:**
-- [thing to look up before forge runs]
+- [thing to look up before /build runs]
 
 Are we aligned? (yes / keep going / fix X)
 ```
@@ -77,7 +77,7 @@ Are we aligned? (yes / keep going / fix X)
 - User says **keep going** or corrects something → continue grilling, re-surface summary when ready
 - Never self-declare complete — always wait for explicit "yes"
 
-**Gate:** Agreement confirmed. Run `/forge` with the topic. Do NOT write any code from this output alone.
+**Gate:** Agreement confirmed. Run `/build` with the topic. Do NOT write any code from this output alone.
 
 ---
 
