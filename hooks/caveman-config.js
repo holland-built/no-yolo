@@ -78,46 +78,45 @@ function getDefaultMode() {
 // Set CAVEMAN_DEBUG=1 to emit stderr diagnostics when flag writes are refused.
 //
 // Silent-fails on any filesystem error — the flag is best-effort.
+function resolveOwnerDir(dir, debug) {
+  try {
+    const lstat = fs.lstatSync(dir);
+    if (!lstat.isSymbolicLink()) return dir;
+    const realDir = fs.realpathSync(dir);
+    const realStat = fs.statSync(realDir);
+    if (!realStat.isDirectory()) {
+      if (debug) process.stderr.write(`[caveman] resolveOwnerDir: ${realDir} is not a directory\n`);
+      return null;
+    }
+    if (typeof process.getuid === 'function') {
+      if (realStat.uid !== process.getuid()) {
+        if (debug) process.stderr.write(`[caveman] resolveOwnerDir: ${realDir} owned by uid ${realStat.uid}, not ${process.getuid()}\n`);
+        return null;
+      }
+    } else {
+      const home = os.homedir();
+      const normalizedReal = path.resolve(realDir).toLowerCase();
+      const normalizedHome = path.resolve(home).toLowerCase();
+      if (!normalizedReal.startsWith(normalizedHome + path.sep) &&
+          normalizedReal !== normalizedHome) {
+        if (debug) process.stderr.write(`[caveman] resolveOwnerDir: ${normalizedReal} outside home ${normalizedHome}\n`);
+        return null;
+      }
+    }
+    return realDir;
+  } catch (e) {
+    return null;
+  }
+}
+
 function safeWriteFlag(flagPath, content) {
   const debug = process.env.CAVEMAN_DEBUG === '1';
   try {
     const flagDir = path.dirname(flagPath);
     fs.mkdirSync(flagDir, { recursive: true });
 
-    // When the parent directory is a symlink, resolve it and verify ownership.
-    // This allows legitimate symlinked ~/.claude dirs while still refusing
-    // attacker-planted symlinks pointing at dirs owned by another user.
-    let realFlagDir;
-    try {
-      const lstat = fs.lstatSync(flagDir);
-      if (lstat.isSymbolicLink()) {
-        realFlagDir = fs.realpathSync(flagDir);
-        const realStat = fs.statSync(realFlagDir);
-        if (!realStat.isDirectory()) {
-          if (debug) process.stderr.write(`[caveman] safeWriteFlag: symlink target ${realFlagDir} is not a directory\n`);
-          return;
-        }
-        if (typeof process.getuid === 'function') {
-          if (realStat.uid !== process.getuid()) {
-            if (debug) process.stderr.write(`[caveman] safeWriteFlag: symlink target ${realFlagDir} owned by uid ${realStat.uid}, not current user ${process.getuid()}\n`);
-            return;
-          }
-        } else {
-          const home = os.homedir();
-          const normalizedReal = path.resolve(realFlagDir);
-          const normalizedHome = path.resolve(home);
-          if (!normalizedReal.toLowerCase().startsWith(normalizedHome.toLowerCase() + path.sep) &&
-              normalizedReal.toLowerCase() !== normalizedHome.toLowerCase()) {
-            if (debug) process.stderr.write(`[caveman] safeWriteFlag: symlink target ${normalizedReal} is outside home directory ${normalizedHome}\n`);
-            return;
-          }
-        }
-      } else {
-        realFlagDir = flagDir;
-      }
-    } catch (e) {
-      return;
-    }
+    const realFlagDir = resolveOwnerDir(flagDir, debug);
+    if (realFlagDir === null) return;
 
     // The flag file itself must never be a symlink (that's the actual clobber vector).
     const realFlagPath = path.join(realFlagDir, path.basename(flagPath));
@@ -201,30 +200,8 @@ function appendFlag(filePath, line) {
     const dir = path.dirname(filePath);
     fs.mkdirSync(dir, { recursive: true });
 
-    let realDir;
-    try {
-      const lstat = fs.lstatSync(dir);
-      if (lstat.isSymbolicLink()) {
-        realDir = fs.realpathSync(dir);
-        const realStat = fs.statSync(realDir);
-        if (!realStat.isDirectory()) return;
-        if (typeof process.getuid === 'function') {
-          if (realStat.uid !== process.getuid()) {
-            if (debug) process.stderr.write(`[caveman] appendFlag: symlink target ${realDir} owned by uid ${realStat.uid}\n`);
-            return;
-          }
-        } else {
-          const home = os.homedir();
-          const normalized = path.resolve(realDir).toLowerCase();
-          const normalizedHome = path.resolve(home).toLowerCase();
-          if (!normalized.startsWith(normalizedHome + path.sep) && normalized !== normalizedHome) return;
-        }
-      } else {
-        realDir = dir;
-      }
-    } catch (e) {
-      return;
-    }
+    const realDir = resolveOwnerDir(dir, debug);
+    if (realDir === null) return;
 
     const realPath = path.join(realDir, path.basename(filePath));
     try {
