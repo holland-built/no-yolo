@@ -7,7 +7,7 @@ interface DetectionResult {
   suggested: AIType | null;
 }
 
-export function detectAIType(cwd: string = process.cwd()): DetectionResult {
+function detectAIType(cwd: string = process.cwd()): DetectionResult {
   const detected: AIType[] = [];
 
   if (existsSync(join(cwd, '.claude'))) {
@@ -76,7 +76,7 @@ export function detectAIType(cwd: string = process.cwd()): DetectionResult {
   return { detected, suggested };
 }
 
-export function getAITypeDescription(aiType: AIType): string {
+function getAITypeDescription(aiType: AIType): string {
   switch (aiType) {
     case 'claude':
       return 'Claude Code (.claude/skills/)';

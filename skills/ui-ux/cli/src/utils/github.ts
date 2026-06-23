@@ -5,14 +5,14 @@ const REPO_OWNER = 'nextlevelbuilder';
 const REPO_NAME = 'ui-ux-pro-max-skill';
 const API_BASE = 'https://api.github.com';
 
-export class GitHubRateLimitError extends Error {
+class GitHubRateLimitError extends Error {
   constructor(message: string) {
     super(message);
     this.name = 'GitHubRateLimitError';
   }
 }
 
-export class GitHubDownloadError extends Error {
+class GitHubDownloadError extends Error {
   constructor(message: string) {
     super(message);
     this.name = 'GitHubDownloadError';
@@ -31,7 +31,7 @@ function checkRateLimit(response: Response): void {
   }
 }
 
-export async function fetchReleases(): Promise<Release[]> {
+async function fetchReleases(): Promise<Release[]> {
   const url = `${API_BASE}/repos/${REPO_OWNER}/${REPO_NAME}/releases`;
 
   const response = await fetch(url, {
@@ -50,7 +50,7 @@ export async function fetchReleases(): Promise<Release[]> {
   return response.json();
 }
 
-export async function getLatestRelease(): Promise<Release> {
+async function getLatestRelease(): Promise<Release> {
   const url = `${API_BASE}/repos/${REPO_OWNER}/${REPO_NAME}/releases/latest`;
 
   const response = await fetch(url, {
@@ -69,7 +69,7 @@ export async function getLatestRelease(): Promise<Release> {
   return response.json();
 }
 
-export async function downloadRelease(url: string, dest: string): Promise<void> {
+async function downloadRelease(url: string, dest: string): Promise<void> {
   const response = await fetch(url, {
     headers: {
       'User-Agent': 'uipro-cli',
@@ -87,7 +87,7 @@ export async function downloadRelease(url: string, dest: string): Promise<void> 
   await writeFile(dest, Buffer.from(buffer));
 }
 
-export function getAssetUrl(release: Release): string | null {
+function getAssetUrl(release: Release): string | null {
   // First try to find an uploaded ZIP asset
   const asset = release.assets.find(a => a.name.endsWith('.zip'));
   if (asset?.browser_download_url) {

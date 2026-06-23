@@ -10,7 +10,7 @@ const execAsync = promisify(exec);
 
 const EXCLUDED_FILES = ['settings.local.json'];
 
-export async function extractZip(zipPath: string, destDir: string): Promise<void> {
+async function extractZip(zipPath: string, destDir: string): Promise<void> {
   try {
     const isWindows = process.platform === 'win32';
     if (isWindows) {
@@ -32,7 +32,7 @@ async function exists(path: string): Promise<boolean> {
   }
 }
 
-export async function copyFolders(
+async function copyFolders(
   sourceDir: string,
   targetDir: string,
   aiType: AIType
@@ -87,7 +87,7 @@ export async function copyFolders(
   return copiedFolders;
 }
 
-export async function cleanup(tempDir: string): Promise<void> {
+async function cleanup(tempDir: string): Promise<void> {
   try {
     await rm(tempDir, { recursive: true, force: true });
   } catch {
@@ -98,7 +98,7 @@ export async function cleanup(tempDir: string): Promise<void> {
 /**
  * Create a temporary directory for extracting ZIP files
  */
-export async function createTempDir(): Promise<string> {
+async function createTempDir(): Promise<string> {
   return mkdtemp(join(tmpdir(), 'uipro-'));
 }
 
@@ -122,7 +122,7 @@ async function findExtractedRoot(tempDir: string): Promise<string> {
 /**
  * Install from a downloaded and extracted ZIP file
  */
-export async function installFromZip(
+async function installFromZip(
   zipPath: string,
   targetDir: string,
   aiType: AIType

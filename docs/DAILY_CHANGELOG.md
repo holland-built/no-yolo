@@ -58,6 +58,8 @@
 - added "Skills with modes" section to README.md — table of 7 skills with flags/routes (/ui, /update, /my-skills, /md-check, /code-review, /code-health, /remember-that)
 - added Phase 3c README format hard-block to /ship — commits blocked if any required README section is missing or renamed
 - updated CORE_RULES.md — added rules 6 (flag uncertainty) and 7 (suggest better paths)
+- updated SKILL_TRIGGERS.md — fixed 4 drift entries: code-review (added --fix/--comment/effort flags), ship (added README hard-block note), last-30 (gaining-traction vs all-time), md-check (added --pre gate)
+- stripped 26 unused exports from skills/ui-ux/cli/ — fallow fix removed dead export keywords across 10 TypeScript files
 - updated better-prompt SKILL.md — trigger and behavior refinements
 - updated whats-next SKILL.md — creative suggestion format improvements
 - updated update SKILL.md — expanded with rollback and restore-removed-skill flows

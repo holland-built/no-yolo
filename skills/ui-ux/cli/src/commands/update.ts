@@ -9,7 +9,7 @@ interface UpdateOptions {
   ai?: AIType;
 }
 
-export async function updateCommand(options: UpdateOptions): Promise<void> {
+async function updateCommand(options: UpdateOptions): Promise<void> {
   logger.title('UI/UX Pro Max Updater');
 
   const spinner = ora('Checking for updates...').start();
