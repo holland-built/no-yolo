@@ -106,3 +106,5 @@
 - updated my-md GLOBAL_DESCRIPTIONS.md — added HOOKS_INTERNALS.md entry
 - updated docs/SKILLS.md — added Skill Taxonomy (4 buckets: utility/verification/data-enrichment/orchestration) and Skill Folder Structure sections
 - updated docs/NO_YOLO.md — fixed new-skill checklist (trigger line now in SKILL_TRIGGERS.md not CLAUDE.md), added description-as-trigger-condition rule and gotchas-grow-organically rule
+- added .agents/ and skills-lock.json to .gitignore — npm artifacts from skills@latest install
+- wired trim-* symlinks into ~/.claude/skills/ — trim, trim-audit, trim-debt, trim-gain, trim-help, trim-review now show in /my-skills plugin section
