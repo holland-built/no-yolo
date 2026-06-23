@@ -14,6 +14,10 @@
 - rewrote README intro, What this is, Set up a new project — shorter, eli5, less jargon
 - fixed README Add a new skill step 3 — wrong file (CLAUDE.md → SKILL_TRIGGERS.md)
 - trimmed README fork sync, security note, directory layout, keeping up to date, update memory sections
+- fixed README borrowed count: 7→8, trim count: 5→6 (was wrong in 3 places)
+- replaced shadcn MCP with GitHub MCP in outside tools table and MCP examples
+- improved video-to-kb descriptions: now says "Obsidian vault wiki page" not just "summary"
+- updated /ship step 3c.5: now auto-patches borrowed count alongside custom count
 - updated docs/README_FORMAT.md — section order updated to match restructured README
 - ingested YouTube "How Anthropic Employees ACTUALLY Use Claude Skills" — raw KB file + wiki source page + topic page updated with 4-bucket taxonomy and folder structure
 - rewrote description fields in 27 skills — all now lead with "Use this skill when" trigger condition
