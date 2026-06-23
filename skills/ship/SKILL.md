@@ -102,7 +102,9 @@ If any required heading is missing or renamed → STOP: `BLOCKED — README miss
 ### 3c.5 README skill count patch
 ```bash
 CUSTOM=$(for d in ~/.claude/skills/*/; do [ -L "${d%/}" ] || echo x; done | wc -l | tr -d ' ')
+BORROWED=$(for d in ~/.claude/skills/*/; do [ -L "${d%/}" ] && echo x; done | wc -l | tr -d ' ')
 sed -i '' "s/[0-9][0-9]* custom commands/$CUSTOM custom commands/" ~/.claude/README.md
+sed -i '' "s/plus [0-9]* borrowed from plugins/plus $BORROWED borrowed from plugins/" ~/.claude/README.md
 ```
 
 ### 3d. Stage
