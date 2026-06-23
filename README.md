@@ -156,33 +156,33 @@ A "skill" is a custom command you trigger with a slash, like `/code-review`. Her
 
 ### Commands in this setup
 
-| Skill | What it does |
-|---|---|
-| `debug-debate` | 6 Opus personas argue the root cause of your bug in parallel, map contradictions, give most likely cause with file:line, and one concrete next diagnostic step. Diagnosis only, no code changed |
-| `code-health` | A 4-step checkup of your code: review the changes, run static analysis, look for over-complication, then suggest a cleanup plan |
-| `code-review` | Reviews a pull request or a set of changes: first for bugs, then for over-complication, then for unrelated edits that shouldn't be there |
-| `diagnose` | A 6-step way to find the real cause of a bug — when you're stuck, it walks you through it step by step |
-| `drawio-skill` | Draws diagrams (architecture, flowcharts, database tables, UML). Saves them as PNG, SVG, or PDF |
-| `forge` | Builds a whole feature start to finish: gather evidence, plan with Opus, approve, UI mockup gate, write tests first, build with Sonnet, then prove it works |
-| `grill-me` | Interviews you before any code gets written — one question at a time until every tricky case is sorted out |
-| `my-md` | Lists every markdown file — both the global `~/.claude/` docs and the ones in your current project |
-| `my-skills` | This very list. Shows the commands I wrote and the borrowed ones, plus how they connect and what they depend on |
-| `quick-design` | Makes 3 quick screen mockups using your project's real colors and fonts — a safe one, a modern one, and a bold one — and opens them in Chrome |
-| `tdd` | Keeps you honest about test-driven development: write a failing test, make it pass, clean up, repeat |
-| `ui` | Entry point for all UI work — type `/ui` or `/ux`, get a numbered menu, route to the right tool. No memorization required |
-| `ui-ux` | Design know-how: 161 color palettes, 57 font pairings, 99 design guidelines, 25 chart types |
-| `ui-wild` | A bold redesign: 10 designer "personalities" compete, a judge throws out the generic ones, and you pick the winner |
-| `video-to-kb` | *(Optional — requires Obsidian + Groq API key)* Transcribes a YouTube video using Groq Whisper and saves a structured summary into your Obsidian notes folder |
-| `whats-next` | Reads session task queue (`~/.claude/.pending-tasks.md`) and runs next task; creative project-specific suggestions when queue is empty |
-| `debate` | Your product team argues the decision — Senior Dev, Junior Dev, Sales Engineer, DevOps, Sales Leader, Eng Leader — then maps contradictions, synthesizes a briefing, and ends with one clear YES/NO/CONDITIONAL verdict |
-| `eli5` | Explains any command, plan, file, or decision in plain English before you commit to it |
-| `antislop` | Paste any text and get a violations table — forbidden words, filler openers, em-dash spam, GUI clichés — with excerpts and one-line fixes. CLEAN or SLOP-DETECTED verdict. Diagnosis only |
-| `prompt-scan` | Reads all system prompt files plus current model release notes and appends a dated snapshot to `learnings.md`. Required before `/better_prompt` |
-| `better_prompt` | Reads `learnings.md`, diagnoses a rough prompt for missing target/scope/criterion, rewrites it with all three plus the right skill route. Requires `/prompt-scan` to have run first |
-| `last-30` | Pulls the last 30 days of signal from GitHub, HN, YouTube, and X — trending repos, top discussions, recent talks. Filters out old results |
-| `md-check` | Lists every `~/.claude/` doc with its size, flags anything over 200 lines, and spots two files saying the same thing so you can merge them |
-| `ship` | Quality-gate, changelog, and publish to `no-yolo` in one command. Warns on slop and bloat, blocks personal-data leaks, writes a dated changelog entry, pushes, then creates a dated GitHub release |
-| `update` | Checks if your setup is out of date, shows a plain-English summary of what changed, and lets you apply updates, roll back, or restore a removed skill |
+| Skill | What it does | Modes & flags |
+|---|---|---|
+| `debug-debate` | 6 Opus personas argue the root cause of your bug in parallel, map contradictions, give most likely cause with file:line, and one concrete next diagnostic step. Diagnosis only, no code changed | — |
+| `code-health` | A 4-step checkup of your code: review the changes, run static analysis, look for over-complication, then suggest a cleanup plan | `--auto` (skip gates, unattended) |
+| `code-review` | Reviews a pull request or a set of changes: first for bugs, then for over-complication, then for unrelated edits that shouldn't be there | `--fix` (auto-apply) · `--comment` (inline comments) · `--effort low\|medium\|high\|max` (depth) |
+| `diagnose` | A 6-step way to find the real cause of a bug — when you're stuck, it walks you through it step by step | — |
+| `drawio-skill` | Draws diagrams (architecture, flowcharts, database tables, UML). Saves them as PNG, SVG, or PDF | — |
+| `forge` | Builds a whole feature start to finish: gather evidence, plan with Opus, approve, UI mockup gate, write tests first, build with Sonnet, then prove it works | — |
+| `grill-me` | Interviews you before any code gets written — one question at a time until every tricky case is sorted out | — |
+| `my-md` | Lists every markdown file — both the global `~/.claude/` docs and the ones in your current project | — |
+| `my-skills` | This very list. Shows the commands I wrote and the borrowed ones, plus how they connect and what they depend on | `fast` (2-col) · `deep` (4-col + relationships) |
+| `quick-design` | Makes 3 quick screen mockups using your project's real colors and fonts — a safe one, a modern one, and a bold one — and opens them in Chrome | — |
+| `tdd` | Keeps you honest about test-driven development: write a failing test, make it pass, clean up, repeat | — |
+| `ui` | Entry point for all UI work — type `/ui` or `/ux`, get a numbered menu, route to the right tool. No memorization required | routes to: /ui-ux, /quick-design, /ui-wild, /impeccable |
+| `ui-ux` | Design know-how: 161 color palettes, 57 font pairings, 99 design guidelines, 25 chart types | also reachable via `/ui` |
+| `ui-wild` | A bold redesign: 10 designer "personalities" compete, a judge throws out the generic ones, and you pick the winner | also reachable via `/ui` |
+| `video-to-kb` | *(Optional — requires Obsidian + Groq API key)* Transcribes a YouTube video using Groq Whisper and saves a structured summary into your Obsidian notes folder | — |
+| `whats-next` | Reads session task queue (`~/.claude/.pending-tasks.md`) and runs next task; creative project-specific suggestions when queue is empty | — |
+| `debate` | Your product team argues the decision — Senior Dev, Junior Dev, Sales Engineer, DevOps, Sales Leader, Eng Leader — then maps contradictions, synthesizes a briefing, and ends with one clear YES/NO/CONDITIONAL verdict | — |
+| `eli5` | Explains any command, plan, file, or decision in plain English before you commit to it | — |
+| `antislop` | Paste any text and get a violations table — forbidden words, filler openers, em-dash spam, GUI clichés — with excerpts and one-line fixes. CLEAN or SLOP-DETECTED verdict. Diagnosis only | — |
+| `prompt-scan` | Reads all system prompt files plus current model release notes and appends a dated snapshot to `learnings.md`. Required before `/better_prompt` | — |
+| `better_prompt` | Reads `learnings.md`, diagnoses a rough prompt for missing target/scope/criterion, rewrites it with all three plus the right skill route. Requires `/prompt-scan` to have run first | — |
+| `last-30` | Pulls the last 30 days of signal from GitHub, HN, YouTube, and X — trending repos, top discussions, recent talks. Filters out old results | — |
+| `md-check` | Lists every `~/.claude/` doc with its size, flags anything over 200 lines, and spots two files saying the same thing so you can merge them | `--pre FILENAME` (check before creating) · `--drift` (check CLAUDE.md descriptions) |
+| `ship` | Quality-gate, changelog, and publish to `no-yolo` in one command. Warns on slop and bloat, blocks personal-data leaks, writes a dated changelog entry, pushes, then creates a dated GitHub release | — |
+| `update` | Checks if your setup is out of date, shows a plain-English summary of what changed, and lets you apply updates, roll back, or restore a removed skill | `preview` (see what changed) · `full` (pull+install) · `rules` (pull rules only) · `rollback` (undo last) · `restore NAME` (bring back deleted skill) |
 
 ### Borrowed commands
 
@@ -193,22 +193,6 @@ These come from other people's plugins. One install command gets you all 5 ponyt
 | `ponytail` + 4 sub-commands | Push for the simplest thing that works, scan for over-complication, gather TODO notes, review changes for deletions, quick reference card — one install gets all five | `npx skills@latest add DietrichGebert/ponytail` |
 | `improve` | Surveys a codebase and writes a ranked improvement plan — never changes anything itself | `npx skills@latest add shadcn/improve` |
 | `impeccable` | A magazine-style design look — warm cream and burnt orange — for building screens | `/plugin marketplace add impeccable` (run inside Claude Code) |
-
----
-
-## Skills with modes
-
-Some skills accept arguments or modes that change what they do:
-
-| Skill | Modes / flags |
-|---|---|
-| `/ui` | Routes to: `/ui-ux`, `/quick-design`, `/ui-wild`, `/impeccable` |
-| `/update` | `preview` · `full` · `rules` · `rollback` · `restore <name>` |
-| `/my-skills` | `fast` · `deep` |
-| `/md-check` | `--pre <filename>` · `--drift` |
-| `/code-review` | `--fix` · `--comment` · `--effort low\|medium\|high\|max` |
-| `/code-health` | `--auto` |
-| `/remember-that` | `d <id>` · `m <id>` · `audit` · `compile` |
 
 ---
 

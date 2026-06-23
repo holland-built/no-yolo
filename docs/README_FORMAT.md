@@ -9,7 +9,6 @@ This file defines the required structure of `README.md`. The `/ship` skill reads
 ## Install on a new machine
 ## Directory layout
 ## Skills inventory
-## Skills with modes
 ## The CLAUDE.md instruction chain
 ## Model guidance
 ## Keeping your setup up to date

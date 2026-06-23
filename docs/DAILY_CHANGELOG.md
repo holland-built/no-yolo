@@ -59,3 +59,6 @@
 - added Phase 3c README format hard-block to /ship — commits blocked if any required README section is missing or renamed
 - updated ship/SKILL.md description — reflects new README format validation gate
 - updated memory/CLAUDE.generated.md — compiled new eli5-on-output feedback rule
+- merged "Skills with modes" section into inventory table — 3-col (Skill | What it does | Modes & flags), 7 skills get described modes, 18 get dash
+- deleted standalone ## Skills with modes section from README.md
+- removed ## Skills with modes from README_FORMAT.md required sections (14 remain)
