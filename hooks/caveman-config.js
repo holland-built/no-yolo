@@ -19,21 +19,17 @@ const VALID_MODES = [
   'commit', 'review', 'compress'
 ];
 
-function getConfigDir() {
+function getConfigPath() {
   if (process.env.XDG_CONFIG_HOME) {
-    return path.join(process.env.XDG_CONFIG_HOME, 'caveman');
+    return path.join(process.env.XDG_CONFIG_HOME, 'caveman', 'config.json');
   }
   if (process.platform === 'win32') {
     return path.join(
       process.env.APPDATA || path.join(os.homedir(), 'AppData', 'Roaming'),
-      'caveman'
+      'caveman', 'config.json'
     );
   }
-  return path.join(os.homedir(), '.config', 'caveman');
-}
-
-function getConfigPath() {
-  return path.join(getConfigDir(), 'config.json');
+  return path.join(os.homedir(), '.config', 'caveman', 'config.json');
 }
 
 function getDefaultMode() {
@@ -248,4 +244,4 @@ function readHistory(filePath) {
   }
 }
 
-module.exports = { getDefaultMode, getConfigDir, getConfigPath, VALID_MODES, safeWriteFlag, readFlag, appendFlag, readHistory };
+module.exports = { getDefaultMode, getConfigPath, VALID_MODES, safeWriteFlag, readFlag, appendFlag, readHistory };
