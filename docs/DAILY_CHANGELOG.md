@@ -57,6 +57,10 @@
 - added docs/README_FORMAT.md — spec file listing 15 required README section headings; /ship reads this to validate structure
 - added "Skills with modes" section to README.md — table of 7 skills with flags/routes (/ui, /update, /my-skills, /md-check, /code-review, /code-health, /remember-that)
 - added Phase 3c README format hard-block to /ship — commits blocked if any required README section is missing or renamed
+- updated CORE_RULES.md — added rules 6 (flag uncertainty) and 7 (suggest better paths)
+- updated better-prompt SKILL.md — trigger and behavior refinements
+- updated whats-next SKILL.md — creative suggestion format improvements
+- updated update SKILL.md — expanded with rollback and restore-removed-skill flows
 - updated ship/SKILL.md description — reflects new README format validation gate
 - updated memory/CLAUDE.generated.md — compiled new eli5-on-output feedback rule
 - merged "Skills with modes" section into inventory table — 3-col (Skill | What it does | Modes & flags), 7 skills get described modes, 18 get dash
@@ -65,3 +69,12 @@
 - fixed README Prerequisites: Mac home path corrected to /Users/<username>, Linux /home/<username>
 - added inline skill definition at first use (line 13) — "A skill is a command you run by typing /name"
 - removed manual mkdir brainstorms from "Set up a new project" — skills create it automatically
+- rewrote README install section: git clone alternative added, setup.sh documented step-by-step, redundant manual install block removed
+- added /update fork-sync support: detects fork vs direct clone, auto-adds upstream remote, rebases AHEAD>0 commits instead of --ff-only, aborts cleanly on conflict
+- added README "Keeping your fork in sync" section — fork workflow, upstream remote, rebase, force-push warning
+- added "Keeping your fork in sync" to README_FORMAT.md required sections
+- fixed /update AHEAD=0 fork path: now uses merge --ff-only $SYNC_REF (upstream) not origin
+- fixed /update SYNC_REF: variable now set inside bash block (was prose-only — would have been empty at rebase time)
+- added learnings.md (created by /prompt-scan): model delta, skill triggers, slop patterns, output conventions
+- added staleness check to /better_prompt: warns if learnings.md >90 days old
+- fixed /whats-next Step 3: checks git status + unpushed commits before creative suggestions
