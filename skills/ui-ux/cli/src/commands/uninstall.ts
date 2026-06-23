@@ -36,7 +36,7 @@ async function removeSkillDir(baseDir: string, aiType: Exclude<AIType, 'all'>): 
   return removed;
 }
 
-export async function uninstallCommand(options: UninstallOptions): Promise<void> {
+async function uninstallCommand(options: UninstallOptions): Promise<void> {
   logger.title('UI/UX Pro Max Uninstaller');
 
   const isGlobal = !!options.global;
