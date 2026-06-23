@@ -2,8 +2,8 @@ code-health|Audit for dead code, over-engineering, and waste.
 code-review|Review a diff before merging. Catches bugs and bloat.
 diagnose|Root-cause analysis step by step until bug is found.
 drawio-skill|Generate diagrams — flowcharts, architecture, sequence.
-forge|Full feature pipeline: plan → UI → code → tests → proof.
-grill-me|Interview yourself about a plan before writing code.
+build|Full feature pipeline: plan → UI → code → tests → proof.
+plan|Interview yourself about a plan before writing code.
 my-skills|This menu.
 tdd|Failing test first, then make it pass. Red→green discipline.
 ui|Entry point for all UI skills. Pick the right one from a menu.
@@ -11,11 +11,11 @@ ui-ux|Design help before touching code: palettes, fonts, UX rules.
 ui-wild|10 AI designers compete; judge kills generic; you pick winner.
 video-to-kb|Turn a YouTube video into a searchable KB note.
 improve|Read-only audit → prioritized improvement list.
-ponytail|Forces the laziest solution that works. Kills abstraction.
-ponytail-audit|Scan repo for over-engineered code — ranked simplify list.
-ponytail-debt|Harvest ponytail-tagged shortcuts into a debt ledger.
-ponytail-review|Review diff for what to delete, not what to add.
-ponytail-help|Quick reference for all ponytail commands.
+trim|Forces the laziest solution that works. Kills abstraction.
+trim-audit|Scan repo for over-engineered code — ranked simplify list.
+trim-debt|Harvest trim-tagged shortcuts into a debt ledger.
+trim-review|Review diff for what to delete, not what to add.
+trim-help|Quick reference for all trim commands.
 my-md|List all markdown files — global docs + project artifacts.
 quick-design|3-variant mockup (conservative/modern/wild) before code.
 whats-next|Shows unfinished work or next-action list. Never static.

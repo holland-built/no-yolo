@@ -1,6 +1,6 @@
 ---
 name: code-health
-description: Three-phase codebase health pass — Fallow (static analysis, all commands in sequence), Ponytail (LLM anti-over-engineering review), Improve (shadcn, token waste + YAGNI plan). Each phase gates before the next. All output in table format. Activate on "/code-health", "code health", "run health pass", "fallow pass".
+description: Three-phase codebase health pass — Fallow (static analysis, all commands in sequence), Trim (LLM anti-over-engineering review), Improve (shadcn, token waste + YAGNI plan). Each phase gates before the next. All output in table format. Activate on "/code-health", "code health", "run health pass", "fallow pass".
 user-invocable: true
 argument-hint: "[path/goal, or --auto to skip confirmation gates for AFK use]"
 allowed-tools:
@@ -26,10 +26,10 @@ Before Phase 1, silently run:
 
 ```bash
 which fallow && fallow --version
-ls ~/.agents/skills/ | grep -i "^ponytail-audit$" 2>/dev/null && echo "ponytail-audit:ok" || echo "ponytail-audit:missing"
-ls ~/.agents/skills/ | grep -i "^ponytail-debt$" 2>/dev/null && echo "ponytail-debt:ok" || echo "ponytail-debt:missing"
+ls ~/.agents/skills/ | grep -i "^trim-audit$" 2>/dev/null && echo "trim-audit:ok" || echo "trim-audit:missing"
+ls ~/.agents/skills/ | grep -i "^trim-debt$" 2>/dev/null && echo "trim-debt:ok" || echo "trim-debt:missing"
 ls ~/.agents/skills/ | grep -i "^improve$" 2>/dev/null && echo "improve:ok" || echo "improve:missing"
-ls ~/.agents/skills/ | grep -i "^ponytail-review$" 2>/dev/null && echo "ponytail-review:ok" || echo "ponytail-review:missing"
+ls ~/.agents/skills/ | grep -i "^trim-review$" 2>/dev/null && echo "trim-review:ok" || echo "trim-review:missing"
 ```
 
 Output a single status table:
@@ -37,24 +37,24 @@ Output a single status table:
 | Tool | Status | Install if missing |
 |---|---|---|
 | Fallow | ✅ installed / ❌ missing | `npm install -g fallow` |
-| Ponytail (review) | ✅ installed / ❌ missing | `npx skills@latest add DietrichGebert/ponytail` |
-| Ponytail (audit) | ✅ installed / ❌ missing | `npx skills@latest add DietrichGebert/ponytail` |
-| Ponytail (debt) | ✅ installed / ❌ missing | `npx skills@latest add DietrichGebert/ponytail` |
+| Trim (review) | ✅ installed / ❌ missing | `npx skills@latest add DietrichGebert/trim` |
+| Trim (audit) | ✅ installed / ❌ missing | `npx skills@latest add DietrichGebert/trim` |
+| Trim (debt) | ✅ installed / ❌ missing | `npx skills@latest add DietrichGebert/trim` |
 | Improve | ✅ installed / ❌ missing | `npx skills@latest add shadcn/improve` |
 
 If Fallow is missing: STOP. Show the status table, tell the user to install Fallow first.
-If Ponytail or Improve are missing: note it, continue — those phases will show an install gate and stop there.
+If Trim or Improve are missing: note it, continue — those phases will show an install gate and stop there.
 
 ---
 
-## Phase 0 — Ponytail Review (diff-scoped, only if changes exist)
+## Phase 0 — Trim Review (diff-scoped, only if changes exist)
 
 ```bash
 git diff --stat HEAD 2>/dev/null | head -5
 git status --short 2>/dev/null | head -5
 ```
 
-**If staged or uncommitted changes exist AND ponytail-review is installed:** invoke the `ponytail-review` skill. It reviews the diff and finds what to delete from your changes specifically.
+**If staged or uncommitted changes exist AND trim-review is installed:** invoke the `trim-review` skill. It reviews the diff and finds what to delete from your changes specifically.
 
 Reformat output as a table:
 
@@ -64,7 +64,7 @@ Reformat output as a table:
 
 **If no diff (clean working tree):** skip silently — note "Phase 0: skipped (clean tree)" in the final roll-up.
 
-**If ponytail-review not installed:** skip silently — note "Phase 0: skipped (not installed)" in the final roll-up.
+**If trim-review not installed:** skip silently — note "Phase 0: skipped (not installed)" in the final roll-up.
 
 No gate after Phase 0 — continue straight to Phase 1.
 
@@ -157,31 +157,31 @@ If `--auto` in $ARGUMENTS: skip fallow fix (treat as "no"), note "auto-skipped f
 
 - If no: skip fix, note it.
 
-**Hard gate:** If `--auto` in $ARGUMENTS: skip this gate and proceed automatically, note "auto" in roll-up. Otherwise: "Phase 1 complete. Proceed to Phase 2 — Ponytail? (y/n)" — stop and wait.
+**Hard gate:** If `--auto` in $ARGUMENTS: skip this gate and proceed automatically, note "auto" in roll-up. Otherwise: "Phase 1 complete. Proceed to Phase 2 — Trim? (y/n)" — stop and wait.
 
 ---
 
-## Phase 2 — Ponytail (LLM Anti-Over-Engineering Review)
+## Phase 2 — Trim (LLM Anti-Over-Engineering Review)
 
 ### Phase 2a — Whole-codebase audit
 
 First check:
 
 ```bash
-ls ~/.agents/skills/ | grep -i "^ponytail-audit$" || echo "NOT_INSTALLED"
+ls ~/.agents/skills/ | grep -i "^trim-audit$" || echo "NOT_INSTALLED"
 ```
 
 If NOT_INSTALLED:
 ```
-⚠️ Ponytail not installed.
-Install: npx skills@latest add DietrichGebert/ponytail
+⚠️ Trim not installed.
+Install: npx skills@latest add DietrichGebert/trim
 Once installed, re-run /code-health to continue from Phase 2.
 ```
 STOP Phase 2 here.
 
-If installed: invoke the `ponytail-audit` skill via the Skill tool. Pass the target path from $ARGUMENTS as context. `ponytail-audit` scans the ENTIRE codebase (not a diff) and returns a ranked list of what to delete, simplify, or replace with stdlib/native equivalents.
+If installed: invoke the `trim-audit` skill via the Skill tool. Pass the target path from $ARGUMENTS as context. `trim-audit` scans the ENTIRE codebase (not a diff) and returns a ranked list of what to delete, simplify, or replace with stdlib/native equivalents.
 
-Capture ponytail-audit output and reformat as a table:
+Capture trim-audit output and reformat as a table:
 
 | File | Finding | Category | Priority |
 |---|---|---|---|
@@ -208,12 +208,12 @@ Phase 2 summary:
 Check:
 
 ```bash
-ls ~/.agents/skills/ | grep -i "^ponytail-debt$" || echo "NOT_INSTALLED"
+ls ~/.agents/skills/ | grep -i "^trim-debt$" || echo "NOT_INSTALLED"
 ```
 
 If NOT_INSTALLED: skip silently, note in summary row.
 
-If installed: invoke the `ponytail-debt` skill via the Skill tool. Pass the target path from $ARGUMENTS. `ponytail-debt` harvests all `ponytail:` inline comments into a debt ledger.
+If installed: invoke the `trim-debt` skill via the Skill tool. Pass the target path from $ARGUMENTS. `trim-debt` harvests all `trim:` inline comments into a debt ledger.
 
 Reformat output as a table:
 
@@ -277,14 +277,14 @@ After all phases complete, output one master summary:
 
 | Phase | Tool | Findings | Auto-fixed | Status |
 |---|---|---|---|---|
-| 0 | Ponytail review (diff) | N | — | ✅ / skipped (clean tree / not installed) |
+| 0 | Trim review (diff) | N | — | ✅ / skipped (clean tree / not installed) |
 | 1a | Fallow dead-code | N | N | ✅ / ⚠️ |
 | 1b | Fallow dupes | N | — | ✅ / ⚠️ |
 | 1c | Fallow health | N hotspots | — | ✅ / ⚠️ |
 | 1d | Fallow security | N | — | ✅ / ⚠️ |
 | 1e | Fallow audit | N | — | ✅ / skipped |
-| 2a | Ponytail audit (codebase) | N | — | ✅ / ⚠️ not installed |
-| 2b | Ponytail debt (markers) | N | — | ✅ / skipped |
+| 2a | Trim audit (codebase) | N | — | ✅ / ⚠️ not installed |
+| 2b | Trim debt (markers) | N | — | ✅ / skipped |
 | 3 | Improve | N | — | ✅ / ⚠️ not installed |
 | **Total** | | **N** | **N** | |
 
@@ -292,7 +292,7 @@ Top 5 highest-priority actions across all phases, as a table:
 
 | Priority | Action | Tool | File | Effort |
 |---|---|---|---|---|
-| 1 | description | Fallow/Ponytail/Improve | `file.ts` | S/M/L |
+| 1 | description | Fallow/Trim/Improve | `file.ts` | S/M/L |
 
 ---
 
@@ -300,7 +300,7 @@ Top 5 highest-priority actions across all phases, as a table:
 
 - Never implement. Flag findings, show tables, gate between phases. Human decides what to act on.
 - Never skip a Fallow command — run all five even if earlier ones find nothing.
-- Never merge Fallow + Ponytail findings — they are separate tables.
-- Ponytail and Improve missing = not a failure. Show install gate and stop that phase cleanly.
+- Never merge Fallow + Trim findings — they are separate tables.
+- Trim and Improve missing = not a failure. Show install gate and stop that phase cleanly.
 - $ARGUMENTS empty = run against `.` (current directory).
 - `--auto` skips all gates and the fallow fix prompt for unattended/AFK runs.
