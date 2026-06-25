@@ -99,6 +99,9 @@ These are not installed by setup.sh. Install whichever ones match the skills you
 | [Groq Whisper](https://console.groq.com/) | Transcribes a YouTube video and saves a structured wiki page into your Obsidian vault | `video-to-kb` | Get a free API key at console.groq.com, then add `export GROQ_API_KEY=your_key` to `~/.zshrc` |
 | [Chrome](https://www.google.com/chrome/) (headless) | Takes screenshots of mockups without opening a browser window | `design-fast`, `design-full`, `build` | Already on most machines; or `brew install --cask google-chrome` |
 | [Playwright](https://playwright.dev/) | Lets Claude click around in a browser to test your web app | `build` | Add the `playwright` MCP server to `settings.json` — see MCP note below |
+| [Lazyweb](https://github.com/aboul3ata/lazyweb-skill) | Real app screenshots + A/B test evidence — 12 design research skills | `design-audit`, `design-fast`, `design-full` | `curl -fsSL https://www.lazyweb.com/install.sh \| bash` |
+| [Interface Design](https://github.com/Dammyjay93/interface-design) | Persists design decisions across sessions | `design-full` | `npx skills@latest add interface-design` |
+| [Design+Refine](https://github.com/0xdesign/design-plugin) | Side-by-side mockup variant comparison | `design-fast`, `design-full` | `/plugin marketplace add 0xdesign/design-plugin` inside Claude Code |
 
 > **What's an MCP server?** MCP (Model Context Protocol) is a standard for giving Claude extra tools — like the ability to control a browser or search a codebase. You wire one up by adding a config block to `settings.json`. See the [Claude MCP docs](https://docs.anthropic.com/en/docs/claude-code/mcp) for how.
 
@@ -167,7 +170,7 @@ Three skills cover the full frontend design workflow, each a step deeper. Design
 
 `/design-audit` output passes forward — paste it into `/design-fast` or `/design-full` and they skip re-running it. **Nothing builds without an approved mockup** (`/design-full` Gate 3).
 
-The design pipeline uses three optional tools: **Lazyweb** (real app screenshots + A/B test evidence, install via `curl -fsSL https://www.lazyweb.com/install.sh | bash`), **Interface Design** (persists design decisions across sessions, install via `npx skills@latest add interface-design`), and **Design+Refine** (side-by-side variant comparison, install via `/plugin marketplace add 0xdesign/design-plugin` inside Claude Code). All degrade gracefully — if a tool isn't installed, the skill falls back to embedded rules.
+All three skills degrade gracefully — if Lazyweb, Interface Design, or Design+Refine aren't installed, the skill falls back to embedded rules. See the Outside tools table above for install commands.
 
 
 ### Commands in this setup
