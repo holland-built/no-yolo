@@ -19,7 +19,7 @@ Feature: $ARGUMENTS
 
 ## Routing — pick the right tool BEFORE running the pipeline
 - **Spatial/layout bug** (overlap, clip, truncation) → Phase 0A (Playwright DOM measurement). Trivial fix path if cause already measured.
-- **Color/typography/token/spacing nits** → NOT /build. Use `/ui-ux` (design direction) or `/impeccable` (surgical token edits on running app).
+- **Color/typography/token/spacing nits** → NOT /build. Use `/design-audit` to find issues or `/design-fast` to see options.
 - **Visual/aesthetic redesign** → /build WITH the mockup gate.
 - **Trivial fix** (1–2 files, cause already known) → fast path: phase 0 only → skip plan → approve → build.
 - **Code quality / dead code / YAGNI audit** → STOP, run `/code-health` instead.

@@ -11,24 +11,14 @@ When the user types `/code-health`, invoke the Skill tool with `skill: "code-hea
 # my-skills
 - **my-skills** - list skills you authored (not plugin packs) + relationship map. Trigger: `/my-skills`
 When the user types `/my-skills`, invoke the Skill tool with `skill: "my-skills"` before doing anything else.
-# ui
-- **ui** (`~/.claude/skills/ui/SKILL.md`) - UI entry point: numbered menu routes to ui-ux / quick-design / ui-wild. Trigger: `/ui`, `/ux`
-When the user types `/ui`, `/ux`, says "design something", "design this", "show me options", "mockup this", or "design options", invoke the Skill tool with `skill: "ui"` before doing anything else.
-# ui-wild
-- **ui-wild** (`~/.claude/skills/ui-wild/SKILL.md`) - radical UI/UX redesign: 10 Opus personas, judge pass kills generic AI output, mockup approval gate before any code. Trigger: `/ui-wild`
-When the user types `/ui-wild`, invoke the Skill tool with `skill: "ui-wild"` before doing anything else.
 # code-review
 - **code-review** (`~/.claude/skills/code-review/SKILL.md`) - three-pass diff review: correctness/bugs, over-engineering (trim), Karpathy surgical+simplicity. Supports `--fix` to apply findings, `--comment` for inline PR comments, effort flags (low/medium/high/max). Trigger: `/code-review`
 When the user types `/code-review`, invoke the Skill tool with `skill: "code-review"` before doing anything else.
-# ui-ux
-- **ui-ux** - design intelligence: 50+ styles, 161 palettes, 57 font pairings, 99 UX guidelines, 25 chart types across 10 stacks. Use for: plan/design/review/fix UI before or without code. Trigger: `/ui-ux`
-When the user types `/ui-ux`, says "design this", "plan the UI", "review the UX", or asks about styles/palettes/typography choices, invoke the Skill tool with `skill: "ui-ux"` before doing anything else.
+# ui-ux (internal sub-skill — not user-invocable)
+- **ui-ux** - design intelligence backend: 161 palettes, 57 font pairings, 99 UX guidelines. Called internally by design-audit, design-fast, design-full as a reference lens. Not triggered directly by the user.
 # my-md
 - **my-md** (`~/.claude/skills/my-md/SKILL.md`) - list all markdown files: global ~/.claude/ docs + current project artifacts. Trigger: `/my-md`
 When the user types `/my-md`, says "list md files", or "show markdown files", invoke the Skill tool with `skill: "my-md"` before doing anything else.
-# quick-design
-- **quick-design** (`~/.claude/skills/quick-design/SKILL.md`) - 3 parallel agents (conservative/modern/wild) using real tokens, Chrome popup, hard approval gate before any code written. Trigger: `/quick-design`
-When the user types `/quick-design`, says "show me options", "mockup this", or "design options", invoke the Skill tool with `skill: "quick-design"` before doing anything else.
 # whats-next
 - **whats-next** (`~/.claude/skills/whats-next/SKILL.md`) - checks task queue first, runs next task; if empty, scans project and proposes. Never shows a static menu. Trigger: `/whats-next`
 When the user types `/whats-next`, says "what's next", "what should I do", or "now what", invoke the Skill tool with `skill: "whats-next"` before doing anything else.
@@ -67,3 +57,12 @@ When the user types `/remember-that`, says "remember that", "save this to memory
 # skill-audit
 - **skill-audit** (`~/.claude/skills/skill-audit/SKILL.md`) - audits ~/.claude/skills/ across 4 dimensions: bucket fit, component gaps, missing verifiers, trigger conditions. Also builds verifiers and surfaces gotcha gaps. Trigger: `/skill-audit`
 When the user types `/skill-audit`, says "audit my skills", "check my skill library", "find skill gaps", or "run skill audit", invoke the Skill tool with `skill: "skill-audit"` before doing anything else.
+# design-audit
+- **design-audit** (`~/.claude/skills/design-audit/SKILL.md`) - read-only design audit: Playwright screenshot + Lazyweb deep + Taste/Swiss/UIwiki/accessibility/code-health lenses → ranked violations table + top-10 improvements. No gates, no code. Trigger: `/design-audit`
+When the user types `/design-audit`, says "audit this UI", "review the design", or "find design problems", invoke the Skill tool with `skill: "design-audit"` before doing anything else.
+# design-fast
+- **design-fast** (`~/.claude/skills/design-fast/SKILL.md`) - 7 parallel Sonnet mockups (5 redesign + 2 wild), slop judge, Chrome screenshot, HARD pick-gate. No code written — run /design-full to build. Trigger: `/design-fast`
+When the user types `/design-fast`, says "design options", "mockup this fast", "show me design directions", or "quick mockup", invoke the Skill tool with `skill: "design-fast"` before doing anything else.
+# design-full
+- **design-full** (`~/.claude/skills/design-full/SKILL.md`) - full pipeline: audit → debate direction → 7 Opus mockups (5+2) → slop judge → 4 hard gates → token extraction → Opus plan → chains to /build. Nothing builds without an approved mockup. Trigger: `/design-full`
+When the user types `/design-full`, says "full design pipeline", "design and build this", or "redesign and ship", invoke the Skill tool with `skill: "design-full"` before doing anything else.
