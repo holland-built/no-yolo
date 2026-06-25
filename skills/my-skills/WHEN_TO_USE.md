@@ -13,7 +13,6 @@ ui-ux|Planning or reviewing UI without touching code yet
 ui-wild|Existing UI needs a real redesign, not a tweak
 video-to-kb|Good talk or tutorial worth keeping permanently
 whats-next|Session start — orient before picking what to do
-impeccable|Want a premium magazine feel, not default web look
 improve|Want an outside-in audit before deciding what to fix
 trim|About to over-engineer something
 trim-audit|Major cleanup, debt paydown, or before a refactor

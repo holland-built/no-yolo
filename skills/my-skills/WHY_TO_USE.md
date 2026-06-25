@@ -13,7 +13,6 @@ ui-ux|161 palettes + 57 font pairings — design decisions have a defensible bas
 ui-wild|Anti-slop judge kills generic AI output. Result doesn't look like every other Claude UI
 video-to-kb|Talks are perishable. One command turns them into permanent, searchable KB nodes
 whats-next|Prevents starting something new while something is already half-done
-impeccable|Default Claude UI looks like defaults. This gives it a distinctive editorial identity
 improve|Never touches code — pure signal. Tells you what's wrong without risk of a bad auto-fix
 trim|The instinct to abstract too early is universal. This actively resists it
 trim-audit|Finds the abstraction that seemed smart 6 months ago and now nobody understands
