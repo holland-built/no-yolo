@@ -167,3 +167,14 @@
 - updated /quick-design inventory row — explains conservative/modern/wild + Sonnet/cheap vs ui-wild
 - updated /ui-wild inventory row — explains 10 Opus personas, when to use over quick-design
 - updated /ui SKILL.md — removed impeccable route, menu now 3 options, wild variant description updated
+
+## 2026-06-25
+
+- consolidated design pipeline: merged /design-fast into /design-full as --fast flag; /design-full now has two modes
+- consolidated bug diagnosis: merged /debug-debate into /diagnose as --debate flag; six Opus personas debate competing theories
+- deleted /ui-ux skill (duplicate of externally-managed ui-ux-pro-max); removed all references from registries
+- updated all skill registry files (TAGLINES, WHEN_TO_USE, WHY_TO_USE, HOW_TO_USE, STORIES, RELATIONSHIPS, BOLT_ONS) to reflect consolidations
+- updated SKILL_TRIGGERS.md — removed triggers for deleted skills, merged modes into parent trigger blocks
+- updated README.md frontend design section: two-skill table with mode documentation
+- updated docs (SKILLS.md, UI_MOCKUPS.md) to reference /design-full --fast instead of /design-fast
+- removed shadcn MCP from BOLT_ONS.md (was only used by deleted /ui-ux)

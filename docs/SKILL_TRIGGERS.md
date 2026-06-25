@@ -14,8 +14,6 @@ When the user types `/my-skills`, invoke the Skill tool with `skill: "my-skills"
 # code-review
 - **code-review** (`~/.claude/skills/code-review/SKILL.md`) - three-pass diff review: correctness/bugs, over-engineering (trim), Karpathy surgical+simplicity. Supports `--fix` to apply findings, `--comment` for inline PR comments, effort flags (low/medium/high/max). Trigger: `/code-review`
 When the user types `/code-review`, invoke the Skill tool with `skill: "code-review"` before doing anything else.
-# ui-ux (internal sub-skill — not user-invocable)
-- **ui-ux** - design intelligence backend: 161 palettes, 57 font pairings, 99 UX guidelines. Called internally by design-audit, design-fast, design-full as a reference lens. Not triggered directly by the user.
 # my-md
 - **my-md** (`~/.claude/skills/my-md/SKILL.md`) - list all markdown files: global ~/.claude/ docs + current project artifacts. Trigger: `/my-md`
 When the user types `/my-md`, says "list md files", or "show markdown files", invoke the Skill tool with `skill: "my-md"` before doing anything else.
@@ -33,9 +31,9 @@ When the user types `/update`, says "check for updates", "am I out of date", "wh
 When the user types `/ship`, says "push skills", "publish to no-yolo", or "ship my work", invoke the Skill tool with `skill: "ship"` before doing anything else.
 # skill-discovery
 When the user says "find skill for X", "what skill handles X", "which skill does X", or "what should I use for X", read `~/.claude/skills/my-skills/TAGLINES.md`, match X against the taglines, and return the single best-matching skill plus its trigger command. This is a routing rule, not a skill — do not invoke the Skill tool.
-# debug-debate
-- **debug-debate** (`~/.claude/skills/debug-debate/SKILL.md`) - 6 repo-aware Opus personas argue bug root causes → contradiction map → diagnosis + next diagnostic step. No fix — diagnosis only. Trigger: `/debug-debate`
-When the user types `/debug-debate`, says "argue about this bug", "what's breaking and why", or "debate the bug", invoke the Skill tool with `skill: "debug-debate"` before doing anything else.
+# diagnose
+- **diagnose** (`~/.claude/skills/diagnose/SKILL.md`) - two modes: default = systematic 6-phase diagnosis (reproduce → minimize → hypothesize → instrument → fix → regression-test); `--debate` = 6 Opus personas argue competing root-cause theories → contradiction map → diagnosis + next step. Trigger: `/diagnose`
+When the user types `/diagnose`, says "debug this", "can't figure out why", "something's broken", "argue about this bug", or "debate the bug", invoke the Skill tool with `skill: "diagnose"` before doing anything else.
 # last-30
 - **last-30** (`~/.claude/skills/last-30/SKILL.md`) - pulls gaining-traction signal (not all-time rankings) from GitHub/HN/YouTube/X filtered to last 30 days only. Trigger: `/last-30`
 When the user types `/last-30`, says "what's trending in", "last 30 days", or "what's hot right now", invoke the Skill tool with `skill: "last-30"` before doing anything else.
@@ -60,9 +58,6 @@ When the user types `/skill-audit`, says "audit my skills", "check my skill libr
 # design-audit
 - **design-audit** (`~/.claude/skills/design-audit/SKILL.md`) - read-only design audit: Playwright screenshot + Lazyweb deep + Taste/Swiss/UIwiki/accessibility/code-health lenses → ranked violations table + top-10 improvements. No gates, no code. Trigger: `/design-audit`
 When the user types `/design-audit`, says "audit this UI", "review the design", or "find design problems", invoke the Skill tool with `skill: "design-audit"` before doing anything else.
-# design-fast
-- **design-fast** (`~/.claude/skills/design-fast/SKILL.md`) - 7 parallel Sonnet mockups (5 redesign + 2 wild), slop judge, Chrome screenshot, HARD pick-gate. No code written — run /design-full to build. Trigger: `/design-fast`
-When the user types `/design-fast`, says "design options", "mockup this fast", "show me design directions", or "quick mockup", invoke the Skill tool with `skill: "design-fast"` before doing anything else.
 # design-full
-- **design-full** (`~/.claude/skills/design-full/SKILL.md`) - full pipeline: audit → debate direction → 7 Opus mockups (5+2) → slop judge → 4 hard gates → token extraction → Opus plan → chains to /build. Nothing builds without an approved mockup. Trigger: `/design-full`
-When the user types `/design-full`, says "full design pipeline", "design and build this", or "redesign and ship", invoke the Skill tool with `skill: "design-full"` before doing anything else.
+- **design-full** (`~/.claude/skills/design-full/SKILL.md`) - two modes: default = full pipeline (audit → debate → 7 Opus mockups → 4 hard gates → token extraction → Opus plan → /build); `--fast` = 7 Sonnet mockups + slop judge + pick gate, no code. Nothing builds without an approved mockup. Trigger: `/design-full`
+When the user types `/design-full`, says "full design pipeline", "design and build this", "redesign and ship", "design options", "mockup this fast", "show me design directions", or "quick mockup", invoke the Skill tool with `skill: "design-full"` before doing anything else.

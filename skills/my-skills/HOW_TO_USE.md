@@ -1,6 +1,6 @@
 code-health|`/code-health` — runs automatically on current project
 code-review|`/code-review` — point at a diff or PR URL
-diagnose|`/diagnose [describe the bug]`
+diagnose|`/diagnose [describe the bug]` or `/diagnose --debate [bug]` for 6 Opus personas
 drawio-skill|`/drawio-skill [describe the diagram]`
 build|`/build [describe the feature]`
 graphify|`/graphify` — then ask questions in plain English
@@ -8,10 +8,8 @@ plan|`/plan [describe your plan]`
 my-md|`/my-md`
 my-skills|`/my-skills`
 design-audit|`/design-audit [surface to audit]` — optionally add `--persist` to save report
-design-fast|`/design-fast [surface]` — paste /design-audit output to skip rerun
-design-full|`/design-full [surface]` — paste /design-audit output to skip rerun
+design-full|`/design-full --fast [surface]` for quick mockups; `/design-full [surface]` for full pipeline. Paste /design-audit output to skip rerun
 tdd|`/tdd [describe what to build/fix]`
-ui-ux|`/ui-ux [describe the design problem]` — internal sub-skill, also callable directly
 video-to-kb|`/video-to-kb [YouTube URL]`
 whats-next|`/whats-next`
 improve|`/improve` — runs on current project, outputs plan files
