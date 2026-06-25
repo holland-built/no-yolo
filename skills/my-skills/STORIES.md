@@ -35,7 +35,6 @@ video-to-kb|Watched a great talk worth keeping? `/video-to-kb [YouTube URL]` tur
 whats-next|Back after a break and don't know where you left off? `/whats-next` scans your work-in-progress and shows what's unfinished — or a clean menu if nothing's pending.
 
 # ── Section 2 — Plugin skills ─────────────────────────────────────────────────
-impeccable|Building a net-new site and want slop kept out from day one? `/impeccable` generates a complete design system spec — tokens, component rules (all states), a11y criteria, anti-patterns, and a QA checklist. Every rule is testable and anchored to a real value.
 improve|Want an honest audit before fixing anything? `/improve` surveys the project and hands you a ranked to-do list. Never touches code — pure advice, zero risk.
 trim|About to overbuild something simple? `/trim [what you're building]` forces the laziest thing that actually works — strips out extra layers and ceremony.
 trim-audit|`/trim-audit` scans the whole project for over-engineered code and ranks what to simplify. Finds the clever thing from 6 months ago nobody understands now.
@@ -81,5 +80,4 @@ bolt:Graphviz|The engine that auto-arranges diagram boxes for drawio-skill. Inst
 bolt:draw.io|Turns diagram instructions into actual pictures (PNG/SVG/PDF) for drawio-skill. Install: `brew install --cask drawio`.
 bolt:Groq Whisper|Transcribes audio and video cheaply for video-to-kb. Set GROQ_API_KEY in your shell. Far cheaper than OpenAI.
 bolt:shadcn MCP|A library of ready-made design components that ui-ux pulls from. Add the shadcn plugin to settings.json. Keeps design grounded in real parts.
-bolt:impeccable|The editorial cream and burnt-orange theme, used by build and ui-wild. Run `/impeccable`. Gives the UI a distinct look.
 skill-audit|Wondering if your skills are well-structured or missing pieces? `/skill-audit` scans your whole library in one pass — buckets every skill into utility/verification/data enrichment/orchestration, flags missing scripts and config files, finds skills that produce output but never check it, and confirms every trigger description is actually a trigger. Writes a full report to brainstorms/. Also builds new verifiers and surfaces gotcha gaps on demand.
