@@ -60,10 +60,10 @@ bash ~/.claude/setup.sh --md-only # rules only — no tools installed
 |------|-------------|-------|
 | 1. settings.json | Copies `settings.example.json` → `settings.json`. Skips if you already have one. Prints a reminder to edit the Node.js path and add your MCP servers | Required — Claude Code won't load without it |
 | 2. Hook permissions | Runs `chmod +x` on all `hooks/*.sh` so the automation scripts can execute | Required |
-| 3. CLI tools | Checks for `fallow`, `graphify`, `gh`, and `Graphviz`. Installs fallow and graphify if missing; prints the install command for anything else it can't auto-install | Optional — only needed if you use those specific skills |
+| 3. CLI tools | Checks for `fallow`, `gh`, and `Graphviz`. Installs fallow if missing; prints the install command for anything else it can't auto-install | Optional — only needed if you use those specific skills |
 | 4. Plugin skills (terminal) | Installs `trim` and `improve` via `npx skills@latest add` | Optional — skip if you don't need those commands |
 | 5. Plugin skills (Claude Code) | Lists already-installed Claude Code plugins, or prints the commands to run inside Claude Code to install the recommended ones | Informational only — you run these inside Claude Code, not here |
-| 6. Environment variables | Prints the `export` lines to copy into your `~/.zshrc` or `~/.bash_profile` | Optional — only needed for `video-to-kb` and graphify |
+| 6. Environment variables | Prints the `export` lines to copy into your `~/.zshrc` or `~/.bash_profile` | Optional — only needed for `video-to-kb` |
 
 **--md-only mode** does steps 1 and 2 only, then runs a Python script that strips every skill trigger block out of `CLAUDE.md`. Use this if you want the rules but not the full toolchain — Claude won't reference skills that aren't installed, so nothing breaks. The strip is dynamic: it reads the current file, so it stays correct even if you add or remove skills later.
 
@@ -167,7 +167,7 @@ Three skills cover the full frontend design workflow, each a step deeper. Design
 
 `/design-audit` output passes forward — paste it into `/design-fast` or `/design-full` and they skip re-running it. **Nothing builds without an approved mockup** (`/design-full` Gate 3).
 
-The design pipeline uses four optional MCP servers: Lazyweb (reference screens), Interface Design (persists design decisions), Design+Refine (side-by-side comparison), and Magic MCP (component stubs in build). All degrade gracefully — if a server isn't installed, the skill falls back to embedded rules. Add them to your `settings.json` `mcpServers` block — see each repo's README for the exact npx invocation.
+The design pipeline uses three optional tools: **Lazyweb** (real app screenshots + A/B test evidence, install via `curl -fsSL https://www.lazyweb.com/install.sh | bash`), **Interface Design** (persists design decisions across sessions, install via `npx skills@latest add interface-design`), and **Design+Refine** (side-by-side variant comparison, install via `/plugin marketplace add 0xdesign/design-plugin` inside Claude Code). All degrade gracefully — if a tool isn't installed, the skill falls back to embedded rules.
 
 
 ### Commands in this setup
@@ -403,7 +403,6 @@ To remove individual tools installed by setup.sh:
 | What to remove | Command |
 |---|---|
 | fallow | `npm uninstall -g fallow` |
-| graphify | `uv tool uninstall graphify` |
 | trim | `npx skills@latest remove holland-built/trim` |
 | improve | `npx skills@latest remove shadcn/improve` |
 | Claude Code plugins | `/plugin remove <name>` inside Claude Code |

@@ -88,17 +88,6 @@ else
   npm install -g fallow || echo "    ! fallow install failed — install manually: npm install -g fallow"
 fi
 
-if command -v graphify >/dev/null 2>&1; then
-  echo "    graphify already installed"
-else
-  echo "    Installing graphify..."
-  if command -v uv >/dev/null 2>&1; then
-    uv tool install graphify || echo "    ! graphify install failed"
-  else
-    echo "    ! uv not found — install uv first: curl -LsSf https://astral.sh/uv/install.sh | sh"
-    echo "      then run: uv tool install graphify"
-  fi
-fi
 
 if command -v gh >/dev/null 2>&1; then
   echo "    gh already installed"
@@ -159,7 +148,7 @@ echo ""
 echo "==> 6. Environment variables (add to ~/.zshrc or ~/.bash_profile)"
 cat <<'ENVEOF'
 
-    export GROQ_API_KEY=your_key_here               # video-to-kb, graphify (Whisper)
+    export GROQ_API_KEY=your_key_here               # video-to-kb (Whisper transcription)
     export OBSIDIAN_VAULT="$HOME/path/to/your/vault"  # video-to-kb vault root
 
 ENVEOF

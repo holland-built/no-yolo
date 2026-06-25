@@ -45,6 +45,8 @@
 - installed Interface Design skill pack — persists design decisions across sessions
 - installed Design+Refine plugin — side-by-side variant comparison
 - fixed ui-ux plugin doctor error — created .claude/skills/ui-ux-pro-max symlink to resolve missing path
+- removed graphify from setup.sh and README — skill was deleted, stale references remained
+- updated README design pipeline note — removed Magic MCP, added real install commands for Lazyweb, Interface Design, and Design+Refine
 
 ## 2026-06-22
 
