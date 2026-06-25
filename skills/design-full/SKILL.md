@@ -165,8 +165,6 @@ Show plan. Stop and ask: **"Approve plan, or redirect?"**
 
 Hand approved plan + approved-tokens.md to `/build` entering at Phase 4 (TDD → build → regression → prove). The upstream gates are satisfied — do not regenerate mockups.
 
-Use Magic MCP for component stubs where useful.
-
 ---
 
 ## Step 13 — eli5 final summary
