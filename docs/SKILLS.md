@@ -75,10 +75,8 @@ Industry guidance (from engineers like Andrej Karpathy and Boris Cherny) recomme
 | `build-feature` | Reads approved plan → mockup gate → TDD → build → regression → prove. |
 | `code-health` | Three-phase health: Fallow (dead-code/dupes/security) → Trim (YAGNI review) → Improve (plan) |
 | `code-review` | 3-pass diff review: correctness → over-engineering → engineering filters (scope check + simplicity check) |
-| `ui-ux` | Design intelligence — 161 palettes, 99 UX guidelines, font pairings, chart types |
 | `design-audit` | Read-only design audit: 5 parallel lenses (Taste/Swiss/UIwiki/a11y/code-health) → violations table + top-10 |
-| `design-fast` | 7 parallel Sonnet mockups (5 redesign + 2 wild), slop judge, Chrome screenshot, HARD pick-gate, no code |
-| `design-full` | Full pipeline: audit → debate direction → 7 Opus mockups → token extraction → Opus plan → /build |
+| `design-full` | Two modes: `--fast` (7 Sonnet mockups, pick-gate, no code) or full pipeline (audit → debate → 7 Opus mockups → token extraction → Opus plan → /build) |
 
 ## Symlinks vs Real Skill Dirs
 

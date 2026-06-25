@@ -49,7 +49,7 @@ Mockups live under `.mockups/<group>/<name>.html` in the current project root. T
 
 | Situation | Tool | Variations |
 |---|---|---|
-| Fast mockups, no build | `/design-fast` | 7 (5 redesign + 2 wild) |
+| Fast mockups, no build | `/design-full --fast` | 7 (5 redesign + 2 wild) |
 | Manual or ad-hoc mockup (no skill) | this doc's manual flow | 5–8 |
 | Full feature pipeline | `/build` | 10 (phase 3.5 gate) |
 | Full design + build pipeline | `/design-full` | 7 Opus variants → approved one feeds /build |
@@ -119,5 +119,5 @@ Pick 5–8 from this list, depending on what's being designed:
 
 - `/build` — full feature pipeline with 10-variant mockup gate (phase 3.5)
 - `/design-audit` — read-only audit: 5 lenses → violations table + top-10 improvements
-- `/design-fast` — 7-variant fast generator (5 redesign + 2 wild), hard pick-gate, no code
+- `/design-full --fast` — 7-variant fast generator (5 redesign + 2 wild), hard pick-gate, no code
 - `/design-full` — full design pipeline: audit → debate → 7 Opus mockups → plan → /build
