@@ -126,7 +126,6 @@ echo "    Optional: design pipeline MCP servers (add to settings.json mcpServers
 echo "      lazyweb (reference screens)      — github.com/aboul3ata/lazyweb-skill"
 echo "      interface-design (design memory) — github.com/Dammyjay93/interface-design"
 echo "      design-refine (variant compare)  — github.com/0xdesign/design-plugin"
-echo "      magic (component stubs)          — github.com/21st-dev/magic-mcp"
 
 echo ""
 echo "==> 5. Plugins (Claude Code marketplace)"
