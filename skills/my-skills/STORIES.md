@@ -26,11 +26,11 @@ better_prompt|Rough prompts get rough results. `/better_prompt "[your prompt]"` 
 plan|Got a fuzzy plan? `/plan [plan]` interviews you one question at a time and forces the hard decisions out before you code. First try works far more often (~70% to ~90%).
 my-md|Lost track of your notes? `/my-md` lists every markdown file — your global Claude docs plus this project's brainstorms and changelogs. One command, see everything.
 my-skills|This menu. `/my-skills` lists every tool you have and what it's for, so you stop forgetting what you built.
-quick-design|Changing how something looks? `/quick-design [the UI]` shows three real options — safe, modern, bold — before you write a line of CSS. Pick, then build.
+design-audit|UI feels off but you can't name why? `/design-audit [surface]` screenshots the running app, pulls real-world reference screens, then runs five lenses — taste, Swiss design, UI rules, accessibility, and code health on your CSS — and hands back a ranked table of what's wrong, worst first. Read-only, no gates, no code. Feed the output straight into /design-fast or /design-full.
+design-fast|Want to see real directions before committing? `/design-fast [surface]` fans out 7 mockups at once — 5 serious redesigns and 2 wild ones — kills the generic ones with a slop judge, and opens them all in Chrome side by side. Your existing tokens are a starting point, not a cage. Hard stop on a pick — no code. Want it built? run /design-full.
+design-full|Ready to design and ship? `/design-full [surface]` runs the whole thing — audit, a 6-persona debate on direction, 7 Opus mockups, slop judge, then extracts the tokens from the one you pick and hands a plan to /build. Four hard gates, and nothing gets built until you approve a mockup.
 tdd|`/tdd [what to build]` writes a failing test first, then makes it pass. The failing test is your proof you actually fixed it, not just think you did.
-ui|Can't remember which UI command to use? `/ui` (or `/ux`) shows a 4-option menu — design knowledge, quick mockups, radical redesign, editorial theme — and routes you to the right one. Zero memorization.
 ui-ux|Planning a design without touching code? `/ui-ux [problem]` hands you real palettes, font pairs, and layout rules — 161 palettes to pick from, not guesswork.
-ui-wild|Design looks generic and needs a real shake-up? `/ui-wild` runs 10 AI designers, a judge kills the boring ones, you pick the winner. Won't look like every other app.
 video-to-kb|Watched a great talk worth keeping? `/video-to-kb [YouTube URL]` turns it into a permanent searchable note in your knowledge base. Talks don't get lost.
 whats-next|Back after a break and don't know where you left off? `/whats-next` scans your work-in-progress and shows what's unfinished — or a clean menu if nothing's pending.
 
@@ -53,7 +53,9 @@ rel:ship|Reads ANTISLOP.md for the slop pass, reads DAILY_CHANGELOG.md to append
 rel:antislop|Reads ANTISLOP.md (writing tells + GUI slop). No subagents, no web calls — pure in-context pattern match.
 rel:prompt-scan|Reads 8 system MD files sequentially + WebFetch to Anthropic docs for release notes. Appends to learnings.md without overwriting prior entries — entries compound over time.
 rel:better_prompt|Reads learnings.md then rewrite prompt inline. No subagents, no web calls — pure in-context reasoning against the learned rules.
-rel:ui-wild|Feeds real design rules from ui-ux into 10 designers, with a judge to kill the generic ones. Constraints, not random guessing.
+rel:design-audit|Read-only. Calls Lazyweb + Interface Design MCPs for references, runs Taste/Swiss/UIwiki sub-skills (or embedded fallbacks), plus /code-health on CSS. No code, no gates.
+rel:design-fast|7 parallel Sonnet agents + slop judge, screenshots via headless Chrome, optional Lazyweb-lite and Design+Refine MCPs. Accepts /design-audit output. Stops at a pick — never builds.
+rel:design-full|Chains /design-audit → /debate → 7 Opus agents → slop judge → token extraction → Opus plan → /build Phase 4. Four hard gates. Uses Lazyweb deep, Interface Design, Design+Refine, and Magic MCPs when present.
 rel:drawio-skill|Uses the draw.io tool plus Graphviz and Python scripts that auto-arrange the boxes, so you place nothing by hand.
 rel:video-to-kb|Uses Groq Whisper to transcribe the video cheaply, then files it into your Obsidian notes. A one-hour talk is done in ~2 minutes.
 rel:tdd|Runs your test command, and if a failing test is confusing it hands off to diagnose automatically — no manual switch.
@@ -68,13 +70,12 @@ rel:trim-review|Stands alone — no setup. Diff review for what to delete.
 rel:trim-help|Stands alone — no setup. The trim cheat-sheet.
 rel:my-skills|Stands alone — no setup. This inventory tool.
 rel:my-md|Stands alone — no setup. Lists your markdown files.
-rel:quick-design|Runs three designer agents at once and uses headless Chrome to screenshot each mockup, so all three are ready together.
 rel:whats-next|Stands alone, read-only. Scans your in-progress work and git status.
 
 # ── Section 4 — Bolt-ons (prefix bolt:) ──────────────────────────────────────
 bolt:fallow|Finds code nobody uses — dead leftovers, dupes, junk. code-health runs it before cleanup. Install: `npm install -g fallow`. Free, fast, no AI.
 bolt:gh|GitHub's tool — pulls real PR diffs so code-review reads them without copy-paste. Install: `brew install gh && gh auth login`.
-bolt:Chrome|Takes screenshots of mockups so you see them without opening a browser. Used by quick-design and build. Usually already installed.
+bolt:Chrome|Takes screenshots of mockups so you see them without opening a browser. Used by design-fast, design-full, and build. Usually already installed.
 bolt:Playwright|Drives a browser to measure layouts and run smoke tests for build. Add the playwright MCP plugin to settings.json. Gives real proof a layout is right.
 bolt:Graphviz|The engine that auto-arranges diagram boxes for drawio-skill. Install: `brew install graphviz`. No hand-placing.
 bolt:draw.io|Turns diagram instructions into actual pictures (PNG/SVG/PDF) for drawio-skill. Install: `brew install --cask drawio`.
