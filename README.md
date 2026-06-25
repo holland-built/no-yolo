@@ -9,7 +9,7 @@ My personal Claude Code setup, saved in git. Fork it and you get a working setup
 Claude Code is a command-line tool where you talk to Claude to write and edit code. It reads a folder called `~/.claude/` every time it starts. This repo *is* that folder, saved in git. Here's what's inside:
 
 - **Rules** Claude reads at the start of every session. Enforces strict habits: plan before coding, only touch the exact lines you asked for, use the right model for the right job.
-- **28 custom commands**, plus 19 borrowed from plugins — type `/name` to run one, like `/code-review` or `/build`. Run `/my-skills` for the full list.
+- **25 custom commands**, plus 19 borrowed from plugins — type `/name` to run one, like `/code-review` or `/build`. Run `/my-skills` for the full list.
 - **Memory** that learns your preferences. Say "remember that I prefer X" and Claude saves it automatically — carries forward to every future session.
 
 ---
@@ -97,11 +97,11 @@ These are not installed by setup.sh. Install whichever ones match the skills you
 | [Graphviz](https://graphviz.org/) | Draws diagram files | `drawio-skill` | `brew install graphviz` |
 | [draw.io](https://www.drawio.com/) CLI | Opens and exports diagrams | `drawio-skill` | `brew install --cask drawio` |
 | [Groq Whisper](https://console.groq.com/) | Transcribes a YouTube video and saves a structured wiki page into your Obsidian vault | `video-to-kb` | Get a free API key at console.groq.com, then add `export GROQ_API_KEY=your_key` to `~/.zshrc` |
-| [Chrome](https://www.google.com/chrome/) (headless) | Takes screenshots of mockups without opening a browser window | `design-fast`, `design-full`, `build` | Already on most machines; or `brew install --cask google-chrome` |
+| [Chrome](https://www.google.com/chrome/) (headless) | Takes screenshots of mockups without opening a browser window | `design-full`, `build` | Already on most machines; or `brew install --cask google-chrome` |
 | [Playwright](https://playwright.dev/) | Lets Claude click around in a browser to test your web app | `build` | Add the `playwright` MCP server to `settings.json` — see MCP note below |
-| [Lazyweb](https://github.com/aboul3ata/lazyweb-skill) | Real app screenshots + A/B test evidence — 12 design research skills | `design-audit`, `design-fast`, `design-full` | `curl -fsSL https://www.lazyweb.com/install.sh \| bash` |
+| [Lazyweb](https://github.com/aboul3ata/lazyweb-skill) | Real app screenshots + A/B test evidence — 12 design research skills | `design-audit`, `design-full` | `curl -fsSL https://www.lazyweb.com/install.sh \| bash` |
 | [Interface Design](https://github.com/Dammyjay93/interface-design) | Persists design decisions across sessions | `design-full` | `npx skills@latest add interface-design` |
-| [Design+Refine](https://github.com/0xdesign/design-plugin) | Side-by-side mockup variant comparison | `design-fast`, `design-full` | `/plugin marketplace add 0xdesign/design-plugin` inside Claude Code |
+| [Design+Refine](https://github.com/0xdesign/design-plugin) | Side-by-side mockup variant comparison | `design-full` | `/plugin marketplace add 0xdesign/design-plugin` inside Claude Code |
 
 > **What's an MCP server?** MCP (Model Context Protocol) is a standard for giving Claude extra tools — like the ability to control a browser or search a codebase. You wire one up by adding a config block to `settings.json`. See the [Claude MCP docs](https://docs.anthropic.com/en/docs/claude-code/mcp) for how.
 
@@ -160,15 +160,14 @@ A "skill" is a custom command you trigger with a slash, like `/code-review`. Her
 
 ### Frontend design — audit, explore, build
 
-Three skills cover the full frontend design workflow, each a step deeper. Design tokens (`DESIGN.md` / `design-system/MASTER.md` / CSS) are always read as **context, not constraint** — a redesign can propose replacing them entirely.
+Two skills cover the full frontend design workflow. Design tokens (`DESIGN.md` / `design-system/MASTER.md` / CSS) are always read as **context, not constraint** — a redesign can propose replacing them entirely.
 
 | Command | Depth | What it does | Gates |
 |---|---|---|---|
 | `/design-audit` | read-only | Screenshots the running app, pulls real-world references via Lazyweb, runs Taste / Swiss / UIwiki / accessibility / code-health lenses → ranked violations table + top-10 improvements | none |
-| `/design-fast` | mockups | 7 parallel Sonnet mockups (5 redesign + 2 wild), slop-judged, opens in Chrome. Pick a direction and stop | one hard pick-gate, no code |
-| `/design-full` | full pipeline | Audit → 6-persona direction debate → 7 Opus mockups → token extraction → Opus plan → chains to `/build` | 4 hard gates |
+| `/design-full` | mockups + full pipeline | `--fast`: 7 parallel Sonnet mockups (5 redesign + 2 wild), slop-judged, opens in Chrome — hard pick-gate, no code. Default: Audit → 6-persona direction debate → 7 Opus mockups → token extraction → Opus plan → chains to `/build` | `--fast`: 1 gate; full: 4 hard gates |
 
-`/design-audit` output passes forward — paste it into `/design-fast` or `/design-full` and they skip re-running it. **Nothing builds without an approved mockup** (`/design-full` Gate 3).
+`/design-audit` output passes forward — paste it into `/design-full` and it skips re-running the audit. **Nothing builds without an approved mockup** (`/design-full` Gate 3).
 
 All three skills degrade gracefully — if Lazyweb, Interface Design, or Design+Refine aren't installed, the skill falls back to embedded rules. See the Outside tools table above for install commands.
 
@@ -177,18 +176,16 @@ All three skills degrade gracefully — if Lazyweb, Interface Design, or Design+
 
 | Skill | What it does | Modes & flags |
 |---|---|---|
-| `/debug-debate` | 6 Opus personas argue the root cause of your bug in parallel, map contradictions, give most likely cause with file:line, and one concrete next diagnostic step. Diagnosis only, no code changed | — |
 | `/code-health` | Runs `trim` + `improve` in one pass: static analysis, then trims over-complication, then a ranked improvement plan. No need to run those borrowed commands separately | `--auto` (skip gates, unattended) |
 | `/code-review` | Reviews a pull request or a set of changes: first for bugs, then for over-complication, then for unrelated edits that shouldn't be there | `--fix` (auto-apply) · `--comment` (inline comments) · `--effort low\|medium\|high\|max` (depth) |
-| `/diagnose` | A 6-step way to find the real cause of a bug — when you're stuck, it walks you through it step by step | — |
+| `/diagnose` | A 6-step way to find the real cause of a bug. Add `--debate` and 6 Opus personas each argue a competing root-cause theory — contradiction map, most likely cause with file:line, one concrete next step | `--debate` (6-persona Opus mode) |
 | `/drawio-skill` | Draws diagrams (architecture, flowcharts, database tables, UML). Saves them as PNG, SVG, or PDF | — |
 | `/build` | Builds a whole feature start to finish: gather evidence, plan with Opus, approve, then automatically runs a 10-variant UI mockup gate (slop-filtered, requires approval) before writing any code — tests first, build with Sonnet, then prove it works | — |
 | `/plan` | Interviews you before any code gets written — one question at a time until every tricky case is sorted out | — |
 | `/my-md` | Lists every markdown file — both the global `~/.claude/` docs and the ones in your current project | — |
 | `/my-skills` | This very list. Shows the commands I wrote and the borrowed ones, plus how they connect and what they depend on | `fast` (2-col) · `deep` (4-col + relationships) |
 | `/design-audit` | Read-only design audit: screenshots the app, pulls real-world references, runs Taste / Swiss / UIwiki / accessibility / code-health lenses → ranked violations table + top-10 improvements. No gates, no code | `--persist` (write report to `design-system/AUDIT-<date>.md`) |
-| `/design-fast` | 7 parallel Sonnet mockups (5 redesign + 2 wild) using your tokens as reference not constraint, slop-judged, opens in Chrome. Hard pick-gate — no code written | accepts pasted `/design-audit` output |
-| `/design-full` | Full design-to-code pipeline: audit → 6-persona direction debate → 7 Opus mockups → slop judge → token extraction → Opus plan → chains to `/build`. Four hard gates; nothing builds without an approved mockup | accepts pasted `/design-audit` output |
+| `/design-full` | Two modes. `--fast`: 7 Sonnet mockups (5 redesign + 2 wild), slop-judged, opens in Chrome, hard pick-gate — no code. Default full pipeline: audit → 6-persona debate → 7 Opus mockups → slop judge → token extraction → Opus plan → chains to `/build`. Four hard gates; nothing builds without an approved mockup | `--fast` (quick mockups, no code) · accepts pasted `/design-audit` output |
 | `/tdd` | Keeps you honest about test-driven development: write a failing test, make it pass, clean up, repeat | — |
 | `/video-to-kb` | *(Optional — requires Obsidian + Groq API key)* Watch a YouTube video and get a structured wiki page injected into your Obsidian vault automatically — transcript, summary, key claims | — |
 | `/whats-next` | Reads session task queue (`~/.claude/.pending-tasks.md`) and runs next task; creative project-specific suggestions when queue is empty | — |

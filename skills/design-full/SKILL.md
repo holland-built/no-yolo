@@ -1,8 +1,8 @@
 ---
 name: design-full
-description: Use this skill when the user types /design-full, says 'full design pipeline', 'design and build this', or 'redesign and ship'. Full pipeline — audit → debate direction → 7 Opus mockups (5 redesign + 2 wild) → slop judge → 4 hard gates → token extraction → Opus plan → chains to /build. Nothing builds without an approved mockup.
+description: Use this skill when the user types /design-full, says 'full design pipeline', 'design and build this', 'redesign and ship', 'design options', 'mockup this fast', 'show me design directions', or 'quick mockup'. Two modes: default = full pipeline (audit → debate → 7 Opus mockups → 4 hard gates → token extraction → Opus plan → /build); --fast = 7 Sonnet mockups + slop judge + pick gate only, no code. Nothing builds without an approved mockup.
 user-invocable: true
-argument-hint: "[surface/feature — optionally paste /design-audit output]"
+argument-hint: "[surface/feature — optionally paste /design-audit output] [--fast]"
 allowed-tools:
   - Bash
   - Read
@@ -16,6 +16,81 @@ allowed-tools:
 # design-full
 
 Target: $ARGUMENTS
+
+**Mode detection:** If `$ARGUMENTS` contains `--fast` → run **Fast mode** (Steps F0–F7 below). Otherwise → run **Full pipeline** (Steps 0–13 below).
+
+---
+
+## FAST MODE (`--fast`)
+
+7 variants (5 redesign + 2 wild), one approval gate. No code written. Sonnet — cheap and fast.
+
+**Token rule:** DESIGN.md / MASTER.md / CSS are read as **context, not constraint.**
+
+### Step F0 — Detect project, accept prior audit
+
+```bash
+head -20 CLAUDE.md 2>/dev/null
+cat package.json 2>/dev/null | python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('name','?'), d.get('description',''))" 2>/dev/null
+```
+
+If the user pasted `/design-audit` output → use it directly. **Skip re-running audit.**
+
+### Step F1 — Lazyweb lite — reference screens
+
+Query Lazyweb MCP (lite mode). If unavailable → skip with: `⚠️ Lazyweb unavailable — skipping references.`
+
+### Step F2 — Interface Design MCP — prior decisions
+
+Read prior design decisions for this project. If unavailable → continue.
+
+### Step F3 — Read design tokens (context only)
+
+Check `design-system/MASTER.md` → `DESIGN.md` → CSS `:root` vars. **Reference only.** State what was found in one line.
+
+### Step F4 — Fan out 7 parallel Sonnet agents
+
+ONE parallel call. Each agent writes `.mockups/design-fast-<slug>/vN.html` — self-contained, inline CSS, realistic content, `<!-- VARIANT: vN — paradigm name -->` header comment.
+
+Each brief includes Taste + Swiss + UIwiki as reference text (use FALLBACKS if sub-skills absent).
+
+**v1–v5 — Redesigns:** five distinct layout paradigms — materially different, not variations on a theme.
+
+**v6–v7 — Wild:** throw out convention entirely. Challenge what this kind of app should look like.
+
+### Step F5 — Slop judge
+
+Judge agent reviews all 7 for slop fingerprint. Kills generic or DNA-sharing variants, respawns rejects with "go weirder — do not reuse [specific pattern]." Max 2 rounds.
+
+### Step F6 — Build all.html → screenshot
+
+Write `.mockups/design-fast-<slug>/all.html` with sticky `v1…v7` jump nav, ★ recommended marking.
+
+```bash
+open ".mockups/design-fast-<slug>/all.html"
+"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" \
+  --headless --disable-gpu --window-size=1400,900 \
+  --screenshot=".mockups/design-fast-<slug>/all.png" \
+  "file://$PWD/.mockups/design-fast-<slug>/all.html"
+```
+
+Show screenshot inline.
+
+### Step F7 — Design+Refine MCP
+
+If installed, run side-by-side comparison. If unavailable → skip.
+
+### FAST GATE — Hard stop (no code)
+
+Print variant table: `| Variant | Paradigm | One-line description | Recommended |`
+
+Ask: **"Which variant? (v1–v7 / redirect)"**
+
+**STOP HERE.** No production code in this mode. Want it built? → run `/design-full` (without `--fast`).
+
+---
+
+## FULL PIPELINE
 
 Full design-to-code pipeline. Four hard gates. Opus mockups. Chains to `/build`.
 
