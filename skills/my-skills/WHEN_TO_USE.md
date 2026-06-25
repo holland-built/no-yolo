@@ -7,10 +7,11 @@ graphify|Unfamiliar codebase or tracing an unexpected dependency
 plan|Fuzzy requirements, multiple valid approaches
 my-md|New to a project or after a long break
 my-skills|Forgot what skills exist
-quick-design|Any UI change — see it before you build it
+design-audit|Any UI that feels off — get a ranked list of what's wrong before changing anything
 tdd|Bug fixes, new features, anywhere tests matter
 ui-ux|Planning or reviewing UI without touching code yet
-ui-wild|Existing UI needs a real redesign, not a tweak
+design-fast|Any UI change — see 7 real directions before committing
+design-full|Redesign you intend to ship — full pipeline with build at the end
 video-to-kb|Good talk or tutorial worth keeping permanently
 whats-next|Session start — orient before picking what to do
 improve|Want an outside-in audit before deciding what to fix
@@ -28,7 +29,6 @@ md-check|Before adding a new doc, or when ~/.claude notes feel bloated and repet
 prompt-scan|After a new Claude model ships, or first-time setup before using /better-prompt
 remember-that|End of a session with useful decisions or preferences worth keeping
 ship|Done editing skills and ready to publish to no-yolo
-ui|Any UI task — when you're not sure which UI skill to reach for
 debate|Before committing to an architecture, UI/UX direction, or what-to-build-next call. When you want the whole team — dev, ops, and sales — stress-testing it, not validating it.
 update|Before pulling changes to your ~/.claude setup. Also after an update that broke something, or when you want to recover a skill that was removed.
 trim-gain|When you want to see trim's ROI in numbers.

@@ -1,7 +1,7 @@
 ---
 name: ui-ux
-description: Use this skill when the user types /ui-ux, says 'design this', 'plan the UI', 'review the UX', or asks about styles, palettes, or typography. Design intelligence — 161 palettes, 57 font pairings, 99 UX guidelines, 25 chart types across 10 stacks.
-user-invocable: true
+description: Internal design intelligence sub-skill — called by design-audit, design-fast, and design-full as a reference lens. 161 palettes, 57 font pairings, 99 UX guidelines, 25 chart types across 10 stacks. Not user-invocable directly.
+user-invocable: false
 argument-hint: "[design task or component to improve]"
 ---
 

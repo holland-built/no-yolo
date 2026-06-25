@@ -7,10 +7,11 @@ graphify|Answers "what breaks if I change X?" in seconds instead of reading 40 f
 plan|First-attempt success jumps from ~70% to ~90% when decisions are front-loaded
 my-md|One command to see everything. Prevents losing work to forgotten files
 my-skills|You forget you have tools. This is the map
-quick-design|See three real options before writing a line of CSS. Conservative/modern/wild gives real range
+design-audit|Five independent lenses + real-world references catch what one reviewer misses — read-only, zero risk
 tdd|The RED test is proof you actually fixed it. Without it you're asserting, not proving
 ui-ux|161 palettes + 57 font pairings — design decisions have a defensible basis
-ui-wild|Anti-slop judge kills generic AI output. Result doesn't look like every other Claude UI
+design-fast|7 directions at once, slop judge kills the generic ones — tokens are context not a cage
+design-full|Nothing builds without an approved mockup. Audit, debate, and 4 gates mean the shipped UI is the one you chose
 video-to-kb|Talks are perishable. One command turns them into permanent, searchable KB nodes
 whats-next|Prevents starting something new while something is already half-done
 improve|Never touches code — pure signal. Tells you what's wrong without risk of a bad auto-fix
@@ -28,7 +29,6 @@ md-check|Duplicate rules in two files = the wrong one gets followed. Overlap det
 prompt-scan|Without a learnings snapshot, /better-prompt rewrites blindly. This gives it real context
 remember-that|Preferences decay between sessions. This makes them permanent without manual file editing
 ship|Leak guard + quality gates run automatically. One command replaces 5 manual steps
-ui|Single entry point prevents the wrong skill for the job — routes to the right one every time
 debate|Because no single role sees the whole picture. Six product-team lenses — code, ops, and revenue — surface the contradictions and the one question you haven't asked yet.
 update|Because pulling blindly can remove things you rely on. See first, then decide.
 trim-gain|Scorecard from benchmark medians — not a per-repo estimate.

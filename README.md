@@ -97,7 +97,7 @@ These are not installed by setup.sh. Install whichever ones match the skills you
 | [Graphviz](https://graphviz.org/) | Draws diagram files | `drawio-skill` | `brew install graphviz` |
 | [draw.io](https://www.drawio.com/) CLI | Opens and exports diagrams | `drawio-skill` | `brew install --cask drawio` |
 | [Groq Whisper](https://console.groq.com/) | Transcribes a YouTube video and saves a structured wiki page into your Obsidian vault | `video-to-kb` | Get a free API key at console.groq.com, then add `export GROQ_API_KEY=your_key` to `~/.zshrc` |
-| [Chrome](https://www.google.com/chrome/) (headless) | Takes screenshots of mockups without opening a browser window | `quick-design`, `build` | Already on most machines; or `brew install --cask google-chrome` |
+| [Chrome](https://www.google.com/chrome/) (headless) | Takes screenshots of mockups without opening a browser window | `design-fast`, `design-full`, `build` | Already on most machines; or `brew install --cask google-chrome` |
 | [Playwright](https://playwright.dev/) | Lets Claude click around in a browser to test your web app | `build` | Add the `playwright` MCP server to `settings.json` — see MCP note below |
 
 > **What's an MCP server?** MCP (Model Context Protocol) is a standard for giving Claude extra tools — like the ability to control a browser or search a codebase. You wire one up by adding a config block to `settings.json`. See the [Claude MCP docs](https://docs.anthropic.com/en/docs/claude-code/mcp) for how.
@@ -155,20 +155,19 @@ What each file and folder is for:
 
 A "skill" is a custom command you trigger with a slash, like `/code-review`. Here's everything available.
 
-### Frontend design — plan the look, generate mockups, write the code
+### Frontend design — audit, explore, build
 
-Four skills cover the full frontend design workflow: explore directions, lock a design language, generate mockups, and build — all with approval gates so no code gets written until you've seen what it looks like.
+Three skills cover the full frontend design workflow, each a step deeper. Design tokens (`DESIGN.md` / `design-system/MASTER.md` / CSS) are always read as **context, not constraint** — a redesign can propose replacing them entirely.
 
-**One command does everything:** `/build` plans the feature, generates 10 UI mockup variants, filters out generic-looking ones, asks you to pick one, then writes the code. You never need to think about the other design commands to get a good UI.
+| Command | Depth | What it does | Gates |
+|---|---|---|---|
+| `/design-audit` | read-only | Screenshots the running app, pulls real-world references via Lazyweb, runs Taste / Swiss / UIwiki / accessibility / code-health lenses → ranked violations table + top-10 improvements | none |
+| `/design-fast` | mockups | 7 parallel Sonnet mockups (5 redesign + 2 wild), slop-judged, opens in Chrome. Pick a direction and stop | one hard pick-gate, no code |
+| `/design-full` | full pipeline | Audit → 6-persona direction debate → 7 Opus mockups → token extraction → Opus plan → chains to `/build` | 4 hard gates |
 
-The other commands let you go deeper before running `/build`:
+`/design-audit` output passes forward — paste it into `/design-fast` or `/design-full` and they skip re-running it. **Nothing builds without an approved mockup** (`/design-full` Gate 3).
 
-| Command | What it does | How it feeds into `/build` |
-|---|---|---|
-| `/quick-design` | Generates 3 mockup options fast, no feature needed — pick a direction before committing | Visual reference only — you decide what to carry forward |
-| `/ui-ux --persist` | Locks your design language (colors, fonts, spacing) into `design-system/MASTER.md` | **Direct handoff** — `/build` reads `MASTER.md` automatically and constrains all 10 mockup variants to your design system |
-
-Run `/ui-ux --persist` before `/build` for on-brand mockups. Skip it and `/build` falls back to your project's existing CSS tokens.
+The design pipeline uses four optional MCP servers: Lazyweb (reference screens), Interface Design (persists design decisions), Design+Refine (side-by-side comparison), and Magic MCP (component stubs in build). All degrade gracefully — if a server isn't installed, the skill falls back to embedded rules. Add them to your `settings.json` `mcpServers` block — see each repo's README for the exact npx invocation.
 
 
 ### Commands in this setup
@@ -184,11 +183,10 @@ Run `/ui-ux --persist` before `/build` for on-brand mockups. Skip it and `/build
 | `/plan` | Interviews you before any code gets written — one question at a time until every tricky case is sorted out | — |
 | `/my-md` | Lists every markdown file — both the global `~/.claude/` docs and the ones in your current project | — |
 | `/my-skills` | This very list. Shows the commands I wrote and the borrowed ones, plus how they connect and what they depend on | `fast` (2-col) · `deep` (4-col + relationships) |
-| `/quick-design` | 3 fast mockups (conservative / modern / wild) using your project's real CSS tokens — Sonnet, cheap, opens in Chrome. Use when you want a quick direction before committing to `/build` | — |
+| `/design-audit` | Read-only design audit: screenshots the app, pulls real-world references, runs Taste / Swiss / UIwiki / accessibility / code-health lenses → ranked violations table + top-10 improvements. No gates, no code | `--persist` (write report to `design-system/AUDIT-<date>.md`) |
+| `/design-fast` | 7 parallel Sonnet mockups (5 redesign + 2 wild) using your tokens as reference not constraint, slop-judged, opens in Chrome. Hard pick-gate — no code written | accepts pasted `/design-audit` output |
+| `/design-full` | Full design-to-code pipeline: audit → 6-persona direction debate → 7 Opus mockups → slop judge → token extraction → Opus plan → chains to `/build`. Four hard gates; nothing builds without an approved mockup | accepts pasted `/design-audit` output |
 | `/tdd` | Keeps you honest about test-driven development: write a failing test, make it pass, clean up, repeat | — |
-| `/ui` | Entry point for all UI work — type `/ui` or `/ux`, get a numbered menu, route to the right tool. No memorization required | routes to: /ui-ux, /quick-design, /ui-wild |
-| `/ui-ux` | Design know-how: 161 color palettes, 57 font pairings, 99 design guidelines, 25 chart types | also reachable via `/ui` |
-| `/ui-wild` | 10 Opus personas (brutalist, editorial, Bloomberg terminal, etc.) each design from scratch — judge kills generic ones, you pick. Slow and expensive but genuinely radical. Use when `/quick-design` isn't wild enough | also reachable via `/ui` |
 | `/video-to-kb` | *(Optional — requires Obsidian + Groq API key)* Watch a YouTube video and get a structured wiki page injected into your Obsidian vault automatically — transcript, summary, key claims | — |
 | `/whats-next` | Reads session task queue (`~/.claude/.pending-tasks.md`) and runs next task; creative project-specific suggestions when queue is empty | — |
 | `/debate` | Your product team argues the decision — Senior Dev, Junior Dev, Sales Engineer, DevOps, Sales Leader, Eng Leader — then maps contradictions, synthesizes a briefing, and ends with one clear YES/NO/CONDITIONAL verdict | — |
