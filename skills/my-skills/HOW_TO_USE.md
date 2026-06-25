@@ -7,13 +7,13 @@ graphify|`/graphify` — then ask questions in plain English
 plan|`/plan [describe your plan]`
 my-md|`/my-md`
 my-skills|`/my-skills`
-quick-design|`/quick-design [describe the UI]`
+design-audit|`/design-audit [surface to audit]` — optionally add `--persist` to save report
+design-fast|`/design-fast [surface]` — paste /design-audit output to skip rerun
+design-full|`/design-full [surface]` — paste /design-audit output to skip rerun
 tdd|`/tdd [describe what to build/fix]`
-ui-ux|`/ui-ux [describe the design problem]`
-ui-wild|`/ui-wild` — run from project with a live dev server
+ui-ux|`/ui-ux [describe the design problem]` — internal sub-skill, also callable directly
 video-to-kb|`/video-to-kb [YouTube URL]`
 whats-next|`/whats-next`
-impeccable|`/impeccable` — then describe the UI to generate
 improve|`/improve` — runs on current project, outputs plan files
 trim|`/trim [describe what you're building]`
 trim-audit|`/trim-audit`

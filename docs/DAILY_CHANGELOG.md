@@ -28,6 +28,18 @@
 ## 2026-06-25
 
 - removed impeccable from my-skills data files: TAGLINES.md, STORIES.md, WHEN_TO_USE.md, WHY_TO_USE.md
+- added /design-audit skill — read-only audit: Playwright screenshot + Lazyweb deep + 5 lenses (Taste/Swiss/UIwiki/a11y/code-health) → violations table + top-10 improvements
+- added /design-fast skill — 7 parallel Sonnet mockups (5 redesign + 2 wild), slop judge, Chrome screenshot, hard pick-gate, no code
+- added /design-full skill — full pipeline: audit → 6-persona debate → 7 Opus mockups → token extraction → Opus plan → chains to /build, 4 hard gates
+- retired /ui, /quick-design, /ui-wild — replaced by /design-audit, /design-fast, /design-full
+- demoted /ui-ux to internal sub-skill (user-invocable: false) — called by design-* skills as reference lens
+- updated README — rewrote frontend design section with new 3-command structure + 4 optional MCP servers
+- updated SKILL_TRIGGERS.md — removed 3 old blocks, updated ui-ux to internal, added 3 new design skill triggers
+- updated all my-skills data files — STORIES, TAGLINES, WHEN_TO_USE, WHY_TO_USE, HOW_TO_USE, RELATIONSHIPS, BOLT_ONS
+- updated docs/UI_MOCKUPS.md — replaced tool decision tree with new design skills
+- updated docs/SKILLS.md — replaced ui-wild row with 3 design skill rows
+- updated skills/build/SKILL.md — routing note updated from /impeccable to /design-audit
+- updated setup.sh — removed impeccable plugin hint, added 4 design pipeline MCP server hints
 
 ## 2026-06-22
 

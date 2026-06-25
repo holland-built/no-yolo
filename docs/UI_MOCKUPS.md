@@ -49,10 +49,10 @@ Mockups live under `.mockups/<group>/<name>.html` in the current project root. T
 
 | Situation | Tool | Variations |
 |---|---|---|
-| Quick exploration, no full pipeline | `/quick-design` | 3 (conservative / modern / wild) |
+| Fast mockups, no build | `/design-fast` | 7 (5 redesign + 2 wild) |
 | Manual or ad-hoc mockup (no skill) | this doc's manual flow | 5–8 |
 | Full feature pipeline | `/build` | 10 (phase 3.5 gate) |
-| Radical redesign, start from scratch | `/ui-wild` | 6+ survivors after judge pass |
+| Full design + build pipeline | `/design-full` | 7 Opus variants → approved one feeds /build |
 
 Use the manual flow (5–8) when no skill applies. Use the skill count when a skill is invoked — don't override it.
 
@@ -117,8 +117,7 @@ Pick 5–8 from this list, depending on what's being designed:
 
 ## Skill Reference
 
-- `/build` — full pipeline with 10-variant mockup gate (phase 3.5)
-- `/ui-wild` — radical redesign: 10 Opus personas + anti-slop judge → 6+ survivors
-- `/quick-design` — 3-variant fast generator (conservative / modern / wild)
-- `/ui-ux` — design intelligence (palettes, font pairings, UX guidelines) — use before building
-- `/impeccable` — live browser polish on a running app *(requires impeccable plugin)*
+- `/build` — full feature pipeline with 10-variant mockup gate (phase 3.5)
+- `/design-audit` — read-only audit: 5 lenses → violations table + top-10 improvements
+- `/design-fast` — 7-variant fast generator (5 redesign + 2 wild), hard pick-gate, no code
+- `/design-full` — full design pipeline: audit → debate → 7 Opus mockups → plan → /build

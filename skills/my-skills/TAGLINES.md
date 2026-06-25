@@ -6,9 +6,7 @@ build|Full feature pipeline: plan → UI → code → tests → proof.
 plan|Interview yourself about a plan before writing code.
 my-skills|This menu.
 tdd|Failing test first, then make it pass. Red→green discipline.
-ui|Entry point for all UI skills. Pick the right one from a menu.
 ui-ux|Design help before touching code: palettes, fonts, UX rules.
-ui-wild|10 AI designers compete; judge kills generic; you pick winner.
 video-to-kb|Turn a YouTube video into a searchable KB note.
 improve|Read-only audit → prioritized improvement list.
 trim|Forces the laziest solution that works. Kills abstraction.
@@ -17,7 +15,9 @@ trim-debt|Harvest trim-tagged shortcuts into a debt ledger.
 trim-review|Review diff for what to delete, not what to add.
 trim-help|Quick reference for all trim commands.
 my-md|List all markdown files — global docs + project artifacts.
-quick-design|3-variant mockup (conservative/modern/wild) before code.
+design-audit|Read-only design audit → ranked violations + top-10 fixes.
+design-fast|7 Sonnet mockups (5 redesign + 2 wild), slop-judged. No code.
+design-full|Audit → debate → 7 Opus mockups → plan → build. 4 hard gates.
 whats-next|Shows unfinished work or next-action list. Never static.
 eli5|Explain anything in plain English before you commit to it.
 debate|6 product-team personas argue your decision → YES/NO/CONDITIONAL.
