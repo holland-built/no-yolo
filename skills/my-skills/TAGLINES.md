@@ -19,7 +19,6 @@ trim-help|Quick reference for all trim commands.
 my-md|List all markdown files — global docs + project artifacts.
 quick-design|3-variant mockup (conservative/modern/wild) before code.
 whats-next|Shows unfinished work or next-action list. Never static.
-impeccable|Premium editorial design system spec from scratch.
 eli5|Explain anything in plain English before you commit to it.
 debate|6 product-team personas argue your decision → YES/NO/CONDITIONAL.
 update|Check, preview, apply, rollback, or restore setup updates.
