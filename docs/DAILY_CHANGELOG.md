@@ -40,6 +40,11 @@
 - updated docs/SKILLS.md — replaced ui-wild row with 3 design skill rows
 - updated skills/build/SKILL.md — routing note updated from /impeccable to /design-audit
 - updated setup.sh — removed impeccable plugin hint, added 4 design pipeline MCP server hints
+- removed Magic MCP from /design-full and setup.sh — required paid 21st.dev API key; Claude handles component generation natively via /build
+- installed Lazyweb MCP — 12 design research skills now available (lazyweb, lazyweb-ab-test-research, lazyweb-deep-design-research, lazyweb-design-best-practices, lazyweb-design-brainstorm, lazyweb-design-improve, lazyweb-lite-design-research, lazyweb-optimize-paywall, lazyweb-optimize-sign-up, lazyweb-paywall-cta, lazyweb-quick-search, lazyweb-update)
+- installed Interface Design skill pack — persists design decisions across sessions
+- installed Design+Refine plugin — side-by-side variant comparison
+- fixed ui-ux plugin doctor error — created .claude/skills/ui-ux-pro-max symlink to resolve missing path
 
 ## 2026-06-22
 
