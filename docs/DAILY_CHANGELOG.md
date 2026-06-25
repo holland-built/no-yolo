@@ -25,6 +25,10 @@
 - updated docs/NO_YOLO.md — added trigger-condition and gotchas-grow-organically rules, fixed skill checklist (user-invocable: true, SKILL_TRIGGERS.md)
 - added /skill-audit skill — 3-mode library audit: bucket/component/verifier/trigger audit, build-verifier mode, gotchas mode
 
+## 2026-06-25
+
+- removed impeccable from my-skills data files: TAGLINES.md, STORIES.md, WHEN_TO_USE.md, WHY_TO_USE.md
+
 ## 2026-06-22
 
 - reorganized docs into docs/ subfolder — moved all .md files from root except CLAUDE.md and README.md
