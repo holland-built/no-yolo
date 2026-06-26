@@ -19,40 +19,49 @@ Target: $ARGUMENTS
 
 **Mode detection:** If `$ARGUMENTS` contains `--fast` → run **Fast mode** (Steps F0–F7 below). Otherwise → run **Full pipeline** (Steps 0–13 below).
 
+**BOLD REDESIGN RULE:** If `$ARGUMENTS` contains any of: `new`, `redesign`, `fresh`, `different`, `something new`, `new look`, `start over`, `rethink` → **BOLD MODE is active.** In Bold Mode: every variant (v1–v7) must be impossible to mistake for an incremental update of the current design. Different layout paradigm. Different color logic. Different type hierarchy. The slop judge **also kills any variant that looks like it could be a minor refresh** — not just generic slop. Similarity to the existing UI = instant reject + respawn with explicit brief: "this looks like the current app — go completely different."
+
+**LIGHT + DARK RULE:** Every mockup HTML file must include **both** a light-mode section and a dark-mode section. Use a `<button>` toggle at the top that switches `data-theme="light|dark"` on `<html>`. Both themes must be fully realized — not just CSS inversion. This is non-negotiable in both Fast and Full mode.
+
 ---
 
 ## FAST MODE (`--fast`)
 
 7 variants (5 redesign + 2 wild), one approval gate. No code written. Sonnet — cheap and fast.
 
-**Token rule:** DESIGN.md / MASTER.md / CSS are read as **context, not constraint.**
+**Token rule:** DESIGN.md / MASTER.md / CSS are read to know what to **AVOID** — do not copy any existing colors, fonts, or layout patterns into new mockups.
 
-### Step F0 — Detect project, accept prior audit
+### Step F0 — Detect project, load prior audit
 
 ```bash
+SLUG=$(python3 -c "import json; print(json.load(open('package.json')).get('name','').replace('/','-').replace('@',''))" 2>/dev/null || basename "$PWD")
 head -20 CLAUDE.md 2>/dev/null
 cat package.json 2>/dev/null | python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('name','?'), d.get('description',''))" 2>/dev/null
 ```
 
-If the user pasted `/design-audit` output → use it directly. **Skip re-running audit.**
+**Audit auto-pickup (no paste needed):**
+```bash
+ls -t design-system/AUDIT-${SLUG}-*.md 2>/dev/null | head -1
+```
+- File found → read it, print `Using saved audit: <filename>`. Skip re-running.
+- Multiple files → use the most recent (already sorted by `ls -t`).
+- No file → proceed to Step F1, then run `/design-audit` before mockups.
+
+If the user pasted `/design-audit` output explicitly → that takes priority over the saved file.
 
 ### Step F1 — Lazyweb lite — reference screens
 
 Query Lazyweb MCP (lite mode). If unavailable → skip with: `⚠️ Lazyweb unavailable — skipping references.`
 
-### Step F2 — Interface Design MCP — prior decisions
+### Step F3 — Read design tokens (to AVOID, not to copy)
 
-Read prior design decisions for this project. If unavailable → continue.
-
-### Step F3 — Read design tokens (context only)
-
-Check `design-system/MASTER.md` → `DESIGN.md` → CSS `:root` vars. **Reference only.** State what was found in one line.
+Check `design-system/MASTER.md` → `DESIGN.md` → CSS `:root` vars. Read these to know what the current design looks like — **do not use any of these values in new mockups.** Every variant must use a completely different palette, type system, and layout from what's found here. State what was found in one line, then state what's banned.
 
 ### Step F4 — Fan out 7 parallel Sonnet agents
 
-ONE parallel call. Each agent writes `.mockups/design-fast-<slug>/vN.html` — self-contained, inline CSS, realistic content, `<!-- VARIANT: vN — paradigm name -->` header comment.
+ONE parallel call. Each agent writes `.mockups/design-fast-<slug>/vN.html` — self-contained, inline CSS, realistic content, `<!-- VARIANT: vN — paradigm name -->` header comment. Every file must satisfy the **LIGHT + DARK RULE** (both themes + toggle button). If **BOLD MODE** is active, each brief carries the bold redesign constraint.
 
-Each brief includes Taste + Swiss + UIwiki as reference text (use FALLBACKS if sub-skills absent).
+Each brief includes: Taste + Swiss + UIwiki reference text (use FALLBACKS if absent) + palette seed from Step 0d + ban list from Step 0e + component library from Step 0c. Agents must use the palette hex values and must not use any banned value.
 
 **v1–v5 — Redesigns:** five distinct layout paradigms — materially different, not variations on a theme.
 
@@ -62,9 +71,11 @@ Each brief includes Taste + Swiss + UIwiki as reference text (use FALLBACKS if s
 
 Judge agent reviews all 7 for slop fingerprint. Kills generic or DNA-sharing variants, respawns rejects with "go weirder — do not reuse [specific pattern]." Max 2 rounds.
 
+If BOLD MODE active: also kill any variant that resembles the existing UI. Explicit rejection brief: "too close to the current design — completely different layout, colors, and type system required."
+
 ### Step F6 — Build all.html → screenshot
 
-Write `.mockups/design-fast-<slug>/all.html` with sticky `v1…v7` jump nav, ★ recommended marking.
+Write `.mockups/design-fast-<slug>/all.html` showing all 14 sections — every variant in both light AND dark mode. Structure: v1-light, v1-dark, v2-light, v2-dark … v7-light, v7-dark. Sticky jump nav with 14 anchors. Each section labeled "vN — [paradigm] — [LIGHT/DARK]". Toggle button per variant switches `data-theme` on that variant's wrapper. ★ recommended marking on the winning variant's light section.
 
 ```bash
 open ".mockups/design-fast-<slug>/all.html"
@@ -75,10 +86,6 @@ open ".mockups/design-fast-<slug>/all.html"
 ```
 
 Show screenshot inline.
-
-### Step F7 — Design+Refine MCP
-
-If installed, run side-by-side comparison. If unavailable → skip.
 
 ### FAST GATE — Hard stop (no code)
 
@@ -96,27 +103,88 @@ Full design-to-code pipeline. Four hard gates. Opus mockups. Chains to `/build`.
 
 **Nothing builds without an approved mockup (Gate 3). This is non-negotiable.**
 
-**Token rule:** DESIGN.md / MASTER.md / CSS are **context, not constraint.** Agents may propose replacing them entirely. Nothing is locked until Gate 3.
+**Token rule:** DESIGN.md / MASTER.md / CSS are read to build an **explicit ban list** — do not copy any existing colors, fonts, or layout patterns. Full nuke, every run, no exceptions.
 
 ---
 
 ## Step 0 — Detect project
 
 ```bash
+SLUG=$(python3 -c "import json; print(json.load(open('package.json')).get('name','').replace('/','-').replace('@',''))" 2>/dev/null || basename "$PWD")
 head -20 CLAUDE.md 2>/dev/null
 cat package.json 2>/dev/null | python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('name','?'), d.get('description',''))" 2>/dev/null
 head -10 README.md 2>/dev/null
 ```
 
-State: project type, stack, target surface.
+State: project type, stack, target surface, slug.
 
 ---
 
-## Step 0b — Audit
+## Step 0b — Audit auto-pickup
 
-If the user pasted `/design-audit` output in `$ARGUMENTS` → accept it. **Skip re-running the audit.**
+Priority order:
+1. User pasted `/design-audit` output in `$ARGUMENTS` → use it. Print `Using pasted audit.`
+2. Saved audit file exists for this project slug:
+   ```bash
+   ls -t design-system/AUDIT-${SLUG}-*.md 2>/dev/null | head -1
+   ```
+   → read it, print `Using saved audit: <filename>`. Skip re-running.
+3. No saved audit → run `/design-audit` now on the target surface.
 
-Otherwise → run `/design-audit` now on the target surface.
+---
+
+## Step 0c — Stack detection
+
+```bash
+STACK_REACT=$(cat package.json 2>/dev/null | python3 -c "import json,sys; d=json.load(sys.stdin); print('yes' if 'react' in str(d.get('dependencies',{})) or 'react' in str(d.get('devDependencies',{})) else 'no')" 2>/dev/null || echo "no")
+STACK_VUE=$(cat package.json 2>/dev/null | python3 -c "import json,sys; d=json.load(sys.stdin); print('yes' if 'vue' in str(d.get('dependencies',{})) else 'no')" 2>/dev/null || echo "no")
+STACK_TAILWIND=$(cat package.json 2>/dev/null | python3 -c "import json,sys; d=json.load(sys.stdin); print('yes' if 'tailwindcss' in str(d.get('dependencies',{})) or 'tailwindcss' in str(d.get('devDependencies',{})) else 'no')" 2>/dev/null || echo "no")
+```
+
+Based on results, select component library candidates:
+- React + Tailwind → shadcn/ui, MagicUI, Aceternity UI, Mantine
+- Tailwind only (no React) → DaisyUI, HyperUI
+- Vue → Naive UI, PrimeVue
+- None detected → warn: "No web framework detected — proceeding without component library reference." Continue.
+
+Check which candidates are installed in node_modules. Prefer installed ones. If none installed, use the candidate list as reference knowledge only.
+
+State one line: `Stack: [X] · Library: [Y or "none installed — using as reference"]`
+
+---
+
+## Step 0d — Palette injection
+
+From the detected stack, select a color scale from Radix Colors (React projects) or Open Color (other):
+- Radix Colors: radix-ui.com/colors — pick a scale NOT present in the current ban list below
+- Open Color: yeun.github.io/open-color — 13 colors × 10 shades
+
+Generate a concrete palette agents will use:
+```
+Palette seed:
+  background: [hex]
+  surface:    [hex]
+  accent:     [hex]
+  text:       [hex]
+  muted:      [hex]
+```
+
+Agents receive these exact hex values — not a vague "use a fresh palette."
+
+---
+
+## Step 0e — Explicit ban list
+
+Read current tokens from Step 4 findings. Emit a literal ban list:
+
+```
+BANNED (do not use any of these in new designs):
+  Colors: [list actual hex values found in tokens]
+  Fonts:  [list font names found in tokens]
+  Layouts: [list patterns e.g. sidebar-left, dark-background, top-nav-dark]
+```
+
+Every fan-out agent brief in Steps 5 and F4 must include this ban list verbatim.
 
 ---
 
@@ -146,23 +214,17 @@ If unavailable → skip with: `⚠️ Lazyweb unavailable — skipping reference
 
 ---
 
-## Step 3 — Interface Design MCP — prior decisions
+## Step 4 — Read design tokens (to AVOID, not to copy)
 
-Read prior design decisions for this project. If unavailable → continue.
-
----
-
-## Step 4 — Read design tokens (context only)
-
-Check `design-system/MASTER.md` → `DESIGN.md` → CSS `:root` vars. **Reference only, not a constraint.**
+Check `design-system/MASTER.md` → `DESIGN.md` → CSS `:root` vars. Read these to know what the current design looks like — **do not use any of these values in new mockups.** Every variant must use a completely different palette, type system, and layout from what's found here. State what was found in one line, then state explicitly what's banned from the new designs.
 
 ---
 
 ## Step 5 — Fan out 7 parallel Opus agents
 
-ONE parallel call (Opus). Each agent writes `.mockups/design-full-<slug>/vN.html` — self-contained, inline CSS, realistic content.
+ONE parallel call (Opus). Each agent writes `.mockups/design-full-<slug>/vN.html` — self-contained, inline CSS, realistic content. Every file must satisfy the **LIGHT + DARK RULE** (both themes + toggle button). If **BOLD MODE** is active, each brief carries the bold redesign constraint.
 
-Each brief carries the Gate-2 direction + **full Taste/Swiss/UIwiki sub-skill calls** (FALLBACKS if absent).
+Each brief carries: Gate-2 direction + full Taste/Swiss/UIwiki sub-skill calls (FALLBACKS if absent) + palette seed from Step 0d + ban list from Step 0e + component library from Step 0c. Agents must use the palette hex values and must not use any banned value.
 
 **v1–v5 — Redesigns:** five distinct paradigms grounded in the approved direction. Must be materially different from each other.
 
@@ -174,11 +236,13 @@ Each brief carries the Gate-2 direction + **full Taste/Swiss/UIwiki sub-skill ca
 
 Kill generic or shared-DNA variants, respawn rejects with specific brief, max 2 rounds.
 
+If BOLD MODE active: also kill any variant that resembles the existing UI. Explicit rejection brief: "too close to the current design — completely different layout, colors, and type system required."
+
 ---
 
 ## Step 7 — Build all.html → screenshot
 
-Write `.mockups/design-full-<slug>/all.html` with sticky `v1…v7` jump nav.
+Write `.mockups/design-full-<slug>/all.html` showing all 14 sections — every variant in both light AND dark mode. Structure: v1-light, v1-dark, v2-light, v2-dark … v7-light, v7-dark. Sticky jump nav with 14 anchors. Each section labeled "vN — [paradigm] — [LIGHT/DARK]". Toggle button per variant switches `data-theme` on that variant's wrapper. ★ recommended marking on the winning variant's light section.
 
 ```bash
 open ".mockups/design-full-<slug>/all.html"
@@ -189,12 +253,6 @@ open ".mockups/design-full-<slug>/all.html"
 ```
 
 Show screenshot inline.
-
----
-
-## Step 8 — Design+Refine MCP — side-by-side compare
-
-If installed, run side-by-side comparison. If unavailable → skip.
 
 ---
 
@@ -213,14 +271,6 @@ Stop and ask: **"Which variant? (v1–v7 / mix — name which ones / redirect)"*
 From chosen mockup, extract: palette (hex values), type scale (font families + sizes), spacing scale, layout paradigm name.
 
 Write to `.mockups/design-full-<slug>/approved-tokens.md`.
-
----
-
-## Step 10 — Write decision to Interface Design MCP
-
-Persist the chosen direction + tokens to Interface Design MCP for this project.
-
-If unavailable → skip with note.
 
 ---
 

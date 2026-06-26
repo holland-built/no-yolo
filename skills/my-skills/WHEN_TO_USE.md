@@ -10,6 +10,7 @@ my-skills|Forgot what skills exist
 design-audit|Any UI that feels off — get a ranked list of what's wrong before changing anything
 tdd|Bug fixes, new features, anywhere tests matter
 design-full|Any UI change — /design-full --fast to see 7 directions, or full for a redesign you intend to ship
+design-fix|One component or area feels wrong — button placement, nav layout, card structure
 video-to-kb|Good talk or tutorial worth keeping permanently
 whats-next|Session start — orient before picking what to do
 improve|Want an outside-in audit before deciding what to fix
