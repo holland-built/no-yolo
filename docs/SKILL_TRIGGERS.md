@@ -38,7 +38,7 @@ When the user types `/diagnose`, says "debug this", "can't figure out why", "som
 - **last-30** (`~/.claude/skills/last-30/SKILL.md`) - pulls gaining-traction signal (not all-time rankings) from GitHub/HN/YouTube/X filtered to last 30 days only. Trigger: `/last-30`
 When the user types `/last-30`, says "what's trending in", "last 30 days", or "what's hot right now", invoke the Skill tool with `skill: "last-30"` before doing anything else.
 # md-check
-- **md-check** (`~/.claude/skills/md-check/SKILL.md`) - MD hygiene: line counts, topic-overlap, duplicate-rule detection; `--drift` mode catches stale CLAUDE.md descriptions; `--pre <file>` pre-creation gate. Trigger: `/md-check`
+- **md-check** (`~/.claude/skills/md-check/SKILL.md`) - MD hygiene: line counts, topic-overlap, duplicate-rule detection; `--drift` mode catches stale skill descriptions; `--pre <file>` pre-creation gate. Trigger: `/md-check`
 When the user types `/md-check`, says "check md files" or "md hygiene", invoke the Skill tool with `skill: "md-check"` before doing anything else.
 # prompt-scan
 - **prompt-scan** (`~/.claude/skills/prompt-scan/SKILL.md`) - reads all system prompt files + fetches current model release notes → appends dated section to ~/.claude/learnings.md. Feeds /better_prompt. Trigger: `/prompt-scan`
@@ -59,8 +59,11 @@ When the user types `/skill-audit`, says "audit my skills", "check my skill libr
 - **design-audit** (`~/.claude/skills/design-audit/SKILL.md`) - read-only design audit: Playwright screenshot + Lazyweb deep + Taste/Swiss/UIwiki/accessibility/code-health lenses → ranked violations table + top-10 improvements. No gates, no code. Trigger: `/design-audit`
 When the user types `/design-audit`, says "audit this UI", "review the design", or "find design problems", invoke the Skill tool with `skill: "design-audit"` before doing anything else.
 # design-full
-- **design-full** (`~/.claude/skills/design-full/SKILL.md`) - two modes: default = full pipeline (audit → debate → 7 Opus mockups → 4 hard gates → token extraction → Opus plan → /build); `--fast` = 7 Sonnet mockups + slop judge + pick gate, no code. Nothing builds without an approved mockup. Trigger: `/design-full`
+- **design-full** (`~/.claude/skills/design-full/SKILL.md`) - three modes: default = full pipeline (audit → debate → 7 Opus mockups → 4 hard gates → token extraction → Opus plan → /build); `--fast` = 7 Sonnet mockups + slop judge + pick gate, no code; `--steal [url]` = runs /token-hunt first to seed palette from a real site. Nothing builds without an approved mockup. Trigger: `/design-full`
 When the user types `/design-full`, says "full design pipeline", "design and build this", "redesign and ship", "design options", "mockup this fast", "show me design directions", or "quick mockup", invoke the Skill tool with `skill: "design-full"` before doing anything else.
 # design-fix
 - **design-fix** (`~/.claude/skills/design-fix/SKILL.md`) - targeted 7-variant mockup for one component — respects current design tokens, no build. Trigger: `/design-fix`
 When the user types `/design-fix`, says "fix this component", "move this button", "redesign just the nav", or describes a targeted single-component change, invoke the Skill tool with `skill: "design-fix"` before doing anything else.
+# token-hunt
+- **token-hunt** (`~/.claude/skills/token-hunt/SKILL.md`) - finds 5 reference sites matching your site's design intent, extracts their CSS tokens, lets you pick one, outputs a ready-to-use token bag. Can chain into /design-full via --into-design-full. Trigger: `/token-hunt`
+When the user types `/token-hunt`, says "steal tokens from a site", "find sites like mine", "match the style of", "find me design inspiration", or "find reference sites", invoke the Skill tool with `skill: "token-hunt"` before doing anything else.
