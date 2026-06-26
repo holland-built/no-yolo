@@ -9,6 +9,7 @@ my-md|`/my-md`
 my-skills|`/my-skills`
 design-audit|`/design-audit [surface to audit]` — optionally add `--persist` to save report
 design-full|`/design-full --fast [surface]` for quick mockups; `/design-full [surface]` for full pipeline. Paste /design-audit output to skip rerun
+design-fix|`/design-fix [describe the change]` — e.g. `/design-fix move login button to header`
 tdd|`/tdd [describe what to build/fix]`
 video-to-kb|`/video-to-kb [YouTube URL]`
 whats-next|`/whats-next`

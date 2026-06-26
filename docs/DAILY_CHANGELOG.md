@@ -178,3 +178,12 @@
 - updated README.md frontend design section: two-skill table with mode documentation
 - updated docs (SKILLS.md, UI_MOCKUPS.md) to reference /design-full --fast instead of /design-fast
 - removed shadcn MCP from BOLT_ONS.md (was only used by deleted /ui-ux)
+- added /design-fix skill — surgical 7-variant mockup for one component; respects current design tokens, no build chain
+- added bold redesign enforcement to /design-full — BOLD MODE activates on keywords (new, redesign, fresh, different); variants must be impossible to mistake for current design
+- added light+dark mode to all /design-full and /design-audit mockups — 14-section all.html (v1-light through v7-dark) required in both fast and full mode
+- design-full always nukes existing design tokens — reads tokens to build explicit ban list; palette injection gives agents fresh hex from Radix/Open Color
+- removed Interface Design MCP and Design+Refine MCP from design-full and design-audit pipeline steps
+- added shadcn/ui MCP to design pipeline (MIT, open source, official shadcn team)
+- added auto-pickup of saved audit by project slug — design-full reads latest AUDIT-<slug>-*.md without paste
+- updated RELATIONSHIPS.md — removed stale Interface Design/Design+Refine references from design-audit and design-full rows
+- updated SKILL_TRIGGERS.md — added design-fix trigger block
