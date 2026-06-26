@@ -61,3 +61,6 @@ When the user types `/design-audit`, says "audit this UI", "review the design", 
 # design-full
 - **design-full** (`~/.claude/skills/design-full/SKILL.md`) - two modes: default = full pipeline (audit → debate → 7 Opus mockups → 4 hard gates → token extraction → Opus plan → /build); `--fast` = 7 Sonnet mockups + slop judge + pick gate, no code. Nothing builds without an approved mockup. Trigger: `/design-full`
 When the user types `/design-full`, says "full design pipeline", "design and build this", "redesign and ship", "design options", "mockup this fast", "show me design directions", or "quick mockup", invoke the Skill tool with `skill: "design-full"` before doing anything else.
+# design-fix
+- **design-fix** (`~/.claude/skills/design-fix/SKILL.md`) - targeted 7-variant mockup for one component — respects current design tokens, no build. Trigger: `/design-fix`
+When the user types `/design-fix`, says "fix this component", "move this button", "redesign just the nav", or describes a targeted single-component change, invoke the Skill tool with `skill: "design-fix"` before doing anything else.

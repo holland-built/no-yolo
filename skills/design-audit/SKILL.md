@@ -2,7 +2,7 @@
 name: design-audit
 description: Use this skill when the user types /design-audit, says 'audit this UI', 'review the design', or 'find design problems'. Read-only design audit — Playwright screenshot + Lazyweb deep references + Taste/Swiss/UIwiki/a11y/code-health lenses → ranked violations table + top-10 improvements. No gates, no code.
 user-invocable: true
-argument-hint: "[surface to audit, or --persist]"
+argument-hint: "[surface to audit]"
 allowed-tools:
   - Bash
   - Read
@@ -15,7 +15,7 @@ allowed-tools:
 
 Target: $ARGUMENTS
 
-Read-only. No gates, no code. Output is a ranked findings table you can hand directly to `/design-fast` or `/design-full`.
+Read-only. No gates, no code. Output is a ranked findings table you can hand directly to `/design-full` (or `/design-full --fast`).
 
 ---
 
@@ -33,9 +33,13 @@ State one line: `Project: [type] · stack: [X] · Lazyweb profile: [keywords]`
 
 ---
 
-## Step 1 — Screenshot running app
+## Step 1 — Screenshot running app (light AND dark)
 
-If a dev server URL is detectable (check package.json scripts, CLAUDE.md, README.md), use Playwright to screenshot the target surface. If app is not running, note it and audit from component source + CSS instead.
+If a dev server URL is detectable (check package.json scripts, CLAUDE.md, README.md), use Playwright to screenshot the target surface **twice** — once in light mode and once in dark mode (toggle `prefers-color-scheme` via Playwright `colorScheme` option).
+
+If only one mode exists → flag "no dark mode support" as a **HIGH** severity finding.
+
+If app is not running, note it and audit from component source + CSS instead.
 
 ---
 
@@ -47,66 +51,72 @@ If Lazyweb not installed → skip with: `⚠️ Lazyweb unavailable — skipping
 
 ---
 
-## Step 3 — Interface Design MCP — prior decisions
-
-Read prior design decisions for this project from Interface Design MCP.
-
-If unavailable → note and continue.
-
----
-
-## Step 4 — Five lenses in parallel
+## Step 3 — Five lenses in parallel
 
 Spawn 5 parallel Sonnet agents, each returning a findings list in format: `severity | rule | location (file:line) | observed | expected`
 
-**4a — Taste lens**
+**3a — Taste lens**
 Sub-skill if installed (`~/.claude/skills/taste`); else use FALLBACKS taste fingerprint below.
 
-**4b — Swiss lens**
+**3b — Swiss lens**
 Sub-skill if installed (`~/.claude/skills/swiss-design-system`); else use FALLBACKS Swiss principles below.
 
-**4c — UIwiki lens**
+**3c — UIwiki lens**
 Sub-skill if installed (`~/.claude/skills/userinterface-wiki`); else use FALLBACKS 20-rule summary below.
 
-**4d — Accessibility lens**
+**3d — Accessibility lens**
 WCAG 2.1 AA: color contrast ≥ 4.5:1, focus-visible states, keyboard nav, aria labels, motion/prefers-reduced-motion, form labels, error messaging.
 
-**4e — code-health on CSS**
+**3e — code-health on CSS**
 Run `/code-health` on component CSS files for the target surface. Flag hardcoded color values, magic numbers in spacing, inconsistent token usage.
 
 ---
 
-## Step 5 — Merge, dedupe, rank
+## Step 4 — Merge, dedupe, rank
 
 Coordinator merges all lens output, dedupes overlapping findings, ranks by impact:
 - CRITICAL: a11y violations, broken hierarchy
-- HIGH: legibility, contrast, density issues
+- HIGH: legibility, contrast, density issues, missing dark mode
 - MEDIUM: consistency, alignment, spacing
 - LOW: polish, typography details
 
+Tag each finding with **Mode:** `light` / `dark` / `both` — lens agents must identify which mode the violation appears in.
+
 ---
 
-## Step 6 — Output
+## Step 5 — Output
 
 Print both tables:
 
 **Violations table:**
-`| # | Lens | Finding | Severity | File:line |`
+`| # | Lens | Finding | Severity | Mode | File:line |`
 
 **Top 10 prioritized improvements:**
 `| # | Improvement | Why it matters | Effort (S/M/L) | Lens |`
 
 ---
 
-## Step 7 — eli5
+## Step 6 — eli5
 
 Run `/eli5` on the summary before presenting — plain English recap.
 
 ---
 
+## Auto-save (always on)
+
+Always write full report to `design-system/AUDIT-<project-slug>-<date>.md`.
+
+Project slug derived from:
+```bash
+python3 -c "import json; print(json.load(open('package.json')).get('name','').replace('/','-').replace('@',''))" 2>/dev/null \
+  || basename "$PWD"
+```
+
+This file is picked up automatically by `/design-full` — no paste needed.
+
 ## Optional `--persist`
 
-Write full report to `design-system/AUDIT-<date>.md`.
+`--persist` is now a no-op (kept for backwards compatibility) — all audits auto-save.
 
 ---
 
