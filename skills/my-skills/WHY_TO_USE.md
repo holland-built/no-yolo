@@ -10,6 +10,7 @@ my-skills|You forget you have tools. This is the map
 design-audit|Five independent lenses + real-world references catch what one reviewer misses — read-only, zero risk
 tdd|The RED test is proof you actually fixed it. Without it you're asserting, not proving
 design-full|--fast: 7 directions at once, slop judge kills the generic ones. Full: nothing builds without an approved mockup — audit, debate, 4 gates
+design-fix|Full pipeline is overkill for one component. Gets 7 targeted options fast without nuking the whole design.
 video-to-kb|Talks are perishable. One command turns them into permanent, searchable KB nodes
 whats-next|Prevents starting something new while something is already half-done
 improve|Never touches code — pure signal. Tells you what's wrong without risk of a bad auto-fix

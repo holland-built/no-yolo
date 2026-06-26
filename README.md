@@ -9,7 +9,7 @@ My personal Claude Code setup, saved in git. Fork it and you get a working setup
 Claude Code is a command-line tool where you talk to Claude to write and edit code. It reads a folder called `~/.claude/` every time it starts. This repo *is* that folder, saved in git. Here's what's inside:
 
 - **Rules** Claude reads at the start of every session. Enforces strict habits: plan before coding, only touch the exact lines you asked for, use the right model for the right job.
-- **25 custom commands**, plus 19 borrowed from plugins — type `/name` to run one, like `/code-review` or `/build`. Run `/my-skills` for the full list.
+- **27 custom commands**, plus 19 borrowed from plugins — type `/name` to run one, like `/code-review` or `/build`. Run `/my-skills` for the full list.
 - **Memory** that learns your preferences. Say "remember that I prefer X" and Claude saves it automatically — carries forward to every future session.
 
 ---
@@ -99,9 +99,8 @@ These are not installed by setup.sh. Install whichever ones match the skills you
 | [Groq Whisper](https://console.groq.com/) | Transcribes a YouTube video and saves a structured wiki page into your Obsidian vault | `video-to-kb` | Get a free API key at console.groq.com, then add `export GROQ_API_KEY=your_key` to `~/.zshrc` |
 | [Chrome](https://www.google.com/chrome/) (headless) | Takes screenshots of mockups without opening a browser window | `design-full`, `build` | Already on most machines; or `brew install --cask google-chrome` |
 | [Playwright](https://playwright.dev/) | Lets Claude click around in a browser to test your web app | `build` | Add the `playwright` MCP server to `settings.json` — see MCP note below |
+| [shadcn/ui MCP](https://ui.shadcn.com/docs/mcp) | Gives Claude full context on shadcn/ui components for design mockups | `design-full`, `design-fix` | `pnpm dlx shadcn@latest mcp init --client claude` (or `npx shadcn@latest mcp init --client claude`) |
 | [Lazyweb](https://github.com/aboul3ata/lazyweb-skill) | Real app screenshots + A/B test evidence — 12 design research skills | `design-audit`, `design-full` | `curl -fsSL https://www.lazyweb.com/install.sh \| bash` |
-| [Interface Design](https://github.com/Dammyjay93/interface-design) | Persists design decisions across sessions | `design-full` | `npx skills@latest add interface-design` |
-| [Design+Refine](https://github.com/0xdesign/design-plugin) | Side-by-side mockup variant comparison | `design-full` | `/plugin marketplace add 0xdesign/design-plugin` inside Claude Code |
 
 > **What's an MCP server?** MCP (Model Context Protocol) is a standard for giving Claude extra tools — like the ability to control a browser or search a codebase. You wire one up by adding a config block to `settings.json`. See the [Claude MCP docs](https://docs.anthropic.com/en/docs/claude-code/mcp) for how.
 
@@ -185,7 +184,8 @@ All three skills degrade gracefully — if Lazyweb, Interface Design, or Design+
 | `/my-md` | Lists every markdown file — both the global `~/.claude/` docs and the ones in your current project | — |
 | `/my-skills` | This very list. Shows the commands I wrote and the borrowed ones, plus how they connect and what they depend on | `fast` (2-col) · `deep` (4-col + relationships) |
 | `/design-audit` | Read-only design audit: screenshots the app, pulls real-world references, runs Taste / Swiss / UIwiki / accessibility / code-health lenses → ranked violations table + top-10 improvements. No gates, no code | `--persist` (write report to `design-system/AUDIT-<date>.md`) |
-| `/design-full` | Two modes. `--fast`: 7 Sonnet mockups (5 redesign + 2 wild), slop-judged, opens in Chrome, hard pick-gate — no code. Default full pipeline: audit → 6-persona debate → 7 Opus mockups → slop judge → token extraction → Opus plan → chains to `/build`. Four hard gates; nothing builds without an approved mockup | `--fast` (quick mockups, no code) · accepts pasted `/design-audit` output |
+| `/design-full` | Always nukes existing design tokens and starts fresh. Two modes: `--fast` = 7 Sonnet mockups, pick and stop; full = audit → debate → 7 Opus mockups → plan → `/build`. Detects stack, injects fresh palette, bans current colors. All mockups show light + dark. Four hard gates. | `--fast` (quick mockups, no code) · accepts pasted `/design-audit` output |
+| `/design-fix` | Surgical 7-variant mockup for ONE component. Respects current colors and fonts — only structure/layout changes. 5 sensible + 2 wild variants, light + dark, hard pick gate, no code | — |
 | `/tdd` | Keeps you honest about test-driven development: write a failing test, make it pass, clean up, repeat | — |
 | `/video-to-kb` | *(Optional — requires Obsidian + Groq API key)* Watch a YouTube video and get a structured wiki page injected into your Obsidian vault automatically — transcript, summary, key claims | — |
 | `/whats-next` | Reads session task queue (`~/.claude/.pending-tasks.md`) and runs next task; creative project-specific suggestions when queue is empty | — |
