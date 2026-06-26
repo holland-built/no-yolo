@@ -22,3 +22,4 @@ trim-review|`/trim-review` — point at the diff
 eli5|`/eli5 [skill name, plan, or command]`
 debate|/debate [decision] — or paste in the mockups, plan, or options you're deciding between. Works on architecture, UI/UX, or feature-priority calls.
 update|/update — check status. /update preview — full changelog. /update full — apply everything. /update rules — rules only. /update rollback — undo. /update restore <name> — recover deleted skill.
+token-hunt|`/token-hunt [site or design intent]` — outputs stolen-tokens.md, feeds `/design-full --steal`

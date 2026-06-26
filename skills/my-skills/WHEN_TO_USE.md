@@ -30,3 +30,4 @@ ship|Done editing skills and ready to publish to no-yolo
 debate|Before committing to an architecture, UI/UX direction, or what-to-build-next call. When you want the whole team — dev, ops, and sales — stress-testing it, not validating it.
 update|Before pulling changes to your ~/.claude setup. Also after an update that broke something, or when you want to recover a skill that was removed.
 trim-gain|When you want to see trim's ROI in numbers.
+token-hunt|Starting a redesign and you want to match the look of a real reference site instead of inventing a palette

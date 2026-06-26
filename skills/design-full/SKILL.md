@@ -1,8 +1,8 @@
 ---
 name: design-full
-description: Use this skill when the user types /design-full, says 'full design pipeline', 'design and build this', 'redesign and ship', 'design options', 'mockup this fast', 'show me design directions', or 'quick mockup'. Two modes: default = full pipeline (audit → debate → 7 Opus mockups → 4 hard gates → token extraction → Opus plan → /build); --fast = 7 Sonnet mockups + slop judge + pick gate only, no code. Nothing builds without an approved mockup.
+description: Use this skill when the user types /design-full, says 'full design pipeline', 'design and build this', 'redesign and ship', 'design options', 'mockup this fast', 'show me design directions', or 'quick mockup'. Three modes: default = full pipeline (audit → debate → 7 Opus mockups → 4 hard gates → token extraction → Opus plan → /build); --fast = 7 Sonnet mockups + slop judge + pick gate only, no code; --steal = runs /token-hunt first to steal tokens from a reference site before mockups. Nothing builds without an approved mockup.
 user-invocable: true
-argument-hint: "[surface/feature — optionally paste /design-audit output] [--fast]"
+argument-hint: "[surface/feature — optionally paste /design-audit output] [--fast] [--steal [source-url]]"
 allowed-tools:
   - Bash
   - Read
@@ -18,6 +18,8 @@ allowed-tools:
 Target: $ARGUMENTS
 
 **Mode detection:** If `$ARGUMENTS` contains `--fast` → run **Fast mode** (Steps F0–F7 below). Otherwise → run **Full pipeline** (Steps 0–13 below).
+
+**STEAL MODE:** If `$ARGUMENTS` contains `--steal` → run `/token-hunt` first (before Step 0). Token-hunt writes `.mockups/token-hunt/stolen-tokens.md`. When it completes and the user picks a token set, continue to Step 0 — but Step 0d is replaced: read the stolen palette seed from `.mockups/token-hunt/stolen-tokens.md` instead of generating one from Radix/Open Color. All other steps and gates are unchanged.
 
 **BOLD REDESIGN RULE:** If `$ARGUMENTS` contains any of: `new`, `redesign`, `fresh`, `different`, `something new`, `new look`, `start over`, `rethink` → **BOLD MODE is active.** In Bold Mode: every variant (v1–v7) must be impossible to mistake for an incremental update of the current design. Different layout paradigm. Different color logic. Different type hierarchy. The slop judge **also kills any variant that looks like it could be a minor refresh** — not just generic slop. Similarity to the existing UI = instant reject + respawn with explicit brief: "this looks like the current app — go completely different."
 
