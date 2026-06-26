@@ -30,3 +30,4 @@ ship|Leak guard + quality gates run automatically. One command replaces 5 manual
 debate|Because no single role sees the whole picture. Six product-team lenses — code, ops, and revenue — surface the contradictions and the one question you haven't asked yet.
 update|Because pulling blindly can remove things you rely on. See first, then decide.
 trim-gain|Scorecard from benchmark medians — not a per-repo estimate.
+token-hunt|Real sites already solved the palette. Steals 5 candidates' tokens so you pick from proven looks, not a blank canvas
