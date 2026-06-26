@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-06-26
+
+- added /token-hunt skill — finds 5 reference sites matching design intent, extracts CSS tokens from each, outputs stolen-tokens.md for design-full
+- updated /design-full — added --steal flag that runs /token-hunt first to seed palette from a real site instead of generating one
+- updated all my-skills index files — RELATIONSHIPS, WHEN_TO_USE, WHY_TO_USE, HOW_TO_USE, STORIES, TAGLINES with token-hunt entries
+- updated SKILL_TRIGGERS.md — added token-hunt trigger, fixed md-check drift description, updated design-full to three modes
+- updated README.md — added token-hunt row, bumped skill count to 28
+- fixed MCP config — open-design server was registered in wrong ~/.claude.json (desktop app install vs CLI install); re-registered to correct ~/.claude-work/.claude.json
+
 ## 2026-06-23
 
 - renamed /forge → /build — more obvious name for the full feature-build pipeline

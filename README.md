@@ -9,7 +9,7 @@ My personal Claude Code setup, saved in git. Fork it and you get a working setup
 Claude Code is a command-line tool where you talk to Claude to write and edit code. It reads a folder called `~/.claude/` every time it starts. This repo *is* that folder, saved in git. Here's what's inside:
 
 - **Rules** Claude reads at the start of every session. Enforces strict habits: plan before coding, only touch the exact lines you asked for, use the right model for the right job.
-- **27 custom commands**, plus 19 borrowed from plugins — type `/name` to run one, like `/code-review` or `/build`. Run `/my-skills` for the full list.
+- **28 custom commands**, plus 18 borrowed from plugins — type `/name` to run one, like `/code-review` or `/build`. Run `/my-skills` for the full list.
 - **Memory** that learns your preferences. Say "remember that I prefer X" and Claude saves it automatically — carries forward to every future session.
 
 ---
@@ -186,6 +186,7 @@ All three skills degrade gracefully — if Lazyweb, Interface Design, or Design+
 | `/design-audit` | Read-only design audit: screenshots the app, pulls real-world references, runs Taste / Swiss / UIwiki / accessibility / code-health lenses → ranked violations table + top-10 improvements. No gates, no code | `--persist` (write report to `design-system/AUDIT-<date>.md`) |
 | `/design-full` | Always nukes existing design tokens and starts fresh. Two modes: `--fast` = 7 Sonnet mockups, pick and stop; full = audit → debate → 7 Opus mockups → plan → `/build`. Detects stack, injects fresh palette, bans current colors. All mockups show light + dark. Four hard gates. | `--fast` (quick mockups, no code) · accepts pasted `/design-audit` output |
 | `/design-fix` | Surgical 7-variant mockup for ONE component. Respects current colors and fonts — only structure/layout changes. 5 sensible + 2 wild variants, light + dark, hard pick gate, no code | — |
+| `/token-hunt` | Finds 5 live sites matching your design intent, extracts each one's CSS tokens (colors, fonts, spacing), lets you pick one, and writes `stolen-tokens.md` — ready to feed `/design-full --steal`. Standalone or first step of a redesign | — |
 | `/tdd` | Keeps you honest about test-driven development: write a failing test, make it pass, clean up, repeat | — |
 | `/video-to-kb` | *(Optional — requires Obsidian + Groq API key)* Watch a YouTube video and get a structured wiki page injected into your Obsidian vault automatically — transcript, summary, key claims | — |
 | `/whats-next` | Reads session task queue (`~/.claude/.pending-tasks.md`) and runs next task; creative project-specific suggestions when queue is empty | — |
