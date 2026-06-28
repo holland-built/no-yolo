@@ -31,3 +31,16 @@ debate|Before committing to an architecture, UI/UX direction, or what-to-build-n
 update|Before pulling changes to your ~/.claude setup. Also after an update that broke something, or when you want to recover a skill that was removed.
 trim-gain|When you want to see trim's ROI in numbers.
 token-hunt|Starting a redesign and you want to match the look of a real reference site instead of inventing a palette
+lazyweb|Before designing, critiquing, or changing product UI — when you need real evidence not training-data guesses
+lazyweb-quick-search|Want a few real app references fast before building, no report needed
+lazyweb-lite-design-research|Want to see examples of a screen or UI element without a full research report
+lazyweb-deep-design-research|Competitive analysis or "how do top apps handle X" — needs a full backed report
+lazyweb-design-improve|You have an existing design and want feedback backed by real references
+lazyweb-design-brainstorm|Want unconventional ideas — patterns from domains nobody in your space looks at
+lazyweb-design-best-practices|"What's the best skill for X design task" — routes to the winning community skill
+lazyweb-ab-test-research|Want growth/monetization test ideas grounded in what other apps actually tried
+lazyweb-optimize-paywall|Redesigning or improving a paywall for conversion
+lazyweb-optimize-sign-up|Redesigning or improving a sign-up / registration screen
+lazyweb-paywall-cta|Just the paywall CTA needs work — not a full redesign
+lazyweb-update|Lazyweb slash commands are stale or you want the latest skill pack
+skill-audit|Periodically, or when a skill misbehaves — find structural gaps in your skill library

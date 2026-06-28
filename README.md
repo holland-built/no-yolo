@@ -9,7 +9,7 @@ My personal Claude Code setup, saved in git. Fork it and you get a working setup
 Claude Code is a command-line tool where you talk to Claude to write and edit code. It reads a folder called `~/.claude/` every time it starts. This repo *is* that folder, saved in git. Here's what's inside:
 
 - **Rules** Claude reads at the start of every session. Enforces strict habits: plan before coding, only touch the exact lines you asked for, use the right model for the right job.
-- **28 custom commands**, plus 18 borrowed from plugins — type `/name` to run one, like `/code-review` or `/build`. Run `/my-skills` for the full list.
+- **29 custom commands**, plus 18 borrowed from plugins — type `/name` to run one, like `/code-review` or `/build`. Run `/my-skills` for the full list.
 - **Memory** that learns your preferences. Say "remember that I prefer X" and Claude saves it automatically — carries forward to every future session.
 
 ---
