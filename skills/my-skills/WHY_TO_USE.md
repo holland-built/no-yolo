@@ -31,3 +31,16 @@ debate|Because no single role sees the whole picture. Six product-team lenses �
 update|Because pulling blindly can remove things you rely on. See first, then decide.
 trim-gain|Scorecard from benchmark medians — not a per-repo estimate.
 token-hunt|Real sites already solved the palette. Steals 5 candidates' tokens so you pick from proven looks, not a blank canvas
+lazyweb|Routes to the right mode + real screenshots instead of generic guesses from training data
+lazyweb-quick-search|Lightweight best-practice check from real apps — no report overhead
+lazyweb-lite-design-research|Real references grouped by pattern beat inventing UI from memory
+lazyweb-deep-design-research|Prototype-first report with side-by-side comparisons — research you can act on
+lazyweb-design-improve|Improvement ideas anchored to real screens, not opinion
+lazyweb-design-brainstorm|Cross-category inspiration finds patterns your competitors never see
+lazyweb-design-best-practices|Skeptic-verified ranking points you at the actually-best skill, not the first one
+lazyweb-ab-test-research|Real experiment evidence beats guessing what might convert
+lazyweb-optimize-paywall|Twin experiments + falsifiable hypotheses — conversion work grounded in data
+lazyweb-optimize-sign-up|Diagnoses real signup friction + gives testable fixes, not vibes
+lazyweb-paywall-cta|CTA candidates backed by real before/after A/B observations
+lazyweb-update|One command reinstalls across all clients — no manual sync
+skill-audit|Finds bucket-fit, verifier, and trigger gaps you can't see one skill at a time
