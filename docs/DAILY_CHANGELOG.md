@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-06-28
+
+- updated /my-skills index files — added taglines, when-to-use, and why-to-use entries for all lazyweb skills (lazyweb, lazyweb-quick-search, lazyweb-lite-design-research, lazyweb-deep-design-research, lazyweb-design-improve, lazyweb-design-brainstorm, lazyweb-design-best-practices, lazyweb-ab-test-research, lazyweb-optimize-paywall, lazyweb-optimize-sign-up, lazyweb-paywall-cta, lazyweb-update) and /skill-audit
+
 ## 2026-06-26
 
 - added /token-hunt skill — finds 5 reference sites matching design intent, extracts CSS tokens from each, outputs stolen-tokens.md for design-full
