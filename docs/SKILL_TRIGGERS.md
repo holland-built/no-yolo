@@ -55,15 +55,15 @@ When the user types `/remember-that`, says "remember that", "save this to memory
 # skill-audit
 - **skill-audit** (`~/.claude/skills/skill-audit/SKILL.md`) - audits ~/.claude/skills/ across 4 dimensions: bucket fit, component gaps, missing verifiers, trigger conditions. Also builds verifiers and surfaces gotcha gaps. Trigger: `/skill-audit`
 When the user types `/skill-audit`, says "audit my skills", "check my skill library", "find skill gaps", or "run skill audit", invoke the Skill tool with `skill: "skill-audit"` before doing anything else.
+# design
+- **design** (`~/.claude/skills/design/SKILL.md`) - fresh generation only, never preserves existing design: brand seed → Taste generators → 7 Opus mockups (distinct paradigms) → slop validator → HARD pick gate → Opus plan → Sonnet build. `--apply-spec <file>` swaps tokens from a DESIGN.md. Trigger: `/design`
+When the user types `/design`, says "design this", "new design", "redesign", "fresh look", "start over on the UI", "mock this up", or "show me design options", invoke the Skill tool with `skill: "design"` before doing anything else.
+# impeccable
+- **impeccable** (`~/.claude/skills/impeccable/SKILL.md`) - full-app visual polish LOOP over real code: audit (5 lenses) → fix Critical+High → verify, repeating until you stop or 3 clean rounds. Trigger: `/impeccable`
+When the user types `/impeccable`, says "polish the whole app", "make this impeccable", "tighten up the UI", or "design polish pass", invoke the Skill tool with `skill: "impeccable"` before doing anything else.
 # design-audit
-- **design-audit** (`~/.claude/skills/design-audit/SKILL.md`) - read-only design audit: Playwright screenshot + Lazyweb deep + Taste/Swiss/UIwiki/accessibility/code-health lenses → ranked violations table + top-10 improvements. No gates, no code. Trigger: `/design-audit`
+- **design-audit** (`~/.claude/skills/design-audit/SKILL.md`) - read-only: 5 parallel lenses → adversarial verify every Critical → ranked violations table + P0/P1/P2 implementation plan. Zero code, zero mockups. Trigger: `/design-audit`
 When the user types `/design-audit`, says "audit this UI", "review the design", or "find design problems", invoke the Skill tool with `skill: "design-audit"` before doing anything else.
-# design-full
-- **design-full** (`~/.claude/skills/design-full/SKILL.md`) - three modes: default = full pipeline (audit → debate → 7 Opus mockups → 4 hard gates → token extraction → Opus plan → /build); `--fast` = 7 Sonnet mockups + slop judge + pick gate, no code; `--steal [url]` = runs /token-hunt first to seed palette from a real site. Nothing builds without an approved mockup. Trigger: `/design-full`
-When the user types `/design-full`, says "full design pipeline", "design and build this", "redesign and ship", "design options", "mockup this fast", "show me design directions", or "quick mockup", invoke the Skill tool with `skill: "design-full"` before doing anything else.
-# design-fix
-- **design-fix** (`~/.claude/skills/design-fix/SKILL.md`) - targeted 7-variant mockup for one component — respects current design tokens, no build. Trigger: `/design-fix`
-When the user types `/design-fix`, says "fix this component", "move this button", "redesign just the nav", or describes a targeted single-component change, invoke the Skill tool with `skill: "design-fix"` before doing anything else.
-# token-hunt
-- **token-hunt** (`~/.claude/skills/token-hunt/SKILL.md`) - finds 5 reference sites matching your site's design intent, extracts their CSS tokens, lets you pick one, outputs a ready-to-use token bag. Can chain into /design-full via --into-design-full. Trigger: `/token-hunt`
-When the user types `/token-hunt`, says "steal tokens from a site", "find sites like mine", "match the style of", "find me design inspiration", or "find reference sites", invoke the Skill tool with `skill: "token-hunt"` before doing anything else.
+# ingest-docs
+- **ingest-docs** (`~/.claude/skills/ingest-docs/SKILL.md`) - per-repo doc ingestion pipeline: converts PDF/PPTX/DOCX/images in docs/raw/ → dense .md context files in docs/context/ via markitdown + LLM topic-match (NEW/UPDATE/REPLACE/COMBINE), approval table, manifest tracking. Trigger: `/ingest-docs`
+When the user types `/ingest-docs`, says "ingest docs", "process raw docs", or "update context from docs", invoke the Skill tool with `skill: "ingest-docs"` before doing anything else.

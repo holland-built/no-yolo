@@ -10,7 +10,7 @@ SUBAGENTS.md|Rules for dispatching parallel agents — when to fan out, how to c
 TESTING.md|The testing discipline — when to write tests, what counts as proof something works, TDD rules. Open this if you're about to skip a test.
 UI_MOCKUPS.md|Rules for creating UI mockup variations before building any UI change — the 5-8 variation requirement, what each variant must cover. Open this before any visual design work.
 HOOKS.md|Documents the hook scripts in ~/.claude/hooks/ — scripts that fire automatically at harness events (session start/stop, before a tool runs). Open this to understand or add automated behaviors.
-MEMORY.md|Explains the memory system — preferences stored as small fact files that compile into one generated file Claude reads at session start, so preferences persist across conversations.
+MEMORY.md|Memory system reference — 4 types, fact file format, everyday workflow (auto-save / /remember-that / /memory-compile), what NOT to save, git rules. Merged from MEMORY_USAGE.md.
 NO_YOLO.md|Skill authoring rules for when working in ~/.claude as the no-yolo repo — write for strangers, eli5 output standard, no-slop rules, what files are safe to publish.
 ANTISLOP.md|25 AI writing tells (filler openers, em-dash spam, forbidden words) + GUI slop patterns. Canonical extraction target for /prompt-scan and /antislop.
 CONTEXT_VOCAB.md|Shared vocabulary — name a concept here once, reference it in prompts to cut token cost. Has ~/.claude system terms; add project-specific terms while working, delete after.
@@ -18,6 +18,5 @@ learnings.md|Compiled prompt conventions written by /prompt-scan. Feeds /better_
 DAILY_CHANGELOG.md|Running log of every change shipped — /ship appends a dated entry here before pushing. Open to see what changed and when.
 README_FORMAT.md|Spec file listing the 15 required README section headings. /ship reads this and hard-blocks the commit if any section is missing or renamed.
 SKILL_TRIGGERS.md|Source of truth for every skill trigger rule — what phrases fire which skill. CLAUDE.md imports this. Edit here, not in CLAUDE.md directly.
-MEMORY_USAGE.md|Teammate onboarding for the memory system — how to add, delete, and compile preferences. Safe to share; no personal facts in here.
 .pending-tasks.md|Session task queue. /whats-next reads this first and runs the next unchecked item. Add tasks here to queue work across sessions.
 HOOKS_INTERNALS.md|Developer reference for the 4 caveman hook JS modules — what each does, when it fires, exports, and security notes.
