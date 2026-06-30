@@ -91,7 +91,7 @@ Window: <start-date> → <today>
 | <metric + number> | <one sentence why it matters> | [Title ↗](url) |
 (max 6 rows — highest signal only; merge dupes across sources into the stronger link)
 
-**Bottom line:** <2 sentences max. Bull/bear or the clearest pattern. No hedging.
+**Bottom line:** 3–4 sentences. State the bull/bear case with concrete metric evidence. Name the clearest pattern and one actionable implication. No hedging.
 
 _Starting point for research. Verify before acting._
 ```
@@ -100,5 +100,6 @@ Rules:
 - One row = one distinct signal. If HN + YouTube both flag the same thing, one row, stronger link.
 - Signal: concrete metric (CAPE >40, yield 5.18%, +2k stars this month). Never "high activity".
 - Takeaway: one sentence, plain English, no unexplained jargon.
-- Bottom line: under 40 words.
-- Total output: under 250 words. No files written.
+- Source links: short URLs → `[Title ↗](url)`. URLs longer than 60 chars → `[Here ↗](url)` with raw URL on the next indented line so Supacode renders it readable.
+- Bottom line: 3–4 sentences max. No word cap — use what the signal requires.
+- Total output: under 300 words. No files written.
