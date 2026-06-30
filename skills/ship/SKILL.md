@@ -107,6 +107,32 @@ sed -i '' "s/[0-9][0-9]* custom commands/$CUSTOM custom commands/" ~/.claude/REA
 sed -i '' "s/plus [0-9]* borrowed from plugins/plus $BORROWED borrowed from plugins/" ~/.claude/README.md
 ```
 
+### 3c.6 Regenerate my-skills RENDERED.md
+```bash
+taglines="$HOME/.claude/skills/my-skills/TAGLINES.md"
+when="$HOME/.claude/skills/my-skills/WHEN_TO_USE.md"
+why="$HOME/.claude/skills/my-skills/WHY_TO_USE.md"
+cats="$HOME/.claude/skills/my-skills/CATEGORIES.md"
+packs="$HOME/.claude/skills/my-skills/PLUGIN_PACKS.md"
+out="$HOME/.claude/skills/my-skills/RENDERED.md"
+{ in_section=0
+  while IFS= read -r line; do
+    case "$line" in
+      "## "*) [ $in_section -eq 1 ] && printf '\n'; printf '%s\n\n' "$line"; printf '| Skill | What it does | When to use | Why vs manual |\n| --- | --- | --- | --- |\n'; in_section=1 ;;
+      "") ;;
+      *) name="$line"
+         story=$(grep "^$name|" "$taglines" 2>/dev/null | cut -d'|' -f2-); [ -z "$story" ] && story="⚠️ missing"
+         when_val=$(grep "^$name|" "$when" 2>/dev/null | cut -d'|' -f2-); [ -z "$when_val" ] && when_val="—"
+         why_val=$(grep "^$name|" "$why" 2>/dev/null | cut -d'|' -f2-); [ -z "$why_val" ] && why_val="—"
+         printf '| %s | %s | %s | %s |\n' "$name" "$story" "$when_val" "$why_val" ;;
+    esac
+  done < "$cats"
+  printf '\n## Plugins\n\n'
+  printf '| Pack | What it does | Entry point | Why vs manual |\n| --- | --- | --- | --- |\n'
+  while IFS='|' read -r name tagline entry why_val; do printf '| %s | %s | %s | %s |\n' "$name" "$tagline" "$entry" "$why_val"; done < "$packs"
+} > "$out"
+```
+
 ### 3d. Stage
 ```bash
 git -C ~/.claude add skills/ *.md docs/ hooks/ setup.sh .gitignore 2>/dev/null
