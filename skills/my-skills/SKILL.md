@@ -29,64 +29,62 @@ Three modes:
 taglines="$HOME/.claude/skills/my-skills/TAGLINES.md"
 when="$HOME/.claude/skills/my-skills/WHEN_TO_USE.md"
 why="$HOME/.claude/skills/my-skills/WHY_TO_USE.md"
-if [ "$ARGUMENTS" = "fast" ]; then
-  printf '| Skill | What it does |\n'
-  printf '| --- | --- |\n'
-else
-  printf '| Skill | What it does | When to use | Why vs manual |\n'
-  printf '| --- | --- | --- | --- |\n'
-fi
-for d in ~/.claude/skills/*/; do
-  [ -L "${d%/}" ] && continue
-  name=$(basename "$d")
-  [ "$(ls -A "$d" 2>/dev/null)" ] || continue
-  story=$(grep "^$name|" "$taglines" 2>/dev/null | cut -d'|' -f2-)
-  [ -z "$story" ] && story="⚠️ missing"
-  if [ "$ARGUMENTS" = "fast" ]; then
-    printf '| %s | %s |\n' "$name" "$story"
-  else
-    when_val=$(grep "^$name|" "$when" 2>/dev/null | cut -d'|' -f2-)
-    why_val=$(grep "^$name|" "$why" 2>/dev/null | cut -d'|' -f2-)
-    [ -z "$when_val" ] && when_val="—"
-    [ -z "$why_val" ] && why_val="—"
-    printf '| %s | %s | %s | %s |\n' "$name" "$story" "$when_val" "$why_val"
-  fi
-done
+cats="$HOME/.claude/skills/my-skills/CATEGORIES.md"
+in_section=0
+while IFS= read -r line; do
+  case "$line" in
+    "## "*)
+      [ $in_section -eq 1 ] && printf '\n'
+      printf '%s\n\n' "$line"
+      if [ "$ARGUMENTS" = "fast" ]; then
+        printf '| Skill | What it does |\n| --- | --- |\n'
+      else
+        printf '| Skill | What it does | When to use | Why vs manual |\n| --- | --- | --- | --- |\n'
+      fi
+      in_section=1
+      ;;
+    "")
+      ;;
+    *)
+      name="$line"
+      story=$(grep "^$name|" "$taglines" 2>/dev/null | cut -d'|' -f2-)
+      [ -z "$story" ] && story="⚠️ missing"
+      if [ "$ARGUMENTS" = "fast" ]; then
+        printf '| %s | %s |\n' "$name" "$story"
+      else
+        when_val=$(grep "^$name|" "$when" 2>/dev/null | cut -d'|' -f2-)
+        why_val=$(grep "^$name|" "$why" 2>/dev/null | cut -d'|' -f2-)
+        [ -z "$when_val" ] && when_val="—"
+        [ -z "$why_val" ] && why_val="—"
+        printf '| %s | %s | %s | %s |\n' "$name" "$story" "$when_val" "$why_val"
+      fi
+      ;;
+  esac
+done < "$cats"
 ```
 
-Print the bash output verbatim — complete GFM table. Do NOT rephrase or reformat.
+Print verbatim — GFM with section headers and tables. Do NOT rephrase or reformat.
 
-### Section 2 — Installed / plugin skills
+### Section 2 — Installed plugin packs
 
 ```bash
-taglines="$HOME/.claude/skills/my-skills/TAGLINES.md"
-when="$HOME/.claude/skills/my-skills/WHEN_TO_USE.md"
-why="$HOME/.claude/skills/my-skills/WHY_TO_USE.md"
+packs="$HOME/.claude/skills/my-skills/PLUGIN_PACKS.md"
 found=0
 for d in ~/.claude/skills/*/; do [ -L "${d%/}" ] && found=1 && break; done
 [ $found -eq 0 ] && exit 0
+[ -f "$packs" ] || exit 0
+printf '\n## Plugins\n\n'
 if [ "$ARGUMENTS" = "fast" ]; then
-  printf '| Skill | What it does |\n'
-  printf '| --- | --- |\n'
+  printf '| Pack | What it does |\n| --- | --- |\n'
+  while IFS='|' read -r name tagline entry why_val; do
+    printf '| %s | %s |\n' "$name" "$tagline"
+  done < "$packs"
 else
-  printf '| Skill | What it does | When to use | Why vs manual |\n'
-  printf '| --- | --- | --- | --- |\n'
+  printf '| Pack | What it does | Entry point | Why vs manual |\n| --- | --- | --- | --- |\n'
+  while IFS='|' read -r name tagline entry why_val; do
+    printf '| %s | %s | %s | %s |\n' "$name" "$tagline" "$entry" "$why_val"
+  done < "$packs"
 fi
-for d in ~/.claude/skills/*/; do
-  [ -L "${d%/}" ] || continue
-  name=$(basename "$d")
-  story=$(grep "^$name|" "$taglines" 2>/dev/null | cut -d'|' -f2-)
-  [ -z "$story" ] && story="⚠️ missing"
-  if [ "$ARGUMENTS" = "fast" ]; then
-    printf '| %s | %s |\n' "$name" "$story"
-  else
-    when_val=$(grep "^$name|" "$when" 2>/dev/null | cut -d'|' -f2-)
-    why_val=$(grep "^$name|" "$why" 2>/dev/null | cut -d'|' -f2-)
-    [ -z "$when_val" ] && when_val="—"
-    [ -z "$why_val" ] && why_val="—"
-    printf '| %s | %s | %s | %s |\n' "$name" "$story" "$when_val" "$why_val"
-  fi
-done
 ```
 
 Print verbatim. If no plugin skills found, omit section.
