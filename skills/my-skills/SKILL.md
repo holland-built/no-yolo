@@ -23,71 +23,15 @@ Three modes:
 
 ## How to run
 
-### Section 1 — Your skills
+### Output — pre-rendered table
 
 ```bash
-taglines="$HOME/.claude/skills/my-skills/TAGLINES.md"
-when="$HOME/.claude/skills/my-skills/WHEN_TO_USE.md"
-why="$HOME/.claude/skills/my-skills/WHY_TO_USE.md"
-cats="$HOME/.claude/skills/my-skills/CATEGORIES.md"
-in_section=0
-while IFS= read -r line; do
-  case "$line" in
-    "## "*)
-      [ $in_section -eq 1 ] && printf '\n'
-      printf '%s\n\n' "$line"
-      if [ "$ARGUMENTS" = "fast" ]; then
-        printf '| Skill | What it does |\n| --- | --- |\n'
-      else
-        printf '| Skill | What it does | When to use | Why vs manual |\n| --- | --- | --- | --- |\n'
-      fi
-      in_section=1
-      ;;
-    "")
-      ;;
-    *)
-      name="$line"
-      story=$(grep "^$name|" "$taglines" 2>/dev/null | cut -d'|' -f2-)
-      [ -z "$story" ] && story="⚠️ missing"
-      if [ "$ARGUMENTS" = "fast" ]; then
-        printf '| %s | %s |\n' "$name" "$story"
-      else
-        when_val=$(grep "^$name|" "$when" 2>/dev/null | cut -d'|' -f2-)
-        why_val=$(grep "^$name|" "$why" 2>/dev/null | cut -d'|' -f2-)
-        [ -z "$when_val" ] && when_val="—"
-        [ -z "$why_val" ] && why_val="—"
-        printf '| %s | %s | %s | %s |\n' "$name" "$story" "$when_val" "$why_val"
-      fi
-      ;;
-  esac
-done < "$cats"
+cat "$HOME/.claude/skills/my-skills/RENDERED.md"
 ```
 
-Print verbatim — GFM with section headers and tables. Do NOT rephrase or reformat.
+Print verbatim — complete GFM with section headers and tables. Do NOT rephrase or reformat.
 
-### Section 2 — Installed plugin packs
-
-```bash
-packs="$HOME/.claude/skills/my-skills/PLUGIN_PACKS.md"
-found=0
-for d in ~/.claude/skills/*/; do [ -L "${d%/}" ] && found=1 && break; done
-[ $found -eq 0 ] && exit 0
-[ -f "$packs" ] || exit 0
-printf '\n## Plugins\n\n'
-if [ "$ARGUMENTS" = "fast" ]; then
-  printf '| Pack | What it does |\n| --- | --- |\n'
-  while IFS='|' read -r name tagline entry why_val; do
-    printf '| %s | %s |\n' "$name" "$tagline"
-  done < "$packs"
-else
-  printf '| Pack | What it does | Entry point | Why vs manual |\n| --- | --- | --- | --- |\n'
-  while IFS='|' read -r name tagline entry why_val; do
-    printf '| %s | %s | %s | %s |\n' "$name" "$tagline" "$entry" "$why_val"
-  done < "$packs"
-fi
-```
-
-Print verbatim. If no plugin skills found, omit section.
+> RENDERED.md is rebuilt automatically by /ship. To rebuild manually: run the regen script in ship/SKILL.md Step 3c.6.
 
 ### Section 3 — Relationships (what each skill leans on) — deep mode only
 
