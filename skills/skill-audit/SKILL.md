@@ -1,7 +1,7 @@
 ---
 name: skill-audit
 description: Use this skill when the user types /skill-audit, says 'audit my skills', 'check my skill library', 'find skill gaps', or 'run skill audit'. Audits ~/.claude/skills/ across 4 dimensions (bucket fit, component gaps, missing verifiers, trigger conditions), builds new verifiers, or surfaces gotcha gaps.
-user-invocable: true
+user-invocable: false
 argument-hint: "[--audit] [--build-verifier <skill-name>] [--gotchas]"
 allowed-tools:
   - Read

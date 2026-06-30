@@ -45,3 +45,4 @@ lazyweb-optimize-sign-up|Diagnoses real signup friction + gives testable fixes, 
 lazyweb-paywall-cta|CTA candidates backed by real before/after A/B observations
 lazyweb-update|One command reinstalls across all clients — no manual sync
 skill-audit|Finds bucket-fit, verifier, and trigger gaps you can't see one skill at a time
+review|Replaces two separate commands with one routed pass — secret scan and antislop are automatic, not a separate step you remember to run

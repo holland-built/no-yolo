@@ -5,15 +5,9 @@
 # eli5
 - **eli5** (`~/.claude/skills/eli5/SKILL.md`) - explain anything in plain English before you commit to it. Trigger: `/eli5`
 When the user types `/eli5`, invoke the Skill tool with `skill: "eli5"` before doing anything else.
-# code-health
-- **code-health** (`~/.claude/skills/code-health/SKILL.md`) - three-phase codebase health pass: Fallow (static analysis) → Trim → Improve. All output as tables. Trigger: `/code-health`
-When the user types `/code-health`, invoke the Skill tool with `skill: "code-health"` before doing anything else.
 # my-skills
 - **my-skills** - list skills you authored (not plugin packs) + relationship map. Trigger: `/my-skills`
 When the user types `/my-skills`, invoke the Skill tool with `skill: "my-skills"` before doing anything else.
-# code-review
-- **code-review** (`~/.claude/skills/code-review/SKILL.md`) - three-pass diff review: correctness/bugs, over-engineering (trim), Karpathy surgical+simplicity. Supports `--fix` to apply findings, `--comment` for inline PR comments, effort flags (low/medium/high/max). Trigger: `/code-review`
-When the user types `/code-review`, invoke the Skill tool with `skill: "code-review"` before doing anything else.
 # my-md
 - **my-md** (`~/.claude/skills/my-md/SKILL.md`) - list all markdown files: global ~/.claude/ docs + current project artifacts. Trigger: `/my-md`
 When the user types `/my-md`, says "list md files", or "show markdown files", invoke the Skill tool with `skill: "my-md"` before doing anything else.
@@ -67,3 +61,6 @@ When the user types `/design-audit`, says "audit this UI", "review the design", 
 # ingest-docs
 - **ingest-docs** (`~/.claude/skills/ingest-docs/SKILL.md`) - per-repo doc ingestion pipeline: converts PDF/PPTX/DOCX/images in docs/raw/ → dense .md context files in docs/context/ via markitdown + LLM topic-match (NEW/UPDATE/REPLACE/COMBINE), approval table, manifest tracking. Trigger: `/ingest-docs`
 When the user types `/ingest-docs`, says "ingest docs", "process raw docs", or "update context from docs", invoke the Skill tool with `skill: "ingest-docs"` before doing anything else.
+# review
+- **review** (`~/.claude/skills/review/SKILL.md`) - unified quality review: three-pass diff review (correctness/bugs/over-engineering/Karpathy) + optional full codebase health pass (fallow + trim + improve). Bakes in secret scan and antislop on .md changes. Supports `--health`, `--fix`, `--comment`, `--effort` flags. Trigger: `/review`
+When the user types `/review`, says "review this", "check the diff", "code health", "run health pass", or "review before merge", invoke the Skill tool with `skill: "review"` before doing anything else.

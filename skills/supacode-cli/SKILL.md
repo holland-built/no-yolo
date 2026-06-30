@@ -1,6 +1,7 @@
 ---
 name: supacode-cli
 description: Control Supacode from the terminal. Use when running Supacode CLI commands, managing worktrees, tabs, and surfaces programmatically, or when inside a Supacode terminal session.
+user-invocable: false
 ---
 
 # Supacode CLI
