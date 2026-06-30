@@ -14,8 +14,8 @@ trim-debt|Harvest trim-tagged shortcuts into a debt ledger.
 trim-review|Review diff for what to delete, not what to add.
 trim-help|Quick reference for all trim commands.
 my-md|List all markdown files — global docs + project artifacts.
-design-audit|Read-only design audit → ranked violations + top-10 fixes.
-design|Fresh UI generation: 7 Opus mockups → slop gate → plan → build. Never patches.
+design-audit|Audit UI across 5 lenses → ranked violations → optional 10-mockup fix pipeline.
+design|Fresh UI generation: 10 Opus mockups (8 paradigms + 2 wild) → AI picks → you confirm → build.
 impeccable|Full-app polish loop: audit 5 lenses → fix Critical/High → verify. Repeats until clean.
 ingest-docs|Convert PDFs/PPTX/DOCX/images in docs/raw/ → searchable .md context files.
 supacode-cli|Control Supacode worktrees, tabs, and surfaces from the terminal.

@@ -7,7 +7,7 @@ graphify|Unfamiliar codebase or tracing an unexpected dependency
 plan|Fuzzy requirements, multiple valid approaches
 my-md|New to a project or after a long break
 my-skills|Forgot what skills exist
-design-audit|Any UI that feels off — get a ranked list of what's wrong before changing anything
+design-audit|Any UI that feels off — audit first, then optionally fix with 10 mockups in the same command
 tdd|Bug fixes, new features, anywhere tests matter
 design|Starting a new design or full redesign — want truly fresh, not an incremental patch
 impeccable|App works but looks rough — need systematic visual polish across the whole codebase
