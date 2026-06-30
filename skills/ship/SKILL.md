@@ -1,6 +1,6 @@
 ---
 name: ship
-description: Use this skill when the user types /ship, says 'push skills', 'publish to no-yolo', or 'ship my work'. Quality-gated publish: md-check + antislop + eli5 + drift-check → README validation → changelog entry → commit + push to no-yolo.
+description: Use this skill when the user types /ship, says 'ship this', 'push this', 'commit and push', or 'ship my work'. Quality-gated publish for any project: antislop + content leak guard → changelog → commit + push to current branch. In ~/.claude project: also runs md-check, drift-check, README validation, RENDERED.md regen, and GitHub release to no-yolo.
 user-invocable: true
 argument-hint: "[optional commit message]"
 allowed-tools:
@@ -10,7 +10,22 @@ allowed-tools:
 
 # ship
 
-Quality-gate, changelog, then publish `~/.claude` to `github.com/holland-built/no-yolo`.
+Quality-gate, changelog, commit + push. Behavior adapts to which project you're in.
+
+## Step 0 — Detect project context
+
+```bash
+REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null)
+IS_CLAUDE_REPO=false
+[ "$REPO_ROOT" = "$HOME/.claude" ] && IS_CLAUDE_REPO=true
+echo "Repo: $REPO_ROOT | .claude mode: $IS_CLAUDE_REPO"
+```
+
+```bash
+git -C "$REPO_ROOT" status --short
+```
+
+If clean: print "Nothing to ship. Working tree clean." and STOP.
 
 ---
 
@@ -26,25 +41,25 @@ If clean: print "Nothing to ship. Working tree clean." and STOP.
 
 ## Phase 1 — Quality gates (WARN ONLY — never block)
 
-### 1a. Size check
+### 1a. Antislop scan (ALL projects)
+Read `~/.claude/docs/ANTISLOP.md` — extract all bullets under `## Writing Tells (25)`.
+Scan all changed `.md` files (`git diff HEAD --name-only | grep '\.md$'`) for tell matches.
+If violations found: print `| File | Tell | Excerpt |` table. Do NOT stop.
+
+### 1b. ~/.claude project only — additional gates
+Skip 1b entirely if `IS_CLAUDE_REPO=false`.
+
+**Size check:**
 ```bash
 wc -l ~/.claude/*.md ~/.claude/docs/*.md ~/.claude/skills/*/SKILL.md 2>/dev/null | sort -rn | head -20
 ```
-Table any file with >200 lines: `| File | Lines |`. Print warning. Do NOT stop.
+Table any file >200 lines. Do NOT stop.
 
-### 1b. Antislop scan
-Read `~/.claude/docs/ANTISLOP.md` — extract all bullets under `## Writing Tells (25)`.
-Scan `~/.claude/README.md` and `~/.claude/CLAUDE.md` for tell matches.
-If violations found: print `| File | Tell | Excerpt |` table. Do NOT stop.
+**eli5 check:** Read `~/.claude/README.md`. Flag unexplained jargon in any `##` section's first sentence. Do NOT stop.
 
-### 1c. eli5 check
-Read `~/.claude/README.md`. For each `##` section heading: does the first sentence use unexplained jargon or acronyms?
-Flag any in a one-line table: `| Section | Jargon |`. Do NOT stop.
+**Drift check:** Invoke `md-check --drift`. Print DRIFT/WRONG verdicts as warning. Do NOT stop.
 
-### 1d. Drift check
-Invoke `md-check --drift` via the Skill tool. For any DRIFT or WRONG verdicts: print the full drift table as a warning. Do NOT stop.
-
-### 1e. GLOBAL_DESCRIPTIONS coverage check
+**GLOBAL_DESCRIPTIONS check:**
 ```bash
 descs="$HOME/.claude/skills/my-md/GLOBAL_DESCRIPTIONS.md"
 { find "$HOME/.claude" -maxdepth 1 -name "*.md"; find "$HOME/.claude/docs" -maxdepth 1 -name "*.md" 2>/dev/null; } | sort | while IFS= read -r f; do
@@ -52,7 +67,7 @@ descs="$HOME/.claude/skills/my-md/GLOBAL_DESCRIPTIONS.md"
   grep -q "^$name|" "$descs" 2>/dev/null || echo "MISSING: $name"
 done
 ```
-If any `MISSING:` lines → print warning table `| File | Status |` with each missing file. Do NOT stop.
+Print warning for any MISSING. Do NOT stop.
 
 ---
 
@@ -60,11 +75,15 @@ If any `MISSING:` lines → print warning table `| File | Status |` with each mi
 
 Run:
 ```bash
-git -C ~/.claude diff HEAD --stat
-git -C ~/.claude diff HEAD --name-only
+git -C "$REPO_ROOT" diff HEAD --stat
+git -C "$REPO_ROOT" diff HEAD --name-only
 ```
 
-Append to `~/.claude/docs/DAILY_CHANGELOG.md` (create file if missing):
+Determine changelog path:
+- `IS_CLAUDE_REPO=true` → `~/.claude/docs/DAILY_CHANGELOG.md`
+- Any other project → `$REPO_ROOT/frontend/DAILY_CHANGELOG.md` if exists, else `$REPO_ROOT/DAILY_CHANGELOG.md` (create if missing)
+
+Append to that file:
 
 ```
 ## YYYY-MM-DD
@@ -81,25 +100,27 @@ Rules:
 
 ## Phase 3 — Commit + push
 
-### 3a. Personal-file guard (HARD BLOCK)
+### 3a. Personal-file guard (HARD BLOCK — all projects)
 If any changed path matches these → STOP, do not commit:
 `memory/facts/` `brainstorms/` `plans/` `proposals/` `projects/` `sessions/` `settings.json` `settings.local.json` `history.jsonl` `*.log` `cache/` `paste-cache/`
 
 Output: `BLOCKED — personal files in diff: [list them]. Fix before shipping.`
 
-### 3b. Content scan (HARD BLOCK)
+### 3b. Content scan (HARD BLOCK — all projects)
 ```bash
-git -C ~/.claude diff HEAD | grep -E "^\+" | grep -vE "^\+\+\+" | grep -E \
+git -C "$REPO_ROOT" diff HEAD | grep -E "^\+" | grep -vE "^\+\+\+" | grep -E \
   "/Users/[a-zA-Z0-9_-]+|provenance:|session: [a-f0-9-]{36}|password\s*[:=]|secret\s*[:=]|api[_-]?key\s*[:=]|AKIA[0-9A-Z]{16}"
 ```
 If any line matches → STOP: `BLOCKED — personal data in diff: [matched lines]. Fix before shipping.`
 
-### 3c. README format check (HARD BLOCK)
-Read `~/.claude/docs/README_FORMAT.md`. Extract every line that starts with `## ` as a required section heading.
-Read `~/.claude/README.md`. For each required heading, check it appears verbatim in README.md.
-If any required heading is missing or renamed → STOP: `BLOCKED — README missing required section: [heading]. Fix README or update README_FORMAT.md before shipping.`
+### 3c. ~/.claude project only — README + RENDERED regen
+Skip 3c entirely if `IS_CLAUDE_REPO=false`.
 
-### 3c.5 README skill count patch
+**README format check (HARD BLOCK):**
+Read `~/.claude/docs/README_FORMAT.md`. Extract every `## ` heading as required.
+Read `~/.claude/README.md`. Any missing/renamed heading → STOP: `BLOCKED — README missing required section: [heading].`
+
+**README skill count patch:**
 ```bash
 CUSTOM=$(for d in ~/.claude/skills/*/; do [ -L "${d%/}" ] || echo x; done | wc -l | tr -d ' ')
 BORROWED=$(for d in ~/.claude/skills/*/; do [ -L "${d%/}" ] && echo x; done | wc -l | tr -d ' ')
@@ -107,7 +128,7 @@ sed -i '' "s/[0-9][0-9]* custom commands/$CUSTOM custom commands/" ~/.claude/REA
 sed -i '' "s/plus [0-9]* borrowed from plugins/plus $BORROWED borrowed from plugins/" ~/.claude/README.md
 ```
 
-### 3c.6 Regenerate my-skills RENDERED.md
+**Regenerate my-skills RENDERED.md:**
 ```bash
 taglines="$HOME/.claude/skills/my-skills/TAGLINES.md"
 when="$HOME/.claude/skills/my-skills/WHEN_TO_USE.md"
@@ -134,26 +155,38 @@ out="$HOME/.claude/skills/my-skills/RENDERED.md"
 ```
 
 ### 3d. Stage
+If `IS_CLAUDE_REPO=true`:
 ```bash
 git -C ~/.claude add skills/ *.md docs/ hooks/ setup.sh .gitignore 2>/dev/null
 ```
+Any other project: stage all modified tracked files:
+```bash
+git -C "$REPO_ROOT" add -u
+```
 
 ### 3e. Commit
-Use `$ARGUMENTS` as commit message if provided. Otherwise auto-generate:
-- Format: `[verb] [skill names]: [one-line description]`
-- Examples: `add /ship, /antislop, /prompt-scan: quality-gated publish + slop detection`
-
+Use `$ARGUMENTS` as commit message if provided. Otherwise auto-generate from changed files.
 Always append footer:
 ```
 Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
 ```
 
 ### 3f. Push
+If `IS_CLAUDE_REPO=true`:
 ```bash
 git -C ~/.claude push origin main
 ```
+Any other project — push to current tracking branch:
+```bash
+BRANCH=$(git -C "$REPO_ROOT" rev-parse --abbrev-ref HEAD)
+git -C "$REPO_ROOT" push origin "$BRANCH"
+```
 
 ---
+
+## Step 4 — GitHub release (~/.claude project only)
+
+Skip entirely if `IS_CLAUDE_REPO=false`.
 
 ## Step 4 — GitHub release
 

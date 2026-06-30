@@ -3,38 +3,23 @@ design
 design-audit
 impeccable
 
-## Build & Plan
+## Build
 build
-plan
-tdd
+
+## Review
+review
 
 ## Research
 last-30
 video-to-kb
-ingest-docs
 
 ## Quality
-code-review
-code-health
 diagnose
-antislop
 
-## Prompts & AI
-eli5
-debate
-better-prompt
-prompt-scan
-
-## Memory & Docs
+## Memory
 remember-that
-md-check
-my-md
-drawio-skill
 
 ## Meta
 my-skills
 whats-next
-skill-audit
-update
 ship
-supacode-cli

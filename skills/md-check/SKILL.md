@@ -1,7 +1,7 @@
 ---
 name: md-check
 description: Use this skill when the user types /md-check, says 'check md files', or 'md hygiene'. MD hygiene audit: line counts, topic-overlap, duplicate-rule detection, --drift mode for stale descriptions.
-user-invocable: true
+user-invocable: false
 argument-hint: "[--pre <proposed-filename>] [--drift] (omit for full audit)"
 model: haiku
 allowed-tools:

@@ -3,6 +3,13 @@
 ## 2026-06-30
 
 - improved /last-30 output: removed 40-word bottom line cap (now 3–4 sentences with concrete evidence), added clickable link format rules with long-URL fallback, raised output cap to 300 words
+- consolidated 27 visible skills to 11: added /review (unified diff review + codebase health), hid plan/tdd/code-review/code-health/antislop/md-check/prompt-scan/better-prompt/eli5/debate/skill-audit/my-md/update/ingest-docs/drawio-skill/supacode-cli from /my-skills menu
+- updated CATEGORIES.md to show exactly 11 skills in 6 sections (Design/Build/Review/Research/Quality/Memory/Meta)
+- updated SKILL_TRIGGERS.md: removed code-review and code-health triggers, added /review trigger
+- updated /build: /code-health references replaced with /review --health
+- updated /impeccable: added adversarial verify gate for Criticals + eli5 round summary
+- updated /design: added tsc/lint/build gate before Playwright smoke in main build flow
+- set user-invocable: false on 16 hidden skills so they run internally but don't appear in menus
 
 ## 2026-06-28
 
