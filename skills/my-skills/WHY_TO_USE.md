@@ -9,8 +9,10 @@ my-md|One command to see everything. Prevents losing work to forgotten files
 my-skills|You forget you have tools. This is the map
 design-audit|Five independent lenses + real-world references catch what one reviewer misses — read-only, zero risk
 tdd|The RED test is proof you actually fixed it. Without it you're asserting, not proving
-design-full|--fast: 7 directions at once, slop judge kills the generic ones. Full: nothing builds without an approved mockup — audit, debate, 4 gates
-design-fix|Full pipeline is overkill for one component. Gets 7 targeted options fast without nuking the whole design.
+design|7 distinct paradigms at once + slop validator kills the generic — one pick becomes a full build plan
+impeccable|Loop catches regressions after each fix. Manual polish misses cross-file consistency
+ingest-docs|Raw PDFs are invisible to Claude. Converts once, tracks changes, no re-ingestion overhead
+supacode-cli|CLI is faster than UI for batch operations on tabs and worktrees
 video-to-kb|Talks are perishable. One command turns them into permanent, searchable KB nodes
 whats-next|Prevents starting something new while something is already half-done
 improve|Never touches code — pure signal. Tells you what's wrong without risk of a bad auto-fix
@@ -30,7 +32,6 @@ ship|Leak guard + quality gates run automatically. One command replaces 5 manual
 debate|Because no single role sees the whole picture. Six product-team lenses — code, ops, and revenue — surface the contradictions and the one question you haven't asked yet.
 update|Because pulling blindly can remove things you rely on. See first, then decide.
 trim-gain|Scorecard from benchmark medians — not a per-repo estimate.
-token-hunt|Real sites already solved the palette. Steals 5 candidates' tokens so you pick from proven looks, not a blank canvas
 lazyweb|Routes to the right mode + real screenshots instead of generic guesses from training data
 lazyweb-quick-search|Lightweight best-practice check from real apps — no report overhead
 lazyweb-lite-design-research|Real references grouped by pattern beat inventing UI from memory

@@ -15,9 +15,10 @@ trim-review|Review diff for what to delete, not what to add.
 trim-help|Quick reference for all trim commands.
 my-md|List all markdown files — global docs + project artifacts.
 design-audit|Read-only design audit → ranked violations + top-10 fixes.
-design-full|Mockups to build: --fast for 7 quick variants, full for 4-gate pipeline.
-design-fix|Surgical 7-variant mockup for one component — respects current design, no build.
-token-hunt|Find 5 sites matching your vibe, steal their CSS tokens, feed into design-full.
+design|Fresh UI generation: 7 Opus mockups → slop gate → plan → build. Never patches.
+impeccable|Full-app polish loop: audit 5 lenses → fix Critical/High → verify. Repeats until clean.
+ingest-docs|Convert PDFs/PPTX/DOCX/images in docs/raw/ → searchable .md context files.
+supacode-cli|Control Supacode worktrees, tabs, and surfaces from the terminal.
 whats-next|Shows unfinished work or next-action list. Never static.
 eli5|Explain anything in plain English before you commit to it.
 debate|6 product-team personas argue your decision → YES/NO/CONDITIONAL.
