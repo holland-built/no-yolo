@@ -1,6 +1,6 @@
 ---
 name: design
-description: Use this skill when the user types /design, says 'design this', 'new design', 'redesign', 'fresh look', 'start over on the UI', 'mock this up', or 'show me design options'. Fresh generation only — never preserves the existing design. Pipeline: brand seed -> Taste generators -> 7 Opus mockups (distinct paradigms) -> slop validator -> HARD pick gate -> Opus plan -> Sonnet build. Nothing builds before the gate. Auto-redirects fix/patch to /impeccable and audit/review to /design-audit.
+description: Use this skill when the user types /design, says 'design this', 'new design', 'redesign', 'fresh look', 'start over on the UI', 'mock this up', or 'show me design options'. Fresh generation only — never preserves the existing design. Pipeline: brand seed -> Taste generators -> 10 Opus mockups (8 distinct paradigms + 2 wild) -> slop validator -> AI picks best -> Chrome auto-opens -> you confirm or pick different -> Opus plan -> Sonnet build. Nothing builds before you confirm. Auto-redirects audit/review to /design-audit.
 user-invocable: true
 argument-hint: "[text | URL | screenshot | domain context] [--apply-spec <file>]"
 allowed-tools:
@@ -21,8 +21,6 @@ Fresh generation. This skill **never preserves the existing design** — every m
 clean-sheet take. Existing tokens are read only to build a ban list.
 
 ## Redirects (check first)
-- `$ARGUMENTS` contains `fix`, `patch`, `tweak`, `adjust`, `polish`, `move`, `nudge` and
-  names ONE component/area -> stop and run `/impeccable` instead.
 - `$ARGUMENTS` contains `audit`, `review`, `analyze`, `what's wrong`, `find problems` ->
   stop and run `/design-audit` instead.
 - `--apply-spec <file>` present -> jump straight to the APPLY-SPEC branch (skip Steps 0-4).
@@ -61,41 +59,87 @@ layout principles, component states, do's/don'ts. State one line summarizing the
   image, analyze structure, translate faithfully).
 - Invoke Taste **redesign-skill** to set mockup generation direction (six categories:
   typography, color/surfaces, layout, interactivity, content, components).
-Both feed the Step 5 briefs. If Taste sub-skills are not installed, use the FALLBACKS block.
+Both feed the Step 2 briefs. If Taste sub-skills are not installed, use the FALLBACKS block.
 
-## Step 2 — 7 Opus mockups
+## Step 2 — 10 Opus mockups
 ONE parallel Agent call, `model: "opus"`. Each writes `.mockups/design-<slug>/vN.html`:
 self-contained, inline `<style>`, **no external deps**, `file://` openable, `<!-- VARIANT:
 vN — paradigm -->` header. **Real data, not lorem ipsum.** Bake the Step 0 seed tokens
-throughout. Each variant anchored to a DISTINCT paradigm — pick 7 from:
+throughout.
+
+**v1–v8**: each anchored to a DISTINCT paradigm — pick 8 from:
 Terminal/CLI · Bloomberg data grid · editorial/magazine · bento grid · command palette ·
 split-pane reference · single-column full-bleed · floating action panel · timeline · kanban.
+
+**v9–v10**: WILD. Must use a completely alien layout paradigm — impossible to mistake for
+a variation of v1–v8. Examples: physical-object skeuomorph, radial/circular nav, newspaper
+broadsheet, game HUD, brutalist raw grid with zero decoration. Label each with `WILD` in
+the header comment.
+
+**Every variant must include:**
+- Light + dark sections with toggle (LIGHT+DARK rule above)
+- **States strip**: a thin labeled row at the bottom of the HTML showing all 5 interactive
+  states as small labeled boxes: `hover` · `focus` · `empty` · `error` · `loading`. Each box
+  shows the relevant component in that state. Real styled boxes, not placeholder text.
+- **2–3 annotation callouts**: HTML comments placed inline at key design decisions:
+  `<!-- ANNOTATION: [one sentence explaining this layout/hierarchy choice] -->`. Place at
+  the most non-obvious decision points (why this column count, why this type scale, why this
+  component placement).
+
 Each brief carries: design seed + Taste/Swiss/UIwiki rule text (FALLBACKS if absent) + the
 slop reject list below + LIGHT+DARK rule. BOLD constraint added when BOLD MODE is on.
 
-## Step 3 — Validator pass
-Spawn a judge agent running Taste + Swiss + UIwiki lenses on all 7. Reject any variant that
+## Step 3 — Validator + combined view + AI pick
+
+### Validator pass
+Spawn a judge agent running Taste + Swiss + UIwiki lenses on all 10. Reject any variant that
 hits the **slop reject list** and regenerate it (max 2 rounds, specific brief per reject):
 > card grids · accordion-only · sidebar-nav + icon rows · gradient CTAs (blue->purple /
 > teal->green) · rounded corners >8px everywhere · glassmorphism · sans-only type hierarchy ·
 > hero + centered-CTA layout · shadcn/MUI/Tailwind-UI starter DNA · badge/pill stat rows ·
 > progress bars everywhere · skeleton loaders · "Powered by" badges · hover scale transforms.
 If BOLD MODE: also reject any variant that reads as a minor refresh of the current app.
+Minimum 6 survivors required before proceeding.
 
-Build `.mockups/design-<slug>/all.html` — 14 sections (v1-light, v1-dark … v7-light,
-v7-dark), sticky 14-anchor jump nav, per-variant theme toggle, ★ on the recommended variant.
+### Combined view
+Build `.mockups/design-<slug>/all.html` — layout: **5 rows x 2 columns**.
+Each row = one variant pair: left column = light theme, right column = dark theme.
+States strip and annotation callouts visible in both columns.
+Sticky jump nav with v1–v10 anchors. Per-variant theme toggle preserved.
+
 ```bash
 "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" \
   --headless --disable-gpu --window-size=1400,900 \
   --screenshot=".mockups/design-<slug>/all.png" \
   "file://$PWD/.mockups/design-<slug>/all.html"
-open ".mockups/design-<slug>/all.html"
 ```
 Show the screenshot inline.
 
-## ⛔ HARD GATE — Step 4 (no code before this)
-Print: `| Variant | Paradigm | One-line description | Recommended |`
-Ask: **"Which variant? (v1–v7 / mix — name which / redo)"**
+### AI recommendation
+Spawn ONE scoring agent. It reads all 10 variant HTML files and scores each on:
+- Taste (anti-slop, typography, motion discipline) — 0–10
+- Swiss (grid, type scale, color count, negative space) — 0–10
+- UIwiki (20 rules, scored 1 each) — 0–20
+
+Returns the winner variant number + a single sentence explaining why it won.
+Update `all.html` to mark the winner with * in its section header.
+
+Show this table:
+```
+| Variant | Paradigm | Score | Recommended |
+|---------|----------|-------|-------------|
+| v1      | Terminal/CLI | 34 | |
+| v3      | Bloomberg grid | 41 | * "Strongest data-ink discipline and only variant with true asymmetric balance" |
+```
+
+### Chrome auto-open
+```bash
+open ".mockups/design-<slug>/all.html"
+```
+Opens immediately — you see all 10 before answering anything.
+
+## HARD GATE — Step 4 (no code before this)
+Ask: **"Which variant? (confirm * vN / pick different vN / mix vA layout + vB colors / redo)"**
 - `redo` -> regenerate Step 2 with a different paradigm set.
 - **Do not write a single line of production code until the user names a variant.**
 
@@ -111,7 +155,7 @@ Ask: **"Which variant? (v1–v7 / mix — name which / redo)"**
    exists — do NOT recreate").
 4. Dispatch Sonnet subagents to build the approved mockup against the plan. Disjoint file
    clusters, no overlap.
-4.5. After all subagents complete, run tsc + lint + build (zero new errors) before the Playwright smoke. If any errors → fix before proceeding.
+4.5. After all subagents complete, run tsc + lint + build (zero new errors) before the Playwright smoke. If any errors -> fix before proceeding.
 5. `npx playwright test` smoke after build (load each changed surface, assert no console errors,
    toggle dark mode). Use CLI — NOT `ecc:playwright` MCP.
 6. Run `/eli5` on the completed-work summary before presenting.
@@ -124,7 +168,7 @@ Skip Steps 0-4 entirely. The spec file is a DESIGN.md (or token doc).
 2. 8-dimension token audit of the current app: color, typography, spacing, radius, shadow/
    elevation, component states, layout grid, motion. Map current -> spec for each.
 3. Palette/token swap: replace current values with spec values across CSS/theme files.
-4. WCAG AA gate: every changed surface contrast ≥ 4.5:1 (text), focus-visible preserved.
+4. WCAG AA gate: every changed surface contrast >= 4.5:1 (text), focus-visible preserved.
 5. Cleanup dead CSS left by the swap.
 6. Build verify: tsc + lint + build green, then `npx playwright test` smoke. (CLI — NOT `ecc:playwright` MCP.)
 7. `/eli5` summary.
@@ -135,7 +179,7 @@ Skip Steps 0-4 entirely. The spec file is a DESIGN.md (or token doc).
 **Taste:** em-dash ban; no beige+brass default palette; no serif-as-default (no Fraunces/
 Instrument_Serif); no three equal cards; no filler verbs / fake-perfect numbers / placeholder
 brands; motion via Motion/GSAP/IntersectionObserver, never scroll listeners.
-**Swiss:** strict grid, ≤3 type sizes, ≤3 colors, asymmetric balance, generous negative
+**Swiss:** strict grid, <=3 type sizes, <=3 colors, asymmetric balance, generous negative
 space, function over decoration.
 **UIwiki (20 rules):** hierarchy, contrast, alignment, proximity, consistency, affordance,
 feedback, error prevention, recognition over recall, minimal load, progressive disclosure,

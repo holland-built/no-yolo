@@ -10,6 +10,11 @@
 - updated /impeccable: added adversarial verify gate for Criticals + eli5 round summary
 - updated /design: added tsc/lint/build gate before Playwright smoke in main build flow
 - set user-invocable: false on 16 hidden skills so they run internally but don't appear in menus
+- redesigned /design: 10 mockups (8 paradigms + 2 wild), light+dark side-by-side (5 rows x 2 cols), states strip, annotation callouts, AI scoring agent picks winner, Chrome auto-opens before gate
+- redesigned /design-audit: adds fix gate after audit (y/n); y triggers full 10-mockup pipeline scoped to P0 findings, you pick variant, then builds with tsc+lint+Playwright+re-audit
+- absorbed /impeccable into /design-audit fix gate; set /impeccable user-invocable: false, removed from CATEGORIES.md and SKILL_TRIGGERS.md
+- updated TAGLINES.md, WHEN_TO_USE.md, WHY_TO_USE.md for design and design-audit
+- rebuilt RENDERED.md (10 visible skills: 2 Design / 1 Build / 1 Review / 2 Research / 1 Quality / 1 Memory / 3 Meta)
 
 ## 2026-06-28
 
