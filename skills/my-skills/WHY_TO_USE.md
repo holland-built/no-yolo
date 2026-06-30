@@ -7,7 +7,7 @@ graphify|Answers "what breaks if I change X?" in seconds instead of reading 40 f
 plan|First-attempt success jumps from ~70% to ~90% when decisions are front-loaded
 my-md|One command to see everything. Prevents losing work to forgotten files
 my-skills|You forget you have tools. This is the map
-design-audit|Five independent lenses + real-world references catch what one reviewer misses — read-only, zero risk
+design-audit|Five independent lenses catch what one reviewer misses — audit is read-only, fix gate keeps you in control before anything builds
 tdd|The RED test is proof you actually fixed it. Without it you're asserting, not proving
 design|7 distinct paradigms at once + slop validator kills the generic — one pick becomes a full build plan
 impeccable|Loop catches regressions after each fix. Manual polish misses cross-file consistency
