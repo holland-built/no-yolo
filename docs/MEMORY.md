@@ -12,13 +12,20 @@ Think of it like a preference notepad: you write a note, run a compile step, and
 4. **Never hand-edit** `CLAUDE.generated.md` — it is overwritten on every compile.
 5. **Commit** both the fact file and the regenerated output after any change.
 
-## Adding or changing a preference
+## The 4 memory types
 
-1. Add or edit a file in `memory/facts/<id>.md`
-2. Run `/memory-compile` in Claude Code
-3. Commit both the fact file and `memory/CLAUDE.generated.md`
+| Type | What it stores | Example |
+|------|----------------|---------|
+| `user` | Your role, skills, preferences | "senior Go engineer, new to React" |
+| `feedback` | How Claude should behave | "no confirmation questions, act and continue" |
+| `project` | Current work, deadlines, decisions | "freeze non-critical merges after 2026-06-26" |
+| `reference` | Where to find things in external systems | "bugs tracked in Linear project INGEST" |
 
-High-confidence cross-project instincts auto-promote into the fact store over time.
+## Everyday workflow — 3 ways to add memories
+
+1. **Claude auto-saves** — during a session, Claude writes facts to `memory/facts/` automatically when it learns something worth keeping.
+2. **`/remember-that`** — explicit control: add, delete, audit, or compile memories by hand.
+3. **`/memory-compile`** — rebuilds `CLAUDE.generated.md` from all fact files. Run after any manual edit.
 
 ## Fact file format
 
@@ -41,5 +48,10 @@ Body: the preference or rule. For feedback/project types, include **Why:** and *
 
 - Code patterns, architecture, file paths — derivable from the codebase
 - Git history — use `git log` / `git blame`
-- Debugging solutions — the fix is in the code
+- Debugging solutions — the fix is in the code; the commit message has context
+- Anything already in a `CLAUDE.md` file
 - Ephemeral task details or current conversation context
+
+## Committing to git
+
+`facts/` is gitignored (contains personal/private content). Only `MEMORY.md` and `CLAUDE.generated.md` are committed. Never force-add `facts/`.

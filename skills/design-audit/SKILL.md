@@ -1,6 +1,6 @@
 ---
 name: design-audit
-description: Use this skill when the user types /design-audit, says 'audit this UI', 'review the design', or 'find design problems'. Read-only design audit — Playwright screenshot + Lazyweb deep references + Taste/Swiss/UIwiki/a11y/code-health lenses → ranked violations table + top-10 improvements. No gates, no code.
+description: Use this skill when the user types /design-audit, says 'audit this UI', 'review the design', 'find design problems', or 'what's wrong with this UI'. Read-only — zero code, zero mockups, zero edits. 5 parallel lenses -> adversarial verification of every Critical -> ranked violations table + dependency-ordered P0/P1/P2 implementation plan. 'Fix it' afterward redirects to /impeccable.
 user-invocable: true
 argument-hint: "[surface to audit]"
 allowed-tools:
@@ -15,115 +15,43 @@ allowed-tools:
 
 Target: $ARGUMENTS
 
-Read-only. No gates, no code. Output is a ranked findings table you can hand directly to `/design-full` (or `/design-full --fast`).
+**Read-only. No code, no mockups, no edits.** Output is two artifacts the user can hand to
+`/design` or `/impeccable`.
 
----
-
-## Step 0 — Detect project, build Lazyweb query profile
-
+## Step 0 — Detect project
 ```bash
-head -30 CLAUDE.md 2>/dev/null
+head -20 CLAUDE.md 2>/dev/null
 cat package.json 2>/dev/null | python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('name','?'), d.get('description',''))" 2>/dev/null
-head -10 README.md 2>/dev/null
 ```
+State one line: `Project: [type] · stack: [X]`. Detect whether a brand DESIGN.md
+(Awesome DESIGN.md 9-section format) is in use.
 
-Derive: framework, product type (e.g. "dark NOC dashboard", "SaaS admin panel"), audience, use context, density.
+## Step 1 — 5 parallel lens agents
+ONE parallel Agent call. Each returns `severity | rule | file:line | observed | expected`.
+1. **Taste** — anti-slop fingerprint (FALLBACKS if sub-skill absent).
+2. **Swiss** — grid / type scale / color count.
+3. **UIwiki** — 20 rules scored.
+4. **WCAG 2.1 AA** — contrast, focus-visible, keyboard, aria, reduced-motion.
+5. **CSS health** — hardcoded values, magic numbers, inconsistent tokens.
+If a brand DESIGN.md is in use, add a **6th lens**: compare the UI against that brand's
+do's/don'ts and component states.
 
-State one line: `Project: [type] · stack: [X] · Lazyweb profile: [keywords]`
+## Step 2 — Adversarial verify
+Spawn an independent agent that challenges every **Critical** finding. Each Critical must be
+confirmed with file:line evidence or downgraded. Record the verdict per finding.
 
----
+## Step 3 — Two output artifacts
+1. **Ranked violations table:** `| # | Lens | Finding | Severity | file:line |`
+   (Critical / High / Medium / Low).
+2. **Dependency-ordered implementation plan:** `| Priority | Change | Depends on | Scope (S/M/L) |`
+   grouped P0 / P1 / P2.
+Then run `/eli5` on the summary.
 
-## Step 1 — Screenshot running app (light AND dark)
-
-If a dev server URL is detectable (check package.json scripts, CLAUDE.md, README.md), use Playwright to screenshot the target surface **twice** — once in light mode and once in dark mode (toggle `prefers-color-scheme` via Playwright `colorScheme` option).
-
-If only one mode exists → flag "no dark mode support" as a **HIGH** severity finding.
-
-If app is not running, note it and audit from component source + CSS instead.
-
----
-
-## Step 2 — Lazyweb deep — real-world reference screens
-
-Query Lazyweb MCP (deep mode) using the Step 0 query profile. Pull 3–6 reference screens of comparable products.
-
-If Lazyweb not installed → skip with: `⚠️ Lazyweb unavailable — skipping references.`
-
----
-
-## Step 3 — Five lenses in parallel
-
-Spawn 5 parallel Sonnet agents, each returning a findings list in format: `severity | rule | location (file:line) | observed | expected`
-
-**3a — Taste lens**
-Sub-skill if installed (`~/.claude/skills/taste`); else use FALLBACKS taste fingerprint below.
-
-**3b — Swiss lens**
-Sub-skill if installed (`~/.claude/skills/swiss-design-system`); else use FALLBACKS Swiss principles below.
-
-**3c — UIwiki lens**
-Sub-skill if installed (`~/.claude/skills/userinterface-wiki`); else use FALLBACKS 20-rule summary below.
-
-**3d — Accessibility lens**
-WCAG 2.1 AA: color contrast ≥ 4.5:1, focus-visible states, keyboard nav, aria labels, motion/prefers-reduced-motion, form labels, error messaging.
-
-**3e — code-health on CSS**
-Run `/code-health` on component CSS files for the target surface. Flag hardcoded color values, magic numbers in spacing, inconsistent token usage.
+## Redirect
+If the user says "fix it" / "apply these" after the audit -> run `/impeccable` (or `/design`
+for a clean-sheet redesign). This skill never edits.
 
 ---
 
-## Step 4 — Merge, dedupe, rank
-
-Coordinator merges all lens output, dedupes overlapping findings, ranks by impact:
-- CRITICAL: a11y violations, broken hierarchy
-- HIGH: legibility, contrast, density issues, missing dark mode
-- MEDIUM: consistency, alignment, spacing
-- LOW: polish, typography details
-
-Tag each finding with **Mode:** `light` / `dark` / `both` — lens agents must identify which mode the violation appears in.
-
----
-
-## Step 5 — Output
-
-Print both tables:
-
-**Violations table:**
-`| # | Lens | Finding | Severity | Mode | File:line |`
-
-**Top 10 prioritized improvements:**
-`| # | Improvement | Why it matters | Effort (S/M/L) | Lens |`
-
----
-
-## Step 6 — eli5
-
-Run `/eli5` on the summary before presenting — plain English recap.
-
----
-
-## Auto-save (always on)
-
-Always write full report to `design-system/AUDIT-<project-slug>-<date>.md`.
-
-Project slug derived from:
-```bash
-python3 -c "import json; print(json.load(open('package.json')).get('name','').replace('/','-').replace('@',''))" 2>/dev/null \
-  || basename "$PWD"
-```
-
-This file is picked up automatically by `/design-full` — no paste needed.
-
-## Optional `--persist`
-
-`--persist` is now a no-op (kept for backwards compatibility) — all audits auto-save.
-
----
-
-## FALLBACKS (graceful degradation when sub-skills absent)
-
-**Taste fallback** — slop fingerprint: generic card grids, blue/purple/teal default palette, >8px radius softening on everything, gradient CTAs, glassmorphism panels, sans-only type hierarchy, hero+centered-CTA layout, visible Tailwind/shadcn starter DNA.
-
-**Swiss fallback** — principles: strict grid alignment, restrained type scale (max 3 sizes), asymmetric balance, generous negative space, limited palette (≤3 colors), function over decoration, no gratuitous ornamentation.
-
-**UIwiki fallback** — 20 rules: visual hierarchy, contrast ratio, alignment, proximity, consistency, affordance clarity, feedback on interaction, error prevention, recognition over recall, minimal cognitive load, progressive disclosure, data-ink ratio for tables, status color semantics, responsive breakpoints, motion purpose, label clarity, empty state handling, loading state feedback, keyboard accessibility, touch target size.
+## FALLBACKS
+Same Taste / Swiss / UIwiki rule text as `/design`.
