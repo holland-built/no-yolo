@@ -80,25 +80,25 @@ Read all result rows. Produce:
 
 ## Step 4 — Output
 
+Condense all sources into ONE signal table — one row per finding, not per source. Include a linked title so the user can drill in without re-running. Drop source column; signal + takeaway + link is enough.
+
 ```
 ## Last 30 Days: <topic>
 Window: <start-date> → <today>
 
-| Source | Title | Signal | Date | Why it matters |
-|--------|-------|--------|------|----------------|
-(GitHub rows — best 1-2)
-(HN rows — best 1-2)
-(YouTube rows — best 1-2)
-(X rows — best 1-2)
-(SOURCE_UNAVAILABLE rows if any)
+| Signal | Takeaway | Source |
+|--------|----------|--------|
+| <metric + number> | <one sentence why it matters> | [Title ↗](url) |
+(max 6 rows — highest signal only; merge dupes across sources into the stronger link)
 
-**Synthesis**
-- Gaining most traction now: …
-- Strongest single resource: <url>
-- Emerging shift: …
-- Ignore: …
+**Bottom line:** <2 sentences max. Bull/bear or the clearest pattern. No hedging.
 
-_Starting point for research, not a final answer. Verify before acting._
+_Starting point for research. Verify before acting._
 ```
 
-Total output: under 300 words. No files written.
+Rules:
+- One row = one distinct signal. If HN + YouTube both flag the same thing, one row, stronger link.
+- Signal: concrete metric (CAPE >40, yield 5.18%, +2k stars this month). Never "high activity".
+- Takeaway: one sentence, plain English, no unexplained jargon.
+- Bottom line: under 40 words.
+- Total output: under 250 words. No files written.
