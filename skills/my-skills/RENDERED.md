@@ -2,9 +2,8 @@
 
 | Skill | What it does | When to use | Why vs manual |
 | --- | --- | --- | --- |
-| design | Fresh UI generation: 7 Opus mockups → slop gate → plan → build. Never patches. | Starting a new design or full redesign — want truly fresh, not an incremental patch | 7 distinct paradigms at once + slop validator kills the generic — one pick becomes a full build plan |
-| design-audit | Read-only design audit → ranked violations + top-10 fixes. | Any UI that feels off — get a ranked list of what's wrong before changing anything | Five independent lenses + real-world references catch what one reviewer misses — read-only, zero risk |
-| impeccable | Full-app polish loop: audit 5 lenses → fix Critical/High → verify. Repeats until clean. | App works but looks rough — need systematic visual polish across the whole codebase | Loop catches regressions after each fix. Manual polish misses cross-file consistency |
+| design | Fresh UI generation: 10 Opus mockups (8 paradigms + 2 wild) → AI picks → you confirm → build. | Starting a new design or full redesign — want truly fresh, not an incremental patch | 7 distinct paradigms at once + slop validator kills the generic — one pick becomes a full build plan |
+| design-audit | Audit UI across 5 lenses → ranked violations → optional 10-mockup fix pipeline. | Any UI that feels off — audit first, then optionally fix with 10 mockups in the same command | Five independent lenses catch what one reviewer misses — audit is read-only, fix gate keeps you in control before anything builds |
 
 ## Build
 
@@ -49,4 +48,3 @@
 
 | Pack | What it does | Entry point | Why vs manual |
 | --- | --- | --- | --- |
-| trim | Simplicity enforcer — forces laziest solution, audits over-engineering, tracks debt. 7 sub-skills. | /trim-help | Abstracting too early is universal. This actively resists it. |

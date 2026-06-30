@@ -50,11 +50,8 @@ When the user types `/remember-that`, says "remember that", "save this to memory
 - **skill-audit** (`~/.claude/skills/skill-audit/SKILL.md`) - audits ~/.claude/skills/ across 4 dimensions: bucket fit, component gaps, missing verifiers, trigger conditions. Also builds verifiers and surfaces gotcha gaps. Trigger: `/skill-audit`
 When the user types `/skill-audit`, says "audit my skills", "check my skill library", "find skill gaps", or "run skill audit", invoke the Skill tool with `skill: "skill-audit"` before doing anything else.
 # design
-- **design** (`~/.claude/skills/design/SKILL.md`) - fresh generation only, never preserves existing design: brand seed → Taste generators → 7 Opus mockups (distinct paradigms) → slop validator → HARD pick gate → Opus plan → Sonnet build. `--apply-spec <file>` swaps tokens from a DESIGN.md. Trigger: `/design`
+- **design** (`~/.claude/skills/design/SKILL.md`) - fresh generation only, never preserves existing design: brand seed → Taste generators → 10 Opus mockups (8 paradigms + 2 wild) → slop validator → AI picks best → Chrome auto-opens → you confirm → Opus plan → Sonnet build. `--apply-spec <file>` swaps tokens from a DESIGN.md. Trigger: `/design`
 When the user types `/design`, says "design this", "new design", "redesign", "fresh look", "start over on the UI", "mock this up", or "show me design options", invoke the Skill tool with `skill: "design"` before doing anything else.
-# impeccable
-- **impeccable** (`~/.claude/skills/impeccable/SKILL.md`) - full-app visual polish LOOP over real code: audit (5 lenses) → fix Critical+High → verify, repeating until you stop or 3 clean rounds. Trigger: `/impeccable`
-When the user types `/impeccable`, says "polish the whole app", "make this impeccable", "tighten up the UI", or "design polish pass", invoke the Skill tool with `skill: "impeccable"` before doing anything else.
 # design-audit
 - **design-audit** (`~/.claude/skills/design-audit/SKILL.md`) - read-only: 5 parallel lenses → adversarial verify every Critical → ranked violations table + P0/P1/P2 implementation plan. Zero code, zero mockups. Trigger: `/design-audit`
 When the user types `/design-audit`, says "audit this UI", "review the design", or "find design problems", invoke the Skill tool with `skill: "design-audit"` before doing anything else.
