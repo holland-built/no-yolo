@@ -181,8 +181,6 @@
 - updated /ui-wild inventory row — explains 10 Opus personas, when to use over quick-design
 - updated /ui SKILL.md — removed impeccable route, menu now 3 options, wild variant description updated
 
-## 2026-06-25
-
 - consolidated design pipeline: merged /design-fast into /design-full as --fast flag; /design-full now has two modes
 - consolidated bug diagnosis: merged /debug-debate into /diagnose as --debate flag; six Opus personas debate competing theories
 - deleted /ui-ux skill (duplicate of externally-managed ui-ux-pro-max); removed all references from registries
