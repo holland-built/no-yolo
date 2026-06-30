@@ -1,7 +1,7 @@
 ---
 name: debate
 description: Use this skill when the user types /debate, says 'debate this', 'stress test this decision', 'get the team on this', or 'should we build this'. Six-persona product-team debate — Senior Dev + Junior Dev + Sales Engineer + DevOps + Sales Leader + Eng Leader — contradiction map, synthesis, peer review.
-user-invocable: true
+user-invocable: false
 ---
 
 # debate

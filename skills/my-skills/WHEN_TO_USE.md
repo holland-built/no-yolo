@@ -45,3 +45,4 @@ lazyweb-optimize-sign-up|Redesigning or improving a sign-up / registration scree
 lazyweb-paywall-cta|Just the paywall CTA needs work — not a full redesign
 lazyweb-update|Lazyweb slash commands are stale or you want the latest skill pack
 skill-audit|Periodically, or when a skill misbehaves — find structural gaps in your skill library
+review|Before merging any non-trivial change, or when a codebase needs a cleanup pass

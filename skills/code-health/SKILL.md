@@ -1,7 +1,7 @@
 ---
 name: code-health
 description: Use this skill when the user types /code-health, says 'code health', 'run health pass', or 'fallow pass'. Three-phase health pass: Fallow (static analysis) → Trim (YAGNI review) → Improve (shadcn, token waste + YAGNI plan). All output as tables.
-user-invocable: true
+user-invocable: false
 argument-hint: "[path/goal, or --auto to skip confirmation gates for AFK use]"
 allowed-tools:
   - Bash
