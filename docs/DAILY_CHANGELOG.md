@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-06-30
+
+- improved /last-30 output: removed 40-word bottom line cap (now 3–4 sentences with concrete evidence), added clickable link format rules with long-URL fallback, raised output cap to 300 words
+
 ## 2026-06-28
 
 - updated /my-skills index files — added taglines, when-to-use, and why-to-use entries for all lazyweb skills (lazyweb, lazyweb-quick-search, lazyweb-lite-design-research, lazyweb-deep-design-research, lazyweb-design-improve, lazyweb-design-brainstorm, lazyweb-design-best-practices, lazyweb-ab-test-research, lazyweb-optimize-paywall, lazyweb-optimize-sign-up, lazyweb-paywall-cta, lazyweb-update) and /skill-audit
