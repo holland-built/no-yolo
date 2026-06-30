@@ -1,7 +1,7 @@
 ---
 name: update
 description: Use this skill when the user types /update, says 'check for updates', 'am I out of date', 'what's new', 'update my setup', or 'rollback'. Checks for, previews, and applies updates to ~/.claude setup — rollback and restore-removed-skill included.
-user-invocable: true
+user-invocable: false
 ---
 
 # update

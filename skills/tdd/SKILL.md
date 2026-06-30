@@ -1,7 +1,7 @@
 ---
 name: tdd
 description: Use this skill when the user types /tdd, says 'write tests first', 'TDD this', 'test-driven', or 'implement with tests'. Vertical-slice TDD — one test → one implementation → one green bar → repeat. Forbids all-tests-first horizontal slicing.
-user-invocable: true
+user-invocable: false
 argument-hint: "[describe the feature or function to implement]"
 allowed-tools:
   - Bash

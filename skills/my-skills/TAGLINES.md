@@ -44,3 +44,4 @@ lazyweb-optimize-sign-up|Optimize a sign-up screen — diagnose friction + falsi
 lazyweb-paywall-cta|Critique + rewrite a paywall CTA — ranked candidates backed by real before/after data.
 lazyweb-update|Update the local Lazyweb skill pack from GitHub + reinstall into clients.
 skill-audit|Audit ~/.claude/skills across 4 dimensions; build verifiers, surface gotcha gaps.
+review|Unified diff review + codebase health. Bugs, bloat, secrets, slop — one command.
