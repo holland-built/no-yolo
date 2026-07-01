@@ -19,6 +19,7 @@
 - added a drift guard to /ship's RENDERED.md/RENDERED_FAST.md regen — diffs against the current file before overwriting, warns if source files had drifted, still commits either way
 - redesigned /review into one mode: always runs diff review AND whole-codebase health pass together, max effort always, one ranked findings list, one approve-all gate, then fixes everything approved — removed --health/--fix/--comment/--effort flags, kept --auto as an unattended override
 - added Core Rule 8: self-check simplest-method + reuse before declaring any coding task done, checked during planning and again after — separate from /review, always on, unprompted
+- fixed /plan's Gate: explicitly bans asking a second confirmation question after the user already says "yes" to alignment — was adding an extra unneeded prompt
 
 ## 2026-06-30
 
