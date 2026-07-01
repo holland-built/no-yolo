@@ -182,7 +182,10 @@ Fan out all agents in one parallel call (never one-at-a-time). Every agent MUST:
 - cap output ~300 words
 - if ui_change: match the approved mockup variant exactly
 
-After all agents complete: run the detected build/typecheck command (if any) to catch errors before testing. If the project is containerized, hotpatch with the detected command. If the project has knowledge-graph tooling, refresh it now (e.g. `graphify update .` — AST-only, no API cost) so the next /build run's Phase 0 evidence reads from an accurate graph, not a stale one.
+After all agents complete: if any used `isolation: worktree`, merge each branch into the working
+branch, confirm merged (`git merge-base --is-ancestor <sha> HEAD`), then clean up —
+`git worktree remove` each `.claude/worktrees/agent-*` dir + `git branch -D` its branch.
+Run the detected build/typecheck command (if any) to catch errors before testing. If the project is containerized, hotpatch with the detected command. If the project has knowledge-graph tooling, refresh it now (e.g. `graphify update .` — AST-only, no API cost) so the next /build run's Phase 0 evidence reads from an accurate graph, not a stale one.
 
 ## 5.5 — Regression gate + fix loop (HARD)
 After build passes, run the full test suite (detected test command).
