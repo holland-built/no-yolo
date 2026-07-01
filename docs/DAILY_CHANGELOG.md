@@ -17,6 +17,8 @@
 - synced TAGLINES.md/WHEN_TO_USE.md/WHY_TO_USE.md — lockstep was missing entirely, several other rows had drifted from the live RENDERED.md content
 - fixed /review's trim-audit/trim-debt/trim-review install checks — were checking the wrong global path and always reporting "missing" even though the skills work; now resolves the actual local symlink
 - added a drift guard to /ship's RENDERED.md/RENDERED_FAST.md regen — diffs against the current file before overwriting, warns if source files had drifted, still commits either way
+- redesigned /review into one mode: always runs diff review AND whole-codebase health pass together, max effort always, one ranked findings list, one approve-all gate, then fixes everything approved — removed --health/--fix/--comment/--effort flags, kept --auto as an unattended override
+- added Core Rule 8: self-check simplest-method + reuse before declaring any coding task done, checked during planning and again after — separate from /review, always on, unprompted
 
 ## 2026-06-30
 
