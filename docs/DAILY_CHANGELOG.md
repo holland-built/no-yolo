@@ -15,6 +15,8 @@
 - added TAGLINES_SHORT.md as the source for the new dense default view; deep mode unchanged
 - fixed stale README: removed all references to deleted/nonexistent skills (code-health, code-review, design-full, design-fix, token-hunt, quick-design), rebuilt the Skills inventory table to match what's actually installed
 - synced TAGLINES.md/WHEN_TO_USE.md/WHY_TO_USE.md — lockstep was missing entirely, several other rows had drifted from the live RENDERED.md content
+- fixed /review's trim-audit/trim-debt/trim-review install checks — were checking the wrong global path and always reporting "missing" even though the skills work; now resolves the actual local symlink
+- added a drift guard to /ship's RENDERED.md/RENDERED_FAST.md regen — diffs against the current file before overwriting, warns if source files had drifted, still commits either way
 
 ## 2026-06-30
 
