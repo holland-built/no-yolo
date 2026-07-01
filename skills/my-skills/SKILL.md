@@ -13,12 +13,12 @@ allowed-tools:
 Mode: $ARGUMENTS
 
 Two modes:
-- **Default** (empty) — 2-col: Skill + What it does. Fits screen.
-- **deep** — 4-col (adds When + Why) + Relationships + Bolt-ons.
+- **Default** (empty) — paired-column, no section headers: Skill + What it does + Skill + What it does. 2-5 word summaries, 2 skills per row. Whole menu fits on one screen.
+- **deep** — 4-col (adds When + Why) + Relationships + Bolt-ons, grouped by category with section headers.
 
-"What it does" always uses TAGLINES.md (short one-liners). WHEN_TO_USE.md and WHY_TO_USE.md for deep mode only.
+Default mode's "What it does" uses TAGLINES_SHORT.md (2-5 word summaries). Deep mode uses TAGLINES.md (full one-liners) + WHEN_TO_USE.md + WHY_TO_USE.md.
 
-`$ARGUMENTS` = `deep` → 4-col all 4 sections. Empty (or anything else) → 2-col sections 1+2.
+`$ARGUMENTS` = `deep` → 4-col all 4 sections. Empty (or anything else) → paired 4-col, no headers.
 
 ## How to run
 
@@ -32,7 +32,7 @@ else
 fi
 ```
 
-Print verbatim — complete GFM with section headers and tables. Do NOT rephrase or reformat.
+Print verbatim — complete GFM with tables. Do NOT rephrase or reformat.
 
 > Both RENDERED.md and RENDERED_FAST.md are rebuilt automatically by /ship. To rebuild manually: run the regen script in ship/SKILL.md Step 3c.6.
 

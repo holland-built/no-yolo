@@ -154,24 +154,27 @@ out="$HOME/.claude/skills/my-skills/RENDERED.md"
 } > "$out"
 ```
 
-**Regenerate my-skills RENDERED_FAST.md (2-col, default mode):**
+**Regenerate my-skills RENDERED_FAST.md (paired-column, no headers, default mode):**
 ```bash
+taglines_short="$HOME/.claude/skills/my-skills/TAGLINES_SHORT.md"
 out_fast="$HOME/.claude/skills/my-skills/RENDERED_FAST.md"
-{ in_section=0
-  while IFS= read -r line; do
-    case "$line" in
-      "## "*) [ $in_section -eq 1 ] && printf '\n'; printf '%s\n\n' "$line"; printf '| Skill | What it does |\n| --- | --- |\n'; in_section=1 ;;
-      "") ;;
-      *) name="$line"
-         story=$(grep "^$name|" "$taglines" 2>/dev/null | cut -d'|' -f2-); [ -z "$story" ] && story="⚠️ missing"
-         printf '| %s | %s |\n' "$name" "$story" ;;
-    esac
-  done < "$cats"
-  printf '\n## Plugins\n\n'
-  printf '| Pack | Entry point |\n| --- | --- |\n'
-  while IFS='|' read -r name tagline entry why_val; do printf '| %s | %s |\n' "$name" "$entry"; done < "$packs"
+order_file=$(mktemp)
+grep -v "^## \|^$" "$cats" > "$order_file"
+{
+  printf '| Skill | What it does | Skill | What it does |\n| --- | --- | --- | --- |\n'
+  paste -d'\t' - - < "$order_file" | while IFS=$'\t' read -r a b; do
+    sa=$(grep "^$a|" "$taglines_short" 2>/dev/null | cut -d'|' -f2-); [ -z "$sa" ] && sa="⚠️ missing"
+    if [ -n "$b" ]; then
+      sb=$(grep "^$b|" "$taglines_short" 2>/dev/null | cut -d'|' -f2-); [ -z "$sb" ] && sb="⚠️ missing"
+      printf '| %s | %s | %s | %s |\n' "$a" "$sa" "$b" "$sb"
+    else
+      printf '| %s | %s | | |\n' "$a" "$sa"
+    fi
+  done
 } > "$out_fast"
+rm -f "$order_file"
 ```
+> Every new skill added to `CATEGORIES.md` needs a matching line in `TAGLINES_SHORT.md` (2-5 words) or it renders "⚠️ missing" here.
 
 ### 3d. Stage
 If `IS_CLAUDE_REPO=true`:
