@@ -143,10 +143,10 @@ Silently run:
 
 ```bash
 which fallow && fallow --version 2>/dev/null && echo "fallow:ok" || echo "fallow:missing"
-ls ~/.agents/skills/ 2>/dev/null | grep -iE "^trim-audit$" && echo "trim-audit:ok" || echo "trim-audit:missing"
-ls ~/.agents/skills/ 2>/dev/null | grep -iE "^trim-debt$" && echo "trim-debt:ok" || echo "trim-debt:missing"
+[ -e ~/.claude/skills/trim-audit/SKILL.md ] && echo "trim-audit:ok" || echo "trim-audit:missing"
+[ -e ~/.claude/skills/trim-debt/SKILL.md ] && echo "trim-debt:ok" || echo "trim-debt:missing"
 ls ~/.agents/skills/ 2>/dev/null | grep -iE "^improve$" && echo "improve:ok" || echo "improve:missing"
-ls ~/.agents/skills/ 2>/dev/null | grep -iE "^trim-review$" && echo "trim-review:ok" || echo "trim-review:missing"
+[ -e ~/.claude/skills/trim-review/SKILL.md ] && echo "trim-review:ok" || echo "trim-review:missing"
 ```
 
 Output a single status table:
@@ -266,7 +266,7 @@ If `--auto` in $ARGUMENTS: skip fallow fix (treat as "no"), note `auto-skipped f
 **H2a — Whole-codebase audit**
 
 ```bash
-ls ~/.agents/skills/ 2>/dev/null | grep -iE "^trim-audit$" || echo "NOT_INSTALLED"
+[ -e ~/.claude/skills/trim-audit/SKILL.md ] || echo "NOT_INSTALLED"
 ```
 
 If NOT_INSTALLED:
@@ -302,7 +302,7 @@ Phase H2 summary:
 **H2b — Debt marker harvest**
 
 ```bash
-ls ~/.agents/skills/ 2>/dev/null | grep -iE "^trim-debt$" || echo "NOT_INSTALLED"
+[ -e ~/.claude/skills/trim-debt/SKILL.md ] || echo "NOT_INSTALLED"
 ```
 
 If NOT_INSTALLED: skip silently, note in summary row.
