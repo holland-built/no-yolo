@@ -41,7 +41,6 @@ skills/lazyweb-optimize-sign-up
 skills/lazyweb-paywall-cta
 skills/lazyweb-quick-search
 skills/lazyweb-update
-
 # interface-design = externally managed by npx skills@latest (symlink to ~/.agents/)
 skills/interface-design
 
