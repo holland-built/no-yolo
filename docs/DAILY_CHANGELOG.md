@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-07-01
+
+- un-hid 13 skills back into /my-skills: eli5, debate, code-health (later deleted), plan, my-md, md-check, skill-audit, update, prompt-scan, better-prompt, ingest-docs, drawio-skill, supacode-cli
+- added /improve to /my-skills after a debate concluded bare (non-namespaced) third-party skills should be visible regardless of authorship
+- deleted /code-health and /code-review entirely — fully superseded by /review, zero unique capability left
+- kept /antislop and /tdd hidden but present — each retains a standalone use case its replacement doesn't cover
+- decided to keep the whole third-party trim-* family off the menu — three of six are already invoked by /review and /code-health, the other three the user won't use standalone
+- added /lockstep — new skill + PreToolUse hook that hard-blocks Edit/Write/NotebookEdit until the user explicitly releases it
+- updated /plan: final output now routes through /better_prompt before dispatching the recommended skill, instead of always assuming /build
+- added a SessionStart hook that nudges /prompt-scan when the current model differs from the last recorded scan
+- added worktree cleanup to /build and /design-audit — merges and removes isolated agent worktrees/branches after use
+- redesigned /my-skills default output: paired-column (Skill+What x2), no section headers, 2-5 word summaries — 25 skills collapse to 13 rows, one screen
+- added TAGLINES_SHORT.md as the source for the new dense default view; deep mode unchanged
+- fixed stale README: removed all references to deleted/nonexistent skills (code-health, code-review, design-full, design-fix, token-hunt, quick-design), rebuilt the Skills inventory table to match what's actually installed
+- synced TAGLINES.md/WHEN_TO_USE.md/WHY_TO_USE.md — lockstep was missing entirely, several other rows had drifted from the live RENDERED.md content
+
 ## 2026-06-30
 
 - improved /last-30 output: removed 40-word bottom line cap (now 3–4 sentences with concrete evidence), added clickable link format rules with long-URL fallback, raised output cap to 300 words
