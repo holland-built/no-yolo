@@ -154,6 +154,25 @@ out="$HOME/.claude/skills/my-skills/RENDERED.md"
 } > "$out"
 ```
 
+**Regenerate my-skills RENDERED_FAST.md (2-col, default mode):**
+```bash
+out_fast="$HOME/.claude/skills/my-skills/RENDERED_FAST.md"
+{ in_section=0
+  while IFS= read -r line; do
+    case "$line" in
+      "## "*) [ $in_section -eq 1 ] && printf '\n'; printf '%s\n\n' "$line"; printf '| Skill | What it does |\n| --- | --- |\n'; in_section=1 ;;
+      "") ;;
+      *) name="$line"
+         story=$(grep "^$name|" "$taglines" 2>/dev/null | cut -d'|' -f2-); [ -z "$story" ] && story="⚠️ missing"
+         printf '| %s | %s |\n' "$name" "$story" ;;
+    esac
+  done < "$cats"
+  printf '\n## Plugins\n\n'
+  printf '| Pack | Entry point |\n| --- | --- |\n'
+  while IFS='|' read -r name tagline entry why_val; do printf '| %s | %s |\n' "$name" "$entry"; done < "$packs"
+} > "$out_fast"
+```
+
 ### 3d. Stage
 If `IS_CLAUDE_REPO=true`:
 ```bash

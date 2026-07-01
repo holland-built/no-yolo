@@ -2,7 +2,7 @@
 name: my-skills
 description: Use this skill when the user types /my-skills, says 'my skills', 'list my skills', or 'skills I created'. Lists authored skills (not plugin packs) in a table plus a relationship map of skill dependencies.
 user-invocable: true
-argument-hint: "[fast | deep]"
+argument-hint: "[deep]"
 model: haiku
 allowed-tools:
   - Bash
@@ -12,26 +12,29 @@ allowed-tools:
 
 Mode: $ARGUMENTS
 
-Three modes:
-- **Default** (empty) — 4-col: Skill + What + When + Why.
-- **fast** — 2-col: Skill + tagline only. Fits screen.
-- **deep** — 4-col + Relationships + Bolt-ons.
+Two modes:
+- **Default** (empty) — 2-col: Skill + What it does. Fits screen.
+- **deep** — 4-col (adds When + Why) + Relationships + Bolt-ons.
 
-"What it does" always uses TAGLINES.md (short one-liners). WHEN_TO_USE.md and WHY_TO_USE.md for default/deep modes.
+"What it does" always uses TAGLINES.md (short one-liners). WHEN_TO_USE.md and WHY_TO_USE.md for deep mode only.
 
-`$ARGUMENTS` = `fast` → 2-col sections 1+2. `$ARGUMENTS` = `deep` → 4-col all 4 sections. Empty → 4-col sections 1+2.
+`$ARGUMENTS` = `deep` → 4-col all 4 sections. Empty (or anything else) → 2-col sections 1+2.
 
 ## How to run
 
 ### Output — pre-rendered table
 
 ```bash
-cat "$HOME/.claude/skills/my-skills/RENDERED.md"
+if [ "$ARGUMENTS" = "deep" ]; then
+  cat "$HOME/.claude/skills/my-skills/RENDERED.md"
+else
+  cat "$HOME/.claude/skills/my-skills/RENDERED_FAST.md"
+fi
 ```
 
 Print verbatim — complete GFM with section headers and tables. Do NOT rephrase or reformat.
 
-> RENDERED.md is rebuilt automatically by /ship. To rebuild manually: run the regen script in ship/SKILL.md Step 3c.6.
+> Both RENDERED.md and RENDERED_FAST.md are rebuilt automatically by /ship. To rebuild manually: run the regen script in ship/SKILL.md Step 3c.6.
 
 ### Section 3 — Relationships (what each skill leans on) — deep mode only
 
