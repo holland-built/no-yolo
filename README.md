@@ -172,7 +172,7 @@ Two skills cover the full frontend design workflow. Design tokens (`DESIGN.md` /
 
 | Skill | What it does | Modes & flags |
 |---|---|---|
-| `/review` | Reviews a diff or a whole codebase: correctness bugs, over-engineering, Karpathy surgical filter, secret scan and antislop on any `.md` changes — all automatic. `--health` escalates to a full codebase health pass instead of a diff review | `--fix` (auto-apply) · `--comment` (inline comments) · `--health` (full pass) · `--effort low\|medium\|high\|max` |
+| `/review` | One mode, always thorough: reviews the diff AND the whole codebase — correctness bugs, over-engineering, Karpathy surgical filter, fallow + trim + improve, secret scan and antislop on any `.md` changes. Max effort, every time. One ranked findings list, one approve-all, then fixes everything approved | `--auto` (skip the approval gate, unattended) |
 | `/diagnose` | A 6-step way to find the real cause of a bug. Add `--debate` and 6 Opus personas each argue a competing root-cause theory — contradiction map, most likely cause with file:line, one concrete next step | `--debate` (6-persona Opus mode) |
 | `/drawio-skill` | Draws diagrams (architecture, flowcharts, database tables, UML). Saves them as PNG, SVG, or PDF | — |
 | `/build` | Builds a whole feature start to finish: gather evidence, plan with Opus, approve, then automatically runs a UI mockup gate (slop-filtered, requires approval) before writing any code — tests first, build with Sonnet, then prove it works | — |
