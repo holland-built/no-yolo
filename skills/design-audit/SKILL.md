@@ -122,6 +122,16 @@ Spawn Opus agent to write `brainstorms/design-audit-<slug>-plan-<date>.md`. Plan
 
 ### F9 — Sonnet build
 Dispatch Sonnet subagents per plan. Disjoint file clusters, no file overlap between agents.
+If any agent used `isolation: worktree`, merge its branch into the working branch now.
+
+### F9.5 — Worktree cleanup (mandatory if any F9 agent used worktree isolation)
+```bash
+git worktree list --porcelain | grep '^worktree' | grep '.claude/worktrees/agent-' | cut -d' ' -f2 | \
+  xargs -I{} git worktree remove {} --force
+git worktree prune
+git branch | grep 'worktree-agent-' | xargs -r git branch -D
+```
+Run only after confirming each branch's commits are merged (`git merge-base --is-ancestor <sha> HEAD`).
 
 ### F10 — tsc + lint + build gate
 Zero new errors before proceeding. If any errors -> fix before Playwright.
