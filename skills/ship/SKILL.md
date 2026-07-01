@@ -136,6 +136,7 @@ why="$HOME/.claude/skills/my-skills/WHY_TO_USE.md"
 cats="$HOME/.claude/skills/my-skills/CATEGORIES.md"
 packs="$HOME/.claude/skills/my-skills/PLUGIN_PACKS.md"
 out="$HOME/.claude/skills/my-skills/RENDERED.md"
+tmp_rendered=$(mktemp)
 { in_section=0
   while IFS= read -r line; do
     case "$line" in
@@ -151,7 +152,9 @@ out="$HOME/.claude/skills/my-skills/RENDERED.md"
   printf '\n## Plugins\n\n'
   printf '| Pack | What it does | Entry point | Why vs manual |\n| --- | --- | --- | --- |\n'
   while IFS='|' read -r name tagline entry why_val; do printf '| %s | %s | %s | %s |\n' "$name" "$tagline" "$entry" "$why_val"; done < "$packs"
-} > "$out"
+} > "$tmp_rendered"
+diff -q "$tmp_rendered" "$out" >/dev/null 2>&1 || { echo "⚠️ RENDERED.md regen differs from committed version — source files (TAGLINES/WHEN_TO_USE/WHY_TO_USE) had drifted:"; diff "$out" "$tmp_rendered"; }
+mv "$tmp_rendered" "$out"
 ```
 
 **Regenerate my-skills RENDERED_FAST.md (paired-column, no headers, default mode):**
@@ -159,6 +162,7 @@ out="$HOME/.claude/skills/my-skills/RENDERED.md"
 taglines_short="$HOME/.claude/skills/my-skills/TAGLINES_SHORT.md"
 out_fast="$HOME/.claude/skills/my-skills/RENDERED_FAST.md"
 order_file=$(mktemp)
+tmp_fast=$(mktemp)
 grep -v "^## \|^$" "$cats" > "$order_file"
 {
   printf '| Skill | What it does | Skill | What it does |\n| --- | --- | --- | --- |\n'
@@ -171,10 +175,13 @@ grep -v "^## \|^$" "$cats" > "$order_file"
       printf '| %s | %s | | |\n' "$a" "$sa"
     fi
   done
-} > "$out_fast"
+} > "$tmp_fast"
+diff -q "$tmp_fast" "$out_fast" >/dev/null 2>&1 || { echo "⚠️ RENDERED_FAST.md regen differs from committed version — source files had drifted:"; diff "$out_fast" "$tmp_fast"; }
+mv "$tmp_fast" "$out_fast"
 rm -f "$order_file"
 ```
 > Every new skill added to `CATEGORIES.md` needs a matching line in `TAGLINES_SHORT.md` (2-5 words) or it renders "⚠️ missing" here.
+> Both regen blocks diff against the current file before overwriting and print a warning if source files had drifted — warn-only, still commits either way.
 
 ### 3d. Stage
 If `IS_CLAUDE_REPO=true`:
