@@ -8,6 +8,18 @@ When the user types `/eli5`, invoke the Skill tool with `skill: "eli5"` before d
 # my-skills
 - **my-skills** - list skills you authored (not plugin packs) + relationship map. Trigger: `/my-skills`
 When the user types `/my-skills`, invoke the Skill tool with `skill: "my-skills"` before doing anything else.
+# improve
+- **improve** (`~/.claude/skills/improve/SKILL.md`) - read-only senior-advisor audit across 9 categories (correctness, security, perf, tests, tech debt, deps, DX, docs, direction) → vetted findings → self-contained implementation plans for an executor model. Trigger: `/improve`
+When the user types `/improve`, asks to audit a codebase, find improvement opportunities, or generate handoff plans for another agent, invoke the Skill tool with `skill: "improve"` before doing anything else.
+# lockstep
+- **lockstep** (`~/.claude/skills/lockstep/SKILL.md`) - hook-enforced gate: blocks Edit/Write/NotebookEdit until you say go. Not just a prompt reminder — mechanically denied. Trigger: `/lockstep`
+When the user types `/lockstep`, says "lock step", "hold off on code", or "don't code yet", invoke the Skill tool with `skill: "lockstep"` before doing anything else.
+# plan
+- **plan** (`~/.claude/skills/plan/SKILL.md`) - pre-build planning interview: extracts design decisions, edge cases, constraints one question at a time before any code. Trigger: `/plan`
+When the user types `/plan`, says "plan this", "help me think through", "plan before we build", or "interview me about", invoke the Skill tool with `skill: "plan"` before doing anything else.
+# drawio-skill
+- **drawio-skill** (`~/.claude/skills/drawio-skill/SKILL.md`) - generates diagrams (flowchart/architecture/ER/UML/sequence/network/mind-map) as .drawio XML, exports PNG/SVG/PDF/JPG via the native draw.io desktop CLI. Trigger: `/drawio-skill`
+When the user types `/drawio-skill`, or asks for a diagram/flowchart/architecture diagram/ER diagram/UML diagram/sequence diagram, invoke the Skill tool with `skill: "drawio-skill"` before doing anything else.
 # my-md
 - **my-md** (`~/.claude/skills/my-md/SKILL.md`) - list all markdown files: global ~/.claude/ docs + current project artifacts. Trigger: `/my-md`
 When the user types `/my-md`, says "list md files", or "show markdown files", invoke the Skill tool with `skill: "my-md"` before doing anything else.

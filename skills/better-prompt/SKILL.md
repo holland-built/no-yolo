@@ -1,7 +1,7 @@
 ---
 name: better-prompt
 description: Use this skill when the user types /better_prompt, says 'sharpen this prompt', or 'improve my prompt'. Rewrites a rough prompt against learned conventions from learnings.md.
-user-invocable: false
+user-invocable: true
 argument-hint: "[rough prompt text to sharpen]"
 allowed-tools:
   - Read

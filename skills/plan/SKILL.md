@@ -1,7 +1,7 @@
 ---
 name: plan
 description: Use this skill when the user types /plan, says 'plan this', 'help me think through', 'plan before we build', or 'interview me about'. Pre-build planning interview — extracts design decisions, edge cases, constraints one question at a time before any code.
-user-invocable: false
+user-invocable: true
 argument-hint: "[describe the feature, system, or decision to plan]"
 allowed-tools:
   - Bash
@@ -77,7 +77,7 @@ Are we aligned? (yes / keep going / fix X)
 - User says **keep going** or corrects something → continue grilling, re-surface summary when ready
 - Never self-declare complete — always wait for explicit "yes"
 
-**Gate:** Agreement confirmed. Run `/build` with the topic. Do NOT write any code from this output alone.
+**Gate:** Agreement confirmed. Before dispatching, run the locked summary through the `better-prompt` skill (Skill tool, `skill: "better-prompt"`) to sharpen it and get its recommended skill route. Dispatch that recommended skill with the sharpened prompt — `/build` for a feature/system, `/design` for a UI-only ask, or whichever skill better-prompt names. Do NOT write any code from this output alone.
 
 ---
 

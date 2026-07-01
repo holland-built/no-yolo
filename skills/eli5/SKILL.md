@@ -1,7 +1,7 @@
 ---
 name: eli5
 description: Use this skill when the user types /eli5. Explains any skill, command, plan, or decision in plain English before committing to it — no jargon.
-user-invocable: false
+user-invocable: true
 argument-hint: "[skill name, plan text, command, or file path]"
 model: haiku
 allowed-tools:
