@@ -1,7 +1,7 @@
 ---
 name: prompt-scan
 description: Use this skill when the user types /prompt-scan, says 'scan my prompts', or 'refresh learnings'. Scans system prompt files + fetches current model release notes → appends dated section to learnings.md for /better-prompt.
-user-invocable: false
+user-invocable: true
 argument-hint: ""
 allowed-tools:
   - Read

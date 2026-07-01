@@ -78,6 +78,28 @@
             "statusMessage": "Loading caveman mode..."
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"~/.claude/hooks/prompt-scan-nudge.js\"",
+            "timeout": 5,
+            "statusMessage": "Checking prompt-scan freshness..."
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"~/.claude/hooks/lockstep-guard.js\"",
+            "timeout": 5
+          }
+        ]
       }
     ],
     "UserPromptSubmit": [
