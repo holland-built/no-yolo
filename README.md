@@ -9,7 +9,7 @@ My personal Claude Code setup, saved in git. Fork it and you get a working setup
 Claude Code is a command-line tool where you talk to Claude to write and edit code. It reads a folder called `~/.claude/` every time it starts. This repo *is* that folder, saved in git. Here's what's inside:
 
 - **Rules** Claude reads at the start of every session. Enforces strict habits: plan before coding, only touch the exact lines you asked for, use the right model for the right job.
-- **29 custom commands**, plus 7 borrowed from plugins — type `/name` to run one, like `/code-review` or `/build`. Run `/my-skills` for the full list.
+- **27 custom commands**, plus 7 borrowed from plugins — type `/name` to run one, like `/review` or `/build`. Run `/my-skills` for the full list.
 - **Memory** that learns your preferences. Say "remember that I prefer X" and Claude saves it automatically — carries forward to every future session.
 
 ---
@@ -93,14 +93,14 @@ These are not installed by setup.sh. Install whichever ones match the skills you
 
 | Tool | Why you'd want it | Used by | How to install |
 |---|---|---|---|
-| [gh (GitHub CLI)](https://cli.github.com/) | Lets Claude push code, open pull requests, and read GitHub issues | `code-review`, `ship` | `brew install gh && gh auth login` |
+| [gh (GitHub CLI)](https://cli.github.com/) | Lets Claude push code, open pull requests, and read GitHub issues | `review`, `ship` | `brew install gh && gh auth login` |
 | [Graphviz](https://graphviz.org/) | Draws diagram files | `drawio-skill` | `brew install graphviz` |
 | [draw.io](https://www.drawio.com/) CLI | Opens and exports diagrams | `drawio-skill` | `brew install --cask drawio` |
 | [Groq Whisper](https://console.groq.com/) | Transcribes a YouTube video and saves a structured wiki page into your Obsidian vault | `video-to-kb` | Get a free API key at console.groq.com, then add `export GROQ_API_KEY=your_key` to `~/.zshrc` |
-| [Chrome](https://www.google.com/chrome/) (headless) | Takes screenshots of mockups without opening a browser window | `design-full`, `build` | Already on most machines; or `brew install --cask google-chrome` |
+| [Chrome](https://www.google.com/chrome/) (headless) | Takes screenshots of mockups without opening a browser window | `design`, `build` | Already on most machines; or `brew install --cask google-chrome` |
 | [Playwright](https://playwright.dev/) | Lets Claude click around in a browser to test your web app | `build` | Add the `playwright` MCP server to `settings.json` — see MCP note below |
-| [shadcn/ui MCP](https://ui.shadcn.com/docs/mcp) | Gives Claude full context on shadcn/ui components for design mockups | `design-full`, `design-fix` | `pnpm dlx shadcn@latest mcp init --client claude` (or `npx shadcn@latest mcp init --client claude`) |
-| [Lazyweb](https://github.com/aboul3ata/lazyweb-skill) | Real app screenshots + A/B test evidence — 12 design research skills | `design-audit`, `design-full` | `curl -fsSL https://www.lazyweb.com/install.sh \| bash` |
+| [shadcn/ui MCP](https://ui.shadcn.com/docs/mcp) | Gives Claude full context on shadcn/ui components for design mockups | `design` | `pnpm dlx shadcn@latest mcp init --client claude` (or `npx shadcn@latest mcp init --client claude`) |
+| [Lazyweb](https://github.com/aboul3ata/lazyweb-skill) | Real app screenshots + A/B test evidence — 12 design research skills | `design-audit`, `design` | `curl -fsSL https://www.lazyweb.com/install.sh \| bash` |
 
 > **What's an MCP server?** MCP (Model Context Protocol) is a standard for giving Claude extra tools — like the ability to control a browser or search a codebase. You wire one up by adding a config block to `settings.json`. See the [Claude MCP docs](https://docs.anthropic.com/en/docs/claude-code/mcp) for how.
 
@@ -123,7 +123,7 @@ The one thing you may want to add: **MCP servers**. These give Claude extra abil
 }
 ```
 
-Common one: `playwright` (browser control for `/build` and `/quick-design`). You don't need any to start — add when a skill asks for one. Full list in the [Claude MCP docs](https://docs.anthropic.com/en/docs/claude-code/mcp).
+Common one: `playwright` (browser control for `/build`). You don't need any to start — add when a skill asks for one. Full list in the [Claude MCP docs](https://docs.anthropic.com/en/docs/claude-code/mcp).
 
 ---
 
@@ -155,51 +155,53 @@ What each file and folder is for:
 
 ## Skills inventory
 
-A "skill" is a custom command you trigger with a slash, like `/code-review`. Here's everything available.
+A "skill" is a custom command you trigger with a slash, like `/review`. Here's everything available.
 
-### Frontend design — audit, explore, build
+### Frontend design — audit and build
 
 Two skills cover the full frontend design workflow. Design tokens (`DESIGN.md` / `design-system/MASTER.md` / CSS) are always read as **context, not constraint** — a redesign can propose replacing them entirely.
 
 | Command | Depth | What it does | Gates |
 |---|---|---|---|
-| `/design-audit` | read-only | Screenshots the running app, pulls real-world references via Lazyweb, runs Taste / Swiss / UIwiki / accessibility / code-health lenses → ranked violations table + top-10 improvements | none |
-| `/design-full` | mockups + full pipeline | `--fast`: 7 parallel Sonnet mockups (5 redesign + 2 wild), slop-judged, opens in Chrome — hard pick-gate, no code. Default: Audit → 6-persona direction debate → 7 Opus mockups → token extraction → Opus plan → chains to `/build` | `--fast`: 1 gate; full: 4 hard gates |
+| `/design-audit` | read-only | 5 lenses in parallel (taste, Swiss design, UI rules, accessibility, CSS health), then a second agent challenges every Critical finding before it sticks. Ranked violations table, worst first. Say "fix it" and it hands off to `/impeccable` | none |
+| `/design` | mockups + full pipeline | Starts from a brand seed, fans out 7 Opus mockups each locked to a different paradigm, kills the generic ones with a slop validator, hard-stops on a pick. Then writes an Opus plan and Sonnet builds it. `--apply-spec [DESIGN.md]` swaps an existing app onto a spec's tokens instead | Nothing builds until you pick a mockup |
 
-`/design-audit` output passes forward — paste it into `/design-full` and it skips re-running the audit. **Nothing builds without an approved mockup** (`/design-full` Gate 3).
-
-All three skills degrade gracefully — if Lazyweb, Interface Design, or Design+Refine aren't installed, the skill falls back to embedded rules. See the Outside tools table above for install commands.
-
+`/design-audit` findings can feed directly into a `/design` fix pass. Both skills always show light + dark mode.
 
 ### Commands in this setup
 
 | Skill | What it does | Modes & flags |
 |---|---|---|
-| `/code-health` | Runs `trim` + `improve` in one pass: static analysis, then trims over-complication, then a ranked improvement plan. No need to run those borrowed commands separately | `--auto` (skip gates, unattended) |
-| `/code-review` | Reviews a pull request or a set of changes: first for bugs, then for over-complication, then for unrelated edits that shouldn't be there | `--fix` (auto-apply) · `--comment` (inline comments) · `--effort low\|medium\|high\|max` (depth) |
+| `/review` | Reviews a diff or a whole codebase: correctness bugs, over-engineering, Karpathy surgical filter, secret scan and antislop on any `.md` changes — all automatic. `--health` escalates to a full codebase health pass instead of a diff review | `--fix` (auto-apply) · `--comment` (inline comments) · `--health` (full pass) · `--effort low\|medium\|high\|max` |
 | `/diagnose` | A 6-step way to find the real cause of a bug. Add `--debate` and 6 Opus personas each argue a competing root-cause theory — contradiction map, most likely cause with file:line, one concrete next step | `--debate` (6-persona Opus mode) |
 | `/drawio-skill` | Draws diagrams (architecture, flowcharts, database tables, UML). Saves them as PNG, SVG, or PDF | — |
-| `/build` | Builds a whole feature start to finish: gather evidence, plan with Opus, approve, then automatically runs a 10-variant UI mockup gate (slop-filtered, requires approval) before writing any code — tests first, build with Sonnet, then prove it works | — |
-| `/plan` | Interviews you before any code gets written — one question at a time until every tricky case is sorted out | — |
+| `/build` | Builds a whole feature start to finish: gather evidence, plan with Opus, approve, then automatically runs a UI mockup gate (slop-filtered, requires approval) before writing any code — tests first, build with Sonnet, then prove it works | — |
+| `/plan` | Interviews you before any code gets written — one question at a time until every tricky case is sorted out. On agreement, routes the sharpened result to `/build`, `/design`, or whichever skill fits | — |
 | `/my-md` | Lists every markdown file — both the global `~/.claude/` docs and the ones in your current project | — |
-| `/my-skills` | This very list. Shows the commands I wrote and the borrowed ones, plus how they connect and what they depend on | `fast` (2-col) · `deep` (4-col + relationships) |
-| `/design-audit` | Read-only design audit: screenshots the app, pulls real-world references, runs Taste / Swiss / UIwiki / accessibility / code-health lenses → ranked violations table + top-10 improvements. No gates, no code | `--persist` (write report to `design-system/AUDIT-<date>.md`) |
-| `/design-full` | Always nukes existing design tokens and starts fresh. Two modes: `--fast` = 7 Sonnet mockups, pick and stop; full = audit → debate → 7 Opus mockups → plan → `/build`. Detects stack, injects fresh palette, bans current colors. All mockups show light + dark. Four hard gates. | `--fast` (quick mockups, no code) · accepts pasted `/design-audit` output |
-| `/design-fix` | Surgical 7-variant mockup for ONE component. Respects current colors and fonts — only structure/layout changes. 5 sensible + 2 wild variants, light + dark, hard pick gate, no code | — |
-| `/token-hunt` | Finds 5 live sites matching your design intent, extracts each one's CSS tokens (colors, fonts, spacing), lets you pick one, and writes `stolen-tokens.md` — ready to feed `/design-full --steal`. Standalone or first step of a redesign | — |
-| `/tdd` | Keeps you honest about test-driven development: write a failing test, make it pass, clean up, repeat | — |
+| `/my-skills` | This very list. Default view is a dense 2-skill-per-row table with 2-5 word summaries — fits one screen | `deep` (full sentences + relationships + bolt-ons) |
+| `/lockstep` | Told "don't code yet" and had it ignored a few messages later? This makes it physical — a `PreToolUse` hook blocks every Edit/Write/NotebookEdit outright until you say go | `on` / `off` |
 | `/video-to-kb` | *(Optional — requires Obsidian + Groq API key)* Watch a YouTube video and get a structured wiki page injected into your Obsidian vault automatically — transcript, summary, key claims | — |
 | `/whats-next` | Reads session task queue (`~/.claude/.pending-tasks.md`) and runs next task; creative project-specific suggestions when queue is empty | — |
 | `/debate` | Your product team argues the decision — Senior Dev, Junior Dev, Sales Engineer, DevOps, Sales Leader, Eng Leader — then maps contradictions, synthesizes a briefing, and ends with one clear YES/NO/CONDITIONAL verdict | — |
 | `/eli5` | Explains any command, plan, file, or decision in plain English before you commit to it | — |
-| `/antislop` | Paste any text and get a violations table — forbidden words, filler openers, em-dash spam, GUI clichés — with excerpts and one-line fixes. CLEAN or SLOP-DETECTED verdict. Diagnosis only | — |
-| `/prompt-scan` | Reads all system prompt files plus current model release notes and appends a dated snapshot to `learnings.md`. Required before `/better_prompt` | — |
+| `/prompt-scan` | Reads all system prompt files plus current model release notes and appends a dated snapshot to `learnings.md`. Required before `/better_prompt`. A SessionStart hook offers to re-run it when the active model differs from the last scan | — |
 | `/better_prompt` | Reads `learnings.md`, diagnoses a rough prompt for missing target/scope/criterion, rewrites it with all three plus the right skill route. Requires `/prompt-scan` to have run first | — |
 | `/last-30` | Pulls the last 30 days of signal from GitHub, HN, YouTube, and X — trending repos, top discussions, recent talks. Filters out old results | — |
-| `/md-check` | Lists every `~/.claude/` doc with its size, flags anything over 200 lines, and spots two files saying the same thing so you can merge them | `--pre FILENAME` (check before creating) · `--drift` (check CLAUDE.md descriptions) |
-| `/ship` | Quality-gate, changelog, and publish to `no-yolo` in one command. Warns on slop and bloat, blocks personal-data leaks, writes a dated changelog entry, pushes, then creates a dated GitHub release | — |
-| `/skill-audit` | Audits your skill library across 4 dimensions: bucket fit (utility/verification/data enrichment/orchestration), component gaps (scripts/assets/config.json), missing verifiers, and trigger condition quality. Writes a full report. Also builds new verifiers and surfaces gotcha gaps on demand | `--audit` · `--build-verifier <skill>` · `--gotchas` |
-| `/update` | Checks if your setup is out of date, shows a plain-English summary of what changed, and lets you apply updates, roll back, or restore a removed skill | `preview` (see what changed) · `full` (pull+install) · `rules` (pull rules only) · `rollback` (undo last) · `restore NAME` (bring back deleted skill) |
+| `/md-check` | Lists every `~/.claude/` doc with its size, flags anything over 200 lines, and spots two files saying the same thing so you can merge them | `--pre FILENAME` (check before creating) · `--drift` (check description staleness) |
+| `/ship` | Quality-gate, changelog, and publish in one command. Warns on slop and bloat, blocks personal-data leaks, writes a dated changelog entry, pushes; in this repo also creates a dated GitHub release | — |
+| `/skill-audit` | Audits your skill library across 4 dimensions: bucket fit, component gaps, missing verifiers, and trigger condition quality. Writes a full report. Also builds new verifiers and surfaces gotcha gaps on demand | `--audit` · `--build-verifier <skill>` · `--gotchas` |
+| `/update` | Checks if your setup is out of date, shows a plain-English summary of what changed, and lets you apply updates, roll back, or restore a removed skill | `preview` · `full` · `rules` · `rollback` · `restore NAME` |
+| `/ingest-docs` | Converts PDFs/decks/docs you drop in `docs/raw/` into dense context files Claude reads at runtime — dedupes against what's already there, tracks changes in a manifest | — |
+| `/remember-that` | Saves a decision or preference from the conversation as a fact file so future sessions know about it. No-args scans the conversation and proposes what's worth keeping | — |
+
+**Hidden from `/my-skills` but still real commands** — kept because each retains a use case its replacement doesn't cover:
+
+| Skill | What it does | Why hidden |
+|---|---|---|
+| `/antislop` | Paste any text and get a violations table — forbidden words, filler openers, em-dash spam, GUI clichés. CLEAN or SLOP-DETECTED verdict. Diagnosis only | Auto-runs inside `/review` and `/ship` — standalone still useful for arbitrary text outside a git diff |
+| `/tdd` | Writes a failing test first, then makes it pass — one behavior at a time | `/build` step 4 runs the identical loop automatically — standalone still useful without the full `/build` pipeline |
+
+`supacode-cli` isn't a typed command — it auto-activates only inside a Supacode terminal session, driving tabs/worktrees/surfaces via the `supacode` CLI.
 
 ### Borrowed commands
 

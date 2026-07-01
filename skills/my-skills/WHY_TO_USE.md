@@ -1,36 +1,36 @@
 code-health|Finds real waste fast — most codebases have 20-30% deletable code
 code-review|Catches what you're blind to after writing it. Karpathy filter hunts code that shouldn't exist
 diagnose|Solo: forces systematic evidence-gathering. --debate: six theories surface the one you missed
-drawio-skill|Diagrams that take an hour in Miro take 2 minutes
+drawio-skill|An hour of manual fiddling becomes two minutes
 build|Nothing ships without a plan, tests, and proof. No more "works on my machine" done claims
 graphify|Answers "what breaks if I change X?" in seconds instead of reading 40 files
-plan|First-attempt success jumps from ~70% to ~90% when decisions are front-loaded
-my-md|One command to see everything. Prevents losing work to forgotten files
+plan|First-try success goes from ~70% to ~90% when the hard calls are made up front, not mid-build
+my-md|One command instead of hunting across two directory trees
 my-skills|You forget you have tools. This is the map
 design-audit|Five independent lenses catch what one reviewer misses — audit is read-only, fix gate keeps you in control before anything builds
 tdd|The RED test is proof you actually fixed it. Without it you're asserting, not proving
 design|7 distinct paradigms at once + slop validator kills the generic — one pick becomes a full build plan
 impeccable|Loop catches regressions after each fix. Manual polish misses cross-file consistency
-ingest-docs|Raw PDFs are invisible to Claude. Converts once, tracks changes, no re-ingestion overhead
-supacode-cli|CLI is faster than UI for batch operations on tabs and worktrees
+ingest-docs|Dedupes against what's already there and tracks changes in a manifest — re-runs only touch what's new
+supacode-cli|Auto-activates in-session; no slash command to remember
 video-to-kb|Talks are perishable. One command turns them into permanent, searchable KB nodes
 whats-next|Prevents starting something new while something is already half-done
-improve|Never touches code — pure signal. Tells you what's wrong without risk of a bad auto-fix
+improve|Vets every subagent finding itself before reporting; plans are written for a weaker model with zero session context
 trim|The instinct to abstract too early is universal. This actively resists it
 trim-audit|Finds the abstraction that seemed smart 6 months ago and now nobody understands
 trim-debt|Shortcuts without a ledger become forgotten landmines
 trim-help|Fast lookup beats interrupting flow to reread docs
 trim-review|Most review tools look for what to add. This one specifically hunts what to remove
 antislop|AI writing has 25 known tell patterns. This catches them before they reach users
-better-prompt|A prompt with a named target + scope + success criterion returns 3x better results
-eli5|Stops you from agreeing to something you did not actually understand
+better-prompt|Shows before/after with rationale instead of guessing why a prompt underperformed
+eli5|Forces the "wait, do you actually get this?" check before you say yes
 last-30|GitHub stars and HN posts from 3 years ago are noise. Last 30 days is actual traction
-md-check|Duplicate rules in two files = the wrong one gets followed. Overlap detection prevents this
-prompt-scan|Without a learnings snapshot, /better-prompt rewrites blindly. This gives it real context
+md-check|Other skills call it with --pre before writing a new note, so you never get two files on one topic
+prompt-scan|Keeps /better_prompt's reference material from going stale
 remember-that|Preferences decay between sessions. This makes them permanent without manual file editing
 ship|Leak guard + quality gates run automatically. One command replaces 5 manual steps
-debate|Because no single role sees the whole picture. Six product-team lenses — code, ops, and revenue — surface the contradictions and the one question you haven't asked yet.
-update|Because pulling blindly can remove things you rely on. See first, then decide.
+debate|Ends with YES/NO/CONDITIONAL and the one reason that settles it — no "it depends"
+update|Rollback and restore-removed-skill built in — no manual git surgery if something breaks
 trim-gain|Scorecard from benchmark medians — not a per-repo estimate.
 lazyweb|Routes to the right mode + real screenshots instead of generic guesses from training data
 lazyweb-quick-search|Lightweight best-practice check from real apps — no report overhead
@@ -44,5 +44,6 @@ lazyweb-optimize-paywall|Twin experiments + falsifiable hypotheses — conversio
 lazyweb-optimize-sign-up|Diagnoses real signup friction + gives testable fixes, not vibes
 lazyweb-paywall-cta|CTA candidates backed by real before/after A/B observations
 lazyweb-update|One command reinstalls across all clients — no manual sync
-skill-audit|Finds bucket-fit, verifier, and trigger gaps you can't see one skill at a time
+skill-audit|One pass instead of manually eyeballing every SKILL.md
 review|Replaces two separate commands with one routed pass — secret scan and antislop are automatic, not a separate step you remember to run
+lockstep|Mechanically denied by a PreToolUse hook — not a prompt the model can talk itself past
