@@ -4,6 +4,7 @@ design-audit
 
 ## Build
 build
+plan
 
 ## Review
 review
@@ -11,9 +12,19 @@ review
 ## Research
 last-30
 video-to-kb
+ingest-docs
 
 ## Quality
 diagnose
+debate
+improve
+
+## Prompting
+prompt-scan
+better-prompt
+
+## Diagrams
+drawio-skill
 
 ## Memory
 remember-that
@@ -22,3 +33,10 @@ remember-that
 my-skills
 whats-next
 ship
+eli5
+my-md
+md-check
+skill-audit
+update
+supacode-cli
+lockstep

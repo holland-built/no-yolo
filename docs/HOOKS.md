@@ -9,6 +9,8 @@ Hook scripts in `~/.claude/hooks/` run automatically at harness events — thing
 - **caveman-mode-tracker.js** — tracks caveman mode state across messages.
 - **caveman-stats.js** — reports token savings from caveman mode.
 - **caveman-statusline.sh / .ps1** — shows caveman state in the status bar (cross-platform).
+- **prompt-scan-nudge.js** — SessionStart; surfaces the model recorded in the last `/prompt-scan` so Claude can offer a re-scan if the current model differs.
+- **lockstep-guard.js** — PreToolUse (Edit/Write/NotebookEdit); denies file mutation while `.lockstep-active` exists. Toggle: `/lockstep`.
 - **reflect-claude-md-stop.sh** — end-of-session reflection; logs learnings when Claude Code exits.
 - **statusline.sh** — displays context usage, your 5-hour usage limit, and your 7-day usage limit in the Claude Code status bar.
 

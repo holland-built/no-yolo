@@ -1,7 +1,7 @@
 ---
 name: my-md
 description: Use this skill when the user types /my-md, says 'list md files', or 'show markdown files'. Lists all markdown files in ~/.claude/ and current project with what each does.
-user-invocable: false
+user-invocable: true
 argument-hint: ""
 model: haiku
 allowed-tools:

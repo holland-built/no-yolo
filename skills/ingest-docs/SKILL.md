@@ -1,7 +1,7 @@
 ---
 name: ingest-docs
 description: Per-repo document ingestion pipeline. Converts raw files (PDF, PPTX, DOCX, images) in docs/raw/ to clean .md context files in docs/context/ that Claude reads at runtime. Tracks changes via .manifest. Trigger /ingest-docs.
-user-invocable: false
+user-invocable: true
 argument-hint: "[--force] [filename]"
 allowed-tools: Read,Write,Edit,Bash
 ---
