@@ -43,6 +43,7 @@ lazyweb-optimize-paywall|Redesign a paywall for conversion — twin experiments 
 lazyweb-optimize-sign-up|Optimize a sign-up screen — diagnose friction + falsifiable redesign hypotheses.
 lazyweb-paywall-cta|Critique + rewrite a paywall CTA — ranked candidates backed by real before/after data.
 lazyweb-update|Update the local Lazyweb skill pack from GitHub + reinstall into clients.
+quick-mockup|Fast throwaway HTML layout mockup — gray boxes, served live, browser-opens. Not /design.
 skill-audit|Audits the whole skill library: bucket fit, missing pieces, unverified output, stale triggers.
 review|Unified diff review + codebase health. Bugs, bloat, secrets, slop — one command.
 lockstep|Hook-enforced gate: blocks Edit/Write/NotebookEdit until you say go.

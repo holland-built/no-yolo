@@ -4,6 +4,7 @@
 | --- | --- | --- | --- |
 | design | Fresh UI generation: 10 Opus mockups (8 paradigms + 2 wild) → AI picks → you confirm → build. | Starting a new design or full redesign — want truly fresh, not an incremental patch | 7 distinct paradigms at once + slop validator kills the generic — one pick becomes a full build plan |
 | design-audit | Audit UI across 5 lenses → ranked violations → optional 10-mockup fix pipeline. | Any UI that feels off — audit first, then optionally fix with 10 mockups in the same command | Five independent lenses catch what one reviewer misses — audit is read-only, fix gate keeps you in control before anything builds |
+| quick-mockup | Fast throwaway HTML layout mockup — gray boxes, served live, browser-opens. Not /design. | — | — |
 
 ## Build
 

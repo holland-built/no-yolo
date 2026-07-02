@@ -73,3 +73,6 @@ When the user types `/ingest-docs`, says "ingest docs", "process raw docs", or "
 # review
 - **review** (`~/.claude/skills/review/SKILL.md`) - one mode, always thorough: diff review (correctness/bugs/over-engineering/Karpathy) AND full codebase health pass (fallow + trim + improve), max effort, every time. Bakes in secret scan and antislop on .md changes. One ranked findings list, one approve-all gate, then fixes everything approved. `--auto` skips the gate for unattended runs. Trigger: `/review`
 When the user types `/review`, says "review this", "check the diff", "code health", "run health pass", or "review before merge", invoke the Skill tool with `skill: "review"` before doing anything else.
+# quick-mockup
+- **quick-mockup** (`~/.claude/skills/quick-mockup/SKILL.md`) - fast disposable placeholder-only HTML mockup for layout/spatial decisions. ONE file, gray boxes, system-ui font, served over http://, auto-opened in browser. No brand tokens, no slop-judge, no 10-variant pipeline — that's /design's job. Also the concrete tool that satisfies the global "never show ASCII mockups" rule for small/quick asks. Trigger: `/quick-mockup`
+When the user types `/quick-mockup`, says "quick mockup", "sketch this", "throwaway mockup", or "just show me the layout", invoke the Skill tool with `skill: "quick-mockup"` before doing anything else.

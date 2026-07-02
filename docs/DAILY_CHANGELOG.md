@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-07-02
+
+- added /quick-mockup skill: fast disposable placeholder-only HTML layout mockup, served over http://, auto-opens browser; lightweight counterpart to /design
+- wired /quick-mockup into SKILL_TRIGGERS.md, STORIES.md, TAGLINES.md, CATEGORIES.md, TAGLINES_SHORT.md
+
 ## 2026-07-01
 
 - un-hid 13 skills back into /my-skills: eli5, debate, code-health (later deleted), plan, my-md, md-check, skill-audit, update, prompt-scan, better-prompt, ingest-docs, drawio-skill, supacode-cli
