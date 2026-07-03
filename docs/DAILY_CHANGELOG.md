@@ -4,6 +4,7 @@
 
 - added /quick-mockup skill: fast disposable placeholder-only HTML layout mockup, served over http://, auto-opens browser; lightweight counterpart to /design
 - wired /quick-mockup into SKILL_TRIGGERS.md, STORIES.md, TAGLINES.md, CATEGORIES.md, TAGLINES_SHORT.md
+- rewrote /better-prompt output: now returns only the rewritten prompt in a fenced block, no before/after/why
 
 ## 2026-07-01
 
