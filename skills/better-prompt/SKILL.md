@@ -86,27 +86,16 @@ Wrong-skill handling: if the rough prompt names skill `/X` but learnings.md trig
 
 ## Step 6 — Output
 
-```
-**Before:**
-\```
-<original rough prompt verbatim>
-\```
+Output the rewritten prompt only — a single fenced block, nothing else. No "Before", no "Why", no rationale bullets, no "Run with" line.
 
-**After:**
+```
 \```
 <rewritten prompt — single block, copy-pasteable>
 \```
-
-**Why:**
-- <rationale bullet 1 — cite the learned rule, e.g. "added scope boundary — Scope rules">
-- <rationale bullet 2>
-- <rationale bullet 3>
-
-**Run with:** `/<skill>` — <one line on why this skill fits>
 ```
 
 Rules:
-- Exactly 3 rationale bullets, each citing the learned rule that drove the change
+- Single fenced block, zero surrounding text
 - Never invent skills not in learnings.md Skill triggers
-- Output is fenced blocks + bullets only — no prose paragraphs
-- If wrong skill was replaced: one of the 3 bullets must be `routed /<old> → /<new> per Skill triggers`
+- If a skill applies, include it as the first word of the rewritten prompt (e.g. `/review ...`)
+- If wrong skill was named in the rough prompt, silently correct it in the rewrite
