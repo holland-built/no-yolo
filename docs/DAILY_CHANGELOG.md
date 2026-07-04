@@ -2,7 +2,7 @@
 
 ## 2026-07-04
 
-- removed the `/ship` alias skill — `/release` is the single publish command (typing `/ship` still routes to `/release` as a shortcut)
+- removed the `/ship` alias skill and killed `/ship` as a trigger phrase entirely — `/release` is the sole publish command
 - unified publishing into one command: `/release` — context-aware, reads a repo-root `SHIP.md` playbook and pushes to the right environment (dev/staging/prod); `/ship` is now an alias
 - added `~/.claude/SHIP.md` (the skill repo's own release playbook) and the SHIP.md template the skill authors when a repo has none
 - `/release` refuses to push a repo with no SHIP.md — it stops (lockstep) and walks you through building one first

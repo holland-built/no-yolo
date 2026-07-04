@@ -53,7 +53,7 @@ git log origin/main..HEAD --oneline 2>/dev/null
 ```
 
 If there are uncommitted changes or unpushed commits → surface them immediately:
-> `Unpushed work: [list files or commits]. Run /ship to push.`
+> `Unpushed work: [list files or commits]. Run /release to push.`
 Stop here. Do not proceed to scan below.
 
 If working tree is clean and nothing unpushed, scan for signal:

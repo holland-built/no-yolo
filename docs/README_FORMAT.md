@@ -1,6 +1,6 @@
 # README Format Spec
 
-This file defines the required structure of `README.md`. The `/ship` skill reads every line starting with `## ` as a required section heading and hard-blocks the commit if any heading is missing or renamed in `README.md`.
+This file defines the required structure of `README.md`. The `/release` skill reads every line starting with `## ` as a required section heading and hard-blocks the commit if any heading is missing or renamed in `README.md`.
 
 ### Required sections (verbatim, in order)
 ## What this is

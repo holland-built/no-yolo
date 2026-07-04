@@ -1,6 +1,6 @@
 ---
 name: release
-description: Use this skill when the user types /release or /ship, says 'release', 'ship it', 'ship this', 'push this', 'commit and push', or 'get this to github'. ONE context-aware publish command for ANY repo — reads the repo-root SHIP.md playbook and runs it, environment-aware (dev/staging/prod). If no SHIP.md exists, it STOPS (lockstep) and guides you to build one before anything is committed or pushed.
+description: Use this skill when the user types /release, says 'release', 'push this', 'commit and push', or 'get this to github'. ONE context-aware publish command for ANY repo — reads the repo-root SHIP.md playbook and runs it, environment-aware (dev/staging/prod). If no SHIP.md exists, it STOPS (lockstep) and guides you to build one before anything is committed or pushed.
 user-invocable: true
 argument-hint: "[env: dev|staging|prod] [optional commit message] [--auto]"
 allowed-tools:
@@ -13,8 +13,6 @@ allowed-tools:
 # release
 
 One verb to publish any repo to GitHub. The repo-specific recipe lives in `<repo-root>/SHIP.md`; this skill detects the repo, reads its `SHIP.md`, and runs it for the target environment. Same command everywhere — `~/.claude`, Wayfinder, MCP, any git repo.
-
-`/ship` is an alias for this skill.
 
 ## Step 0 — Locate repo + playbook
 

@@ -34,7 +34,7 @@ When the user types `/debate`, says "debate this", "stress test this decision", 
 When the user types `/update`, says "check for updates", "am I out of date", "what's new", "update my setup", or "rollback", invoke the Skill tool with `skill: "update"` before doing anything else.
 # release
 - **release** (`~/.claude/skills/release/SKILL.md`) - ONE context-aware publish command for any repo: reads the repo-root SHIP.md playbook and pushes to the right environment (dev/staging/prod). No SHIP.md → stops (lockstep) and helps you build one before anything ships. Trigger: `/release`
-When the user types `/release` or `/ship`, says "release", "ship it", "push this", "commit and push", or "get this to github", invoke the Skill tool with `skill: "release"` before doing anything else.
+When the user types `/release`, says "release", "push this", "commit and push", or "get this to github", invoke the Skill tool with `skill: "release"` before doing anything else.
 # skill-discovery
 When the user says "find skill for X", "what skill handles X", "which skill does X", or "what should I use for X", read `~/.claude/skills/my-skills/TAGLINES.md`, match X against the taglines, and return the single best-matching skill plus its trigger command. This is a routing rule, not a skill — do not invoke the Skill tool.
 # diagnose
