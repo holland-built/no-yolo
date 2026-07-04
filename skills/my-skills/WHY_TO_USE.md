@@ -26,6 +26,7 @@ better-prompt|Shows before/after with rationale instead of guessing why a prompt
 eli5|Forces the "wait, do you actually get this?" check before you say yes
 last-30|GitHub stars and HN posts from 3 years ago are noise. Last 30 days is actual traction
 md-check|Other skills call it with --pre before writing a new note, so you never get two files on one topic
+md-fix|Closes the loop md-check leaves open — one command audits and applies, instead of you hand-editing every finding
 prompt-scan|Keeps /better_prompt's reference material from going stale
 remember-that|Preferences decay between sessions. This makes them permanent without manual file editing
 ship|Leak guard + quality gates run automatically. One command replaces 5 manual steps

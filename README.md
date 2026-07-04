@@ -9,7 +9,7 @@ My personal Claude Code setup, saved in git. Fork it and you get a working setup
 Claude Code is a command-line tool where you talk to Claude to write and edit code. It reads a folder called `~/.claude/` every time it starts. This repo *is* that folder, saved in git. Here's what's inside:
 
 - **Rules** Claude reads at the start of every session. Enforces strict habits: plan before coding, only touch the exact lines you asked for, use the right model for the right job.
-- **28 custom commands**, plus 7 borrowed from plugins — type `/name` to run one, like `/review` or `/build`. Run `/my-skills` for the full list.
+- **30 custom commands**, plus 7 borrowed from plugins — type `/name` to run one, like `/review` or `/build`. Run `/my-skills` for the full list.
 - **Memory** that learns your preferences. Say "remember that I prefer X" and Claude saves it automatically — carries forward to every future session.
 
 ---
@@ -188,6 +188,7 @@ Two skills cover the full frontend design workflow. Design tokens (`DESIGN.md` /
 | `/better_prompt` | Reads `learnings.md`, diagnoses a rough prompt for missing target/scope/criterion, rewrites it with all three plus the right skill route. Requires `/prompt-scan` to have run first | — |
 | `/last-30` | Pulls the last 30 days of signal from GitHub, HN, YouTube, and X — trending repos, top discussions, recent talks. Filters out old results | — |
 | `/md-check` | Lists every `~/.claude/` doc with its size, flags anything over 200 lines, and spots two files saying the same thing so you can merge them | `--pre FILENAME` (check before creating) · `--drift` (check description staleness) |
+| `/md-fix` | Audits your docs then APPLIES the fixes md-check only reports — dedupe repeated rules, merge overlapping files, trim oversize, correct stale descriptions — behind one approve-all gate | `--auto` (skip the gate) |
 | `/ship` | Quality-gate, changelog, and publish in one command. Warns on slop and bloat, blocks personal-data leaks, writes a dated changelog entry, pushes; in this repo also creates a dated GitHub release | — |
 | `/skill-audit` | Audits your skill library across 4 dimensions: bucket fit, component gaps, missing verifiers, and trigger condition quality. Writes a full report. Also builds new verifiers and surfaces gotcha gaps on demand | `--audit` · `--build-verifier <skill>` · `--gotchas` |
 | `/update` | Checks if your setup is out of date, shows a plain-English summary of what changed, and lets you apply updates, roll back, or restore a removed skill | `preview` · `full` · `rules` · `rollback` · `restore NAME` |

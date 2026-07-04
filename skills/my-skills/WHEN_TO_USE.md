@@ -26,6 +26,7 @@ better-prompt|Before running a fuzzy prompt through any skill
 eli5|Before committing to something you're not sure you fully understand
 last-30|Starting research on a topic and want signal from the past month, not all-time rankings
 md-check|Notes piling up or repeating themselves
+md-fix|md-check flagged problems and you want them fixed, not just listed
 prompt-scan|Once on setup, and again whenever a new Claude model ships
 remember-that|End of a session with useful decisions or preferences worth keeping
 ship|Done editing and ready to commit + push

@@ -35,13 +35,19 @@ Read each file in order. If a file is missing, note "(file absent)" for that sec
 ## Step 2 — Detect Model + Fetch Release Notes
 
 **Model detection:**
-Parse the model ID from the current session context ("The exact model ID is …"). Extract family + version (e.g. `claude-sonnet-4-6`). If unresolvable, write `model: unknown` and skip release notes.
+Parse the model ID from the current session context ("The exact model ID is …"). Extract family + version (e.g. `claude-opus-4-8`, `claude-sonnet-5`, `claude-haiku-4-5`). If unresolvable, write `model: unknown` and skip release notes.
 
-**Release notes (WebFetch — skip gracefully if unavailable):**
-- Fetch: `https://docs.anthropic.com/en/release-notes/claude-code`
-- Fetch: `https://docs.anthropic.com/en/docs/about-claude/models/overview`
-- Extract: what changed in `<model-id>` vs prior model — behavior, context window, tool use, output defaults
-- If fetch fails: write "(release notes unavailable — run /prompt-scan again after checking network)"
+**Release notes — use these DIRECT 2026 URLs (the old `docs.anthropic.com` links now 301→`platform.claude.com`→GitHub, burning WebFetch retries on redirects):**
+
+- **Models overview (WebFetch):** `https://platform.claude.com/docs/en/docs/about-claude/models/overview`
+  - Direct hit, no redirect. Extract: what changed in `<model-id>` vs prior model — behavior, context window, max output, thinking mode (extended vs adaptive), pricing tier, knowledge cutoff.
+- **Claude Code changelog (Bash curl, NOT WebFetch):** the release-notes doc redirects to GitHub's HTML view which renders no content — pull the raw file instead:
+  ```bash
+  curl -sL --max-time 15 https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md | head -150
+  ```
+  - Extract latest ~5 versions' highlights — model behavior, tool use, output defaults, subagent/permission changes.
+- If a fetch fails: write "(release notes unavailable — run /prompt-scan again after checking network)" for that source and continue.
+- Do NOT retry `docs.anthropic.com/*` or `platform.claude.com/docs/en/release-notes/claude-code` — both redirect; use the two direct sources above.
 
 ---
 
@@ -49,17 +55,26 @@ Parse the model ID from the current session context ("The exact model ID is …"
 
 File: `~/.claude/learnings.md`
 
-**If file does not exist:** Write with header:
-```
-# Learnings — Claude Code prompt context
-```
-then append the dated block below.
+**Structure — DO NOT append full dated blocks (that repeats §1–5 every scan and bloats the file). The file has two parts:**
+1. **Living snapshot (§1–5)** — OVERWRITE in place each scan. These conventions rarely change, so they must NOT compound.
+2. **Dated model-delta log (§6)** — PREPEND one entry per scan (newest first). This is the only part that grows. If an entry for `<today>` already exists (e.g. re-scan after a `/model` switch), REPLACE it — never two same-day entries.
 
-**If file exists:** Read it, then append the new block after the last `---` separator. Never overwrite prior entries — they compound.
+**If file does not exist:** Write the full skeleton below.
 
-**Dated block structure:**
+**If file exists:** Read it, then:
+- Rewrite the `## Current conventions — living snapshot (last refreshed: …)` heading + §1–5 with fresh content, updating the date/model stamp.
+- Prepend a new `### <today> — <model-id>` entry to the top of the §6 dated log (right under the `## 6. Model delta` header). If a `### <today> — …` entry already exists, replace it instead of adding a second.
+- Leave all prior-day §6 entries untouched — they compound intentionally.
+
+**File skeleton:**
 ```markdown
-## Scan YYYY-MM-DD — model: <model-id>
+# Learnings — Claude Code prompt context
+
+> **How this file works:** §1–5 are a LIVING snapshot — /prompt-scan OVERWRITES them each run. §4 is derived from ~/.claude/docs/SKILL_TRIGGERS.md. §6 is an append-only dated log — each scan PREPENDS one entry. /better_prompt reads §1–6.
+
+---
+
+## Current conventions — living snapshot (last refreshed: YYYY-MM-DD — model: <model-id>)
 
 ### 1. Output conventions
 <bullets from CLAUDE.generated.md and CLAUDE.md — format prefs, caveman mode, table vs prose, single-paste rule>
@@ -71,17 +86,23 @@ then append the dated block below.
 <from CORE_RULES.md — Opus plans / Sonnet codes, no inline planning, subagent execution>
 
 ### 4. Skill triggers
+> Derived from ~/.claude/docs/SKILL_TRIGGERS.md. Regenerate on each scan; do not hand-edit.
+
 | Skill | Trigger | When to use |
 |-------|---------|-------------|
-<one row per skill from CLAUDE.md trigger blocks + SKILLS.md daily-driver table>
+<one row per skill — generate from SKILL_TRIGGERS.md, e.g.:>
+<  grep -E "^- \*\*" ~/.claude/docs/SKILL_TRIGGERS.md | sed -E 's/\(`[^`]*`\)//; s/\*\*//g'>
+<map each line to Skill | Trigger | condensed when-to-use>
 
 ### 5. Slop patterns
 <banned patterns from UI_MOCKUPS.md slop fingerprint + ANTISLOP.md if present — one bullet per pattern>
 
-### 6. Model delta
-<what changed in <model-id> vs prior model — from release notes fetch>
-
 ---
+
+## 6. Model delta — dated log (append-only, newest first)
+
+### YYYY-MM-DD — <model-id>
+<what changed in <model-id> vs prior model — from release notes fetch>
 ```
 
 ---

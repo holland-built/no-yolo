@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-07-04
+
+- added /md-fix skill: the active counterpart to /md-check — audits your docs, then applies the fixes (dedupe repeated rules, merge overlapping files, trim oversize, correct stale descriptions) behind one approve-all gate; --auto skips the gate
+- hardened /prompt-scan release-note fetching: swapped the redirecting docs URLs for direct 2026 endpoints so scans no longer waste retries on redirects
+- restructured /prompt-scan output: conventions are now a living snapshot overwritten each scan, model facts are a dated append-only log, and the skill-trigger table is derived from SKILL_TRIGGERS.md instead of retyped
+- wired /md-fix into the skill menus, README, and triggers
+
 ## 2026-07-02
 
 - added /quick-mockup skill: fast disposable placeholder-only HTML layout mockup, served over http://, auto-opens browser; lightweight counterpart to /design

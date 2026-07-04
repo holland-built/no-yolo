@@ -6,7 +6,6 @@ argument-hint: "[topic / library / tool / pattern to research]"
 allowed-tools:
   - WebSearch
   - WebFetch
-  - Agent
   - mcp__plugin_ecc_exa__web_search_exa
   - mcp__plugin_ecc_exa__web_fetch_exa
 ---
@@ -26,55 +25,45 @@ Calculate the 30-day start date: today − 30 days → `YYYY-MM-DD`. State it in
 
 ---
 
-## Step 2 — 4 Parallel Source Agents
+## Step 2 — Inline Source Searches
 
-Fan out in ONE parallel call. Each agent searches one source, returns max 5 results dated within the window. If a source is unavailable, return one row: `SOURCE_UNAVAILABLE: <reason>`.
+Run these searches inline — NO subagents, NO Agent tool. Call WebSearch/WebFetch directly. Collect up to 5 results per source; skip anything dated before `<start-date>`.
 
-**Every agent outputs rows in this exact schema (pipe-separated):**
-`title | url | signal (metric name + number) | date (YYYY-MM-DD) | one-line summary`
+### GITHUB
+1. WebSearch: `<topic> github stars 2026 trending`
+2. WebSearch: `site:github.com <topic> created:><start-date>`
+Keep: repos with recent commits or creation within window.
+Signal: stars gained this month or total stars if new repo.
 
----
+### HACKER NEWS
+WebFetch: `https://hn.algolia.com/api/v1/search?query=<topic-url-encoded>&dateRange=pastMonth&tags=story&hitsPerPage=10`
+Parse JSON → hits[].{title, url, points, created_at}. Keep only created_at ≥ start-date.
+Signal: points (upvotes).
 
-### GITHUB AGENT
-Search: GitHub trending repos + recent repos for `<topic>`.
-- Try: `https://github.com/trending/<language>?since=monthly` filtered to topic
-- Try: `https://github.com/search?q=<topic>&s=stars&o=desc&type=repositories&created:><start-date>`
-- Keep only repos with activity or creation within the window
-- Signal metric: stars gained this month OR total stars if new repo
-- Prefer repos with recent commits over old repos with high all-time stars
+### YOUTUBE
+1. WebSearch: `<topic> tutorial 2026 site:youtube.com`
+2. WebSearch: `<topic> site:youtube.com after:<start-date>`
+Keep: videos with publish date within window (visible in snippet).
+Signal: view count when present in result snippet.
 
-### HACKER NEWS AGENT
-Search: HN discussions from last 30 days.
-- Use: `https://hn.algolia.com/?query=<topic>&dateRange=pastMonth&sortBy=byPopularity`
-- Include Show HN posts
-- Signal metric: points (upvotes)
-- Skip link posts older than 30 days even if they appear in results
+### X / TWITTER
+WebSearch: `<topic> since:<start-date> min_faves:50 -filter:retweets`
+Keep: posts from engineers, authors, maintainers — not news aggregators.
+Signal: likes/retweets.
 
-### YOUTUBE AGENT
-Search: recent tutorials and talks on `<topic>`.
-- Try WebSearch: `<topic> tutorial 2026 site:youtube.com`
-- Try: `https://www.youtube.com/results?search_query=<topic>&sp=CAISBAgEEAE%3D` (this month, by date)
-- Signal metric: view count
-- Skip anything published before the window start
-
-### X/TWITTER AGENT
-Search: high-engagement posts from credible accounts.
-- Try WebSearch: `<topic> since:<start-date> min_faves:100`
-- Use exa (`mcp__plugin_ecc_exa__web_search_exa`) as fallback if WebSearch returns thin results
-- Signal metric: likes/retweets
-- Credible accounts: engineers, authors, project maintainers — not news aggregators
+Collect all hits into a working list, then proceed to Step 3.
 
 ---
 
 ## Step 3 — Synthesis
 
-After all 4 source agents return, run ONE synthesis pass (inline, not a subagent):
+Run ONE synthesis pass inline (no subagent):
 
-Read all result rows. Produce:
-- **Strongest resource:** the single result with highest signal × recency (one line + URL)
+Read all collected rows. Produce:
+- **Strongest resource:** single result with highest signal × recency (one line + URL)
 - **Cross-source momentum:** anything appearing in ≥2 sources (confirms genuine traction)
 - **Emerging shift:** one pattern — "people are moving from X → Y" or "X is gaining fast"
-- **Ignore list:** stale or all-time items that kept surfacing despite the window filter
+- **Ignore list:** stale or all-time items that surfaced despite the window filter
 
 ---
 

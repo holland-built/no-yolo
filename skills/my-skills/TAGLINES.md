@@ -26,6 +26,7 @@ update|Checks if ~/.claude is behind, previews changes, applies or rolls back.
 ship|Quality-gate + changelog + publish. One command, generic per-repo.
 last-30|Trending now (last 30 days) from GitHub, HN, YouTube, X.
 md-check|Audits ~/.claude docs for size, duplicate topics, stale skill descriptions.
+md-fix|Audits then APPLIES the fixes md-check only reports: dedupe, merge overlaps, trim oversize, fix drift — behind one approve-all gate (--auto skips it).
 antislop|Check text/UI for AI-slop tells. Violations table + verdict.
 prompt-scan|Reads global Claude MD files + current model's release notes, writes a dated snapshot to learnings.md.
 better-prompt|Rewrites a rough prompt with a named target, scope boundary, success criterion, and correct skill route.
