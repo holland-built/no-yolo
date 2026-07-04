@@ -16,7 +16,6 @@ remember-that|Save facts across sessions
 my-skills|This skill menu
 whats-next|Shows unfinished work
 release|One command, any repo
-ship|Alias for /release
 eli5|Plain-English explain anything
 my-md|List all markdown files
 md-check|Audit docs for bloat

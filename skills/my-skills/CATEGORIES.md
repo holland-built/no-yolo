@@ -34,7 +34,6 @@ remember-that
 my-skills
 whats-next
 release
-ship
 eli5
 my-md
 md-check
