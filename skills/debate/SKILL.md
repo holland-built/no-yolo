@@ -1,6 +1,6 @@
 ---
 name: debate
-description: Use this skill when the user types /debate, says 'debate this', 'stress test this decision', 'get the team on this', or 'should we build this'. Six-persona product-team debate — Senior Dev + Junior Dev + Sales Engineer + DevOps + Sales Leader + Eng Leader — contradiction map, synthesis, peer review.
+description: Use this skill when the user types /debate, says 'debate this', 'stress test this decision', 'get the team on this', or 'should we build this'. Seven-persona product-team debate — Senior Dev + Junior Dev + Sales Engineer + DevOps + Sales Leader + Eng Leader + Product Designer — Chairman oversight, contradiction map, synthesis, peer review.
 user-invocable: true
 ---
 
@@ -27,9 +27,9 @@ The argument can be:
 - A prioritization call: "build SSO or the reporting API next"
 - A document, mockup, or plan (if user pastes it in)
 
-### Step 2 — Six perspectives
+### Step 2 — Seven perspectives
 
-Run all 6 in parallel as subagents (model: opus). Never inline — parallel is mandatory to prevent personas biasing each other. Each persona answers their 3 questions, then delivers their unique angle.
+Run all 7 in parallel as subagents (model: opus). Never inline — parallel is mandatory to prevent personas biasing each other. Each persona answers their 3 questions, then delivers their unique angle.
 
 **THE SENIOR DEV** — guards the technical standard AND the design bar
 - Does this hold up under load, edge cases, and the next 2 years of changes?
@@ -67,12 +67,29 @@ Run all 6 in parallel as subagents (model: opus). Never inline — parallel is m
 - What does saying yes to this cost us elsewhere on the roadmap?
 - *Only they would say:* "Capacity is the real constraint — here's what we'd have to drop or delay to make room for this."
 
+**THE PRODUCT DESIGNER** — the human under pressure, UX/interaction lens
+- What does the user see and do in the first 3 seconds of this surface, and does it match what they came to do?
+- Where does cognitive load spike — how many states, choices, and interruptions stand between intent and done?
+- Does the information hierarchy match the task's real priority, or does the layout advertise what was easiest to build?
+- *Only they would say:* "Nobody in this room has watched a real user fail at this — here's the moment they give up, and no metric or refactor fixes what the screen itself is doing wrong."
+
 For each perspective output:
 - Core position (2 sentences)
 - Strongest supporting argument
 - The one thing only they would say
 
-### Step 3 — Contradiction map
+### Step 3 — Chairman's review
+
+After all 7 personas return, run ONE more subagent (model: opus): **THE CHAIRMAN** — oversight, not an 8th opinion. The Chairman gets every persona's full output and steers the debate before synthesis. The Chairman never introduces new arguments — only rules on the ones presented.
+
+The Chairman outputs exactly:
+1. **Evidence rulings** — for each persona: ADMITTED (argument backed by evidence: code read, data cited, causal logic) or DISCOUNTED (assertion, vibes, lens-flattering claim). One line of reason each.
+2. **Forced answers** — the 2 sharpest unanswered cross-examinations (e.g. "SE claims X; EngLeader's capacity point directly contradicts it — which survives?") with the Chairman's ruling on each.
+3. **Steering order** — 3 bullets max: what the synthesis (Steps 4–6) MUST address, and any persona whose voice must be down-weighted for dominating without evidence.
+
+Steps 4–6 are bound by the Chairman's rulings: DISCOUNTED arguments cannot appear as key findings.
+
+### Step 4 — Contradiction map
 
 1. Where do 2+ perspectives directly contradict? List each conflict with the specific claims that clash.
 2. Which perspective has the strongest evidence? Which the weakest? Why?
@@ -80,35 +97,35 @@ For each perspective output:
 4. What does EVERY perspective agree on? (Likely true — even opponents confirm it.)
 5. What did NONE of the perspectives address? (The blind spot — often the most valuable finding.)
 
-### Step 4 — Research briefing
+### Step 5 — Research briefing
 
 1. **One-paragraph summary** — brief a CEO in 60 seconds, nuance not headline
-2. **5 key findings** — ranked by reliability; note which perspectives support/challenge each
-3. **Hidden connection** — one non-obvious link that only shows up across all 6 perspectives
+2. **5 key findings** — ranked by reliability; note which perspectives support/challenge each. ADMITTED arguments only — the Chairman's DISCOUNTED rulings are binding.
+3. **Hidden connection** — one non-obvious link that only shows up across all 7 perspectives
 4. **Actionable insight** — what should someone in the user's role actually DO differently? Specific.
 5. **Frontier question** — the one question that, if answered, would change everything
 
-### Step 5 — Peer review
+### Step 6 — Peer review
 
 1. **Confidence scores** — rate each of the 5 key findings 1–10 for reliability, explain each
 2. **Weakest link** — least confident claim; what info would verify it?
-3. **Bias check** — which perspective dominated the synthesis? Was one voice overrepresented?
-4. **Missing perspective** — is there a 7th angle that would change the conclusions?
+3. **Bias check** — which perspective dominated the synthesis? Was one voice overrepresented? Did the Chairman's rulings hold, or did a discounted argument leak back in?
+4. **Missing perspective** — is there an 8th angle that would change the conclusions?
 5. **Overall grade** — if a Stanford professor reviewed this, what grade and what would they fix?
 
-### Step 6 — Final Decision
+### Step 7 — Final Decision
 
-Do not run a new analysis. Collapse the synthesis from Steps 3–5 into one verdict and one reason. Output exactly one line, nothing after it:
+Do not run a new analysis. Collapse the synthesis from Steps 4–6 into one verdict and one reason. Output exactly one line, nothing after it:
 
 > **Decision: [YES / NO / CONDITIONAL]** — [the single reason that outweighs everything else]
 
 Rules:
 - Pick ONE: YES, NO, or CONDITIONAL. Never "it depends."
-- Give exactly one sentence — the single reason that outweighs all others, drawn from the strongest finding in Step 4 and its Step 5 confidence score.
+- Give exactly one sentence — the single reason that outweighs all others, drawn from the strongest finding in Step 5 and its Step 6 confidence score.
 - If CONDITIONAL, the reason must name the one condition that flips it to YES.
 - No hedging, no caveats, no second sentence.
 
-### Step 7 — ELI5 Summary
+### Step 8 — ELI5 Summary
 
 After the decision line, add a plain-English summary using exactly this structure:
 
