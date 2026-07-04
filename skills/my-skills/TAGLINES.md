@@ -24,7 +24,6 @@ eli5|Explains any skill, command, plan, or decision in plain English.
 debate|6-persona product-team debate → contradiction map → one decisive verdict.
 update|Checks if ~/.claude is behind, previews changes, applies or rolls back.
 release|The one context-aware publish command for any repo: reads the repo-root SHIP.md playbook and pushes to the right environment (dev/staging/prod). No SHIP.md yet? It stops and helps you build one before anything ships.
-ship|Alias for /release.
 last-30|Trending now (last 30 days) from GitHub, HN, YouTube, X.
 md-check|Audits ~/.claude docs for size, duplicate topics, stale skill descriptions.
 md-fix|Audits then APPLIES the fixes md-check only reports: dedupe, merge overlaps, trim oversize, fix drift — behind one approve-all gate (--auto skips it).

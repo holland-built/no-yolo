@@ -21,7 +21,7 @@ Claude Code is a command-line tool where you talk to Claude to write and edit co
 | [Claude Code](https://claude.ai/code) | Required | `claude --version` | [docs.anthropic.com](https://docs.anthropic.com/en/docs/claude-code) |
 | **git** | Required | `git --version` | Pre-installed on Mac; Linux: `sudo apt install git` |
 | **Node.js** | Required | `node --version` | [nodejs.org](https://nodejs.org/) |
-| **gh** (GitHub CLI) | Optional — needed for `/ship` | `gh auth status` | `brew install gh && gh auth login` |
+| **gh** (GitHub CLI) | Optional — needed for `/release` | `gh auth status` | `brew install gh && gh auth login` |
 
 `~` in all paths means your home directory — Mac: `/Users/<username>`, Linux: `/home/<username>`.
 
@@ -142,7 +142,7 @@ What each file and folder is for:
 | `docs/SKILLS.md` | Rules for using skills and plugins |
 | `docs/CODE_REVIEW.md` | Rules for reviewing code |
 | `docs/UI_MOCKUPS.md` | Rules for designing screens before building them |
-| `docs/DAILY_CHANGELOG.md` | Public changelog — `/ship` appends a dated entry here before pushing |
+| `docs/DAILY_CHANGELOG.md` | Public changelog — `/release` appends a dated entry here before pushing |
 | `docs/NO_YOLO.md` | How to author a new skill — the checklist |
 | `docs/MEMORY.md` | Docs for the memory system |
 | `docs/SKILL_TRIGGERS.md` | Trigger rules for every skill — CLAUDE.md points here |
@@ -190,7 +190,6 @@ Two skills cover the full frontend design workflow. Design tokens (`DESIGN.md` /
 | `/md-check` | Lists every `~/.claude/` doc with its size, flags anything over 200 lines, and spots two files saying the same thing so you can merge them | `--pre FILENAME` (check before creating) · `--drift` (check description staleness) |
 | `/md-fix` | Audits your docs then APPLIES the fixes md-check only reports — dedupe repeated rules, merge overlapping files, trim oversize, correct stale descriptions — behind one approve-all gate | `--auto` (skip the gate) |
 | `/release` | The one context-aware publish command for any repo — reads the repo-root `SHIP.md` and pushes to the right environment (dev/staging/prod). No `SHIP.md`? It stops and helps you build one before anything ships | `[env]` `--auto` |
-| `/ship` | Alias for `/release` | — |
 | `/skill-audit` | Audits your skill library across 4 dimensions: bucket fit, component gaps, missing verifiers, and trigger condition quality. Writes a full report. Also builds new verifiers and surfaces gotcha gaps on demand | `--audit` · `--build-verifier <skill>` · `--gotchas` |
 | `/update` | Checks if your setup is out of date, shows a plain-English summary of what changed, and lets you apply updates, roll back, or restore a removed skill | `preview` · `full` · `rules` · `rollback` · `restore NAME` |
 | `/ingest-docs` | Converts PDFs/decks/docs you drop in `docs/raw/` into dense context files Claude reads at runtime — dedupes against what's already there, tracks changes in a manifest | — |
@@ -200,7 +199,7 @@ Two skills cover the full frontend design workflow. Design tokens (`DESIGN.md` /
 
 | Skill | What it does | Why hidden |
 |---|---|---|
-| `/antislop` | Paste any text and get a violations table — forbidden words, filler openers, em-dash spam, GUI clichés. CLEAN or SLOP-DETECTED verdict. Diagnosis only | Auto-runs inside `/review` and `/ship` — standalone still useful for arbitrary text outside a git diff |
+| `/antislop` | Paste any text and get a violations table — forbidden words, filler openers, em-dash spam, GUI clichés. CLEAN or SLOP-DETECTED verdict. Diagnosis only | Auto-runs inside `/review` and `/release` — standalone still useful for arbitrary text outside a git diff |
 | `/tdd` | Writes a failing test first, then makes it pass — one behavior at a time | `/build` step 4 runs the identical loop automatically — standalone still useful without the full `/build` pipeline |
 
 `supacode-cli` isn't a typed command — it auto-activates only inside a Supacode terminal session, driving tabs/worktrees/surfaces via the `supacode` CLI.
@@ -301,7 +300,7 @@ When the user types `/<name>`, invoke the Skill tool with `skill: "<name>"` befo
 <name>|When would you reach for this? What does it actually do? What's the payoff?
 ```
 
-5. Run `/ship` to publish. It adds a changelog entry and pushes to git.
+5. Run `/release` to publish. It adds a changelog entry and pushes to git.
 
 See `docs/NO_YOLO.md` for the full authoring checklist.
 
