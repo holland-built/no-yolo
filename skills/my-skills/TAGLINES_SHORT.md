@@ -15,7 +15,8 @@ drawio-skill|Generate diagrams, export images
 remember-that|Save facts across sessions
 my-skills|This skill menu
 whats-next|Shows unfinished work
-ship|Commit + publish, one command
+release|One command, any repo
+ship|Alias for /release
 eli5|Plain-English explain anything
 my-md|List all markdown files
 md-check|Audit docs for bloat

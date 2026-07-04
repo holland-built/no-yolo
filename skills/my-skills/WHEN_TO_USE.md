@@ -29,6 +29,7 @@ md-check|Notes piling up or repeating themselves
 md-fix|md-check flagged problems and you want them fixed, not just listed
 prompt-scan|Once on setup, and again whenever a new Claude model ships
 remember-that|End of a session with useful decisions or preferences worth keeping
+release|Ready to commit + push any repo to GitHub
 ship|Done editing and ready to commit + push
 debate|Architecture calls, UI/UX choices, or "what should we build next" when you want real pushback
 update|Not sure if you should update

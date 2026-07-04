@@ -189,7 +189,8 @@ Two skills cover the full frontend design workflow. Design tokens (`DESIGN.md` /
 | `/last-30` | Pulls the last 30 days of signal from GitHub, HN, YouTube, and X — trending repos, top discussions, recent talks. Filters out old results | — |
 | `/md-check` | Lists every `~/.claude/` doc with its size, flags anything over 200 lines, and spots two files saying the same thing so you can merge them | `--pre FILENAME` (check before creating) · `--drift` (check description staleness) |
 | `/md-fix` | Audits your docs then APPLIES the fixes md-check only reports — dedupe repeated rules, merge overlapping files, trim oversize, correct stale descriptions — behind one approve-all gate | `--auto` (skip the gate) |
-| `/ship` | Quality-gate, changelog, and publish in one command. Warns on slop and bloat, blocks personal-data leaks, writes a dated changelog entry, pushes; in this repo also creates a dated GitHub release | — |
+| `/release` | The one context-aware publish command for any repo — reads the repo-root `SHIP.md` and pushes to the right environment (dev/staging/prod). No `SHIP.md`? It stops and helps you build one before anything ships | `[env]` `--auto` |
+| `/ship` | Alias for `/release` | — |
 | `/skill-audit` | Audits your skill library across 4 dimensions: bucket fit, component gaps, missing verifiers, and trigger condition quality. Writes a full report. Also builds new verifiers and surfaces gotcha gaps on demand | `--audit` · `--build-verifier <skill>` · `--gotchas` |
 | `/update` | Checks if your setup is out of date, shows a plain-English summary of what changed, and lets you apply updates, roll back, or restore a removed skill | `preview` · `full` · `rules` · `rollback` · `restore NAME` |
 | `/ingest-docs` | Converts PDFs/decks/docs you drop in `docs/raw/` into dense context files Claude reads at runtime — dedupes against what's already there, tracks changes in a manifest | — |
