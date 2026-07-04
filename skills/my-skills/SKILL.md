@@ -34,7 +34,7 @@ fi
 
 Print verbatim — complete GFM with tables. Do NOT rephrase or reformat.
 
-> Both RENDERED.md and RENDERED_FAST.md are rebuilt automatically by /release. To rebuild manually: run the regen script in ship/SKILL.md Step 3c.6.
+> Both RENDERED.md and RENDERED_FAST.md are rebuilt automatically by /release. To rebuild manually, re-run the RENDERED regen (see `~/.claude/SHIP.md` → ## Steps → "Regenerate menus").
 
 ### Section 3 — Relationships (what each skill leans on) — deep mode only
 
