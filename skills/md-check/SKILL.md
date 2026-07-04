@@ -1,20 +1,23 @@
 ---
 name: md-check
-description: Use this skill when the user types /md-check, says 'check md files', or 'md hygiene'. MD hygiene audit: line counts, topic-overlap, duplicate-rule detection, --drift mode for stale descriptions.
+description: Use this skill when the user types /md-check, says 'check md files', or 'md hygiene'. MD hygiene: line counts, topic-overlap, duplicate-rule detection (default audit); --drift finds stale descriptions; --fix APPLIES the fixes (dedupe/merge/trim/drift) behind one approve-all gate; --pre is a pre-creation gate.
 user-invocable: true
-argument-hint: "[--pre <proposed-filename>] [--drift] (omit for full audit)"
+argument-hint: "[--fix [--auto]] [--drift] [--pre <proposed-filename>] (omit for read-only audit)"
 model: haiku
 allowed-tools:
   - Bash
   - Read
   - Grep
+  - Edit
+  - Write
 ---
 
 Mode: $ARGUMENTS
 
 If `$ARGUMENTS` starts with `--pre` → run Pre-creation mode.
+If `$ARGUMENTS` contains `--fix` → run Fix mode (audit + apply).
 If `$ARGUMENTS` is `--drift` → run Drift Check mode.
-Otherwise → run On-demand audit.
+Otherwise → run On-demand audit (read-only).
 
 ---
 
@@ -135,3 +138,43 @@ Then one line of reasoning, e.g.:
 - Exclude `brainstorms/` and `plugins/` from all scans — they are ephemeral/external
 - All paths absolute in output
 - Restart session required to apply changes to CLAUDE.md or other loaded MDs (no hot-reload)
+
+
+---
+
+## FIX MODE (`--fix`)
+
+Default `/md-check` REPORTS; `/md-check --fix` reports THEN applies. Audit → propose fix table → one approve-all gate → apply → re-verify.
+
+### Step 1 — Audit
+Run the On-demand audit AND Drift Check. Collect: OVERSIZE files, merge candidates, duplicate rules, drifted descriptions.
+If fully clean → print `✓ Nothing to fix — all MD files healthy.` and STOP.
+
+### Step 2 — Fix plan
+One row per finding:
+```
+| # | Target | Problem | Fix | Kind |
+```
+Kind vocab:
+- **DEDUPE** — delete the duplicate line(s); keep the canonical copy (name which file:line stays)
+- **MERGE** — fold the smaller file's unique content into the larger, delete the smaller (only when overlap >40%)
+- **TRIM** — an OVERSIZE file: propose what moves out and where. Append-only logs (`DAILY_CHANGELOG.md`, `learnings.md` §6) are EXEMPT — never trim them.
+- **DRIFT-FIX** — rewrite the CLAUDE.md description line to match its SKILL.md `description`
+
+### Step 3 — Approve-all gate
+Skip if `$ARGUMENTS` contains `--auto`. Print the fix table, then: `Reply "go" to apply all, or list the # to skip.` Wait for the reply. This mutation gate is the only pause.
+
+### Step 4 — Apply
+Apply each approved fix with Edit/Write.
+**Personal-file guard (HARD — never edit):** `memory/` `brainstorms/` `plans/` `proposals/` `projects/` `sessions/` `settings.json` `settings.local.json`. Skip + note any fix that would touch these. Never delete a file you did not read this run.
+
+### Step 5 — Verify + report
+Re-run the audit. Report before/after:
+```
+| Metric | Before | After |
+| Files >200 lines | | |
+| Duplicate rules | | |
+| Drifted descriptions | | |
+```
+Then a table of what changed (file, action). End `✅ Fixed N findings across M files`.
+> Edits to `CLAUDE.md` or other loaded MDs need a session restart to take effect (no hot-reload). Note this if any were touched.

@@ -25,8 +25,7 @@ debate|6-persona product-team debate → contradiction map → one decisive verd
 update|Checks if ~/.claude is behind, previews changes, applies or rolls back.
 release|The one context-aware publish command for any repo: reads the repo-root SHIP.md playbook and pushes to the right environment (dev/staging/prod). No SHIP.md yet? It stops and helps you build one before anything ships.
 last-30|Trending now (last 30 days) from GitHub, HN, YouTube, X.
-md-check|Audits ~/.claude docs for size, duplicate topics, stale skill descriptions.
-md-fix|Audits then APPLIES the fixes md-check only reports: dedupe, merge overlaps, trim oversize, fix drift — behind one approve-all gate (--auto skips it).
+md-check|Audits ~/.claude docs for size, duplicate topics, and stale descriptions; `--fix` applies the fixes (dedupe/merge/trim/drift) behind one approve-all gate; `--pre` is a pre-creation gate.
 antislop|Check text/UI for AI-slop tells. Violations table + verdict.
 prompt-scan|Reads global Claude MD files + current model's release notes, writes a dated snapshot to learnings.md.
 better-prompt|Rewrites a rough prompt with a named target, scope boundary, success criterion, and correct skill route.
