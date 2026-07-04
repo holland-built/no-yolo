@@ -33,6 +33,7 @@ remember-that
 ## Meta
 my-skills
 whats-next
+release
 ship
 eli5
 my-md

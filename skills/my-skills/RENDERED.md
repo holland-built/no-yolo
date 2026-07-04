@@ -60,7 +60,8 @@
 | --- | --- | --- | --- |
 | my-skills | This menu. | Forgot what skills exist | You forget you have tools. This is the map |
 | whats-next | Shows unfinished work or next-action list. Never static. | Session start — orient before picking what to do | Prevents starting something new while something is already half-done |
-| ship | Quality-gate + changelog + publish. One command, generic per-repo. | Done editing and ready to commit + push | Leak guard + quality gates run automatically. One command replaces 5 manual steps |
+| release | The one context-aware publish command for any repo: reads the repo-root SHIP.md playbook and pushes to the right environment (dev/staging/prod). No SHIP.md yet? It stops and helps you build one before anything ships. | Ready to commit + push any repo to GitHub | One verb everywhere — each repo's SHIP.md holds its own recipe, so you never memorize per-repo commands |
+| ship | Alias for /release. | Done editing and ready to commit + push | Leak guard + quality gates run automatically. One command replaces 5 manual steps |
 | eli5 | Explains any skill, command, plan, or decision in plain English. | Before committing to something you're not sure you fully understand | Forces the "wait, do you actually get this?" check before you say yes |
 | my-md | Lists every markdown file — global Claude docs plus current project's notes. | Lost track of what notes exist | One command instead of hunting across two directory trees |
 | md-check | Audits ~/.claude docs for size, duplicate topics, stale skill descriptions. | Notes piling up or repeating themselves | Other skills call it with --pre before writing a new note, so you never get two files on one topic |

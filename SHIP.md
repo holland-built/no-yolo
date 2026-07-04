@@ -1,0 +1,43 @@
+# SHIP.md — release playbook for ~/.claude (no-yolo skill library)
+
+Repo: `github.com/holland-built/no-yolo`. Run `/release` from anywhere under `~/.claude`.
+
+## Environments
+| Env | Branch | Default | Notes |
+|-----|--------|---------|-------|
+| main | main | * | the only branch; publishes to no-yolo |
+
+## Steps
+1. **Antislop scan (warn only):** scan changed `.md` files against `docs/ANTISLOP.md` writing tells; print `| File | Tell | Excerpt |`, never block.
+2. **Size check (warn only):** `wc -l ~/.claude/*.md ~/.claude/docs/*.md ~/.claude/skills/*/SKILL.md`; table any file >200 lines.
+3. **Drift check (warn only):** run `/md-check --drift`; print DRIFT/WRONG verdicts.
+4. **GLOBAL_DESCRIPTIONS coverage (warn only):** every root/docs `.md` must have a line in `skills/my-md/GLOBAL_DESCRIPTIONS.md`; print MISSING.
+5. **Changelog:** prepend today's dated section to `docs/DAILY_CHANGELOG.md` — one plain-English bullet per changed skill/doc (skip `.gitignore` and the changelog itself).
+6. **README format check (HARD BLOCK):** every `## ` heading in `docs/README_FORMAT.md` must exist in `README.md`; missing → STOP.
+7. **README count patch:** update "N custom commands" / "plus N borrowed from plugins" from the live skill dir counts.
+8. **Regenerate menus:** rebuild `skills/my-skills/RENDERED.md` and `RENDERED_FAST.md` from `CATEGORIES.md` + `TAGLINES*.md` + `WHEN_TO_USE.md` + `WHY_TO_USE.md` (see the regen scripts kept in this repo's ship history). A skill in `CATEGORIES.md` with no `TAGLINES_SHORT.md` line renders "⚠️ missing".
+
+Stage scope: `git add skills/ docs/ README.md` (explicit paths — do NOT rely on a `*.md` shell glob; it expands in the CWD, not the repo root).
+
+## Guards
+- memory/
+- brainstorms/
+- plans/
+- proposals/
+- projects/
+- sessions/
+- settings.json
+- settings.local.json
+- history.jsonl
+- *.log
+- cache/
+- paste-cache/
+- learnings.md   (personal; gitignored — never publish)
+
+## Release
+Dated GitHub release, publish step (optional — only when the user asks to publish, not on a plain push):
+- `TAG="v$(date +%Y-%m-%d)"`; if it exists, delete + recreate.
+- Notes = today's `DAILY_CHANGELOG.md` bullets; summary line counts new skills (`added /x`) + total changes.
+- `gh release create "$TAG" --repo holland-built/no-yolo --title "$TAG" --notes "$NOTES"`
+- Update repo description with current custom-skill count.
+- If `gh` missing/unauthed: print `⚠️ release skipped — run gh auth login` and continue.

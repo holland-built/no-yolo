@@ -29,6 +29,7 @@ md-check|Other skills call it with --pre before writing a new note, so you never
 md-fix|Closes the loop md-check leaves open — one command audits and applies, instead of you hand-editing every finding
 prompt-scan|Keeps /better_prompt's reference material from going stale
 remember-that|Preferences decay between sessions. This makes them permanent without manual file editing
+release|One verb everywhere — each repo's SHIP.md holds its own recipe, so you never memorize per-repo commands
 ship|Leak guard + quality gates run automatically. One command replaces 5 manual steps
 debate|Ends with YES/NO/CONDITIONAL and the one reason that settles it — no "it depends"
 update|Rollback and restore-removed-skill built in — no manual git surgery if something breaks
