@@ -107,6 +107,16 @@ File: `~/.claude/learnings.md`
 
 ---
 
+## Step 3b — Verify the write (guard /better_prompt)
+
+`/better_prompt` parses sections §1–6. After writing, confirm all six headers exist:
+```bash
+grep -cE "^### [1-5]\.|^## 6\. Model delta" ~/.claude/learnings.md   # expect 6
+```
+If the count is not 6, the write is malformed — fix it before confirming.
+
+---
+
 ## Step 4 — Confirm
 
 Tell user:

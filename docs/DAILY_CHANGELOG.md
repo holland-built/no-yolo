@@ -2,6 +2,7 @@
 
 ## 2026-07-04
 
+- skill-audit fixes: reworded drawio-skill/ingest-docs/supacode-cli descriptions to lead with "Use this skill when"; added a §1–6 header self-check to /prompt-scan (guards /better_prompt); repointed a stale ship/SKILL.md reference in my-skills to SHIP.md
 - removed the `/ship` alias skill and killed `/ship` as a trigger phrase entirely — `/release` is the sole publish command
 - unified publishing into one command: `/release` — context-aware, reads a repo-root `SHIP.md` playbook and pushes to the right environment (dev/staging/prod); `/ship` is now an alias
 - added `~/.claude/SHIP.md` (the skill repo's own release playbook) and the SHIP.md template the skill authors when a repo has none
