@@ -10,7 +10,6 @@
 | drawio-skill | Generate diagrams, export images | remember-that | Save facts across sessions |
 | my-skills | This skill menu | whats-next | Shows unfinished work |
 | release | One command, any repo | eli5 | Plain-English explain anything |
-| my-md | List all markdown files | md-check | Audit docs for bloat |
-| md-fix | Fix and dedupe docs | skill-audit | Audit skill library health |
-| update | Check/apply setup updates | supacode-cli | Drive Supacode terminal app |
-| lockstep | Hard block on edits | | |
+| my-md | List all markdown files | md-check | Audit + fix docs |
+| skill-audit | Audit skill library health | update | Check/apply setup updates |
+| supacode-cli | Drive Supacode terminal app | lockstep | Hard block on edits |

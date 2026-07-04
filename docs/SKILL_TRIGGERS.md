@@ -44,11 +44,8 @@ When the user types `/diagnose`, says "debug this", "can't figure out why", "som
 - **last-30** (`~/.claude/skills/last-30/SKILL.md`) - pulls gaining-traction signal (not all-time rankings) from GitHub/HN/YouTube/X filtered to last 30 days only. Trigger: `/last-30`
 When the user types `/last-30`, says "what's trending in", "last 30 days", or "what's hot right now", invoke the Skill tool with `skill: "last-30"` before doing anything else.
 # md-check
-- **md-check** (`~/.claude/skills/md-check/SKILL.md`) - MD hygiene: line counts, topic-overlap, duplicate-rule detection; `--drift` mode catches stale skill descriptions; `--pre <file>` pre-creation gate. Trigger: `/md-check`
-When the user types `/md-check`, says "check md files" or "md hygiene", invoke the Skill tool with `skill: "md-check"` before doing anything else.
-# md-fix
-- **md-fix** (`~/.claude/skills/md-fix/SKILL.md`) - the active counterpart to md-check: audits, then APPLIES fixes (dedupe, merge overlaps, trim oversize, fix drift) behind one approve-all gate; `--auto` skips the gate. Trigger: `/md-fix`
-When the user types `/md-fix`, says "fix my md files", "dedupe my docs", "organize my markdown", or "clean up my docs", invoke the Skill tool with `skill: "md-fix"` before doing anything else.
+- **md-check** (`~/.claude/skills/md-check/SKILL.md`) - MD hygiene: line counts, topic-overlap, duplicate-rule detection (read-only audit); `--fix` APPLIES the fixes (dedupe/merge/trim/drift) behind one approve-all gate; `--drift` catches stale descriptions; `--pre <file>` pre-creation gate. Trigger: `/md-check`
+When the user types `/md-check`, says "check md files", "md hygiene", "fix my md files", "dedupe my docs", or "clean up my docs", invoke the Skill tool with `skill: "md-check"` before doing anything else.
 # prompt-scan
 - **prompt-scan** (`~/.claude/skills/prompt-scan/SKILL.md`) - reads all system prompt files + fetches current model release notes → appends dated section to ~/.claude/learnings.md. Feeds /better_prompt. Trigger: `/prompt-scan`
 When the user types `/prompt-scan`, says "scan my prompts", or "refresh learnings", invoke the Skill tool with `skill: "prompt-scan"` before doing anything else.

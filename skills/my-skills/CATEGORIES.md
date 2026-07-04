@@ -37,7 +37,6 @@ release
 eli5
 my-md
 md-check
-md-fix
 skill-audit
 update
 supacode-cli
