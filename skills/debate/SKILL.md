@@ -1,12 +1,18 @@
 ---
 name: debate
-description: Use this skill when the user types /debate, says 'debate this', 'stress test this decision', 'get the team on this', or 'should we build this'. Seven-persona product-team debate — Senior Dev + Junior Dev + Sales Engineer + DevOps + Sales Leader + Eng Leader + Product Designer — Chairman oversight, contradiction map, synthesis, peer review.
+description: Use this skill when the user types /debate, says 'debate this', 'stress test this decision', 'get the team on this', or 'should we build this'. Seven-persona product-team debate — Senior Dev + Junior Dev + Sales Engineer + DevOps + Sales Leader + Eng Leader + Product Designer — Chairman oversight, contradiction map, synthesis, peer review. Flag `--ui` swaps in a 5-persona UI/UX panel grounded in the project's design docs.
 user-invocable: true
 ---
 
 # debate
 
 Your product team argues your decision. You get the contradictions, the synthesis, and a self-graded briefing.
+
+## Flags
+
+- `--ui` — swap the default 7 business/eng personas for the **UI/UX panel** (5 design-focused debaters, see Appendix A). Use for visual/interaction/layout/color/a11y decisions. Before running, read the project's design docs if present (`DESIGN.md`, `COLOR_CONTRACT.md`, `UIUX_CHECKLIST.md`, `MOCKUPS.md`, `tailwind.config.*`, token/CSS files) and feed them to every persona so they argue grounded in the project's own rules, not generic taste. Everything else (Chairman → Steps 3–8) runs unchanged.
+
+No flag = default 7-persona product-team panel (Step 2 below).
 
 ## Use cases
 
@@ -137,3 +143,41 @@ After the decision line, add a plain-English summary using exactly this structur
 
 **Watch out for:**
 Only include if the decision has an irreversible, costly, or team-visible consequence. One line per risk. Skip this section entirely if nothing qualifies — no "nothing to worry about."
+
+---
+
+## Appendix A — UI/UX panel (`--ui` flag)
+
+Replaces Step 2's seven personas with these **five**. Run all 5 in parallel as subagents (model: opus), same rules — never inline. Each answers their 3 questions, then delivers the one thing only they would say. Then Chairman (Step 3) and Steps 4–8 run identically.
+
+**Grounding (required before dispatch):** read any project design docs found (`DESIGN.md`, `COLOR_CONTRACT.md`, `UIUX_CHECKLIST.md`, `MOCKUPS.md`, `learnings.md`, `tailwind.config.*`, token/theme CSS). Pass the extracted rules (palette contract, named rules, density/type scale, banned aesthetics, both-theme requirement) into every persona's brief. If no design docs exist, personas argue from WCAG + the stated product context and say so.
+
+**THE RESTRAINT AUDITOR** — palette / color-contract cop
+- Does every color here earn its place, or is a hue encoding identity/decoration that should be neutral?
+- Is the accent still rare — CTA / active-nav / selection / focus only — or is it leaking into chrome and data?
+- Is anything a raw palette class or hex instead of a token, and does it hold in BOTH themes?
+- *Only they would say:* "You added a color to mean identity. That's the exact move that got the last redesign called unprofessional — neutralize it."
+
+**THE OPERATOR** — the real user under real conditions
+- In the first 3–4 seconds on this surface, where does the eye go, and does it match what the user came to do?
+- How many clicks/keystrokes from intent to done, and does anything break flow (modal, scroll, reflow, focus jump)?
+- Is this glanceable and keyboard-first for someone working fast under pressure, or does it assume an unhurried mouse user?
+- *Only they would say:* "I'm mid-conversation with 4 seconds of attention — tell me where my eye lands and how many clicks this costs, because that's the whole job."
+
+**THE SPATIAL DESIGNER** — layout, information architecture, density, hierarchy
+- Does the visual hierarchy match the task's real priority, or does it mirror the data model / what was easiest to build?
+- Is grouping, alignment, and density doing the work (tier bands, baseline alignment, tabular-nums) or fighting the user?
+- What's the affordance for every non-obvious control — is state (collapse/drag/active) legible without a click?
+- *Only they would say:* "This layout advertises what was easiest to build, not the user's mental model of the thing on screen."
+
+**THE ACCESSIBILITY ENFORCER** — AA contrast, keyboard, focus, both themes
+- Does every text/UI pair clear WCAG AA in BOTH light and dark — including muted-foreground and disabled states?
+- Can this be fully operated by keyboard: visible focus rings, aria-current, icon-only buttons labeled, focus not trapped/lost?
+- Are state changes announced (live regions, toasts) and not conveyed by color alone?
+- *Only they would say:* "It passes in light and I can prove it fails AA in dark at the exact ratio — here."
+
+**THE DIAGNOSTICIAN** — symptom vs disease, blast radius (Independent-Diagnosis lens)
+- The user's words describe a symptom — what's the actual underlying cause, and how far upstream is it?
+- What's the minimum surgical change, and what's the blast radius / regression risk / duplicate-component trap?
+- Is there a prior fix in `learnings.md` this would re-break, or a named rule this would violate?
+- *Only they would say:* "You asked to fix what you see; the real defect is several components upstream — patching here just moves the bruise."

@@ -27,7 +27,7 @@ When the user types `/my-md`, says "list md files", or "show markdown files", in
 - **whats-next** (`~/.claude/skills/whats-next/SKILL.md`) - checks task queue first, runs next task; if empty, scans project and proposes. Never shows a static menu. Trigger: `/whats-next`
 When the user types `/whats-next`, says "what's next", "what should I do", or "now what", invoke the Skill tool with `skill: "whats-next"` before doing anything else.
 # debate
-- **debate** (`~/.claude/skills/debate/SKILL.md`) - 7-persona product-team debate: Senior Dev, Junior Dev, Sales Engineer, DevOps, Sales Leader, Eng Leader, Product Designer → Chairman oversight (evidence rulings, forced cross-examinations) → contradiction map → synthesis → peer review. Works on architecture, UI/UX, or feature-priority calls. Trigger: `/debate`
+- **debate** (`~/.claude/skills/debate/SKILL.md`) - 7-persona product-team debate: Senior Dev, Junior Dev, Sales Engineer, DevOps, Sales Leader, Eng Leader, Product Designer → Chairman oversight (evidence rulings, forced cross-examinations) → contradiction map → synthesis → peer review. Works on architecture, UI/UX, or feature-priority calls. Flag `--ui` swaps in a 5-persona UI/UX panel (Restraint Auditor, Operator, Spatial Designer, Accessibility Enforcer, Diagnostician) grounded in the project's design docs. Trigger: `/debate`
 When the user types `/debate`, says "debate this", "stress test this decision", "get the team on this", or "should we build this", invoke the Skill tool with `skill: "debate"` before doing anything else.
 # update
 - **update** (`~/.claude/skills/update/SKILL.md`) - check for updates, preview what changed, apply full or rules-only update, rollback, or restore a removed skill. Trigger: `/update`
