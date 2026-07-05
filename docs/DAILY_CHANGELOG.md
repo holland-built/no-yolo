@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-07-05
+
+- added a `--ui` flag to /debate — swaps the default 7 business/eng personas for a 5-persona UI/UX panel (Restraint Auditor, The Operator, Spatial Designer, Accessibility Enforcer, Diagnostician) that reads the project's own design docs first, so it argues by your rules instead of generic taste
+
 ## 2026-07-04
 
 - merged /md-fix into /md-check as `--fix` — one skill now both audits (default) and applies fixes (`--fix`, `--auto` to skip the gate); removed the standalone /md-fix skill (md-check is the shared audit primitive other skills call)
