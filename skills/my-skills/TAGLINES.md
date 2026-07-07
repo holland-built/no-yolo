@@ -16,7 +16,6 @@ trim-help|Quick reference for all trim commands.
 my-md|Lists every markdown file — global Claude docs plus current project's notes.
 design-audit|Audit UI across 5 lenses → ranked violations → optional 10-mockup fix pipeline.
 design|Fresh UI generation: 10 Opus mockups (8 paradigms + 2 wild) → AI picks → you confirm → build.
-impeccable|Full-app polish loop: audit 5 lenses → fix Critical/High → verify. Repeats until clean.
 ingest-docs|Converts PDFs/decks/docs into dense context files Claude reads at runtime.
 supacode-cli|Lets Claude drive the Supacode terminal app — tabs, worktrees, surfaces.
 whats-next|Shows unfinished work or next-action list. Never static.

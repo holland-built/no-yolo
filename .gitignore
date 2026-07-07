@@ -9,6 +9,10 @@ settings.json
 # third-party plugins (own repos)
 plugins/
 
+# vendored third-party skill content (own repos) — fetched locally by
+# /update vendor <name>, never committed; see docs/THIRD_PARTY_SKILLS.md
+skills/design/vendor/
+
 # external symlinked skills
 skills/improve
 skills/impeccable

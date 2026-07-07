@@ -8,3 +8,12 @@
 6. **Flag uncertainty.** If an approach or technical detail is genuinely ambiguous, say so in one sentence before proceeding — don't silently pick. Don't ask for permission; surface the assumption and continue.
 7. **Suggest better paths.** If a tactical fix has a longer-lasting or higher-impact alternative, name it — one sentence — before or after executing the ask. Don't implement the alternative unless asked.
 8. **Self-check before declaring done.** Before finishing any coding task: state the simplest approach and check for reusable existing code during planning, then verify after writing the code that you actually did both — didn't reinvent something that already existed, didn't over-build past what was asked. Do this every time, unprompted. This is a fast, scoped check on what you just touched — not a full `/review` pass; run `/review` yourself when you want the full audit, otherwise leave that command for the user to invoke.
+
+## Self-learning
+
+When corrected, or you catch yourself mid-mistake: before continuing, add the lesson as a one-line rule under `## Lessons` below, so it never happens again.
+
+## Lessons
+
+- (Claude adds rules here)
+- Before adding any external repo's files to this repo, check `.gitignore` for the existing "third-party stays local, never published" convention (`plugins/`, `skills/impeccable`, `lazyweb-*`, `trim-*`) — vendor it there (gitignored, fetched by an install command) instead of committing a copy.

@@ -10,7 +10,6 @@ my-skills|Forgot what skills exist
 design-audit|Any UI that feels off — audit first, then optionally fix with 10 mockups in the same command
 tdd|Bug fixes, new features, anywhere tests matter
 design|Starting a new design or full redesign — want truly fresh, not an incremental patch
-impeccable|App works but looks rough — need systematic visual polish across the whole codebase
 ingest-docs|You have source material Claude should know about
 supacode-cli|Working inside a Supacode terminal session
 video-to-kb|Good talk or tutorial worth keeping permanently

@@ -10,7 +10,6 @@ my-skills|You forget you have tools. This is the map
 design-audit|Five independent lenses catch what one reviewer misses — audit is read-only, fix gate keeps you in control before anything builds
 tdd|The RED test is proof you actually fixed it. Without it you're asserting, not proving
 design|7 distinct paradigms at once + slop validator kills the generic — one pick becomes a full build plan
-impeccable|Loop catches regressions after each fix. Manual polish misses cross-file consistency
 ingest-docs|Dedupes against what's already there and tracks changes in a manifest — re-runs only touch what's new
 supacode-cli|Auto-activates in-session; no slash command to remember
 video-to-kb|Talks are perishable. One command turns them into permanent, searchable KB nodes

@@ -10,6 +10,10 @@
 - `/update` gained two apply commands — `/update vendor <name>` (re-vendor a stale third-party skill from upstream) and `/update marketplace <name>` (git pull a stale orphaned marketplace, e.g. impeccable) — both confirm-gated, the only steps that touch third-party content
 - `/update` gained a plugin/marketplace drift check for marketplaces cloned directly (no `installed_plugins.json` entry) that the old plugin-status step silently missed — caught `impeccable` stale by 124 commits, since fixed
 - `/release` gained a pre-push sync check (BEHIND only) so it never pushes blind against a moved remote — defers the full picture to `/update` rather than duplicating it
+- **correction (same day):** taste-skill was committed as a full copy — against this repo's own convention (`.gitignore` already excludes `plugins/`, `skills/impeccable`, etc.). Un-tracked it, added it to `.gitignore`, rewrote `THIRD_PARTY_SKILLS.md` as an install-pointer doc — `/update vendor <name>` now handles first install, not just re-fetch
+- **correction (same day):** discovered two unrelated things both named "impeccable" — a hand-written local skill (gitignored, never backed up) and the real `pbakaus/impeccable` plugin. Deleted the hand-written one per your call; `/design`'s existing-UI redirect now points at the real plugin instead, documented as an install command in README (not uploaded)
+- swept every catalog file (STORIES/TAGLINES/WHEN_TO_USE/WHY_TO_USE, README, design/SKILL.md) for the now-fictional "5-lens polish loop" description and the equally-stale claim that `/design-audit`'s "fix it" hands off to `/impeccable` (it never did — self-corrected)
+- logged a new lesson in `CORE_RULES.md` under the (also new) Self-learning section: check `.gitignore` convention before vendoring any external repo's files
 
 ## 2026-07-05
 
