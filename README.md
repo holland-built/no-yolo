@@ -69,13 +69,14 @@ bash ~/.claude/setup.sh --md-only # rules only — no tools installed
 
 **Started with --md-only and want tools later?** Just re-run: `bash ~/.claude/setup.sh` — it skips anything already installed.
 
-### Step 3 — Two optional plugins inside Claude Code
+### Step 3 — Optional plugins inside Claude Code
 
 After setup.sh finishes, open Claude Code and run these if you want them:
 
 | Plugin | What it adds | Command (run inside Claude Code) |
 |---|---|---|
 | Caveman | Makes Claude reply in fewer words — saves tokens on long sessions | `/plugin marketplace add JuliusBrussee/caveman` |
+| impeccable | Frontend design/critique/polish tool used alongside (not part of) `/design` — `/design`'s existing-UI redirect hands off to it | `/plugin marketplace add pbakaus/impeccable` |
 
 ### Step 4 — Verify
 
@@ -163,7 +164,7 @@ Two skills cover the full frontend design workflow. Design tokens (`DESIGN.md` /
 
 | Command | Depth | What it does | Gates |
 |---|---|---|---|
-| `/design-audit` | read-only | 5 lenses in parallel (taste, Swiss design, UI rules, accessibility, CSS health), then a second agent challenges every Critical finding before it sticks. Ranked violations table, worst first. Say "fix it" and it hands off to `/impeccable` | none |
+| `/design-audit` | read-only | 5 lenses in parallel (taste, Swiss design, UI rules, accessibility, CSS health), then a second agent challenges every Critical finding before it sticks. Ranked violations table, worst first. Say "fix it" and it triggers a scoped 10-mockup fix pipeline on the findings | none |
 | `/design` | mockups + full pipeline | Starts from a brand seed, fans out 7 Opus mockups each locked to a different paradigm, kills the generic ones with a slop validator, hard-stops on a pick. Then writes an Opus plan and Sonnet builds it. `--apply-spec [DESIGN.md]` swaps an existing app onto a spec's tokens instead | Nothing builds until you pick a mockup |
 
 `/design-audit` findings can feed directly into a `/design` fix pass. Both skills always show light + dark mode.
@@ -393,6 +394,7 @@ Some things are deliberately left out of this repo, and why:
 | `settings.json` | Specific to your machine — has your Node.js path and any MCP servers you added. Use `settings.example.json` as a starting point, then copy and edit it (setup.sh step 1). Never commit this file — it may contain API keys |
 | `plugins/` | Third-party marketplaces; each lives in its own repo |
 | Plugin shortcuts (`trim*/`, `improve`, etc.) | Symlinks (shortcuts) pointing to `~/.agents/skills/` where plugins install to. Clone them via the install commands above — they won't be in the repo itself |
+| `skills/design/vendor/` | Third-party skill content (currently taste-skill, from `Leonxlnx/taste-skill`) that `/design` reads for real design rules. Run `/update vendor taste-skill` to fetch it — see `docs/THIRD_PARTY_SKILLS.md` for the full list and install commands. Without it, `/design` falls back to a built-in minimum ruleset |
 | `.pending-tasks.md` | Session task queue used by `/whats-next` — local only, not shared |
 | `learnings.md` | Written by `/prompt-scan` — accumulates model release notes + prompt diagnostics over time. Local only |
 | `cache/`, `sessions/`, `history.jsonl`, logs | Temporary runtime files — not part of the configuration |

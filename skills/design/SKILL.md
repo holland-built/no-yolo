@@ -1,6 +1,6 @@
 ---
 name: design
-description: Use this skill when the user types /design, says 'design this', 'new design', 'redesign', 'fresh look', 'start over on the UI', 'mock this up', or 'show me design options'. Fresh generation only — never preserves the existing design. Pipeline: brand seed -> Taste generators -> 10 Opus mockups (8 distinct paradigms + 2 wild) -> slop validator -> AI picks best -> Chrome auto-opens -> you confirm or pick different -> Opus plan -> Sonnet build. Nothing builds before you confirm. Auto-redirects audit/review to /design-audit, existing-UI polish to /impeccable.
+description: Use this skill when the user types /design, says 'design this', 'new design', 'redesign', 'fresh look', 'start over on the UI', 'mock this up', or 'show me design options'. Fresh generation only — never preserves the existing design. Pipeline: brand seed -> Taste generators -> 10 Opus mockups (8 distinct paradigms + 2 wild) -> slop validator -> AI picks best -> Chrome auto-opens -> you confirm or pick different -> Opus plan -> Sonnet build. Nothing builds before you confirm. Auto-redirects audit/review to /design-audit, existing-UI polish to the impeccable plugin.
 user-invocable: true
 argument-hint: "[text | URL | screenshot | domain context] [--apply-spec <file>]"
 allowed-tools:
@@ -27,12 +27,12 @@ a different command themselves.
 - `$ARGUMENTS` contains `audit`, `review`, `analyze`, `what's wrong`, `find problems` ->
   invoke `/design-audit` now.
 - `$ARGUMENTS` contains `polish`, `tighten`, `existing`, `impeccable`, `fix the design`,
-  `clean up the ui` (and no BOLD-mode word below is also present) -> invoke `/impeccable` now.
-  This is real-code polish over what's already built, not fresh generation — `/impeccable` runs
-  Step 1's vendored files itself (see its own Scope note), you don't re-run them here. Never
-  run both engines on the same request — they produce incompatible artifacts (throwaway
-  mockup HTML vs live edits to real files) — but both read the same vendored rule files so
-  their visual judgment stays in sync.
+  `clean up the ui` (and no BOLD-mode word below is also present) -> invoke `impeccable:impeccable`
+  now (the installed plugin — `/plugin marketplace add pbakaus/impeccable` if not present).
+  This is real-code polish over what's already built, not fresh generation. It's an independent
+  tool with its own rules, not something that shares this skill's vendored taste-skill files —
+  never run both engines on the same request regardless, since they produce incompatible
+  artifacts (throwaway mockup HTML vs live edits to real files).
 - `--apply-spec <file>` present -> jump straight to the APPLY-SPEC branch (skip Steps 0-4).
 - Anything else -> run this skill's own pipeline (Steps 0-4 below), taste-skill-driven.
 

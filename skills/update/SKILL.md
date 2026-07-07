@@ -135,13 +135,23 @@ Then output verbatim:
 
 ### Step 4.6 — vendored third-party skill drift (read-only)
 
-Read `docs/THIRD_PARTY_SKILLS.md`. For each row, check upstream HEAD against the pinned commit:
+Read `docs/THIRD_PARTY_SKILLS.md` for the list of names + local paths (none of this content is
+in git — see that file). For each row:
 
 ```bash
-gh api repos/<upstream-repo>/commits/main --jq '.sha' 2>/dev/null
+if [ ! -f "<local-path>/SOURCE.md" ]; then
+  echo "<name>: NOT INSTALLED"
+else
+  PINNED=$(grep "Pinned commit" "<local-path>/SOURCE.md" | grep -oE '[0-9a-f]{40}')
+  HEAD=$(gh api repos/<upstream-repo>/commits/main --jq '.sha' 2>/dev/null)
+fi
 ```
 
-Show as a table: **Name | Pinned | Upstream HEAD | Status**. Status is `up to date` if SHAs match, else `⚠️ STALE — N commits behind` (get N via `gh api repos/<repo>/compare/<pinned>...main --jq '.ahead_by'`). If `gh` missing/unauthed or the table has no rows: skip this step silently.
+Show as a table: **Name | Status**. Status is `not installed — run /update vendor <name> to
+install` if `SOURCE.md` is missing (gitignored dir never fetched on this machine yet), `up to
+date` if `PINNED = HEAD`, else `⚠️ STALE — N commits behind` (get N via `gh api
+repos/<repo>/compare/<pinned>...main --jq '.ahead_by'`). If `gh` missing/unauthed or the table
+has no rows: skip this step silently.
 
 Never auto-update inside this check — output:
 > Vendored skill "<name>" is behind upstream. Run `/update vendor <name>` to re-vendor it.
@@ -303,25 +313,27 @@ After restoring: remind user to add the trigger back to CLAUDE.md if they want `
 
 Look up `<name>` in `docs/THIRD_PARTY_SKILLS.md`. If no row matches: "No vendored third-party skill named '<name>' — see `/update` to see what's tracked." Stop.
 
-Confirm: "Re-vendoring '<name>' from <upstream-repo>. This overwrites the local copy under <vendor-path>. Continue? (y/n)"
+`<vendor-path>` is gitignored — this never touches git, never gets committed, and this command
+works identically whether it's a first install or a refresh.
+
+If `<vendor-path>/SOURCE.md` doesn't exist yet: "Installing '<name>' from <upstream-repo> to <vendor-path> (local only, never published). Continue? (y/n)"
+If it exists: "Re-fetching '<name>' from <upstream-repo>. This overwrites the local copy under <vendor-path>. Continue? (y/n)"
 
 ```bash
 VENDOR_PATH="<vendor-path from the row>"
 REPO="<upstream-repo from the row>"
+mkdir -p "$VENDOR_PATH"
 NEW_SHA=$(gh api "repos/$REPO/commits/main" --jq '.sha')
-for f in "$VENDOR_PATH"/*.md; do
-  base=$(basename "$f" .md)
-  [ "$base" = "SOURCE" ] && continue
-  curl -s "https://raw.githubusercontent.com/$REPO/main/skills/$base/SKILL.md" -o "$f"
+for base in <file basenames from the row's "Used by"/known file list, e.g. taste-skill redesign-skill image-to-code-skill>; do
+  curl -s "https://raw.githubusercontent.com/$REPO/main/skills/$base/SKILL.md" -o "$VENDOR_PATH/$base.md"
 done
-cd ~/.claude && git diff --stat -- "$VENDOR_PATH"
 ```
 
-(Convention: local `<vendor-path>/<x>.md` always maps to upstream `skills/<x>/SKILL.md` — this is how every vendored file here was pulled.)
+(Convention: local `<vendor-path>/<x>.md` always maps to upstream `skills/<x>/SKILL.md`.)
 
-Update `<vendor-path>/SOURCE.md`'s "Pinned commit" and "Vendored" date to `$NEW_SHA` / today. Update the matching row's "Pinned commit" in `docs/THIRD_PARTY_SKILLS.md` too — both must always agree.
+Write or update `<vendor-path>/SOURCE.md` with: Upstream, License, Pinned commit (`$NEW_SHA`), Vendored date (today), Files, Used by — same shape as the existing `taste-skill/SOURCE.md`.
 
-Show the `git diff --stat` output (files changed, lines added/removed) as the change summary. Tell user: "Re-vendored '<name>' to <NEW_SHA short>. Review the diff before your next `/design` or `/impeccable` run — these files directly drive what they build/fix." Do not commit — leave it staged for the user's own review/commit.
+Show a `diff`-style summary of what changed (or "installed N files" if this was a first install). Tell user: "'<name>' ready at <vendor-path> (commit <NEW_SHA short>, local only). Review before your next `/design` run — these files directly drive what it builds."
 
 ### Step 12 — if argument is `marketplace <name>`
 
