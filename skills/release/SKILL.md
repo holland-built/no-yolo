@@ -57,6 +57,21 @@ Echo the resolved target: `env=<x> → branch=<y>`.
   ```
   Any match → STOP: `BLOCKED — secret/personal data in diff`.
 
+## Step 3.5 — Sync check (never push blind against a moved remote)
+
+```bash
+git -C "$REPO_ROOT" fetch origin "<target-branch>" 2>/dev/null
+BEHIND=$(git -C "$REPO_ROOT" rev-list HEAD.."origin/<target-branch>" --count 2>/dev/null || echo 0)
+```
+
+If `BEHIND > 0`: **STOP.** GitHub has commits this machine doesn't — pushing now risks a
+rejected push or overwriting work. Tell user: "GitHub has N commit(s) you don't have locally.
+Run `/update` to see what changed, then pull/rebase before I push." Do not merge or rebase
+here — that's `/update`'s job, not `/release`'s. This is a narrower check than full `/update`
+(just "is it safe to push"), not a substitute for it.
+
+If `BEHIND = 0`: continue.
+
 ## Step 4 — Run the playbook
 
 Execute each `## Steps` action in order for the target env. Then:
