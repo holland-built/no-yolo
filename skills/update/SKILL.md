@@ -1,6 +1,6 @@
 ---
 name: update
-description: Use this skill when the user types /update, says 'check for updates', 'am I out of date', 'what's new', 'update my setup', or 'rollback'. Checks for, previews, and applies updates to ~/.claude setup — rollback and restore-removed-skill included.
+description: Use this skill when the user types /update, says 'check for updates', 'am I out of date', 'what's new', 'update my setup', or 'rollback'. Two-way reconciliation between your local ~/.claude and its published copy on GitHub — checks not just what GitHub has that you don't (behind), but what you have that GitHub doesn't yet (ahead, or plain uncommitted work — points to /release to publish). Also covers plugin version status and vendored third-party skill drift (docs/THIRD_PARTY_SKILLS.md). `/update vendor <name>` and `/update marketplace <name>` actually apply third-party updates (re-vendor / git pull) — the only steps that touch third-party content, always behind a confirm.
 user-invocable: true
 ---
 
@@ -18,6 +18,8 @@ Check if your Claude Code setup is out of date, preview what would change, and u
 | `/update rules` | Pull changes + rules only (no tool installs) |
 | `/update rollback` | Undo the last update, go back to what you had |
 | `/update restore <skill-name>` | Bring back a skill that was removed in an update |
+| `/update vendor <name>` | Re-vendor a stale third-party skill (e.g. taste-skill) from upstream, re-pin the commit |
+| `/update marketplace <name>` | `git pull` a stale orphaned marketplace (e.g. impeccable) to latest |
 
 ## How to run
 
@@ -29,16 +31,36 @@ cd ~/.claude
 git fetch origin main 2>/dev/null
 ```
 
-### Step 2 — check how far behind
+### Step 2 — reconcile both directions (not just "am I behind")
+
+`github.com/holland-built/no-yolo` is your published copy — the place you or anyone else
+copies this setup from. Reconciliation means checking BOTH directions, not just whether
+GitHub has something you don't:
 
 ```bash
+cd ~/.claude
 BEHIND=$(git rev-list HEAD..origin/main --count)
 AHEAD=$(git rev-list origin/main..HEAD --count)
+DIRTY=$(git status --porcelain)
 ```
 
-If BEHIND is 0: output "Your setup is up to date. Nothing to pull." and stop.
+- **BEHIND > 0** — GitHub has commits your machine doesn't. Covered by Steps 3-4 below.
+- **AHEAD > 0** — your machine has commits GitHub doesn't (built locally, never published).
+  List them: `git log origin/main..HEAD --oneline` (same plain-English prefix translation as
+  Step 3). Tell user: "You have N local commit(s) not on GitHub yet. Run `/release` to publish
+  them." Never push from here — `/update`'s job is to report, `/release` is the sole publish
+  command.
+- **DIRTY non-empty** — files changed or created on disk that aren't even committed yet (the
+  most common gap: a whole work session sitting in `git status` that neither BEHIND nor AHEAD
+  can see, since it's not a commit at all). List the files from `$DIRTY` grouped as Modified /
+  New. Tell user: "You also have M uncommitted change(s) — not yet part of any commit."
 
-If BEHIND > 0: continue.
+If BEHIND = 0 AND AHEAD = 0 AND DIRTY is empty: output "Your machine and GitHub are
+identical — everything reconciled." Skip Steps 3-4 (nothing remote to translate) but still run
+Steps 4.5-4.7 below — those check different things (plugins, vendored content, marketplaces)
+and must never be skipped just because the core repo is in sync.
+
+If BEHIND > 0: continue to Step 3.
 
 ### Step 3 — translate commits into plain English
 
@@ -111,17 +133,67 @@ Show as a table: **Plugin | Installed version | Scope**. Flag any row whose vers
 Then output verbatim:
 > To check for plugin updates, run `/plugin list` inside Claude Code, then `/plugin update <name>` for any that are outdated. Plugins can't be updated from outside the session.
 
+### Step 4.6 — vendored third-party skill drift (read-only)
+
+Read `docs/THIRD_PARTY_SKILLS.md`. For each row, check upstream HEAD against the pinned commit:
+
+```bash
+gh api repos/<upstream-repo>/commits/main --jq '.sha' 2>/dev/null
+```
+
+Show as a table: **Name | Pinned | Upstream HEAD | Status**. Status is `up to date` if SHAs match, else `⚠️ STALE — N commits behind` (get N via `gh api repos/<repo>/compare/<pinned>...main --jq '.ahead_by'`). If `gh` missing/unauthed or the table has no rows: skip this step silently.
+
+Never auto-update inside this check — output:
+> Vendored skill "<name>" is behind upstream. Run `/update vendor <name>` to re-vendor it.
+
+### Step 4.7 — orphaned marketplaces (read-only)
+
+Some marketplaces are git-cloned directly into `plugins/marketplaces/<name>/` but have **no
+matching entry** in `installed_plugins.json` (no `<plugin>@<name>` key) — Step 4.5 silently
+skips these, so a skill can drift with zero warning (e.g. `impeccable`, cloned straight from
+`pbakaus/impeccable` with nothing installed through the normal plugin flow).
+
+```bash
+python3 - "$HOME/.claude/plugins/known_marketplaces.json" "$HOME/.claude/plugins/installed_plugins.json" <<'PYEOF'
+import json, sys, os
+mkt_p, inst_p = sys.argv[1], sys.argv[2]
+mkts = json.load(open(mkt_p)) if os.path.exists(mkt_p) else {}
+installed = json.load(open(inst_p)).get("plugins", {}) if os.path.exists(inst_p) else {}
+covered = {k.split("@", 1)[1] for k in installed if "@" in k}
+for name, info in mkts.items():
+    if name in covered:
+        continue
+    loc = info.get("installLocation", "")
+    if loc and os.path.isdir(os.path.join(loc, ".git")):
+        print(f"{name}\t{loc}")
+PYEOF
+```
+
+For each orphaned marketplace printed, run in its directory:
+```bash
+LOCAL=$(git rev-parse HEAD); REMOTE=$(git ls-remote origin HEAD | cut -f1)
+```
+
+Show as a table: **Marketplace | Status**. `up to date` if `LOCAL = REMOTE`, else
+`⚠️ STALE — behind upstream`. If none are orphaned or `git`/network fails: skip silently.
+
+Never auto-update inside this check — output:
+> "<name>" isn't tracked by the plugin system. Run `/update marketplace <name>` to pull it to latest.
+
 ### Step 5 — offer options (when run with no argument)
 
 After showing the summary, output:
 
 ```
 What do you want to do?
-  /update preview   — see the full detailed changelog
-  /update full      — apply everything (pulls + installs tools)
-  /update rules     — apply rules only (no tool installs)
-  /update rollback  — go back to what you had before
+  /update preview            — see the full detailed changelog
+  /update full               — apply everything (pulls + installs tools + offers third-party updates)
+  /update rules               — apply rules only (no tool installs)
+  /update rollback            — go back to what you had before
+  /update vendor <name>       — re-vendor a stale third-party skill
+  /update marketplace <name>  — git pull a stale orphaned marketplace
 ```
+(The last two only appear if Steps 4.6/4.7 found something STALE.)
 
 Then stop. Do not auto-pull.
 
@@ -176,7 +248,7 @@ Confirm: "Pulling all updates and re-running setup. This takes about 30 seconds.
 
 Run the **Shared: sync-and-run** block above using `bash ~/.claude/setup.sh` as `<SETUP_CMD>`.
 
-After success: show plain-English summary of what changed. Tell user: "Reopen Claude Code to pick up the changes."
+After success: show plain-English summary of what changed. Then run Steps 4.6 and 4.7's checks — for any row/marketplace reported STALE, ask once: "Also update third-party content — <names> — to latest? (y/n)". If yes, run Step 11 (`vendor <name>`) and/or Step 12 (`marketplace <name>`) for each. Tell user: "Reopen Claude Code to pick up the changes."
 
 ### Step 8 — if argument is `rules`
 
@@ -226,3 +298,42 @@ git log --all --oneline -- skills/<skill-name>/SKILL.md
 Show the user what commits touched that skill and let them pick which version to restore.
 
 After restoring: remind user to add the trigger back to CLAUDE.md if they want `/skill-name` to work.
+
+### Step 11 — if argument is `vendor <name>`
+
+Look up `<name>` in `docs/THIRD_PARTY_SKILLS.md`. If no row matches: "No vendored third-party skill named '<name>' — see `/update` to see what's tracked." Stop.
+
+Confirm: "Re-vendoring '<name>' from <upstream-repo>. This overwrites the local copy under <vendor-path>. Continue? (y/n)"
+
+```bash
+VENDOR_PATH="<vendor-path from the row>"
+REPO="<upstream-repo from the row>"
+NEW_SHA=$(gh api "repos/$REPO/commits/main" --jq '.sha')
+for f in "$VENDOR_PATH"/*.md; do
+  base=$(basename "$f" .md)
+  [ "$base" = "SOURCE" ] && continue
+  curl -s "https://raw.githubusercontent.com/$REPO/main/skills/$base/SKILL.md" -o "$f"
+done
+cd ~/.claude && git diff --stat -- "$VENDOR_PATH"
+```
+
+(Convention: local `<vendor-path>/<x>.md` always maps to upstream `skills/<x>/SKILL.md` — this is how every vendored file here was pulled.)
+
+Update `<vendor-path>/SOURCE.md`'s "Pinned commit" and "Vendored" date to `$NEW_SHA` / today. Update the matching row's "Pinned commit" in `docs/THIRD_PARTY_SKILLS.md` too — both must always agree.
+
+Show the `git diff --stat` output (files changed, lines added/removed) as the change summary. Tell user: "Re-vendored '<name>' to <NEW_SHA short>. Review the diff before your next `/design` or `/impeccable` run — these files directly drive what they build/fix." Do not commit — leave it staged for the user's own review/commit.
+
+### Step 12 — if argument is `marketplace <name>`
+
+Look up `<name>` in `known_marketplaces.json`'s `installLocation`. If missing or not a git repo: "'<name>' isn't a git-cloned marketplace — nothing to pull." Stop.
+
+Confirm: "Pulling '<name>' to latest from its upstream repo. Continue? (y/n)"
+
+```bash
+cd "<installLocation>"
+BEFORE=$(git rev-parse --short HEAD)
+git pull origin main 2>&1
+AFTER=$(git rev-parse --short HEAD)
+```
+
+Tell user: "'<name>' updated from $BEFORE to $AFTER." If `BEFORE = AFTER`: "'<name>' was already up to date." If pull fails (conflicts/dirty tree in that clone): show the git error verbatim and stop — do not force anything.

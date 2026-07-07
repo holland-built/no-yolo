@@ -1,6 +1,6 @@
 ---
 name: design
-description: Use this skill when the user types /design, says 'design this', 'new design', 'redesign', 'fresh look', 'start over on the UI', 'mock this up', or 'show me design options'. Fresh generation only — never preserves the existing design. Pipeline: brand seed -> Taste generators -> 10 Opus mockups (8 distinct paradigms + 2 wild) -> slop validator -> AI picks best -> Chrome auto-opens -> you confirm or pick different -> Opus plan -> Sonnet build. Nothing builds before you confirm. Auto-redirects audit/review to /design-audit.
+description: Use this skill when the user types /design, says 'design this', 'new design', 'redesign', 'fresh look', 'start over on the UI', 'mock this up', or 'show me design options'. Fresh generation only — never preserves the existing design. Pipeline: brand seed -> Taste generators -> 10 Opus mockups (8 distinct paradigms + 2 wild) -> slop validator -> AI picks best -> Chrome auto-opens -> you confirm or pick different -> Opus plan -> Sonnet build. Nothing builds before you confirm. Auto-redirects audit/review to /design-audit, existing-UI polish to /impeccable.
 user-invocable: true
 argument-hint: "[text | URL | screenshot | domain context] [--apply-spec <file>]"
 allowed-tools:
@@ -21,9 +21,20 @@ Fresh generation. This skill **never preserves the existing design** — every m
 clean-sheet take. Existing tokens are read only to build a ban list.
 
 ## Redirects (check first)
+`/design` is the single entry point for all UI work — it routes to the right engine below.
+A redirect means: invoke that skill now, in this same response. Never tell the user to type
+a different command themselves.
 - `$ARGUMENTS` contains `audit`, `review`, `analyze`, `what's wrong`, `find problems` ->
-  stop and run `/design-audit` instead.
+  invoke `/design-audit` now.
+- `$ARGUMENTS` contains `polish`, `tighten`, `existing`, `impeccable`, `fix the design`,
+  `clean up the ui` (and no BOLD-mode word below is also present) -> invoke `/impeccable` now.
+  This is real-code polish over what's already built, not fresh generation — `/impeccable` runs
+  Step 1's vendored files itself (see its own Scope note), you don't re-run them here. Never
+  run both engines on the same request — they produce incompatible artifacts (throwaway
+  mockup HTML vs live edits to real files) — but both read the same vendored rule files so
+  their visual judgment stays in sync.
 - `--apply-spec <file>` present -> jump straight to the APPLY-SPEC branch (skip Steps 0-4).
+- Anything else -> run this skill's own pipeline (Steps 0-4 below), taste-skill-driven.
 
 ## BOLD mode
 If `$ARGUMENTS` contains any of: `new`, `redesign`, `fresh`, `different`, `something new`,
@@ -55,11 +66,24 @@ Write the seed to `.mockups/design-seed.md`: palette hex, type families, spacing
 layout principles, component states, do's/don'ts. State one line summarizing the seed source.
 
 ## Step 1 — Taste generators
-- If a screenshot is provided -> invoke Taste **image-to-code-skill** (generate reference
-  image, analyze structure, translate faithfully).
-- Invoke Taste **redesign-skill** to set mockup generation direction (six categories:
-  typography, color/surfaces, layout, interactivity, content, components).
-Both feed the Step 2 briefs. If Taste sub-skills are not installed, use the FALLBACKS block.
+Vendored at `skills/design/vendor/taste-skill/` (real content, MIT-licensed from
+Leonxlnx/taste-skill — see `vendor/taste-skill/SOURCE.md`). If the vendor dir is missing,
+fall back to the FALLBACKS block below and skip straight to Step 2.
+
+1. Read `vendor/taste-skill/taste-skill.md`. Apply **Section 0 (Brief Inference)**: state the
+   one-line **Design Read** — page kind, audience, vibe, leaning design-system/aesthetic.
+   Apply **Section 1 (Three Dials)**: set `DESIGN_VARIANCE` / `MOTION_INTENSITY` /
+   `VISUAL_DENSITY` from the inference table (baseline 8/6/4 if nothing overrides). Apply
+   **Section 2 (Brief -> Design System Map)**: if the brief matches a real design system
+   (Fluent/Material/Carbon/Polaris/Atlassian/Primer/GOV.UK/USWDS/Radix/shadcn), name it and use
+   the official package — do not hand-roll its CSS.
+2. If a screenshot is provided -> read `vendor/taste-skill/image-to-code-skill.md` and follow
+   it (generate reference image, analyze structure, translate faithfully).
+3. Read `vendor/taste-skill/redesign-skill.md` to set mockup generation direction (six
+   categories: typography, color/surfaces, layout, interactivity, content, components).
+
+The Design Read line, the three dial values, and the design-system decision all feed the
+Step 2 briefs alongside the six-category direction.
 
 ## Step 2 — 10 Opus mockups
 ONE parallel Agent call, `model: "opus"`. Each writes `.mockups/design-<slug>/vN.html`:
@@ -86,8 +110,9 @@ the header comment.
   the most non-obvious decision points (why this column count, why this type scale, why this
   component placement).
 
-Each brief carries: design seed + Taste/Swiss/UIwiki rule text (FALLBACKS if absent) + the
-slop reject list below + LIGHT+DARK rule. BOLD constraint added when BOLD MODE is on.
+Each brief carries: design seed + Design Read line + the three dial values + any named design
+system from Step 1 + Taste/Swiss/UIwiki rule text (FALLBACKS if vendor absent) + the slop
+reject list below + LIGHT+DARK rule. BOLD constraint added when BOLD MODE is on.
 
 ## Step 3 — Validator + combined view + AI pick
 

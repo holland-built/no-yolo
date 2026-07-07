@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-07-07
+
+- vendored the real taste-skill (Leonxlnx/taste-skill, MIT, pinned commit) into `skills/design/vendor/taste-skill/` — `/design` now actually reads it (Design Read + 3 dials + honest design-system routing) instead of running on the FALLBACKS-only stub
+- added `docs/THIRD_PARTY_SKILLS.md` — registry `/update` reads to flag drift on any vendored (non-plugin) third-party content
+- `/design` now auto-redirects existing-UI polish language (`polish`, `tighten`, `existing`, `fix the design`, etc.) to `/impeccable`, invoked in the same response — never tells you to retype a command
+- `/impeccable` now shares the vendored taste-skill rules with `/design` (redesign-skill.md as its primary Fix driver, taste-skill.md's anti-default checklist in Audit) while its own Scope guard always overrides the dials for documented/intentional design decisions
+- `/update` gained real two-way reconciliation: it now checks AHEAD (local commits not pushed) and DIRTY (uncommitted work) in addition to BEHIND, since the old version only checked "is GitHub ahead of me" and silently missed unpublished local work
+- `/update` gained two apply commands — `/update vendor <name>` (re-vendor a stale third-party skill from upstream) and `/update marketplace <name>` (git pull a stale orphaned marketplace, e.g. impeccable) — both confirm-gated, the only steps that touch third-party content
+- `/update` gained a plugin/marketplace drift check for marketplaces cloned directly (no `installed_plugins.json` entry) that the old plugin-status step silently missed — caught `impeccable` stale by 124 commits, since fixed
+- `/release` gained a pre-push sync check (BEHIND only) so it never pushes blind against a moved remote — defers the full picture to `/update` rather than duplicating it
+
 ## 2026-07-05
 
 - added a `--ui` flag to /debate — swaps the default 7 business/eng personas for a 5-persona UI/UX panel (Restraint Auditor, The Operator, Spatial Designer, Accessibility Enforcer, Diagnostician) that reads the project's own design docs first, so it argues by your rules instead of generic taste

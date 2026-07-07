@@ -18,5 +18,6 @@ learnings.md|Compiled prompt conventions written by /prompt-scan. Feeds /better_
 DAILY_CHANGELOG.md|Running log of every change shipped — /release appends a dated entry here before pushing. Open to see what changed and when.
 README_FORMAT.md|Spec file listing the 15 required README section headings. /release reads this and hard-blocks the commit if any section is missing or renamed.
 SKILL_TRIGGERS.md|Source of truth for every skill trigger rule — what phrases fire which skill. CLAUDE.md imports this. Edit here, not in CLAUDE.md directly.
+THIRD_PARTY_SKILLS.md|Registry of vendored (non-plugin) third-party skill content, pinned to an upstream commit per row. /update reads this to flag drift — read-only, never auto-pulls.
 .pending-tasks.md|Session task queue. /whats-next reads this first and runs the next unchecked item. Add tasks here to queue work across sessions.
 HOOKS_INTERNALS.md|Developer reference for the 4 caveman hook JS modules — what each does, when it fires, exports, and security notes.
