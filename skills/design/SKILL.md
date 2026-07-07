@@ -81,6 +81,10 @@ fall back to the FALLBACKS block below and skip straight to Step 2.
    it (generate reference image, analyze structure, translate faithfully).
 3. Read `vendor/taste-skill/redesign-skill.md` to set mockup generation direction (six
    categories: typography, color/surfaces, layout, interactivity, content, components).
+4. If `MOTION_INTENSITY` > baseline (mockups will have real animation, not just static
+   layout): invoke the `emil-design-eng` skill for transition/easing/timing decisions on
+   the interactivity category. Skip silently if not installed — `/design` never depends
+   on it (`npx skills@latest add emilkowalski/skills` to add it).
 
 The Design Read line, the three dial values, and the design-system decision all feed the
 Step 2 briefs alongside the six-category direction.

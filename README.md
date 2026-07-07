@@ -9,7 +9,7 @@ My personal Claude Code setup, saved in git. Fork it and you get a working setup
 Claude Code is a command-line tool where you talk to Claude to write and edit code. It reads a folder called `~/.claude/` every time it starts. This repo *is* that folder, saved in git. Here's what's inside:
 
 - **Rules** Claude reads at the start of every session. Enforces strict habits: plan before coding, only touch the exact lines you asked for, use the right model for the right job.
-- **30 custom commands**, plus 7 borrowed from plugins — type `/name` to run one, like `/review` or `/build`. Run `/my-skills` for the full list.
+- **28 custom commands**, plus 10 borrowed from plugins — type `/name` to run one, like `/review` or `/build`. Run `/my-skills` for the full list.
 - **Memory** that learns your preferences. Say "remember that I prefer X" and Claude saves it automatically — carries forward to every future session.
 
 ---
@@ -212,6 +212,7 @@ These come from other people's plugins. One install command gets you all 6 trim 
 |---|---|---|
 | `/trim` + 5 sub-commands | Push for the simplest thing that works, scan for over-complication, gather TODO notes, review changes for deletions, quick reference card — one install gets all six | `npx skills@latest add holland-built/trim` |
 | `/improve` | Surveys a codebase and writes a ranked improvement plan — never changes anything itself | `npx skills@latest add shadcn/improve` |
+| `emil-design-eng`, `animation-vocabulary`, `review-animations` | Emil Kowalski's (Vaul/Sonner author) UI-polish and animation-taste rules — fed into `/design`'s Taste generators and `/design-audit`'s Taste lens, not typed as their own commands | `npx skills@latest add emilkowalski/skills` |
 
 ---
 

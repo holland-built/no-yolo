@@ -30,7 +30,9 @@ State one line: `Project: [type] · stack: [X]`. Detect whether a brand DESIGN.m
 
 ## Step 1 — 5 parallel lens agents
 ONE parallel Agent call. Each returns `severity | rule | file:line | observed | expected`.
-1. **Taste** — anti-slop fingerprint (FALLBACKS if sub-skill absent).
+1. **Taste** — anti-slop fingerprint (FALLBACKS if sub-skill absent). If the surface has real
+   animation/transitions, also invoke `review-animations` for a strict animation-specific
+   critique. Skip silently if not installed.
 2. **Swiss** — grid / type scale / color count.
 3. **UIwiki** — 20 rules scored.
 4. **WCAG 2.1 AA** — contrast, focus-visible, keyboard, aria, reduced-motion.

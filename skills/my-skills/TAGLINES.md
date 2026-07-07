@@ -32,3 +32,6 @@ quick-mockup|Fast throwaway HTML layout mockup — gray boxes, served live, brow
 skill-audit|Audits the whole skill library: bucket fit, missing pieces, unverified output, stale triggers.
 review|Unified diff review + codebase health. Bugs, bloat, secrets, slop — one command.
 lockstep|Hook-enforced gate: blocks Edit/Write/NotebookEdit until you say go.
+emil-design-eng|Emil Kowalski's UI-polish and animation-taste rules — feeds /design and /design-audit.
+animation-vocabulary|Turns a vague animation description into its exact term.
+review-animations|Strict critique of animation/motion code against a high craft bar.

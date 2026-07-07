@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-07-07 (cont'd, added emilkowalski/skills)
+
+- installed `emilkowalski/skills` (Vaul/Sonner author's animation/design-eng taste rules) via `npx skills@latest add emilkowalski/skills` — 3 skills: `emil-design-eng`, `animation-vocabulary`, `review-animations`
+- caught and fixed a placement bug in the installer itself: it dropped symlinks into a nested `~/.claude/.claude/skills/` (project-scoped, only live when a session's cwd is exactly `~/.claude`) instead of this repo's own `skills/` — added the correct flat symlinks matching the existing `trim`/`improve` pattern. Left the nested `.claude/.claude/settings.local.json` alone — real accumulated permission history, not installer junk
+- wired `emil-design-eng` into `/design` Step 1 (motion decisions when `MOTION_INTENSITY` is non-baseline) and `review-animations` into `/design-audit`'s Taste lens (motion surfaces only) — both skip silently if not installed
+- cataloged all 3 in `TAGLINES/WHEN_TO_USE/WHY_TO_USE/STORIES/RELATIONSHIPS.md` and `.gitignore` so `/my-skills` surfaces them and `/md-check --orphans` doesn't flag them
+
 ## 2026-07-07 (cont'd, /md-check --fix)
 
 - ran `/md-check --fix` for real: found + removed 12 dangling `lazyweb-*` entries from `TAGLINES.md`/`WHEN_TO_USE.md`/`WHY_TO_USE.md` — these are Lazyweb MCP internals, not slash commands, and never belonged in the skill catalogs
