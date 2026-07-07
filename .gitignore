@@ -16,6 +16,10 @@ skills/design/vendor/
 # external symlinked skills
 skills/improve
 skills/impeccable
+# emilkowalski/skills — animation/design-eng taste rules (npx skills@latest add emilkowalski/skills)
+skills/emil-design-eng
+skills/animation-vocabulary
+skills/review-animations
 # ponytail-* = old name (pre-rename, still installed locally)
 skills/ponytail
 skills/ponytail-audit
