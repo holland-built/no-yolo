@@ -28,18 +28,6 @@ release|One verb everywhere — each repo's SHIP.md holds its own recipe, so you
 debate|Ends with YES/NO/CONDITIONAL and the one reason that settles it — no "it depends"
 update|Rollback and restore-removed-skill built in — no manual git surgery if something breaks
 trim-gain|Scorecard from benchmark medians — not a per-repo estimate.
-lazyweb|Routes to the right mode + real screenshots instead of generic guesses from training data
-lazyweb-quick-search|Lightweight best-practice check from real apps — no report overhead
-lazyweb-lite-design-research|Real references grouped by pattern beat inventing UI from memory
-lazyweb-deep-design-research|Prototype-first report with side-by-side comparisons — research you can act on
-lazyweb-design-improve|Improvement ideas anchored to real screens, not opinion
-lazyweb-design-brainstorm|Cross-category inspiration finds patterns your competitors never see
-lazyweb-design-best-practices|Skeptic-verified ranking points you at the actually-best skill, not the first one
-lazyweb-ab-test-research|Real experiment evidence beats guessing what might convert
-lazyweb-optimize-paywall|Twin experiments + falsifiable hypotheses — conversion work grounded in data
-lazyweb-optimize-sign-up|Diagnoses real signup friction + gives testable fixes, not vibes
-lazyweb-paywall-cta|CTA candidates backed by real before/after A/B observations
-lazyweb-update|One command reinstalls across all clients — no manual sync
 skill-audit|One pass instead of manually eyeballing every SKILL.md
 review|Replaces two separate commands with one routed pass — secret scan and antislop are automatic, not a separate step you remember to run
 lockstep|Mechanically denied by a PreToolUse hook — not a prompt the model can talk itself past

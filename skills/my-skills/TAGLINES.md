@@ -28,18 +28,6 @@ prompt-scan|Reads global Claude MD files + current model's release notes, writes
 better-prompt|Rewrites a rough prompt with a named target, scope boundary, success criterion, and correct skill route.
 remember-that|Save, extract, delete, move, audit facts across sessions.
 trim-gain|Shows trim's measured impact: less code, less cost, more speed.
-lazyweb|Design-evidence router — sends you to the right Lazyweb mode for real app screenshots + references.
-lazyweb-quick-search|Quick Lazyweb screenshot search — a few real app references, no report.
-lazyweb-lite-design-research|Find app screenshots fast, grouped by pattern. No full report.
-lazyweb-deep-design-research|Deep design research — screenshot DB + web → prototype-first HTML report with inspo map.
-lazyweb-design-improve|Screenshot your design, find similar screens, suggest concrete backed improvements.
-lazyweb-design-brainstorm|Cross-pollination brainstorm — finds patterns outside your category. Zig when others zag.
-lazyweb-design-best-practices|Router to the best community design skills across 19 design aspects.
-lazyweb-ab-test-research|Research mobile growth/monetization A/B tests from real experiment evidence.
-lazyweb-optimize-paywall|Redesign a paywall for conversion — twin experiments + hypotheses + mockups + report.
-lazyweb-optimize-sign-up|Optimize a sign-up screen — diagnose friction + falsifiable redesign hypotheses.
-lazyweb-paywall-cta|Critique + rewrite a paywall CTA — ranked candidates backed by real before/after data.
-lazyweb-update|Update the local Lazyweb skill pack from GitHub + reinstall into clients.
 quick-mockup|Fast throwaway HTML layout mockup — gray boxes, served live, browser-opens. Not /design.
 skill-audit|Audits the whole skill library: bucket fit, missing pieces, unverified output, stale triggers.
 review|Unified diff review + codebase health. Bugs, bloat, secrets, slop — one command.

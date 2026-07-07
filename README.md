@@ -270,39 +270,9 @@ If you **forked** this repo on GitHub, `/update full` handles that too — it de
 
 ## Add a new skill
 
-How to add your own command:
+Make `skills/<name>/SKILL.md` with `user-invocable: true`, then add one-line entries to `TAGLINES.md`, `WHEN_TO_USE.md`, `WHY_TO_USE.md`, and `STORIES.md` (all in `skills/my-skills/`), plus a trigger block in `docs/SKILL_TRIGGERS.md`. Run `/release` to publish — it adds a changelog entry and pushes to git.
 
-1. Make the command's folder:
-
-```bash
-mkdir ~/.claude/skills/<name>
-# Create ~/.claude/skills/<name>/SKILL.md with this info at the top:
-# name, description, user-invocable: true
-```
-
-2. Add a one-line summary to `skills/my-skills/TAGLINES.md`:
-
-```
-<name>|One sentence — when to use it and what it does.
-```
-
-3. Add a trigger block to `docs/SKILL_TRIGGERS.md`:
-
-```markdown
-# <name>
-- **<name>** (`~/.claude/skills/<name>/SKILL.md`) - one-line description. Trigger: `/<name>`
-When the user types `/<name>`, invoke the Skill tool with `skill: "<name>"` before doing anything else.
-```
-
-4. Add a story (full description) to `skills/my-skills/STORIES.md`:
-
-```
-<name>|When would you reach for this? What does it actually do? What's the payoff?
-```
-
-5. Run `/release` to publish. It adds a changelog entry and pushes to git.
-
-See `docs/NO_YOLO.md` for the full authoring checklist.
+Full checklist with exact formats: `docs/NO_YOLO.md`.
 
 ---
 

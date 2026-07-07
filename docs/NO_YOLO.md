@@ -12,9 +12,10 @@ When working here, you are authoring public skills — write for a stranger, not
 - **Gotchas grow organically** — only add gotchas that actually happened in testing; never pre-load them. Skills start small and improve as real failures accumulate.
 - **New skill checklist** — every new skill needs:
   - `skills/<name>/SKILL.md` with `user-invocable: true` in frontmatter (required for blue slash command in UI; description = trigger condition)
+  - One-line entry in `skills/my-skills/TAGLINES.md`, `WHEN_TO_USE.md`, and `WHY_TO_USE.md`
   - Entry in `skills/my-skills/STORIES.md`
+  - Trigger block in `docs/SKILL_TRIGGERS.md` (if user-invocable)
   - Row in `README.md` skill table — format: `` | `/name` | what it does | modes & flags | `` (backtick + slash prefix required)
-  - Trigger line in `SKILL_TRIGGERS.md` (if user-invocable)
 
 ## What is safe to publish
 
@@ -28,7 +29,7 @@ When working here, you are authoring public skills — write for a stranger, not
 
 ## Publishing workflow
 
-Run `/publish-skills` from any Claude Code session. It:
+Run `/release` from any Claude Code session. It:
 1. Shows changed skill files
 2. Guards against personal dir leaks
 3. Commits + pushes to `github.com/holland-built/no-yolo`

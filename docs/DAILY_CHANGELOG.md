@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-07-07 (cont'd, /md-check --fix)
+
+- ran `/md-check --fix` for real: found + removed 12 dangling `lazyweb-*` entries from `TAGLINES.md`/`WHEN_TO_USE.md`/`WHY_TO_USE.md` — these are Lazyweb MCP internals, not slash commands, and never belonged in the skill catalogs
+- found a bonus dangling reference while in `NO_YOLO.md`: it told people to run `/publish-skills`, a skill retired long ago and replaced by `/release` — fixed the pointer and completed the checklist (was missing the TAGLINES/WHEN_TO_USE/WHY_TO_USE steps)
+- trimmed README.md's "Add a new skill" section from 36 lines to 4 — it fully duplicated `NO_YOLO.md`'s checklist, now the single source of truth (419 → 389 lines; still over the 200-line soft cap, accepted tradeoff for the primary onboarding doc)
+
 ## 2026-07-07 (cont'd)
 
 - added `/md-check --orphans` — checks two directions: does a catalog file (TAGLINES/STORIES/WHEN_TO_USE/WHY_TO_USE/RELATIONSHIPS/SKILL_TRIGGERS) describe a skill that no longer exists (DANGLING), and does a real skill sit unreferenced anywhere a user would find it (UNREFERENCED). Wired into `SHIP.md` Step 3.5 so every `/release` runs it automatically
