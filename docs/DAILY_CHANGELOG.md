@@ -1,6 +1,13 @@
 # Changelog
 
-## 2026-07-07
+## 2026-07-07 (cont'd)
+
+- added `/md-check --orphans` — checks two directions: does a catalog file (TAGLINES/STORIES/WHEN_TO_USE/WHY_TO_USE/RELATIONSHIPS/SKILL_TRIGGERS) describe a skill that no longer exists (DANGLING), and does a real skill sit unreferenced anywhere a user would find it (UNREFERENCED). Wired into `SHIP.md` Step 3.5 so every `/release` runs it automatically
+- ran it for real and found + fixed 6 dangling names: `code-review`/`code-health` (retired into `/review`, but 6 catalog files still described them as live) and `graphify`/`design-full`/`design-fix`/`token-hunt` (real tool or fully-retired skills wrongly documented as their own commands) — fixed across `BOLT_ONS.md`, `HOW_TO_USE.md`, `WHEN_TO_USE.md`, `TAGLINES.md`, `WHY_TO_USE.md`, `RELATIONSHIPS.md`
+- fixed two bugs in the orphan-checker itself found while running it: it never parsed `RELATIONSHIPS.md`'s `| name | ...` row format, and a regex artifact matched a stray leading `-` as a fake skill name
+- deleted the duplicate local `/impeccable` skill (gitignored, unbacked-up, original content) per explicit choice to use the real `pbakaus/impeccable` plugin instead — `/design`'s existing-UI redirect now points at the real plugin, documented as an install command in README rather than duplicated
+- un-vendored taste-skill from git (was committed as a full copy, against this repo's own `.gitignore` convention that other people's work stays local) — gitignored the vendor dir, rewrote `THIRD_PARTY_SKILLS.md` as an install-pointer doc, `/update vendor <name>` now handles first install too
+- ran `/md-check --drift` for real (previously skipped in favor of ad-hoc greps) and fixed 5 real drift findings in `SKILL_TRIGGERS.md`: `update`, `release`, `md-check`, and `design` all omitted real behavior added this session; `design-audit`'s "zero mockups" claim flatly contradicted its own SKILL.md (predates this session)
 
 - vendored the real taste-skill (Leonxlnx/taste-skill, MIT, pinned commit) into `skills/design/vendor/taste-skill/` — `/design` now actually reads it (Design Read + 3 dials + honest design-system routing) instead of running on the FALLBACKS-only stub
 - added `docs/THIRD_PARTY_SKILLS.md` — registry `/update` reads to flag drift on any vendored (non-plugin) third-party content

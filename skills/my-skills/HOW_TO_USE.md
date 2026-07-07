@@ -1,9 +1,7 @@
-code-health|`/code-health` — runs automatically on current project
-code-review|`/code-review` — point at a diff or PR URL
 diagnose|`/diagnose [describe the bug]` or `/diagnose --debate [bug]` for 6 Opus personas
+review|`/review` — point at a diff, or run with no argument for a full codebase health pass
 drawio-skill|`/drawio-skill [describe the diagram]`
 build|`/build [describe the feature]`
-graphify|`/graphify` — then ask questions in plain English
 plan|`/plan [describe your plan]`
 my-md|`/my-md`
 my-skills|`/my-skills`

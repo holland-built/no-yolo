@@ -1,9 +1,6 @@
-code-health|Finds real waste fast — most codebases have 20-30% deletable code
-code-review|Catches what you're blind to after writing it. Karpathy filter hunts code that shouldn't exist
 diagnose|Solo: forces systematic evidence-gathering. --debate: six theories surface the one you missed
 drawio-skill|An hour of manual fiddling becomes two minutes
 build|Nothing ships without a plan, tests, and proof. No more "works on my machine" done claims
-graphify|Answers "what breaks if I change X?" in seconds instead of reading 40 files
 plan|First-try success goes from ~70% to ~90% when the hard calls are made up front, not mid-build
 my-md|One command instead of hunting across two directory trees
 my-skills|You forget you have tools. This is the map

@@ -1,9 +1,6 @@
-code-health|Before a big refactor or after a long sprint
-code-review|Before merging any non-trivial change
 diagnose|Stuck on a bug > 20 min — solo for systematic, --debate when multiple plausible theories
 drawio-skill|Need a picture of how something works
 build|Starting any non-trivial feature from scratch
-graphify|Unfamiliar codebase or tracing an unexpected dependency
 plan|Fuzzy feature or system idea, before running /build
 my-md|Lost track of what notes exist
 my-skills|Forgot what skills exist
