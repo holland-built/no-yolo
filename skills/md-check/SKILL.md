@@ -1,8 +1,8 @@
 ---
 name: md-check
-description: Use this skill when the user types /md-check, says 'check md files', or 'md hygiene'. MD hygiene: line counts, topic-overlap, duplicate-rule detection (default audit); --drift finds stale descriptions; --fix APPLIES the fixes (dedupe/merge/trim/drift) behind one approve-all gate; --pre is a pre-creation gate.
+description: Use this skill when the user types /md-check, says 'check md files', or 'md hygiene'. MD hygiene: line counts, topic-overlap, duplicate-rule detection (default audit); --drift finds stale descriptions; --orphans finds dangling catalog references (mentions a skill that no longer exists) and unreferenced skills (installed but never surfaced anywhere); --fix APPLIES the fixes (dedupe/merge/trim/drift) behind one approve-all gate; --pre is a pre-creation gate.
 user-invocable: true
-argument-hint: "[--fix [--auto]] [--drift] [--pre <proposed-filename>] (omit for read-only audit)"
+argument-hint: "[--fix [--auto]] [--drift] [--orphans] [--pre <proposed-filename>] (omit for read-only audit)"
 model: haiku
 allowed-tools:
   - Bash
@@ -17,6 +17,7 @@ Mode: $ARGUMENTS
 If `$ARGUMENTS` starts with `--pre` → run Pre-creation mode.
 If `$ARGUMENTS` contains `--fix` → run Fix mode (audit + apply).
 If `$ARGUMENTS` is `--drift` → run Drift Check mode.
+If `$ARGUMENTS` is `--orphans` → run Orphan Check mode.
 Otherwise → run On-demand audit (read-only).
 
 ---
@@ -110,6 +111,46 @@ One-line reason required for any non-OK verdict.
 - Only include rows with DRIFT or WRONG verdicts — skip OK rows to keep output tight
 - If all OK: print `✓ No drift detected.`
 - Count: `X skills checked, Y drifted`
+
+---
+
+## Orphan Check Mode (`/md-check --orphans`)
+
+Two-way check: does GitHub have stuff you don't run anymore, and does anything you run sit
+undiscoverable. This is what should have caught the impeccable situation before it shipped.
+
+### Step 1 — Real skills on disk
+```bash
+ls -d ~/.claude/skills/*/ | xargs -n1 basename
+```
+This is ground truth: a skill is "real" only if this list contains it AND it has a `SKILL.md`
+you can read right now (plugin-managed dirs with a live SKILL.md still count as real — the
+check here is existence, not authorship).
+
+### Step 2 — Names mentioned in catalogs/docs
+```bash
+grep -hoE "^[a-z][a-z0-9-]+\|" ~/.claude/skills/my-skills/{TAGLINES,STORIES,WHEN_TO_USE,WHY_TO_USE,CATEGORIES}.md 2>/dev/null | tr -d '|' | sort -u
+grep -oE "^\- \*\*[a-z][a-z0-9-]+\*\*" ~/.claude/docs/SKILL_TRIGGERS.md 2>/dev/null | sed 's/^- \*\*//; s/\*\*$//' | sort -u
+grep -oE "^\| [a-z][a-z0-9-]+ " ~/.claude/skills/my-skills/RELATIONSHIPS.md 2>/dev/null | sed 's/| //; s/ $//' | sort -u
+```
+`RELATIONSHIPS.md` uses a different row format (`| name | ...` with leading pipe+space) than
+the other catalog files (`name|...`) — it needs its own pattern, not the shared one above. Also
+scan prose mentions of `/name` inside README.md, SKILL_TRIGGERS.md, and other skills' SKILL.md
+bodies (`grep -oE '/[a-z][a-z0-9-]+' <file>`) — a skill can be dangling-referenced in plain text
+even without a catalog row.
+
+### Step 3 — Dangling references (Step 2 names not in Step 1)
+For each name mentioned but not present on disk: `⚠️ DANGLING — "<name>" referenced in <file>:line but no skills/<name>/SKILL.md exists`. This is exactly what happened with `/impeccable` — describing removed/never-real functionality as if it still exists.
+
+### Step 4 — Unreferenced skills (Step 1 names not in Step 2, and not in SKILL_TRIGGERS.md)
+For each real skill with zero catalog/trigger mentions: `⚠️ UNREFERENCED — "<name>" exists at skills/<name>/SKILL.md but isn't surfaced anywhere a user would find it`. Skip any skill whose frontmatter has `user-invocable: false` — those are intentionally internal.
+
+### Step 5 — Output
+```
+| Verdict | Name | Where |
+|---|---|---|
+```
+Only DANGLING and UNREFERENCED rows — skip clean names. If both empty: print `✓ No orphans — everything on GitHub is real, everything real is findable.`
 
 ---
 

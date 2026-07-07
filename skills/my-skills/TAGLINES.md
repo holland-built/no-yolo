@@ -1,5 +1,3 @@
-code-health|Audit for dead code, over-engineering, and waste.
-code-review|Review a diff before merging. Catches bugs and bloat.
 diagnose|Root-cause analysis: solo 6-phase or --debate for 6 Opus personas.
 drawio-skill|Generates a diagram (flowchart/architecture/sequence/ER/UML) and exports PNG/SVG/PDF.
 build|Full feature pipeline: plan → UI → code → tests → proof.

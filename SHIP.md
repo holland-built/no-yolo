@@ -10,14 +10,15 @@ Repo: `github.com/holland-built/no-yolo`. Run `/release` from anywhere under `~/
 ## Steps
 1. **Antislop scan (warn only):** scan changed `.md` files against `docs/ANTISLOP.md` writing tells; print `| File | Tell | Excerpt |`, never block.
 2. **Size check (warn only):** `wc -l ~/.claude/*.md ~/.claude/docs/*.md ~/.claude/skills/*/SKILL.md`; table any file >200 lines.
-3. **Drift check (warn only):** run `/md-check --drift`; print DRIFT/WRONG verdicts.
+3. **Drift check (warn only):** run `/md-check --drift`; print DRIFT/WRONG verdicts. Actually invoke it — do not substitute an ad-hoc grep.
+3.5. **Orphan check (warn only):** run `/md-check --orphans`; print DANGLING/UNREFERENCED verdicts. This is the standing "nothing on GitHub that isn't real, nothing real that's invisible" guarantee — the repo is meant to be a full working backup/template, so a dangling reference (describes something that no longer exists) or an unreferenced skill (exists but undiscoverable) both defeat that purpose. Actually invoke it every run — this is not optional busywork, it's the check that would have caught the impeccable mess before it shipped.
 4. **GLOBAL_DESCRIPTIONS coverage (warn only):** every root/docs `.md` must have a line in `skills/my-md/GLOBAL_DESCRIPTIONS.md`; print MISSING.
 5. **Changelog:** prepend today's dated section to `docs/DAILY_CHANGELOG.md` — one plain-English bullet per changed skill/doc (skip `.gitignore` and the changelog itself).
 6. **README format check (HARD BLOCK):** every `## ` heading in `docs/README_FORMAT.md` must exist in `README.md`; missing → STOP.
 7. **README count patch:** update "N custom commands" / "plus N borrowed from plugins" from the live skill dir counts.
 8. **Regenerate menus:** rebuild `skills/my-skills/RENDERED.md` and `RENDERED_FAST.md` from `CATEGORIES.md` + `TAGLINES*.md` + `WHEN_TO_USE.md` + `WHY_TO_USE.md` (see the regen scripts kept in this repo's ship history). A skill in `CATEGORIES.md` with no `TAGLINES_SHORT.md` line renders "⚠️ missing".
 
-Stage scope: `git add skills/ docs/ README.md` (explicit paths — do NOT rely on a `*.md` shell glob; it expands in the CWD, not the repo root).
+Stage scope: `git add skills/ docs/ README.md .gitignore` (explicit paths — do NOT rely on a `*.md` shell glob; it expands in the CWD, not the repo root).
 
 ## Guards
 - memory/
