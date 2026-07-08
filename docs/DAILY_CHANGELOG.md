@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-07-08
+
+- `/design` was missing the reuse/simplicity gate `/build` already had — added Step 4.6: for every new component/hook/util the build introduces, grep for an existing sibling first (reuse it, don't twin it); run `/trim` on the new files if 3+ new components land or a duplicate pattern shows up. Updated `RELATIONSHIPS.md`'s dependency row to match
+
 ## 2026-07-07 (cont'd, added emilkowalski/skills)
 
 - installed `emilkowalski/skills` (Vaul/Sonner author's animation/design-eng taste rules) via `npx skills@latest add emilkowalski/skills` — 3 skills: `emil-design-eng`, `animation-vocabulary`, `review-animations`

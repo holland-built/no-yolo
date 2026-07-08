@@ -185,6 +185,7 @@ Ask: **"Which variant? (confirm * vN / pick different vN / mix vA layout + vB co
 4. Dispatch Sonnet subagents to build the approved mockup against the plan. Disjoint file
    clusters, no overlap.
 4.5. After all subagents complete, run tsc + lint + build (zero new errors) before the Playwright smoke. If any errors -> fix before proceeding.
+4.6. **Reuse + simplicity gate (HARD):** for every NEW component/hook/util the build introduced, grep the tree for an existing one with the same/similar name or role — a sibling component already doing this means reuse it, don't add a twin. If the diff added 3+ new components or duplicated an existing pattern (a second card/modal/table variant instead of extending the shared one), run `/trim` on the new files before proceeding — kills the abstraction/ceremony a mockup-to-code pass tends to add. Fix or explicitly triage with reason before continuing.
 5. `npx playwright test` smoke after build (load each changed surface, assert no console errors,
    toggle dark mode). Use CLI — NOT `ecc:playwright` MCP.
 6. Run `/eli5` on the completed-work summary before presenting.
