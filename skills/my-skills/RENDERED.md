@@ -3,7 +3,6 @@
 | Skill | What it does | When to use | Why vs manual |
 | --- | --- | --- | --- |
 | design | Fresh UI generation: 10 Opus mockups (8 paradigms + 2 wild) → AI picks → you confirm → build. | Starting a new design or full redesign — want truly fresh, not an incremental patch | 7 distinct paradigms at once + slop validator kills the generic — one pick becomes a full build plan |
-| design-audit | Audit UI across 5 lenses → ranked violations → optional 10-mockup fix pipeline. | Any UI that feels off — audit first, then optionally fix with 10 mockups in the same command | Five independent lenses catch what one reviewer misses — audit is read-only, fix gate keeps you in control before anything builds |
 | quick-mockup | Fast throwaway HTML layout mockup — gray boxes, served live, browser-opens. Not /design. | — | — |
 
 ## Build
@@ -32,7 +31,7 @@
 | Skill | What it does | When to use | Why vs manual |
 | --- | --- | --- | --- |
 | diagnose | Root-cause analysis: solo 6-phase or --debate for 6 Opus personas. | Stuck on a bug > 20 min — solo for systematic, --debate when multiple plausible theories | Solo: forces systematic evidence-gathering. --debate: six theories surface the one you missed |
-| debate | 6-persona product-team debate → contradiction map → one decisive verdict. | Architecture calls, UI/UX choices, or "what should we build next" when you want real pushback | Ends with YES/NO/CONDITIONAL and the one reason that settles it — no "it depends" |
+| debate | 7-persona product-team debate → contradiction map → one decisive verdict. | Architecture calls, UI/UX choices, or "what should we build next" when you want real pushback | Ends with YES/NO/CONDITIONAL and the one reason that settles it — no "it depends" |
 | improve | Read-only codebase audit across 9 categories → ranked findings → self-contained plans for an executor model. | Want a deep audit-plus-plan pass, not just a diff review | Vets every subagent finding itself before reporting; plans are written for a weaker model with zero session context |
 
 ## Prompting

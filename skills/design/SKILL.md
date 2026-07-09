@@ -27,7 +27,8 @@ a different command themselves.
 - `$ARGUMENTS` contains `audit`, `review`, `analyze`, `what's wrong`, `find problems` ->
   invoke `/design-audit` now.
 - `$ARGUMENTS` contains `polish`, `tighten`, `existing`, `impeccable`, `fix the design`,
-  `clean up the ui` (and no BOLD-mode word below is also present) -> invoke `impeccable:impeccable`
+  `clean up the ui`, `update`, `edit`, `change`, `tweak`, `adjust` (and no BOLD-mode word below
+  is also present) -> invoke `impeccable:impeccable`
   now (the installed plugin — `/plugin marketplace add pbakaus/impeccable` if not present).
   This is real-code polish over what's already built, not fresh generation. It's an independent
   tool with its own rules, not something that shares this skill's vendored taste-skill files —

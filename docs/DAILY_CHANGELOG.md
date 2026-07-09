@@ -1,6 +1,9 @@
 # Changelog
 
-## 2026-07-08
+## 2026-07-09
+
+- `/my-skills`' menu (`CATEGORIES.md`/`RENDERED*.md`) only listed `improve` among borrowed plugins, not `trim` — an inconsistency, not a break: fixed by adding `trim`, then removed both `trim` and `design-audit` again per explicit preference (menu should reflect what's actually typed, not every real skill) — `TAGLINES.md`'s "6-persona" debate typo (should be 7) fixed along the way, confirmed clean by `/md-check --orphans` both times since neither skill's catalog/trigger entries elsewhere were touched
+- wired Paper MCP into `/design-audit`'s fix pipeline as a conditional branch (F0.5 + F3-PAPER): fires only when Paper Desktop is connected AND the target is a single component, matching Paper's own "small sections, not whole pages" guidance — builds up to 6 live variants on the canvas instead of static HTML, picks via screenshot, pulls exact values via `get_jsx`/`get_computed_styles` for the build step. Full-page fixes stay on the existing Chrome/HTML path unconditionally. `RELATIONSHIPS.md` updated to match
 
 - `/design` was missing the reuse/simplicity gate `/build` already had — added Step 4.6: for every new component/hook/util the build introduces, grep for an existing sibling first (reuse it, don't twin it); run `/trim` on the new files if 3+ new components land or a duplicate pattern shows up. Updated `RELATIONSHIPS.md`'s dependency row to match
 

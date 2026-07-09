@@ -7,7 +7,7 @@ last-30|Trending last 30 days
 video-to-kb|YouTube video to KB note
 ingest-docs|Docs to context files
 diagnose|Root-cause bug analysis
-debate|6-persona decision debate
+debate|7-persona decision debate
 improve|Deep audit, generates plans
 prompt-scan|Scan prompts, log learnings
 better-prompt|Sharpen a rough prompt
@@ -24,3 +24,4 @@ update|Check/apply setup updates
 supacode-cli|Drive Supacode terminal app
 lockstep|Hard block on edits
 quick-mockup|Throwaway layout mockup
+trim|Forces the simplest solution
