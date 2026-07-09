@@ -102,18 +102,24 @@ function emitReinforcement() {
   }
 }
 
-let input = '';
-process.stdin.on('data', chunk => { input += chunk; });
-process.stdin.on('end', () => {
-  try {
-    const data = JSON.parse(input);
-    const prompt = (data.prompt || '').trim().toLowerCase();
-    detectNLActivation(prompt);
-    if (handleStatsCommand(prompt, data)) return;
-    parseSlashCommand(prompt);
-    detectNLDeactivation(prompt);
-    emitReinforcement();
-  } catch (e) {
-    // Silent fail
-  }
-});
+function main() {
+  let input = '';
+  process.stdin.on('data', chunk => { input += chunk; });
+  process.stdin.on('end', () => {
+    try {
+      const data = JSON.parse(input);
+      const prompt = (data.prompt || '').trim().toLowerCase();
+      detectNLActivation(prompt);
+      if (handleStatsCommand(prompt, data)) return;
+      parseSlashCommand(prompt);
+      detectNLDeactivation(prompt);
+      emitReinforcement();
+    } catch (e) {
+      // Silent fail
+    }
+  });
+}
+
+if (require.main === module) main();
+
+module.exports = { detectNLActivation, parseSlashCommand, detectNLDeactivation, emitReinforcement, flagPath };

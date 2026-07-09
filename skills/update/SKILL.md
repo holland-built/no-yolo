@@ -111,22 +111,9 @@ If nothing is removed: skip the ⚠️ section entirely.
 Read installed plugins (read-only — never auto-update):
 
 ```bash
-python3 - "$HOME/.claude/plugins/installed_plugins.json" <<'PYEOF'
-import json, sys, os
-p = sys.argv[1]
-if not os.path.exists(p):
-    print("No plugins installed."); raise SystemExit
-try:
-    plugins = json.load(open(p)).get("plugins", {})
-except Exception:
-    print("installed_plugins.json unreadable."); raise SystemExit
-if not plugins:
-    print("No plugins installed."); raise SystemExit
-for name, entries in plugins.items():
-    e = entries[0] if entries else {}
-    print(f"{name}\t{e.get('version','?')}\t{e.get('scope','?')}")
-PYEOF
+python3 "$HOME/.claude/hooks/list-plugins.py"
 ```
+(Shared lister — same script setup.sh Step 5 uses. Prints TSV `name<TAB>version<TAB>scope`, or "No plugins installed.")
 
 Show as a table: **Plugin | Installed version | Scope**. Flag any row whose version is `unknown` or `?` as ⚠️ "may be stale — reinstall to pin a version".
 
@@ -226,31 +213,22 @@ cd ~/.claude && DIRTY=$(git status --porcelain)
 ```
 If DIRTY non-empty: tell user "You have local changes I'm setting aside safely before updating." Run `git stash push -m "pre-update stash $(date +%Y-%m-%d)"`. After pull completes run `git stash pop`. If stash pop has conflicts: "Some of your local changes conflicted with the update. Your originals are in git stash — run `git stash pop` in your terminal to review."
 
-**AHEAD/IS_FORK/SYNC_REF detection:**
+**AHEAD detection:**
 ```bash
 cd ~/.claude
 AHEAD=$(git rev-list origin/main..HEAD --count 2>/dev/null || echo 0)
-ORIGIN_URL=$(git remote get-url origin 2>/dev/null || echo "")
-IS_FORK=false; SYNC_REF=origin/main
-if ! echo "$ORIGIN_URL" | grep -q "holland-built/no-yolo"; then
-  IS_FORK=true
-  EXISTING=$(git remote get-url upstream 2>/dev/null || echo "")
-  [ -z "$EXISTING" ] && git remote add upstream https://github.com/holland-built/no-yolo.git \
-    || git remote set-url upstream https://github.com/holland-built/no-yolo.git
-  git fetch upstream main; SYNC_REF=upstream/main
-fi
 ```
 
-**If AHEAD = 0:** `git merge --ff-only "$SYNC_REF" && <SETUP_CMD>`
+**If AHEAD = 0:** `git merge --ff-only origin/main && <SETUP_CMD>`
 
 **If AHEAD > 0:** Tell user "You have [N] local commit(s). Rebasing on top of latest."
 ```bash
 CONFLICTS=""
-git rebase "$SYNC_REF"; REBASE_EXIT=$?
+git rebase origin/main; REBASE_EXIT=$?
 [ $REBASE_EXIT -ne 0 ] && CONFLICTS=$(git diff --name-only --diff-filter=U 2>/dev/null) && git rebase --abort
 ```
-If rebase failed: tell user commits are untouched, list CONFLICTS, print `git fetch [upstream|origin] main && git rebase [SYNC_REF]` + `git rebase --continue`. STOP.
-If rebase succeeded: run `<SETUP_CMD>`. If IS_FORK: tell user "force-push needed: `git push --force origin main`"
+If rebase failed: tell user commits are untouched, list CONFLICTS, print `git fetch origin main && git rebase origin/main` + `git rebase --continue`. STOP.
+If rebase succeeded: run `<SETUP_CMD>`.
 
 ### Step 7 — if argument is `full`
 

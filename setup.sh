@@ -120,20 +120,15 @@ echo ""
 echo "==> 5. Plugins (Claude Code marketplace)"
 PLUGINS_JSON="$CLAUDE_DIR/plugins/installed_plugins.json"
 if [ -f "$PLUGINS_JSON" ] && command -v python3 >/dev/null 2>&1; then
-  python3 - "$PLUGINS_JSON" <<'PYEOF'
-import json, sys
-try:
-    plugins = json.load(open(sys.argv[1])).get("plugins", {})
-except (ValueError, OSError):
-    print("    ! installed_plugins.json is unreadable — skipping"); sys.exit(0)
-if not plugins:
-    print("    No plugins installed yet."); sys.exit(0)
-print(f"    Found {len(plugins)} installed plugins:")
-print(f"    {'NAME':<42} {'VERSION':<14} SCOPE")
-for name, entries in plugins.items():
-    e = entries[0] if entries else {}
-    print(f"    {name:<42} {e.get('version','?'):<14} {e.get('scope','?')}")
-PYEOF
+  # shared lister — one source of truth, also used by /update (skills/update/SKILL.md)
+  OUT=$(python3 "$CLAUDE_DIR/hooks/list-plugins.py" "$PLUGINS_JSON")
+  case "$OUT" in
+    "No plugins"*|"installed_plugins.json"*) echo "    $OUT" ;;
+    *)
+      echo "    Found $(printf '%s\n' "$OUT" | wc -l | tr -d ' ') installed plugins:"
+      printf "    %-42s %-14s %s\n" "NAME" "VERSION" "SCOPE"
+      printf '%s\n' "$OUT" | awk -F'\t' '{printf "    %-42s %-14s %s\n",$1,$2,$3}' ;;
+  esac
 else
   echo "    No installed_plugins.json found — install recommended plugins inside Claude Code:"
   echo "      /plugin marketplace add JuliusBrussee/caveman       # terse mode"
