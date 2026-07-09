@@ -57,7 +57,4 @@ If you are about to add anything else — STOP. Find or create the right MD file
 
 ## Caveman Mode
 
-`~/.claude/hooks/caveman-*` scripts implement an opt-in terse mode (cuts tokens ~75%).
-Toggle: `/caveman lite|full|ultra` or say "stop caveman" to disable.
-Skill: `caveman:caveman`. State: `.caveman-active`.
-Keep these scripts unless caveman mode is no longer wanted.
+Caveman terse mode (scripts, toggle, state) → `~/.claude/docs/HOOKS.md`.

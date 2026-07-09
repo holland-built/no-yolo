@@ -12,12 +12,11 @@ Shared concept names for this setup. Name a concept here once — then reference
 |---|---|
 | skill | A custom Claude Code command defined by a SKILL.md file in `~/.claude/skills/<name>/` |
 | pending queue | `~/.claude/.pending-tasks.md` — session task list read by `/whats-next` |
-| handoff block | HANDOFF section in `brainstorms/<slug>-plan-<date>.md` written by `/plan-feature` on approval |
-| fact file | A memory record in `~/.claude-work/projects/-Users-sholland/memory/facts/*.md` |
+| handoff block | HANDOFF section in `brainstorms/<slug>-plan-<date>.md` written by `/build` on approval |
+| fact file | A memory record in `~/.claude/memory/facts/*.md` |
 | compiled preferences | `memory/CLAUDE.generated.md` — auto-built from fact files by `/memory-compile` |
 | slop | AI-generated visual or prose patterns that look generic/templated — defined in `ANTISLOP.md` |
 | brainstorm file | Planning artifact written to `brainstorms/` by build/plan skills |
-| gateguard | Pre-edit hook that requires stating facts before modifying key files |
 
 ## Project-specific terms
 

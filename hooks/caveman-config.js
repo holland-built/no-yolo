@@ -244,4 +244,4 @@ function readHistory(filePath) {
   }
 }
 
-module.exports = { getDefaultMode, getConfigPath, VALID_MODES, safeWriteFlag, readFlag, appendFlag, readHistory };
+module.exports = { getDefaultMode, VALID_MODES, safeWriteFlag, readFlag, appendFlag, readHistory };

@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-07-09 (cont'd, full /review health pass — 31 fixes)
+
+- `hooks/statusline.sh` — removed leftover debug line that dumped the full statusline stdin JSON (transcript path, cost) to `/tmp/sl-stdin-*.json` on every render
+- `settings.example.json` — removed Stop-hook entry for nonexistent `log-learnings-stop.sh` (fresh installs got a failing hook every turn); fixed playwright allowlist prefix to `mcp__plugin_ecc_playwright__*` (old `mcp__playwright__*` never matched); dropped unconfigured `mcp__filesystem__*` and legacy duplicate `voiceEnabled` key
+- docs de-drifted after the /ship→/release, /design-full→/design, /code-review+/code-health→/review, /plan-feature+/build-feature→/build consolidations: `SKILLS.md` Daily-Driver table rewritten, `UI_MOCKUPS.md` routes + plans-path fixed, `SUBAGENTS.md` dead agents removed, `CODE_REVIEW.md` retitled, `CONTEXT_VOCAB.md` fact-path + gateguard row fixed
+- duplicate rules consolidated to single owners: "Opus plans, Sonnet codes" → `SUBAGENTS.md`; skill-authoring rules → `NO_YOLO.md`; GUI-slop fingerprint → `ANTISLOP.md` pointer; Caveman section in `CLAUDE.md` → `HOOKS.md` pointer; token-bloat rule → `CONTEXT.md`
+- deleted 4 orphaned my-skills catalog files (`HOW_TO_USE.md`, `BOLT_ONS.md`, `RELATIONSHIPS.md`, empty `PLUGIN_PACKS.md`) — nothing read them and two duplicated `STORIES.md` data; md-check's orphan checker updated to stop parsing `RELATIONSHIPS.md`
+- stale numbers fixed everywhere: 27 commands (was 28), 8 core rules (was 5), /design = 10 mockups 8 paradigms + 2 wild (was 7) across README, STORIES, RENDERED, WHY_TO_USE
+- added missing `/quick-mockup` README row and `/build` trigger block in `SKILL_TRIGGERS.md`; deleted duplicate `better_prompt` story line and dead `rel:code-health`/`rel:code-review` lines
+- dead code trimmed: 14 unused exports dropped from `caveman-stats.js`, 1 (`getConfigPath`) from `caveman-config.js` — both invoked as subprocesses, never required
+- `.gitignore` now covers runtime artifacts `.claude.json`, `.claude/`, `chrome/`, `debug/`; `SHIP.md` line added to `GLOBAL_DESCRIPTIONS.md`
+
 ## 2026-07-09 (cont'd, session-tuning settings)
 
 - added 6 settings to `settings.example.json` (the only settings file this repo commits — `settings.json` itself stays gitignored, per-machine): `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY`, `DISABLE_TELEMETRY`, `DISABLE_ERROR_REPORTING`, `DISABLE_NON_ESSENTIAL_MODEL_CALLS`, `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE: "75"` (compacts before quality degrades near the 95% default limit, not after), and top-level `spinnerTipsEnabled: false`. New README section explains what each does and how to add them by hand if you already have an older `settings.json`

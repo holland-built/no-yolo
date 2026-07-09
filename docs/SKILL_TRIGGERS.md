@@ -17,6 +17,9 @@ When the user types `/lockstep`, says "lock step", "hold off on code", or "don't
 # plan
 - **plan** (`~/.claude/skills/plan/SKILL.md`) - pre-build planning interview: extracts design decisions, edge cases, constraints one question at a time before any code. Trigger: `/plan`
 When the user types `/plan`, says "plan this", "help me think through", "plan before we build", or "interview me about", invoke the Skill tool with `skill: "plan"` before doing anything else.
+# build
+- **build** (`~/.claude/skills/build/SKILL.md`) - full feature pipeline: evidence → plan → Opus plan → approval gate → UI mockup gate → TDD → build → regression gate → prove. Trigger: `/build`
+When the user types `/build`, says "build", or "build this feature end to end", invoke the Skill tool with `skill: "build"` before doing anything else.
 # drawio-skill
 - **drawio-skill** (`~/.claude/skills/drawio-skill/SKILL.md`) - generates diagrams (flowchart/architecture/ER/UML/sequence/network/mind-map) as .drawio XML, exports PNG/SVG/PDF/JPG via the native draw.io desktop CLI. Trigger: `/drawio-skill`
 When the user types `/drawio-skill`, or asks for a diagram/flowchart/architecture diagram/ER diagram/UML diagram/sequence diagram, invoke the Skill tool with `skill: "drawio-skill"` before doing anything else.

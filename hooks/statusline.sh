@@ -4,7 +4,6 @@
 # Reads the statusLine JSON from stdin.
 
 INPUT=$(cat)
-printf '%s' "$INPUT" > "/tmp/sl-stdin-$(echo "$INPUT" | python3 -c 'import json,sys;print(json.load(sys.stdin).get("workspace",{}).get("current_dir","x").split("/")[-1])' 2>/dev/null).json"
 
 # --- caveman badge (reuse hardened script) ---
 CAVE=$(bash "$HOME/.claude/hooks/caveman-statusline.sh" 2>/dev/null)

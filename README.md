@@ -9,7 +9,7 @@ My personal Claude Code setup, saved in git. Fork it and you get a working setup
 Claude Code is a command-line tool where you talk to Claude to write and edit code. It reads a folder called `~/.claude/` every time it starts. This repo *is* that folder, saved in git. Here's what's inside:
 
 - **Rules** Claude reads at the start of every session. Enforces strict habits: plan before coding, only touch the exact lines you asked for, use the right model for the right job.
-- **28 custom commands**, plus 10 borrowed from plugins — type `/name` to run one, like `/review` or `/build`. Run `/my-skills` for the full list.
+- **27 custom commands**, plus 10 borrowed from plugins — type `/name` to run one, like `/review` or `/build`. Run `/my-skills` for the full list.
 - **Memory** that learns your preferences. Say "remember that I prefer X" and Claude saves it automatically — carries forward to every future session.
 
 ---
@@ -113,7 +113,7 @@ These are not installed by setup.sh. Install whichever ones match the skills you
 
 | Tool | Why you'd want it | Used by | How to install |
 |---|---|---|---|
-| [gh (GitHub CLI)](https://cli.github.com/) | Lets Claude push code, open pull requests, and read GitHub issues | `review`, `ship` | `brew install gh && gh auth login` |
+| [gh (GitHub CLI)](https://cli.github.com/) | Lets Claude push code, open pull requests, and read GitHub issues | `review`, `release` | `brew install gh && gh auth login` |
 | [Graphviz](https://graphviz.org/) | Draws diagram files | `drawio-skill` | `brew install graphviz` |
 | [draw.io](https://www.drawio.com/) CLI | Opens and exports diagrams | `drawio-skill` | `brew install --cask drawio` |
 | [Groq Whisper](https://console.groq.com/) | Transcribes a YouTube video and saves a structured wiki page into your Obsidian vault | `video-to-kb` | Get a free API key at console.groq.com, then add `export GROQ_API_KEY=your_key` to `~/.zshrc` |
@@ -154,7 +154,7 @@ What each file and folder is for:
 | Path | Purpose |
 |---|---|
 | `CLAUDE.md` | The main rules file Claude reads first. It only holds pointers — loads memory and sends Claude to the right topic file |
-| `docs/CORE_RULES.md` | The 5 core working rules — pulled in by CLAUDE.md |
+| `docs/CORE_RULES.md` | The 8 core working rules — pulled in by CLAUDE.md |
 | `docs/PLANNING.md` | Rules for how to plan work |
 | `docs/TESTING.md` | Rules for how to test |
 | `docs/SUBAGENTS.md` | How and when to hand work off to helper agents |
@@ -184,7 +184,7 @@ Two skills cover the full frontend design workflow. Design tokens (`DESIGN.md` /
 | Command | Depth | What it does | Gates |
 |---|---|---|---|
 | `/design-audit` | read-only | 5 lenses in parallel (taste, Swiss design, UI rules, accessibility, CSS health), then a second agent challenges every Critical finding before it sticks. Ranked violations table, worst first. Say "fix it" and it triggers a scoped 10-mockup fix pipeline on the findings | none |
-| `/design` | mockups + full pipeline | Starts from a brand seed, fans out 7 Opus mockups each locked to a different paradigm, kills the generic ones with a slop validator, hard-stops on a pick. Then writes an Opus plan and Sonnet builds it. `--apply-spec [DESIGN.md]` swaps an existing app onto a spec's tokens instead | Nothing builds until you pick a mockup |
+| `/design` | mockups + full pipeline | Starts from a brand seed, fans out 10 Opus mockups (8 locked to distinct paradigms + 2 wild), kills the generic ones with a slop validator, hard-stops on a pick. Then writes an Opus plan and Sonnet builds it. `--apply-spec [DESIGN.md]` swaps an existing app onto a spec's tokens instead | Nothing builds until you pick a mockup |
 
 `/design-audit` findings can feed directly into a `/design` fix pass. Both skills always show light + dark mode.
 
@@ -198,6 +198,7 @@ Two skills cover the full frontend design workflow. Design tokens (`DESIGN.md` /
 | `/build` | Builds a whole feature start to finish: gather evidence, plan with Opus, approve, then automatically runs a UI mockup gate (slop-filtered, requires approval) before writing any code — tests first, build with Sonnet, then prove it works | — |
 | `/plan` | Interviews you before any code gets written — one question at a time until every tricky case is sorted out. On agreement, routes the sharpened result to `/build`, `/design`, or whichever skill fits | — |
 | `/my-md` | Lists every markdown file — both the global `~/.claude/` docs and the ones in your current project | — |
+| `/quick-mockup` | Fast disposable placeholder-only HTML mockup for layout decisions — one file, gray boxes, generic labels, served over http:// and auto-opened in your browser. The lightweight counterpart to `/design` — no brand tokens, no slop validator, no 10-variant pipeline | — |
 | `/my-skills` | This very list. Default view is a dense 2-skill-per-row table with 2-5 word summaries — fits one screen | `deep` (full sentences + relationships + bolt-ons) |
 | `/lockstep` | Told "don't code yet" and had it ignored a few messages later? This makes it physical — a `PreToolUse` hook blocks every Edit/Write/NotebookEdit outright until you say go | `on` / `off` |
 | `/video-to-kb` | *(Optional — requires Obsidian + Groq API key)* Watch a YouTube video and get a structured wiki page injected into your Obsidian vault automatically — transcript, summary, key claims | — |
@@ -366,7 +367,7 @@ The status bar is driven by `hooks/statusline.sh`. It runs after every response.
 
 `CLAUDE.md` is the first file Claude reads, and by its own rule it holds *only* pointers — nothing else. All it contains is references to other files and the trigger words for each command.
 
-- `@docs/CORE_RULES.md` — the 5 core rules (plan first; keep it simple; only touch what you were asked to; aim at a clear goal; use the expensive model to plan and the cheaper one to type)
+- `@docs/CORE_RULES.md` — the 8 core rules (plan first; keep it simple; only touch what you were asked to; aim at a clear goal; use the expensive model to plan and the cheaper one to type; flag uncertainty; suggest better paths; self-check before declaring done)
 - `@memory/CLAUDE.generated.md` — your compiled preferences from `memory/facts/`
 - It sends Claude to the right file by topic: Planning → `PLANNING.md`, Testing → `TESTING.md`, screens → `UI_MOCKUPS.md`, and so on
 - Command triggers — each command gets its own `# name` block with the plain-English phrases that turn it on
