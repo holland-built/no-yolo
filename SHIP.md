@@ -16,7 +16,8 @@ Repo: `github.com/holland-built/no-yolo`. Run `/release` from anywhere under `~/
 5. **Changelog:** prepend today's dated section to `docs/DAILY_CHANGELOG.md` — one plain-English bullet per changed skill/doc (skip `.gitignore` and the changelog itself).
 6. **README format check (HARD BLOCK):** every `## ` heading in `docs/README_FORMAT.md` must exist in `README.md`; missing → STOP.
 7. **README count patch:** update "N custom commands" / "plus N borrowed from plugins" from the live skill dir counts.
-8. **Regenerate menus:** rebuild `skills/my-skills/RENDERED.md` and `RENDERED_FAST.md` from `CATEGORIES.md` + `TAGLINES*.md` + `WHEN_TO_USE.md` + `WHY_TO_USE.md` (see the regen scripts kept in this repo's ship history). A skill in `CATEGORIES.md` with no `TAGLINES_SHORT.md` line renders "⚠️ missing".
+8. **Regenerate menus:** rebuild `skills/my-skills/RENDERED.md` and `RENDERED_FAST.md` from `CATEGORIES.md` + `TAGLINES*.md` + `WHEN_TO_USE.md` + `WHY_TO_USE.md` (see the regen scripts kept in this repo's ship history). A skill in `CATEGORIES.md` with no `TAGLINES_SHORT.md` line renders "⚠️ missing". Content check, not just format: every tagline in `RENDERED.md` must match the current `TAGLINES.md` line verbatim — a mismatch means someone edited one and forgot the other; sync from TAGLINES.md (source of truth).
+9. **Config template check (HARD BLOCK):** `settings.example.json` must parse (`python3 -c "import json;json.load(open('settings.example.json'))"`), and every `~/.claude/hooks/*` path referenced in its hook commands must exist on disk (`grep -oE '~/.claude/hooks/[a-zA-Z0-9._-]+' settings.example.json | sort -u`, test each with the `~` expanded). A missing hook script means fresh installs get a failing hook every turn — this shipped once (`log-learnings-stop.sh`); never again.
 
 Stage scope: `git add skills/ docs/ README.md .gitignore` (explicit paths — do NOT rely on a `*.md` shell glob; it expands in the CWD, not the repo root).
 

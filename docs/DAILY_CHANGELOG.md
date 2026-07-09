@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-07-09 (cont'd, enhancement batch)
+
+- tests for `hooks/caveman-mode-tracker.js` — the repo's highest-churn untested file: 14 node:test cases (mode transitions, NL activation/deactivation, invalid input, flag round-trip in temp dir), all passing via `node --test 'hooks/tests/*.test.js'`; tracker got a `module.exports` block + `main()` wrapper, CLI behavior unchanged
+- `/update` fork/upstream/force-push flow removed (SKILL.md sync-and-run block) — this repo IS `holland-built/no-yolo`, the fork branch served nobody; sync is pinned to `origin/main`
+- plugin-listing snippet deduped: new shared `hooks/list-plugins.py` (TSV out), called by both `setup.sh` Step 5 and `/update`'s plugin-status step — one source of truth
+- `SHIP.md` hardened: Step 8 now checks RENDERED taglines match TAGLINES.md verbatim (catches the drift class fixed by hand today); new Step 9 HARD BLOCK — `settings.example.json` must parse and every referenced hook script must exist (the `log-learnings-stop.sh` class of bug can't ship again)
+- deleted empty orphaned `skills/learned/` dir
+
 ## 2026-07-09 (cont'd, full /review health pass — 31 fixes)
 
 - `hooks/statusline.sh` — removed leftover debug line that dumped the full statusline stdin JSON (transcript path, cost) to `/tmp/sl-stdin-*.json` on every render
