@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-07-09 (cont'd, README trim + prompt-scan refresh)
+
+- README.md trimmed 410 → 194 lines (task J's <200 target restored): "Cut the noise" section now 4 lines pointing at `settings.example.json`, setup-step table dropped (script self-documents), command-table descriptions cut to one clause, directory layout collapsed — all 17 README_FORMAT.md headings and all 28 command rows kept
+- `/prompt-scan` run for real on Sonnet 5: learnings.md §1-5 snapshot restamped (§4 regenerated from SKILL_TRIGGERS.md — now includes /build, /release two-way update wording), new §6 entry for 2026-07-09 (Fable 5 default set, Claude Code 2.1.200-2.1.205 deltas); nudge hook verified reading it
+
 ## 2026-07-09 (cont'd, enhancement batch)
 
 - tests for `hooks/caveman-mode-tracker.js` — the repo's highest-churn untested file: 14 node:test cases (mode transitions, NL activation/deactivation, invalid input, flag round-trip in temp dir), all passing via `node --test 'hooks/tests/*.test.js'`; tracker got a `module.exports` block + `main()` wrapper, CLI behavior unchanged
