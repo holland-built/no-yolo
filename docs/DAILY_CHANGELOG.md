@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-07-09 (cont'd, plan 003 — template hooks fixed)
+
+- fixed `settings.example.json`: all 6 hook/statusLine commands used `node "~/.claude/hooks/…"` — a quoted `~` never expands in a POSIX shell, so every fresh install threw a failing hook on every session event, had no status line, and the lockstep edit-gate failed open. Now `"$HOME/.claude/hooks/…"` (expands correctly); verified all 6 exit 0
+- `setup.sh`: replaced the stale "update node path" instruction (the template had no node path to update) with "ensure 'node' is on PATH for GUI-launched apps"; removed the `enabledPlugins: caveman@caveman` block that pre-enabled a plugin the base install doesn't ship (marketplace registration kept)
+- `SHIP.md` Step 9 hardened: now hard-fails on any quoted-`~` hook path and matches both `$HOME/` and `~/` forms when checking hook existence — the release gate can't pass a broken-path template again (executed via /improve in an isolated worktree, reviewed, merged)
+
 ## 2026-07-09 (cont'd, README trim + prompt-scan refresh)
 
 - README.md trimmed 410 → 194 lines (task J's <200 target restored): "Cut the noise" section now 4 lines pointing at `settings.example.json`, setup-step table dropped (script self-documents), command-table descriptions cut to one clause, directory layout collapsed — all 17 README_FORMAT.md headings and all 28 command rows kept
