@@ -66,8 +66,8 @@ rel:my-md|Stands alone — no setup. Lists your markdown files.
 rel:whats-next|Stands alone, read-only. Scans your in-progress work and git status.
 
 # ── Section 4 — Bolt-ons (prefix bolt:) ──────────────────────────────────────
-bolt:fallow|Finds code nobody uses — dead leftovers, dupes, junk. code-health runs it before cleanup. Install: `npm install -g fallow`. Free, fast, no AI.
-bolt:gh|GitHub's tool — pulls real PR diffs so code-review reads them without copy-paste. Install: `brew install gh && gh auth login`.
+bolt:fallow|Finds code nobody uses — dead leftovers, dupes, junk. /review runs it in the health pass. Install: `npm install -g fallow`. Free, fast, no AI.
+bolt:gh|GitHub's tool — pulls real PR diffs so /review reads them without copy-paste. Install: `brew install gh && gh auth login`.
 bolt:Chrome|Takes screenshots of mockups so you see them without opening a browser. Used by /design and /build. Usually already installed.
 bolt:Playwright|Drives a browser to measure layouts and run smoke tests. Used by /design and /build. Add the playwright MCP plugin to settings.json. Gives real proof a layout is right.
 bolt:Graphviz|The engine that auto-arranges diagram boxes for drawio-skill. Install: `brew install graphviz`. No hand-placing.
