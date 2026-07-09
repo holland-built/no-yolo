@@ -40,25 +40,13 @@ Setup usability pattern:
 - `AskUserQuestion` tool — structured multiple-choice instead of free-form input
 - `arguments` frontmatter field — declares expected inputs at invocation time
 
-## Description Field = Trigger Condition
+## Skill Authoring Rules
 
-The `description` field in SKILL.md is **not a summary** — it is a trigger condition: tells Claude WHEN to fire and WHO it serves. Claude Code scans descriptions on session start to route requests automatically.
-
-- Good: *"Use this skill when the user asks to build web components, pages, or applications."*
-- Bad: *"A skill that builds web UI components."*
-
-A good trigger names: (1) who it serves, (2) exact phrases a user would type.
-
-## Gotchas Discipline
-
-Gotchas = highest-signal content in any skill file. Rules:
-- Only add gotchas you have **actually seen** Claude get wrong — never pre-load them
-- Skills start small and grow as Claude hits real edge cases
-- "Wait, watch, then add to it."
+Authoring standards (description = trigger condition, gotchas discipline, new-skill checklist, publish rules) live in `~/.claude/docs/NO_YOLO.md` — follow those. One note not covered there: Claude Code scans skill descriptions on session start to route requests automatically, so the trigger phrasing directly controls routing.
 
 ## Per-Project vs Global
 
-Industry guidance (from engineers like Andrej Karpathy and Boris Cherny) recommends installing skills **per-project** rather than globally. Global skills bloat every session's prompt by ~30–40k tokens (tokens are the chunks Claude reads — more tokens = slower, more expensive sessions). Per-project installs cost nothing when not in use.
+Token-budget guidance (global-skill bloat, prefer per-project installs) lives in `~/.claude/docs/CONTEXT.md`.
 
 **Simplicity self-check before installing:** install only what the task asks for. No skill packs "just in case," no configurability you didn't request, no abstraction for a single use. Ask "would a senior engineer say this is overcomplicated?" — if yes, don't install it.
 
@@ -70,13 +58,11 @@ Industry guidance (from engineers like Andrej Karpathy and Boris Cherny) recomme
 | `plan` | Pre-build planning interview — extracts decisions before any code |
 | `diagnose` | 6-phase bug diagnosis — minimize/hypothesize/instrument/fix |
 | `tdd` | Vertical-slice TDD — one test → impl → green → repeat; forbids all-tests-first |
-| `build` | Full pipeline (thin wrapper): calls `/plan-feature` then `/build-feature`. Use for end-to-end runs. |
-| `plan-feature` | Evidence → plan → Opus plan → approval gate. The no-code gate — stops before any code. |
-| `build-feature` | Reads approved plan → mockup gate → TDD → build → regression → prove. |
-| `code-health` | Three-phase health: Fallow (dead-code/dupes/security) → Trim (YAGNI review) → Improve (plan) |
-| `code-review` | 3-pass diff review: correctness → over-engineering → engineering filters (scope check + simplicity check) |
+| `build` | Full feature pipeline: evidence → plan → Opus plan → approval gate → mockup gate → TDD → build → regression → prove |
+| `review` | Diff review AND full codebase health pass (fallow + trim + improve) — one ranked findings list, one approve-all gate |
+| `design` | Fresh design generation: 10 Opus mockups (8 paradigms + 2 wild) → slop validator → you confirm → Opus plan → Sonnet build |
+| `quick-mockup` | Fast disposable placeholder-only HTML mockup for layout/spatial decisions — no brand tokens, no pipeline |
 | `design-audit` | Read-only design audit: 5 parallel lenses (Taste/Swiss/UIwiki/a11y/code-health) → violations table + top-10 |
-| `design-full` | Two modes: `--fast` (7 Sonnet mockups, pick-gate, no code) or full pipeline (audit → debate → 7 Opus mockups → token extraction → Opus plan → /build) |
 
 ## Symlinks vs Real Skill Dirs
 

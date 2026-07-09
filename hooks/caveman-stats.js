@@ -338,9 +338,3 @@ function main() {
 }
 
 if (require.main === module) main();
-
-module.exports = {
-  formatStats, formatShare, formatHistory, aggregateHistory, parseDuration, deriveSavings,
-  parseSession, priceForModel, formatUsd, FULL_MODE_COMPRESSION, MODEL_OUTPUT_PRICE_PER_M,
-  findCompressedPairs, summarizeCompressed, humanizeTokens,
-};

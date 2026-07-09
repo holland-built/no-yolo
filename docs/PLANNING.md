@@ -9,7 +9,7 @@ Plans live in `<project-root>/brainstorms/` — never here. This file defines wh
 - Architecture decisions
 - Anything you'd otherwise guess at
 
-Trigger: user says "plan X" or task is non-trivial → auto-spawn Opus (Claude's bigger, slower model — best for planning) planner agent before any coding.
+Trigger: user says "plan X" or task is non-trivial → auto-spawn an Opus planner agent before any coding — see `SUBAGENTS.md` for the Opus-plans/Sonnet-codes split.
 
 ## Good Plan Structure
 

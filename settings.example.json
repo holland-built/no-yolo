@@ -55,18 +55,17 @@
       "Bash(env:*)",
       "Bash(docker:*)",
       "Bash(docker compose:*)",
-      "mcp__playwright__browser_take_screenshot",
-      "mcp__playwright__browser_snapshot",
-      "mcp__playwright__browser_click",
-      "mcp__playwright__browser_press_key",
-      "mcp__playwright__browser_type",
-      "mcp__playwright__browser_fill_form",
-      "mcp__playwright__browser_navigate",
-      "mcp__playwright__browser_run_code",
-      "mcp__playwright__browser_hover",
-      "mcp__playwright__browser_file_upload",
-      "mcp__playwright__browser_tabs",
-      "mcp__filesystem__*"
+      "mcp__plugin_ecc_playwright__browser_take_screenshot",
+      "mcp__plugin_ecc_playwright__browser_snapshot",
+      "mcp__plugin_ecc_playwright__browser_click",
+      "mcp__plugin_ecc_playwright__browser_press_key",
+      "mcp__plugin_ecc_playwright__browser_type",
+      "mcp__plugin_ecc_playwright__browser_fill_form",
+      "mcp__plugin_ecc_playwright__browser_navigate",
+      "mcp__plugin_ecc_playwright__browser_run_code",
+      "mcp__plugin_ecc_playwright__browser_hover",
+      "mcp__plugin_ecc_playwright__browser_file_upload",
+      "mcp__plugin_ecc_playwright__browser_tabs"
     ],
     "additionalDirectories": [
       "~/.claude/plans"
@@ -124,16 +123,6 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"~/.claude/hooks/log-learnings-stop.sh\"",
-            "timeout": 3,
-            "statusMessage": "Tracking learnings turn counter..."
-          }
-        ]
-      },
-      {
-        "hooks": [
-          {
-            "type": "command",
             "command": "bash \"~/.claude/hooks/reflect-claude-md-stop.sh\"",
             "timeout": 10,
             "async": true,
@@ -167,7 +156,6 @@
   "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": true,
   "skipAutoPermissionPrompt": true,
-  "voiceEnabled": true,
   "model": "sonnet",
   "spinnerTipsEnabled": false
 }

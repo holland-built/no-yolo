@@ -131,11 +131,8 @@ check here is existence, not authorship).
 ```bash
 grep -hoE "^[a-z][a-z0-9-]+\|" ~/.claude/skills/my-skills/{TAGLINES,STORIES,WHEN_TO_USE,WHY_TO_USE,CATEGORIES}.md 2>/dev/null | tr -d '|' | sort -u
 grep -oE "^\- \*\*[a-z][a-z0-9-]+\*\*" ~/.claude/docs/SKILL_TRIGGERS.md 2>/dev/null | sed 's/^- \*\*//; s/\*\*$//' | sort -u
-grep -oE "^\| [a-z][a-z0-9-]+ " ~/.claude/skills/my-skills/RELATIONSHIPS.md 2>/dev/null | sed 's/| //; s/ $//' | sort -u
 ```
-`RELATIONSHIPS.md` uses a different row format (`| name | ...` with leading pipe+space) than
-the other catalog files (`name|...`) — it needs its own pattern, not the shared one above. Also
-scan prose mentions of `/name` inside README.md, SKILL_TRIGGERS.md, and other skills' SKILL.md
+Also scan prose mentions of `/name` inside README.md, SKILL_TRIGGERS.md, and other skills' SKILL.md
 bodies (`grep -oE '/[a-z][a-z0-9-]+' <file>`) — a skill can be dangling-referenced in plain text
 even without a catalog row.
 

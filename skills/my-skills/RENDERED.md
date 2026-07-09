@@ -2,7 +2,7 @@
 
 | Skill | What it does | When to use | Why vs manual |
 | --- | --- | --- | --- |
-| design | Fresh UI generation: 10 Opus mockups (8 paradigms + 2 wild) → AI picks → you confirm → build. | Starting a new design or full redesign — want truly fresh, not an incremental patch | 7 distinct paradigms at once + slop validator kills the generic — one pick becomes a full build plan |
+| design | Fresh UI generation: 10 Opus mockups (8 paradigms + 2 wild) → AI picks → you confirm → build. | Starting a new design or full redesign — want truly fresh, not an incremental patch | 10 mockups at once (8 distinct paradigms + 2 wild) + slop validator kills the generic — one pick becomes a full build plan |
 | quick-mockup | Fast throwaway HTML layout mockup — gray boxes, served live, browser-opens. Not /design. | — | — |
 
 ## Build
@@ -67,8 +67,3 @@
 | update | Checks if ~/.claude is behind, previews changes, applies or rolls back. | Not sure if you should update | Rollback and restore-removed-skill built in — no manual git surgery if something breaks |
 | supacode-cli | Lets Claude drive the Supacode terminal app — tabs, worktrees, surfaces. | Working inside a Supacode terminal session | Auto-activates in-session; no slash command to remember |
 | lockstep | Hook-enforced gate: blocks Edit/Write/NotebookEdit until you say go. | You want "don't code yet" to actually hold, not just get ignored a few messages later | Mechanically denied by a PreToolUse hook — not a prompt the model can talk itself past |
-
-## Plugins
-
-| Pack | What it does | Entry point | Why vs manual |
-| --- | --- | --- | --- |

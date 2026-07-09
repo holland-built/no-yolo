@@ -102,3 +102,9 @@ mcp-needs-auth-cache.json
 .DS_Store
 .agents/
 skills-lock.json
+
+# Claude Code runtime state (created when ~/.claude itself is opened as a project)
+.claude.json
+.claude/
+chrome/
+debug/

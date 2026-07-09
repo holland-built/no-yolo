@@ -55,11 +55,10 @@ These are pre-built helper agent definitions in `~/.claude/agents/`. They work l
 - `qa-expert` — test strategy / quality audits
 
 **<YOUR_STACK> (fill in your framework + language + database):**
-- `react-specialist` / `typescript-pro` / `frontend-developer`
+- `react-specialist` / `typescript-pro`
 - `python-pro` / `fastapi-developer` / `backend-developer`
 
 **UI / quality:**
-- `ui-designer` — visual design
 - `accessibility-tester` — a11y audits
 - `performance-engineer` — perf hot spots
 - `api-designer` — REST/GraphQL design
@@ -69,7 +68,7 @@ These are pre-built helper agent definitions in `~/.claude/agents/`. They work l
 ## Skill Alignment
 
 - `build` — full feature pipeline (plan → Opus plan → TDD → build → prove)
-- `code-review` — PR/diff review gate before merge
+- `review` — PR/diff review gate before merge
 - `diagnose` — systematic bug diagnosis
 - `tdd` — vertical-slice red-green-refactor
 
@@ -81,7 +80,7 @@ Dispatch the matching team in parallel. Build → review pairs: builder writes, 
 
 | Team | Build | Review / Verify | Use for | Model |
 |---|---|---|---|---|
-| **Frontend** | `react-specialist`, `frontend-developer`, `typescript-pro`, `ui-designer` | `typescript-pro`, `accessibility-tester` | UI components, pages, mockup→dev | Sonnet |
+| **Frontend** | `react-specialist`, `typescript-pro` | `typescript-pro`, `accessibility-tester` | UI components, pages, mockup→dev | Sonnet |
 | **Backend** | `backend-developer`, `typescript-pro` | `backend-developer`, `typescript-pro` | API routes, ORM, database | Sonnet |
 | **Quality** | — | `code-reviewer`, `architect-reviewer`, `security-auditor` | pre-merge review, auth/secrets, system design | Opus |
 | **Debug** | `debugger`, `performance-engineer` | `qa-expert` | bugs, regressions, perf bottlenecks | Sonnet |

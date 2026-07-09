@@ -21,3 +21,4 @@ SKILL_TRIGGERS.md|Source of truth for every skill trigger rule — what phrases 
 THIRD_PARTY_SKILLS.md|Registry of vendored (non-plugin) third-party skill content, pinned to an upstream commit per row. /update reads this to flag drift — read-only, never auto-pulls.
 .pending-tasks.md|Session task queue. /whats-next reads this first and runs the next unchecked item. Add tasks here to queue work across sessions.
 HOOKS_INTERNALS.md|Developer reference for the 4 caveman hook JS modules — what each does, when it fires, exports, and security notes.
+SHIP.md|Release playbook for this repo — environments, pre-push steps, hard guards, optional GitHub release recipe. /release reads and runs it; never push without it.

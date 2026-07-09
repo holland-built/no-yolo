@@ -11,16 +11,13 @@ No exceptions for new components, redesigns, layout changes, or visual refactors
 ## Slop prohibition (applies to every mockup, every skill)
 > Canonical GUI slop list: `~/.claude/docs/ANTISLOP.md ## GUI Slop`. Run `/antislop` to check any output.
 
-Before presenting mockups to the user, self-check every variant against the slop fingerprint. If a variant matches — kill it, regenerate it with a structurally different paradigm. For sets of 3: minimum 1 non-slop survivor. For sets of 5+: minimum 2.
+Before presenting mockups to the user, self-check every variant against the canonical GUI slop list in `ANTISLOP.md`. If a variant matches — kill it, regenerate it with a structurally different paradigm. For sets of 3: minimum 1 non-slop survivor. For sets of 5+: minimum 2.
 
-**Slop fingerprint — instant reject if the variant's PRIMARY design expression is:**
-- Card grid (same `.card` box repeated N times, slightly different content)
+**Mockup-specific kill rules (additions not in ANTISLOP.md) — instant reject if the variant's PRIMARY design expression is:**
 - Accordion-only (all groups collapsed behind a chevron, no other structure)
 - Floating cards on a darker/lighter background as the only device
 - Looks like a Tailwind UI, shadcn, or Material UI starter template
-- Sidebar nav with icon + label rows as the structural feature (unless the app already uses this)
 - Rounded corners (>8px) as the only softening device, applied everywhere
-- Badge/pill stat rows as the only data visualization
 - Sans-serif + size-only hierarchy (no weight contrast, spacing, or color differentiation)
 - Any layout that could describe 3+ other variants in the same set
 
@@ -49,10 +46,10 @@ Mockups live under `.mockups/<group>/<name>.html` in the current project root. T
 
 | Situation | Tool | Variations |
 |---|---|---|
-| Fast mockups, no build | `/design-full --fast` | 7 (5 redesign + 2 wild) |
+| Fast throwaway layout sketch, no build | `/quick-mockup` | 1 placeholder-only file |
 | Manual or ad-hoc mockup (no skill) | this doc's manual flow | 5–8 |
 | Full feature pipeline | `/build` | 10 (phase 3.5 gate) |
-| Full design + build pipeline | `/design-full` | 7 Opus variants → approved one feeds /build |
+| Fresh design + build pipeline | `/design` | 10 Opus mockups (8 paradigms + 2 wild) → confirmed one feeds the build |
 
 Use the manual flow (5–8) when no skill applies. Use the skill count when a skill is invoked — don't override it.
 
@@ -110,8 +107,8 @@ Pick 5–8 from this list, depending on what's being designed:
 
 ## After User Picks
 
-1. Capture the pick in the plan file (`~/.claude/plans/<name>.md`)
-2. Delete the 4 losers OR move them to `design-lab/_archive/`
+1. Capture the pick in the plan file (`<project-root>/brainstorms/<slug>-plan-<YYYY-MM-DD>.md` — per PLANNING.md)
+2. Delete the losing variants
 3. Write production code matching the chosen variation exactly
 4. Verify in browser preview before claiming done (per TESTING.md)
 
@@ -119,5 +116,5 @@ Pick 5–8 from this list, depending on what's being designed:
 
 - `/build` — full feature pipeline with 10-variant mockup gate (phase 3.5)
 - `/design-audit` — read-only audit: 5 lenses → violations table + top-10 improvements
-- `/design-full --fast` — 7-variant fast generator (5 redesign + 2 wild), hard pick-gate, no code
-- `/design-full` — full design pipeline: audit → debate → 7 Opus mockups → plan → /build
+- `/quick-mockup` — fast disposable placeholder-only HTML mockup for layout/spatial decisions, no code
+- `/design` — fresh design pipeline: 10 Opus mockups (8 paradigms + 2 wild) → slop validator → confirm → Opus plan → Sonnet build
