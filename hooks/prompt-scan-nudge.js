@@ -13,16 +13,25 @@ const claudeDir = process.env.CLAUDE_CONFIG_DIR || path.join(os.homedir(), '.cla
 const learningsPath = path.join(claudeDir, 'learnings.md');
 
 let lastScan = null;
+let fileExists = false;
 try {
   const content = fs.readFileSync(learningsPath, 'utf8');
-  const matches = [...content.matchAll(/^## Scan (\S+) — model: (\S+)/gm)];
-  if (matches.length) lastScan = matches[matches.length - 1];
+  fileExists = true;
+  // §6 dated log is newest-first: "### 2026-07-04 — claude-opus-4-8"
+  const entry = content.match(/^### (\d{4}-\d{2}-\d{2}) — (\S+)/m);
+  // fallback: living-snapshot header "(last refreshed: 2026-07-04 — model: claude-opus-4-8)"
+  const header = content.match(/last refreshed: (\d{4}-\d{2}-\d{2}) — model: ([^)\s]+)/);
+  lastScan = entry || header;
 } catch (e) { /* learnings.md absent — first run */ }
 
 if (lastScan) {
   process.stdout.write(
     `PROMPT-SCAN CHECK: last /prompt-scan was ${lastScan[1]}, model "${lastScan[2]}". ` +
     `If your current model ID differs, proactively tell the user and offer to run /prompt-scan to refresh learnings.md.`
+  );
+} else if (fileExists) {
+  process.stdout.write(
+    'PROMPT-SCAN CHECK: learnings.md exists but has no dated scan entry — offer to run /prompt-scan to stamp a baseline.'
   );
 } else {
   process.stdout.write(
