@@ -22,7 +22,7 @@ else
   cp "$CLAUDE_DIR/settings.example.json" "$CLAUDE_DIR/settings.json"
   echo "    Created settings.json from template"
 fi
-echo "    ACTION REQUIRED: edit settings.json — update node path and add your MCP servers"
+echo "    ACTION REQUIRED: ensure 'node' is on PATH for GUI-launched apps, then add your MCP servers to settings.json"
 
 # ── Step 2: hook permissions ─────────────────────────────────────────────────
 echo ""
