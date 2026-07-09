@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-07-09 (cont'd, session-tuning settings)
+
+- added 6 settings to `settings.example.json` (the only settings file this repo commits — `settings.json` itself stays gitignored, per-machine): `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY`, `DISABLE_TELEMETRY`, `DISABLE_ERROR_REPORTING`, `DISABLE_NON_ESSENTIAL_MODEL_CALLS`, `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE: "75"` (compacts before quality degrades near the 95% default limit, not after), and top-level `spinnerTipsEnabled: false`. New README section explains what each does and how to add them by hand if you already have an older `settings.json`
+
 ## 2026-07-09
 
 - `/my-skills`' menu (`CATEGORIES.md`/`RENDERED*.md`) only listed `improve` among borrowed plugins, not `trim` — an inconsistency, not a break: fixed by adding `trim`, then removed both `trim` and `design-audit` again per explicit preference (menu should reflect what's actually typed, not every real skill) — `TAGLINES.md`'s "6-persona" debate typo (should be 7) fixed along the way, confirmed clean by `/md-check --orphans` both times since neither skill's catalog/trigger entries elsewhere were touched

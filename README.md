@@ -78,6 +78,25 @@ After setup.sh finishes, open Claude Code and run these if you want them:
 | Caveman | Makes Claude reply in fewer words — saves tokens on long sessions | `/plugin marketplace add JuliusBrussee/caveman` |
 | impeccable | Frontend design/critique/polish tool used alongside (not part of) `/design` — `/design`'s existing-UI redirect hands off to it | `/plugin marketplace add pbakaus/impeccable` |
 
+### Cut the noise — optional session settings
+
+`settings.example.json` ships with a few settings that cut friction on long sessions: no feedback-survey popup, no telemetry/error reporting sent out, no filler "tip" model calls, no rotating spinner text, and context compacts earlier (75% instead of the 95% default) so it happens before quality visibly degrades near the limit, not after.
+
+They're on by default for anyone who runs `setup.sh` (it copies this file to `settings.json`). Already have a `settings.json` from before these were added? Add them yourself:
+
+```json
+"env": {
+  "CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY": "1",
+  "DISABLE_TELEMETRY": "1",
+  "DISABLE_ERROR_REPORTING": "1",
+  "DISABLE_NON_ESSENTIAL_MODEL_CALLS": "1",
+  "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "75"
+}
+```
+and at the top level: `"spinnerTipsEnabled": false`.
+
+Want telemetry/error reporting back on? Delete those two lines — nothing else in this repo depends on them.
+
 ### Step 4 — Verify
 
 Open Claude Code in any folder and run:
