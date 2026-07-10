@@ -60,8 +60,25 @@ cat package.json 2>/dev/null | python3 -c "import json,sys; d=json.load(sys.stdi
    9-section DESIGN.md format). If a brand DESIGN.md exists in-repo or matches the product:
    pull the FULL system — agent prompt guide + layout principles + type hierarchy + component
    states + do's/don'ts.
-2. If no brand match: token-hunt CSS extraction. If `$ARGUMENTS` has a reference URL, extract
-   its palette/type/spacing tokens. Otherwise seed from Radix Colors (React) or Open Color.
+2. If no brand match: token-hunt CSS extraction. Otherwise seed from Radix Colors (React) or
+   Open Color.
+   - **Reference URL**: if `$ARGUMENTS` contains an `http(s)://` URL, scrape it and extract its
+     real tokens (mirrors `skills/ingest-docs/SKILL.md` — Python `firecrawl-py`, self-hosted, no
+     API key). First run the install guard, then scrape for HTML:
+     ```bash
+     python3 -c "import firecrawl" 2>/dev/null || pip3 install firecrawl-py --break-system-packages
+     ```
+     ```python
+     from firecrawl import FirecrawlApp
+     app = FirecrawlApp(api_url="http://<your-firecrawl-host>:3002")  # self-hosted, no API key
+     result = app.scrape_url(url, formats=["html"])  # HTML — need raw CSS, not just markdown
+     # result.html → parse inline + linked CSS for: palette hex, type families (font-family
+     #   stacks), spacing scale (recurring px/rem gaps, padding, margins)
+     ```
+     Fold the extracted palette/type/spacing into the seed. If the scrape fails (service
+     unreachable / non-2xx / empty `result`), do NOT abort the skill — fall back to the
+     Radix/Open-Color seed and note "reference URL scrape failed, used fallback" in the seed file.
+   - No reference URL: local CSS token-hunt, then Radix/Open-Color as above.
 
 Write the seed to `.mockups/design-seed.md`: palette hex, type families, spacing scale,
 layout principles, component states, do's/don'ts. State one line summarizing the seed source.
