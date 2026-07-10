@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-07-10 (plan 017 — reference-URL scraping in design skills)
+
+- `/design` + `/design-audit`: reference-URL support — when the request names a site ("make it look like this <url>"), scrape it via the self-hosted Firecrawl (`firecrawl-py`, `formats=["html"]`) and seed/inject its real palette·type·spacing tokens instead of guessing. `/design` folds tokens into the brand seed (Step 0); `/design-audit` injects them into the F3 fix mockups alongside the P0 findings. Graceful fallback to Radix/Open-Color if the scrape fails. `/quick-mockup` intentionally excluded (placeholder-only by design). Uses the same Python path as `/ingest-docs`; no MCP restart needed. (Opus-planned as advisor-plans/017, built + verified in an isolated worktree, live scrape smoke test passed.)
+
 ## 2026-07-09 (cont'd, plan 003 — template hooks fixed)
 
 - fixed `settings.example.json`: all 6 hook/statusLine commands used `node "~/.claude/hooks/…"` — a quoted `~` never expands in a POSIX shell, so every fresh install threw a failing hook on every session event, had no status line, and the lockstep edit-gate failed open. Now `"$HOME/.claude/hooks/…"` (expands correctly); verified all 6 exit 0
