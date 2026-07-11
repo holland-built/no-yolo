@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-07-11 (plan 019 — /review security layer upgrade)
+
+- `/review` secret scan expanded from ~13 to 25 patterns — added Google `AIza`, Slack `xox*`, Stripe `sk_live`/`rk_live`, GitHub fine-grained `github_pat_` + `gho/ghu/ghs/ghr`, GitLab `glpat`, Anthropic `sk-ant`, OpenAI `sk-proj`, npm, SendGrid, JWT (`eyJ…`), and raw `PRIVATE KEY` blocks. Verified: catches real samples, no false-match on prose (over-broad guard tested)
+- `/review` gains a static **Security Review Checklist** (9 OWASP vuln classes — IDOR/access-control, injection, SSRF, XXE/deserialization, XSS, CSRF, auth/JWT/session, mass assignment, business-logic/race) applied at read-time in Pass A, catching logic/auth bugs that `fallow security` misses. Zero new tools, zero cost, no API key — the free harvest from evaluating the (paid, unusable-without-key) Strix pentester. (Opus-planned advisor-plans/019, built + reviewed in an isolated worktree.)
+
 ## 2026-07-10 (plan 017 — reference-URL scraping in design skills)
 
 - `/design` + `/design-audit`: reference-URL support — when the request names a site ("make it look like this <url>"), scrape it via the self-hosted Firecrawl (`firecrawl-py`, `formats=["html"]`) and seed/inject its real palette·type·spacing tokens instead of guessing. `/design` folds tokens into the brand seed (Step 0); `/design-audit` injects them into the F3 fix mockups alongside the P0 findings. Graceful fallback to Radix/Open-Color if the scrape fails. `/quick-mockup` intentionally excluded (placeholder-only by design). Uses the same Python path as `/ingest-docs`; no MCP restart needed. (Opus-planned as advisor-plans/017, built + verified in an isolated worktree, live scrape smoke test passed.)
