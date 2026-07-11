@@ -34,7 +34,7 @@ Effort is always max — exhaustive cross-file analysis on every pass. There is 
 
 ```bash
 git diff $(git merge-base HEAD origin/main 2>/dev/null || git merge-base HEAD main 2>/dev/null || echo "HEAD~1") HEAD 2>/dev/null \
-  | grep -niE "(api_key\s*[=:]\s*['\"]?[a-zA-Z0-9_\-]{16,}|apikey\s*[=:]\s*['\"]?[a-zA-Z0-9_\-]{16,}|secret\s*[=:]\s*['\"]?[a-zA-Z0-9_\-]{16,}|password\s*[=:]\s*['\"]?[a-zA-Z0-9_\-]{8,}|passwd\s*[=:]\s*['\"]?[a-zA-Z0-9_\-]{8,}|AKIA[0-9A-Z]{16}|sk-[a-zA-Z0-9]{20,}|ghp_[a-zA-Z0-9]{36}|postgres://[^@\s]+@|mysql://[^@\s]+@|mongodb\+srv://[^@\s]+@|redis://:[^@\s]+@|bearer [a-zA-Z0-9\-_\.]{20,})"
+  | grep -niE "(api_key\s*[=:]\s*['\"]?[a-zA-Z0-9_\-]{16,}|apikey\s*[=:]\s*['\"]?[a-zA-Z0-9_\-]{16,}|secret\s*[=:]\s*['\"]?[a-zA-Z0-9_\-]{16,}|password\s*[=:]\s*['\"]?[a-zA-Z0-9_\-]{8,}|passwd\s*[=:]\s*['\"]?[a-zA-Z0-9_\-]{8,}|AKIA[0-9A-Z]{16}|sk-[a-zA-Z0-9]{20,}|ghp_[a-zA-Z0-9]{36}|postgres://[^@\s]+@|mysql://[^@\s]+@|mongodb\+srv://[^@\s]+@|redis://:[^@\s]+@|bearer [a-zA-Z0-9\-_\.]{20,}|AIza[0-9A-Za-z_\-]{35}|github_pat_[0-9A-Za-z_]{22,}|gho_[A-Za-z0-9]{36}|ghu_[A-Za-z0-9]{36}|ghs_[A-Za-z0-9]{36}|ghr_[A-Za-z0-9]{36}|xox[baprs]-[0-9A-Za-z\-]{10,}|sk_live_[0-9A-Za-z]{24,}|rk_live_[0-9A-Za-z]{24,}|sk-ant-[0-9A-Za-z_\-]{20,}|sk-proj-[0-9A-Za-z_\-]{20,}|npm_[0-9A-Za-z]{36}|SG\.[0-9A-Za-z_\-]{22}\.[0-9A-Za-z_\-]{43}|glpat-[0-9A-Za-z_\-]{20}|-----BEGIN [A-Z ]*PRIVATE KEY-----|eyJ[A-Za-z0-9_\-]{10,}\.eyJ[A-Za-z0-9_\-]{10,}\.)"
 ```
 
 Any match → add a 🔑 Critical row per match to the unified findings list (Phase 3). Secret findings are **never** auto-applied, regardless of approval or `--auto` — surface only. No match → note `Secret scan: clean` in the roll-up.
@@ -72,6 +72,20 @@ No branch divergence → diff against `HEAD~1`.
 **Pass C — Karpathy Filters** (from `CODE_REVIEW.md`): Surgical (every changed line traces to the stated request — flag any that don't) and Simplicity (would a senior engineer call this overcomplicated?).
 
 Findings from all three passes feed the unified list in Phase 3 — do not print them separately.
+
+### Security Review Checklist (static — no tools, no cost)
+
+Apply while reading the diff in Pass A. These catch logic/auth/IDOR classes that the `fallow security` static pass (Phase 2) misses. Findings feed the same Phase 3 unified list (🔴/🟠). No new tool calls — pure read-time review prompts:
+
+- **Broken access control / IDOR**: object fetched by ID from request data with no ownership/tenant check.
+- **Injection**: request data concatenated into SQL / NoSQL / OS-command / template strings instead of parameterized.
+- **SSRF**: server-side fetch or URL built from user input without an allowlist.
+- **XXE / deserialization**: untrusted XML / pickle / `yaml.load` parsed without a safe loader.
+- **XSS**: user-controlled data reaching an HTML/DOM sink without escaping.
+- **CSRF**: state-changing route (POST/PUT/DELETE) with no anti-CSRF token check.
+- **Auth / session**: JWT accepted with `alg:none` or no signature verify; session id not rotated on login; secret compared non-constant-time.
+- **Mass assignment**: request body spread directly into a persistence model.
+- **Business logic**: missing server-side validation on price/quantity/role; check-then-act race.
 
 ---
 
