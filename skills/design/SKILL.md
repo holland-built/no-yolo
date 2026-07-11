@@ -1,6 +1,6 @@
 ---
 name: design
-description: Use this skill when the user types /design, says 'design this', 'new design', 'redesign', 'fresh look', 'start over on the UI', 'mock this up', or 'show me design options'. Fresh generation only — never preserves the existing design. Pipeline: brand seed -> Taste generators -> 10 Opus mockups (8 distinct paradigms + 2 wild) -> slop validator -> AI picks best -> Chrome auto-opens -> you confirm or pick different -> Opus plan -> Sonnet build. Nothing builds before you confirm. Auto-redirects audit/review to /design-audit, existing-UI polish to the impeccable plugin. Second mode — component-pull: also fires on natural language like 'put a button here', 'add a chat box', 'drop in a card', or 'add a component'; in a React project it pulls a finished, project-themed component from Meta's open-source Astryx design system instead of hand-building it (React-only; falls back to normal /design otherwise).
+description: Use this skill when the user types /design, says 'design this', 'new design', 'redesign', 'fresh look', 'start over on the UI', 'mock this up', or 'show me design options'. Fresh generation only — never preserves the existing design. Pipeline: brand seed -> Taste generators -> 10 Opus mockups (8 distinct paradigms + 2 wild) -> slop validator -> AI picks best -> Chrome auto-opens -> you confirm or pick different -> Opus plan -> Sonnet build. Nothing builds before you confirm. Auto-redirects audit/review to /design-audit, existing-UI polish to the impeccable plugin. Second mode — component-pull: also fires on natural language like 'put a button here', 'add a chat box', 'drop in a card', or 'add a component'; in a React project it pulls a finished, project-themed component from Meta's open-source Astryx design system instead of hand-building it, and previews the themed component for your approval before placing it (React-only; falls back to normal /design otherwise).
 user-invocable: true
 argument-hint: "[text | URL | screenshot | domain context] [--apply-spec <file>]"
 allowed-tools:
@@ -65,7 +65,7 @@ toggle switching `data-theme` on `<html>`. Both themes hand-tuned, not CSS inver
 ## COMPONENT-PULL MODE (Astryx)
 Additive second mode. Reached only from **Mode select** on "add/put/drop-in a <component>"
 phrasing. The fresh-gen pipeline (Steps 0-5) is untouched and does not run here. Everything
-below is discovered **per project** — never hardcode any project's paths.
+below is discovered **per project** — never hardcode any project's paths. It renders and screenshots the themed component in an isolated throwaway preview for your approval **before** placing anything in the real app — the same confirm-before-build gate the fresh-gen pipeline uses.
 
 **What Astryx is:** Meta's open-source React design system (`github.com/facebook/astryx`, MIT,
 150+ finished accessible components — buttons, chat box, hover cards, feed scroll). Drop-in:
@@ -104,14 +104,51 @@ verb for the detected PM):
 **Never install globally.** If install fails (offline / registry / peer-dep conflict), STOP and
 report — do not hand-build a substitute silently.
 
-### 5. Pull + theme + place
+### 5. Pull + theme (do NOT place yet)
 1. Pull the requested finished component from Astryx (the chat box, hover card, button, etc.).
 2. Map Astryx's CSS-custom-property tokens to the project's detected colors from step 2 (define
    the `--astryx-*` / theme vars against the project's palette — do not ship Astryx's default
    neutral theme). Result: Facebook-built, **project-colored — not looking like Facebook.**
-3. Place the component in the project's conventional location (mirror where sibling components
+
+Placing into the real app happens only AFTER the preview gate below. Do not write the component
+into its final location before the user confirms.
+
+### 5.5 Preview + confirm (never place before the user sees it)
+Mirror the fresh-gen HARD GATE (Step 4): the user sees the component before any code lands in
+their app. Same principle as fresh-gen — *nothing lands before you confirm.*
+1. **Build a throwaway isolated preview.** Create a temp route/page that renders ONLY the themed
+   component in a **sensible mockup context** with realistic placeholder content — never floating
+   in a void:
+   - a chat box / chatbot → a plausible chat surface with 3–4 sample messages;
+   - a button → inside a small form or card;
+   - a card → inside a short list/grid of siblings.
+   Put it behind a disposable route (e.g. a `__astryx-preview` route) or a standalone entry file,
+   in a temp location — NEVER the component's final path, and never a route that stays wired into
+   the app's real router.
+2. **Screenshot it the same way fresh-gen screenshots mockups** (reuse Step 3's machinery): point
+   at / start the project's dev server, then capture the rendered preview URL with headless Chrome
+   `--screenshot=` (same invocation fresh-gen uses on `all.html`) or the Playwright CLI — NOT the
+   `ecc:playwright` MCP. Show the PNG inline, then `open` it so the user sees it immediately —
+   exactly like fresh-gen's Chrome auto-open.
+3. **Confirm gate (HARD — place nothing before this):** ask
+   **"Use this component? (yes / show a different Astryx option / tweak the theme / no)"**
+   - `yes` → proceed to 5.6 (place).
+   - `different` → pull a different Astryx component/variant, re-theme (step 5.2), re-preview.
+   - `tweak` → adjust the theme mapping (step 5.2) and re-preview.
+   - `no` → discard: place nothing.
+4. **Cleanup (HARD requirement).** The temp preview route/entry file is throwaway — remove it in
+   EVERY case (accepted OR rejected). It must never be committed into the user's project, and no
+   `__astryx-preview` route may be left wired in. If for any reason the temp preview cannot be
+   removed (leaving preview cruft in their tree), **STOP and report** rather than leaving it behind.
+5. **Graceful degradation.** If the project has no runnable dev server / Playwright to render a live
+   React preview, do NOT place silently. Fall back to describing the component and showing Astryx's
+   own documented preview image/URL if one is available, and STILL run the confirm gate (step 3)
+   before placing — never place an un-previewed component without the user's yes.
+
+### 5.6 Place (only after 5.5 confirmed)
+1. Place the component in the project's conventional location (mirror where sibling components
    live — `src/components/...`, `app/...`, etc.; discover, don't assume).
-4. Where a per-instance tweak is needed, override with the project's own styling via `className`
+2. Where a per-instance tweak is needed, override with the project's own styling via `className`
    (its Tailwind / CSS modules / plain CSS) — the drop-in override Astryx documents.
 
 ### 6. Which-source rule (prevent visual drift)
