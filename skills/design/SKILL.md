@@ -1,6 +1,6 @@
 ---
 name: design
-description: Use this skill when the user types /design, says 'design this', 'new design', 'redesign', 'fresh look', 'start over on the UI', 'mock this up', or 'show me design options'. Fresh generation only — never preserves the existing design. Pipeline: brand seed -> Taste generators -> 10 Opus mockups (8 distinct paradigms + 2 wild) -> slop validator -> AI picks best -> Chrome auto-opens -> you confirm or pick different -> Opus plan -> Sonnet build. Nothing builds before you confirm. Auto-redirects audit/review to /design-audit, existing-UI polish to the impeccable plugin.
+description: Use this skill when the user types /design, says 'design this', 'new design', 'redesign', 'fresh look', 'start over on the UI', 'mock this up', or 'show me design options'. Fresh generation only — never preserves the existing design. Pipeline: brand seed -> Taste generators -> 10 Opus mockups (8 distinct paradigms + 2 wild) -> slop validator -> AI picks best -> Chrome auto-opens -> you confirm or pick different -> Opus plan -> Sonnet build. Nothing builds before you confirm. Auto-redirects audit/review to /design-audit, existing-UI polish to the impeccable plugin. Second mode — component-pull: also fires on natural language like 'put a button here', 'add a chat box', 'drop in a card', or 'add a component'; in a React project it pulls a finished, project-themed component from Meta's open-source Astryx design system instead of hand-building it (React-only; falls back to normal /design otherwise).
 user-invocable: true
 argument-hint: "[text | URL | screenshot | domain context] [--apply-spec <file>]"
 allowed-tools:
@@ -19,6 +19,19 @@ Target: $ARGUMENTS
 
 Fresh generation. This skill **never preserves the existing design** — every mockup is a
 clean-sheet take. Existing tokens are read only to build a ban list.
+
+## Mode select (route first)
+Decide the mode from `$ARGUMENTS` before anything else:
+- Phrasing like **"put a <component> here"**, **"add a button"**, **"add a chat box"**,
+  **"add a card"**, **"drop in a component"**, **"add a component"** (naming a single UI piece
+  to place into an app you are already building) -> **COMPONENT-PULL MODE** (section below).
+  Skip the fresh-gen pipeline entirely.
+- Everything else (`design this`, `new design`, `redesign`, `mock this up`, a URL, a
+  screenshot, `--apply-spec`) -> fall through to `## Redirects` and the fresh-gen pipeline
+  (Steps 0-5) unchanged.
+- Ambiguous ("update the button" could be polish) -> the Redirects block still owns
+  polish/edit/tweak wording; only the additive "add / put / drop-in a NEW component" phrasing
+  routes here.
 
 ## Redirects (check first)
 `/design` is the single entry point for all UI work — it routes to the right engine below.
@@ -46,6 +59,76 @@ variant resembling the current design, not just generic slop.
 ## LIGHT + DARK rule
 Every mockup HTML includes a fully realized light section AND dark section with a `<button>`
 toggle switching `data-theme` on `<html>`. Both themes hand-tuned, not CSS inversion.
+
+---
+
+## COMPONENT-PULL MODE (Astryx)
+Additive second mode. Reached only from **Mode select** on "add/put/drop-in a <component>"
+phrasing. The fresh-gen pipeline (Steps 0-5) is untouched and does not run here. Everything
+below is discovered **per project** — never hardcode any project's paths.
+
+**What Astryx is:** Meta's open-source React design system (`github.com/facebook/astryx`, MIT,
+150+ finished accessible components — buttons, chat box, hover cards, feed scroll). Drop-in:
+its docs say *"the simplest setup is a few CSS imports plus a theme provider — no build plugin,
+no PostCSS or Babel config"* and *"override with `className` using Tailwind, CSS modules, or
+plain CSS."* Themed purely via **CSS custom properties**, so it coexists with Tailwind/Radix/
+shadcn. React-only.
+
+### 1. Detect React (guard — STOP-style, never crash)
+Read the current project's `package.json` (or a `frontend/`/`web/`/`app/` subdir's) and check
+for `react` in dependencies. If **not** React: do NOT use Astryx. Tell the user
+*"This isn't a React project — Astryx only works in React,"* then fall back to `/design`'s
+normal behavior (route to `## Redirects` / fresh-gen). Do not proceed past this step.
+
+### 2. Detect the project's color/design source (generically)
+Look in this order; use whatever exists first — this is how the pulled component gets painted
+to match the project:
+1. `COLOR_CONTRACT.md`
+2. `DESIGN.md`
+3. a Tailwind theme (`tailwind.config.{js,ts,cjs,mjs}` -> `theme.extend.colors`)
+4. CSS custom properties in the global stylesheet (`:root { --... }` in `globals.css`/`app.css`/
+   `index.css`).
+Extract palette + radius + type tokens. Never assume a filename — glob and use what's there.
+
+### 3. Detect the existing component library
+From `package.json`: Radix (`@radix-ui/*`), shadcn (`components.json` present), MUI (`@mui/*`),
+or none. Feeds the which-source rule (step 6).
+
+### 4. Ensure Astryx is installed in THIS project
+If `@astryxdesign/core` is absent from the project's `package.json`: detect the package manager
+from the lockfile (`pnpm-lock.yaml`->pnpm, `yarn.lock`->yarn, else `package-lock.json`->npm), tell
+the user you are adding the dependency, then run **in that project dir** (npm shown; swap the
+verb for the detected PM):
+`npm install @astryxdesign/core @astryxdesign/theme-neutral` and
+`npm install -D @astryxdesign/cli`.
+**Never install globally.** If install fails (offline / registry / peer-dep conflict), STOP and
+report — do not hand-build a substitute silently.
+
+### 5. Pull + theme + place
+1. Pull the requested finished component from Astryx (the chat box, hover card, button, etc.).
+2. Map Astryx's CSS-custom-property tokens to the project's detected colors from step 2 (define
+   the `--astryx-*` / theme vars against the project's palette — do not ship Astryx's default
+   neutral theme). Result: Facebook-built, **project-colored — not looking like Facebook.**
+3. Place the component in the project's conventional location (mirror where sibling components
+   live — `src/components/...`, `app/...`, etc.; discover, don't assume).
+4. Where a per-instance tweak is needed, override with the project's own styling via `className`
+   (its Tailwind / CSS modules / plain CSS) — the drop-in override Astryx documents.
+
+### 6. Which-source rule (prevent visual drift)
+If the project already has a component lib (Radix/shadcn/MUI): use **Astryx for the COMPLEX,
+high-polish pieces** (chat box, rich hover cards, feed-style scroll) where hand-building costs
+days; **keep the existing lib for the simple pieces** (plain buttons, inputs) so two buttons
+don't end up looking different. Always theme the Astryx component to the project's contract
+(step 2). State which rule you applied in your summary.
+
+### 7. Reuse gate + verify (reuse Step 4.6 spirit + the tsc/lint/build/playwright discipline)
+- **Reuse gate (HARD, mirrors Step 4.6):** before placing, grep the tree for an existing
+  component with the same/similar name or role. A sibling already doing this job means reuse or
+  extend it — do NOT drop in an Astryx twin next to it.
+- After placing: run `tsc` + lint + build (zero new errors), then `npx playwright test` smoke on
+  the changed surface (load it, assert no console errors, toggle dark mode). Use the Playwright
+  CLI — NOT the `ecc:playwright` MCP. Fix any error before finishing.
+- Run `/eli5` on the completed-work summary before presenting.
 
 ---
 
