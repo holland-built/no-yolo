@@ -65,6 +65,7 @@ metrics/
 # caches
 cache/
 paste-cache/
+image-cache/
 
 # personal / private (project-scoped memories live in projects/ — already ignored)
 memory/compile-manifest.json
