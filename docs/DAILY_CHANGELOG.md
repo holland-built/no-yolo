@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-07-11 (cont'd, plans 020+021 — /design component-pull mode with preview gate)
+
+- `/design` gains a second, additive **component-pull mode** — on natural language ("put a button here", "add a chat box", "drop in a card", "add a component") it pulls a finished component from Meta's open-source Astryx design system, themes it to the current project's own colors, and places it, instead of hand-building from scratch. React-only (guarded — falls back to normal `/design` otherwise); project-agnostic (colors, package manager, and existing component lib all discovered per project — nothing hardcoded, works in any React repo); installs Astryx into the target project at runtime, so nothing is vendored into no-yolo. Fresh-generation pipeline (brand seed → 10 mockups → build) 100% unchanged. Triggers added to `docs/SKILL_TRIGGERS.md`.
+- **Preview-before-place gate:** the component-pull mode now renders the themed component in an isolated throwaway preview (in a sensible context — a chatbot in a chat surface, a button in a card), screenshots it with the same headless-Chrome machinery the fresh-gen pipeline uses, shows and auto-opens it, and waits for your yes before writing anything into the real app — matching `/design`'s "nothing builds before you confirm" gate. The temp preview is always cleaned up (accepted or rejected); if no dev server is available it degrades to a described preview and still asks first. (Both Opus-planned as advisor-plans/020 + 021, built + reviewed in isolation.)
+
 ## 2026-07-11 (plan 019 — /review security layer upgrade)
 
 - `/review` secret scan expanded from ~13 to 25 patterns — added Google `AIza`, Slack `xox*`, Stripe `sk_live`/`rk_live`, GitHub fine-grained `github_pat_` + `gho/ghu/ghs/ghr`, GitLab `glpat`, Anthropic `sk-ant`, OpenAI `sk-proj`, npm, SendGrid, JWT (`eyJ…`), and raw `PRIVATE KEY` blocks. Verified: catches real samples, no false-match on prose (over-broad guard tested)
