@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-07-11 (cont'd, plan 022 — latest-stable gate)
+
+- new **CORE_RULES.md Rule 9 (Latest-stable gate)** + wired into `/build`'s stack-detect: when scaffolding a NEW repo or adding a core dependency (runtime/framework/language/core lib), query the package registry for the current stable version and pin that — never default to the version from training data, which lags (this is how a new MCP got React 18 when 19 was current). Dynamic by design: the rule stores the *check command* per ecosystem (`npm view <pkg> version`, `pip index versions`, `cargo add`, `go list -m -versions`), never a version number, so it self-updates forever with no maintenance. Grabs latest *stable* (not alpha/beta/rc), with a compat beat — pins the highest version everything supports if the newest major isn't ready yet. (Opus-planned as advisor-plans/022.)
+
 ## 2026-07-11 (cont'd, plans 020+021 — /design component-pull mode with preview gate)
 
 - `/design` gains a second, additive **component-pull mode** — on natural language ("put a button here", "add a chat box", "drop in a card", "add a component") it pulls a finished component from Meta's open-source Astryx design system, themes it to the current project's own colors, and places it, instead of hand-building from scratch. React-only (guarded — falls back to normal `/design` otherwise); project-agnostic (colors, package manager, and existing component lib all discovered per project — nothing hardcoded, works in any React repo); installs Astryx into the target project at runtime, so nothing is vendored into no-yolo. Fresh-generation pipeline (brand seed → 10 mockups → build) 100% unchanged. Triggers added to `docs/SKILL_TRIGGERS.md`.
