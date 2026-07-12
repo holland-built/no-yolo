@@ -54,6 +54,12 @@
       "sourceType": "github",
       "skillPath": "skills/trim-review/SKILL.md",
       "computedHash": "f747bbc2ed829f1fa27c42f87088291e9932c682e213e6bf739839b71299e0e2"
+    },
+    "improve": {
+      "source": "shadcn/improve",
+      "sourceType": "github",
+      "skillPath": "skills/improve/SKILL.md",
+      "computedHash": "912dd5f74843d6ff7d92af2eb40cdfec522c86b7ef3453731efbb37735017602"
     }
   }
 }
