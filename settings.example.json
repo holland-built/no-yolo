@@ -1,9 +1,5 @@
 {
   "env": {
-    "ECC_CONTEXT_MONITOR_COST_WARNINGS": "off",
-    "ECC_SESSION_START_MAX_CHARS": "4000",
-    "ECC_OBSERVER_SIGNAL_EVERY_N": "30",
-    "ECC_OBSERVER_ANALYSIS_COOLDOWN": "120",
     "CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY": "1",
     "DISABLE_TELEMETRY": "1",
     "DISABLE_ERROR_REPORTING": "1",
@@ -49,18 +45,7 @@
       "Bash(cd:*)",
       "Bash(echo:*)",
       "Bash(docker:*)",
-      "Bash(docker compose:*)",
-      "mcp__plugin_ecc_playwright__browser_take_screenshot",
-      "mcp__plugin_ecc_playwright__browser_snapshot",
-      "mcp__plugin_ecc_playwright__browser_click",
-      "mcp__plugin_ecc_playwright__browser_press_key",
-      "mcp__plugin_ecc_playwright__browser_type",
-      "mcp__plugin_ecc_playwright__browser_fill_form",
-      "mcp__plugin_ecc_playwright__browser_navigate",
-      "mcp__plugin_ecc_playwright__browser_run_code",
-      "mcp__plugin_ecc_playwright__browser_hover",
-      "mcp__plugin_ecc_playwright__browser_file_upload",
-      "mcp__plugin_ecc_playwright__browser_tabs"
+      "Bash(docker compose:*)"
     ],
     "deny": [
       "Read(.env)"

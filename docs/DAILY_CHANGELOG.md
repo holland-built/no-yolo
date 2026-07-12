@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-07-12 (cont'd — strip ecc references from the published template)
+
+- **`settings.example.json` no longer references the `ecc` plugin.** Removed the 4 `ECC_*` env vars and the 11 `mcp__plugin_ecc_playwright__*` permission allows — a fresh install of no-yolo was pre-authorizing browser tools for a plugin the template doesn't require (and `/design` deliberately uses the Playwright CLI, not the ecc MCP). Template is now plugin-agnostic and slimmer. (Local side note: mid-session Stop-hook errors like "Plugin directory does not exist … ecc@ecc" are harmless leftovers from removing ecc while a session was live — they clear on restart and were never a tracked-repo issue.)
+
 ## 2026-07-12 (cont'd, SPIKE 016 follow-up — pin the last unpinned third-party skill)
 
 - **`shadcn/improve` now has a hash entry in `skills-lock.json`** — it was the one npx-installed third-party skill plan 011 left unpinned (a supply-chain gap SPIKE 016 surfaced: a silent upstream mutation on re-fetch would go undetected). Added its source, path, and verified sha256 (`912dd5f7…`) so a drift on the next `/update vendor`/re-install is caught like the emil + trim skills already are.
