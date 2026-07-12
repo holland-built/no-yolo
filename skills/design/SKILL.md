@@ -256,6 +256,15 @@ Each brief carries: design seed + Design Read line + the three dial values + any
 system from Step 1 + Taste/Swiss/UIwiki rule text (FALLBACKS if vendor absent) + the slop
 reject list below + LIGHT+DARK rule. BOLD constraint added when BOLD MODE is on.
 
+Each brief also carries the **Astryx awareness line**: if this is a React + npm project (a
+`package.json` with `react` in deps and a lockfile — NOT a CDN/babel page), read
+`skills/design/ASTRYX_CATALOG.md` first; where the design calls for a rich interaction
+(hover preview, typeahead search, infinite feed, chat, rich composer, reactions), the mockup
+must **mock that Meta-quality behavior** (the mockup is static HTML, so simulate the
+interaction visually / with minimal inline JS) so the winning design already assumes the
+component exists — it will be pulled from Astryx, not hand-built, at build time. Non-React or
+CDN-React projects: ignore this line, hand-build as normal.
+
 ## Step 3 — Validator + combined view + AI pick
 
 ### Validator pass
@@ -309,6 +318,16 @@ Opens immediately — you see all 10 before answering anything.
 Ask: **"Which variant? (confirm * vN / pick different vN / mix vA layout + vB colors / redo)"**
 - `redo` -> regenerate Step 2 with a different paradigm set.
 - **Do not write a single line of production code until the user names a variant.**
+
+### Build-stage rule — pull, don't hand-build (React + npm only)
+Before dispatching the build of the chosen mockup, scan it for rich interactions listed in
+`skills/design/ASTRYX_CATALOG.md` (hover preview, typeahead, infinite feed, chat, composer,
+reactions, command palette, stacked toasts). For each one, in a **React + npm/bundler project**
+(a `package.json` with `react` + a lockfile), **pull the finished Astryx component instead of
+hand-building it** — reuse COMPONENT-PULL MODE steps 4-6 (ensure `@astryxdesign/core` installed,
+theme to the project's detected tokens, preview-gate, place). Plain/static pieces: build normally.
+**Guard:** not React, or React delivered via CDN/babel with no `package.json` (e.g. <a-client-repo> MCP)
+-> do NOT attempt an Astryx install; hand-build the interaction. Never block a build on Astryx.
 
 ## Step 5 — Implement
 1. Extract approved tokens from the chosen mockup to `.mockups/design-<slug>/approved-tokens.md`.
