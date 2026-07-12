@@ -14,6 +14,7 @@ count=0
 if [ -f "$COUNTER_FILE" ]; then
   count=$(cat "$COUNTER_FILE" 2>/dev/null || echo 0)
 fi
+[[ "$count" =~ ^[0-9]+$ ]] || count=0
 count=$((count + 1))
 if [ "$count" -lt "$THRESHOLD" ]; then
   echo "$count" > "$COUNTER_FILE"
@@ -44,7 +45,7 @@ OUTPUT_FILE="$PROPOSALS_DIR/session-$DATE.md"
 BRAINSTORMS_DIR="$HOME/.claude/brainstorms"
 SENTINEL="$HOME/.claude/.memory-prompt-$(date +%Y-%m-%d)"
 if [ -d "$BRAINSTORMS_DIR" ] && [ ! -f "$SENTINEL" ]; then
-  TODAY_FILES=$(find "$BRAINSTORMS_DIR" -name "*-plan-*.md" -newer "$COUNTER_FILE" 2>/dev/null | head -1 || true)
+  TODAY_FILES=$(find "$BRAINSTORMS_DIR" -name "*-plan-*.md" -newermt "$(date +%F)" 2>/dev/null | head -1 || true)
   if [ -n "$TODAY_FILES" ]; then
     touch "$SENTINEL"
     {

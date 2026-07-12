@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-07-12 (cont'd, plans 004 + 008 — release scope + reflect-hook fix)
+
+- **`/release` can now stage the code that runs on adopters' machines** (plan 004). Its stage scope was `skills/ docs/ README.md .gitignore` — so hook scripts, the installer (`setup.sh`), the config template, `SHIP.md`, and `CLAUDE.md` could be edited but never actually published. Widened to include `hooks/ setup.sh settings.example.json SHIP.md CLAUDE.md memory/bin/` (only `memory/bin/` from `memory/`, which stays a Guard). This is why the very next fix below could ship at all.
+- **Fixed a Stop hook that silently did nothing and could crash** (plan 008). `hooks/reflect-claude-md-stop.sh` — the "save your decisions after a plan run" reminder — was dead: it looked for brainstorm files *newer than a counter file it had just touched microseconds earlier*, so nothing ever qualified and the reminder never fired. Swapped to a "modified today" test (`-newermt`), so it works. Also hardened the counter read against a corrupt/garbage value that would crash the hook every turn. New isolated bash test (8 asserts, temp-HOME so the real `~/.claude` is never touched) — all pass. (Both Opus-planned advisor-plans/004 + 008, Sonnet-built + reviewed.)
+
 ## 2026-07-12 (plan 023 — proactive Astryx in /design fresh-gen + /build)
 
 - `/design`'s fresh-generation pipeline now **proactively reaches for Meta's Astryx components** — before, it only pulled one on demand ("add a chat box"); now, whenever a design calls for a rich interaction (hover-preview cards, live typeahead search, infinite/virtualized feeds, chat surfaces, rich composers, reactions, command palette, stacked toasts), it treats the finished Meta component as the default building block instead of hand-rolling a weaker one. New **`skills/design/ASTRYX_CATALOG.md`** is the 14-component awareness menu both `/design` and `/build` read each run. Because Step-2 mockups are static HTML (no React), they *mock the Meta-quality behavior*; the real component is pulled and themed at build time via the existing component-pull machinery.
