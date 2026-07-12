@@ -38,6 +38,13 @@ This skill is project-agnostic. Before phase 0, detect the project's commands an
 - **Knowledge-graph tooling** — note if the project has one (e.g. `graphify` + `graphify-out/`) and its update command (e.g. `graphify update .`).
 - **Critical path** — the project's money path / core user flow that must never break (e.g. your app's primary user flow: checkout → payment → confirmation). Note how to exercise it.
 - **Latest-stable gate** (greenfield / new core dep) — when scaffolding a NEW project or adding a core dependency (runtime, framework, language, core lib), do NOT pin the version from memory (it lags — this is how a new MCP got React 18 when 19 was current). Query the registry for the current stable version and pin that, per **CORE_RULES.md Rule 9** (`npm view <pkg> version`, `pip index versions <pkg>`, etc.; stable tag only, compat beat if the newest major isn't supported yet). Applies to greenfield with no existing surface too.
+- **Astryx proactive-pull (React + npm only):** when building UI that calls for a rich interaction
+  (hover preview, typeahead search, infinite feed, chat, rich composer, reactions, command palette),
+  read `~/.claude/skills/design/ASTRYX_CATALOG.md` and prefer pulling the finished, project-themed
+  Meta/Astryx component over hand-building — the same drop-in the `/design` COMPONENT-PULL MODE uses
+  (`skills/design/SKILL.md` section "COMPONENT-PULL MODE"). Guard: only in a React project with a
+  `package.json` + lockfile; a CDN/babel React page with no npm project (e.g. <a-client-repo> MCP) or a
+  non-React stack -> hand-build, never attempt an install. Never block the build on Astryx.
 If a CLAUDE.md or project skill names these, use those values verbatim. State the detected stack in one line before proceeding.
 
 `<slug>` = kebab of feature. `<date>` = today.
