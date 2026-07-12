@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-07-12 (cont'd, SPIKE 016 follow-up — pin the last unpinned third-party skill)
+
+- **`shadcn/improve` now has a hash entry in `skills-lock.json`** — it was the one npx-installed third-party skill plan 011 left unpinned (a supply-chain gap SPIKE 016 surfaced: a silent upstream mutation on re-fetch would go undetected). Added its source, path, and verified sha256 (`912dd5f7…`) so a drift on the next `/update vendor`/re-install is caught like the emil + trim skills already are.
+
 ## 2026-07-12 (cont'd, plan 012 — SKILL_TRIGGERS.md diet)
 
 - **`docs/SKILL_TRIGGERS.md` slimmed 81 → 33 lines (12.3KB → 8.4KB, ~31% lighter)** — and this file loads into *every* session via CLAUDE.md's `@`-import, so the savings are per-session. Each skill's three-line block (name+desc, trigger, and a repeated "When the user types X, invoke the Skill tool" imperative) collapsed to a single line carrying the command + all natural-language trigger phrases. The per-skill imperative — which was identical 24 times — was replaced by ONE global routing rule at the top ("type a `/command` or match a trigger phrase → invoke that skill"), so explicit routing is preserved, not lost. All 25 trigger blocks intact, the `# skill-discovery` exception kept verbatim, orphan checker + verify.sh still green. (Opus-planned advisor-plans/012; the original collapse dropped the routing imperative entirely — caught in review and restored as the global rule before shipping.)
