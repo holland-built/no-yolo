@@ -47,6 +47,7 @@ When the workflow references one of these, read it on demand — none of them ne
 | `scripts/pyimports.py` · `jsimports.py` · `goimports.py` · `rustimports.py` | The user wants to visualize a **Python, JS/TS, Go, or Rust project** structure — extracts the import graph (transitive-reduced, optional `--group` containers, nested by sub-package) for autolayout |
 | `scripts/pyclasses.py` | The user wants a **Python class hierarchy / class diagram** — extracts classes + inheritance edges (boxed by module with `--group`) for autolayout |
 | `scripts/validate.py` | You generated a `.drawio` (especially via autolayout or for a large hand-placed diagram) and want a fast deterministic structural lint (dangling edges, dup/reserved ids, broken parents, overlaps) before the vision self-check |
+| `references/export.md` | The user exports on Windows, Linux/headless/CI, or WSL2 |
 
 ## Prerequisites
 
@@ -164,15 +165,10 @@ Once the user approves:
 
 ## Style Presets
 
-A **style preset** is a named JSON file capturing a user's visual preferences (palette, shapes, font, edges). When active, it fully replaces the built-in color/shape conventions in this skill.
-
-**Lookup order** when SKILL.md's Step 0 resolves a preset name:
-1. `~/.drawio-skill/styles/<name>.json` — user presets (survive `git pull`)
-2. `<this-skill-dir>/styles/built-in/<name>.json` — shipped built-ins (`default`, `corporate`, `handdrawn`)
-
-Always lowercase the user-provided name before any file operation — the schema enforces lowercase.
-
-**For everything else — Learn flow (extracting a preset from a file), management ops (list/default/delete/rename), application rules (color lookup, shape keywords, edges, fonts, extras, interaction with diagram-type presets), and validation — read `references/style-presets.md`.** It's only needed when the user invokes those flows or when an active preset must be applied to the current generation.
+A **style preset** is a named JSON file that, when active, replaces the built-in
+color/shape/edge/font conventions below. For the lookup order, the Learn flow
+(extracting a preset from a file), management ops (list/default/delete/rename),
+application rules, and validation → `references/style-presets.md`.
 
 ## Draw.io XML Structure
 
@@ -377,15 +373,6 @@ drawio -x -f png -e -s 2 -o diagram.drawio.png input.drawio
 /Applications/draw.io.app/Contents/MacOS/draw.io -x -f png --width 2000 -o diagram.png input.drawio
 /Applications/draw.io.app/Contents/MacOS/draw.io -x -f png -e -s 2 -o diagram.drawio.png input.drawio
 
-# Windows
-"C:\Program Files\draw.io\draw.io.exe" -x -f png -e -s 2 -o diagram.drawio.png input.drawio
-
-# Linux (headless — requires xvfb-run; on servers add HOME and --disable-gpu)
-export HOME=${HOME:-/tmp}
-xvfb-run -a --server-args="-screen 0 1280x1024x24" \
-  drawio -x -f png -e -s 2 -o diagram.drawio.png input.drawio --disable-gpu
-# Running as root (CI / Docker)? Append --no-sandbox AT THE END (placing it earlier makes drawio treat it as the input filename)
-
 # SVG export (final — -e is safe; SVG is text)
 drawio -x -f svg -e -o diagram.svg input.drawio
 
@@ -419,6 +406,8 @@ The script's `endswith(IEND)` guard makes it a no-op once draw.io fixes the bug 
 - `-t` — transparent background (PNG only)
 - `--page-index 0` — export specific page (default: all)
 
+**Windows / Linux / headless / WSL2 export** → see `references/export.md`.
+
 ### Browser fallback (no CLI needed)
 
 When the draw.io desktop CLI is unavailable, generate a client-side URL:
@@ -430,42 +419,7 @@ python3 <this-skill-dir>/scripts/encode_drawio_url.py --edit input.drawio    # o
 
 Default prints a `https://viewer.diagrams.net/...#R…` viewer URL; `--edit` prints a `https://app.diagrams.net/...#create=…` URL that opens straight into the editable editor. Either way the diagram XML is `encodeURIComponent`-encoded, deflate-compressed, and base64'd into the URL fragment — the fragment (after `#`) is never sent to the server, so nothing is uploaded. The `encodeURIComponent` step is mandatory: without it, any diagram containing a literal `%` or non-ASCII (e.g. CJK) label makes the browser throw "URI malformed" and the diagram never opens.
 
-Open the URL with `open "$URL"` (macOS) / `xdg-open "$URL"` (Linux). On **WSL2 / Windows**, `cmd.exe` drops the `#fragment` — write a `.url` shortcut file and open that instead (see `references/troubleshooting.md` → "WSL2 / Windows specifics").
-
-### Fallback chain
-
-When tools are unavailable, degrade gracefully:
-
-| Scenario | Behavior |
-|----------|----------|
-| draw.io CLI missing, Python available | Use browser fallback (diagrams.net URL) |
-| draw.io CLI missing, Python missing | Generate `.drawio` XML only; instruct user to open in draw.io desktop or diagrams.net manually |
-| draw.io CLI crashes / no output in macOS sandbox isolation | Treat CLI as unavailable in-sandbox; use browser fallback / XML-only; ask user to run CLI exports in a non-sandboxed host environment |
-| Vision unavailable for self-check | Skip self-check (step 5); proceed directly to showing user the exported PNG |
-| Export fails (Chromium/display issues) | On Linux, retry with `xvfb-run -a`; if still failing, deliver `.drawio` XML and suggest manual export |
-| Export fails on Linux server (headless) | Try in order: (1) `xvfb-run -a`, (2) append `--no-sandbox` at the very end if root, (3) add `--disable-gpu`, (4) `export HOME=/tmp`, (5) install apt deps (`libgtk-3-0 libnotify4 libnss3 libgbm1 libasound2t64` etc.), (6) fall back to [tomkludy/drawio-renderer](https://hub.docker.com/r/tomkludy/drawio-renderer) Docker (REST API for headless export) |
-
-### Checking if drawio is in PATH
-
-```bash
-# Prefer the Homebrew / Linux-package binary name (no dot)
-if command -v drawio &>/dev/null; then
-  DRAWIO="drawio"
-# Fall back to the dot-named binary (older installs, manual symlinks)
-elif command -v draw.io &>/dev/null; then
-  DRAWIO="draw.io"
-# macOS .app bundle (binary inside the bundle keeps the dot)
-elif [ -f "/Applications/draw.io.app/Contents/MacOS/draw.io" ]; then
-  DRAWIO="/Applications/draw.io.app/Contents/MacOS/draw.io"
-# WSL2: the CLI is the Windows desktop exe, reached via /mnt/c (note the space)
-elif grep -qi microsoft /proc/version 2>/dev/null && [ -f "/mnt/c/Program Files/draw.io/draw.io.exe" ]; then
-  DRAWIO="/mnt/c/Program Files/draw.io/draw.io.exe"
-else
-  echo "drawio not found — install from https://github.com/jgraph/drawio-desktop/releases (Homebrew: brew install --cask drawio)"
-fi
-```
-
-On **WSL2 / native Windows**, opening exported files and browser-fallback URLs needs path conversion + a `.url`-file workaround (`cmd.exe` drops URL `#fragment`s) — see the "WSL2 / Windows specifics" section in `references/troubleshooting.md`.
+Open the URL with `open "$URL"` (macOS) / `xdg-open "$URL"` (Linux). For WSL2/Windows fragment-drop and PATH-detection detail → `references/export.md`.
 
 ## Common Mistakes
 

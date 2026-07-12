@@ -62,7 +62,9 @@ Started with `--md-only` and want tools later? Re-run the full command.
 | [Lazyweb](https://github.com/aboul3ata/lazyweb-skill) | `design-audit`, `design` | `curl -fsSL https://www.lazyweb.com/install.sh \| bash` |
 
 > **MCP servers** give Claude extra tools via a config block in `settings.json` — see the [Claude MCP docs](https://docs.anthropic.com/en/docs/claude-code/mcp).
-> ⚠️ **Security note:** the example settings allow broad bash commands and wildcarded filesystem MCP access, and set `skipDangerousModePermissionPrompt: false`. On a shared or sensitive machine, narrow the `Bash(...)` allow-patterns.
+> ⚠️ **Security note:** the example settings ship a *narrowed* default allow list — `Bash(curl:*)`, `Bash(env:*)`, `Bash(export:*)`, `Bash(chmod:*)`, and `Bash(cat:*)` are deliberately NOT auto-allowed, since together they form a prompt-free read-and-exfiltrate chain (read a secret, then ship it out) once any secret lands in your environment. `skipAutoPermissionPrompt` is `false` by default, so the first time a session wants one of those you'll get a permission prompt — that's intended for a repo named no-yolo. `permissions.deny: ["Read(.env)"]` also blocks reading `.env` files by default.
+>
+> **Opting back in.** On a trusted personal machine, add any of the five entries above back to your (gitignored) `settings.json`'s `permissions.allow`, and optionally set `skipAutoPermissionPrompt: true`. Prefer the sanctioned path over blindly re-adding wildcards: the `fewer-permission-prompts` skill scans your own transcripts and writes a scoped allowlist from your actual usage. Only remove the `Read(.env)` deny entry if you understand the exposure.
 
 ## Set up a new project
 

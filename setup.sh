@@ -49,6 +49,9 @@ text = p.read_text()
 # Remove @memory/CLAUDE.generated.md import line (memory system not included)
 text = re.sub(r'^@memory/CLAUDE\.generated\.md\n?', '', text, flags=re.MULTILINE)
 
+# Remove @docs/SKILL_TRIGGERS.md import line (triggers not included in md-only install)
+text = re.sub(r'^@docs/SKILL_TRIGGERS\.md\n?', '', text, flags=re.MULTILINE)
+
 # Remove skill trigger blocks. Each block is exactly:
 #   # skillname                (single lowercase word/hyphens)
 #   - **skillname** ...        (description + trigger)
@@ -64,13 +67,14 @@ text = re.sub(
 text = re.sub(r'\n{3,}', '\n\n', text)
 
 p.write_text(text)
-print("    Removed: @memory import + all skill trigger blocks")
+print("    Removed: @memory + @docs/SKILL_TRIGGERS imports")
 PYEOF
 
   echo ""
   echo "==> Done (MD-only)."
   echo "    Core rules load automatically when you open Claude Code in any project."
   echo "    Skills folder still present but Claude won't trigger them — safe to ignore or delete."
+  echo "    docs/SKILL_TRIGGERS.md remains on disk but is no longer imported — safe to ignore or delete."
   echo ""
   echo "    To install tools later: run bash ~/.claude/setup.sh (safe to re-run — skips anything already installed)"
   exit 0

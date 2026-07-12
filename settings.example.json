@@ -34,7 +34,6 @@
       "Bash(pwd:*)",
       "Bash(which:*)",
       "Bash(find:*)",
-      "Bash(cat:*)",
       "Bash(head:*)",
       "Bash(tail:*)",
       "Bash(wc:*)",
@@ -43,16 +42,12 @@
       "Bash(cp:*)",
       "Bash(mv:*)",
       "Bash(touch:*)",
-      "Bash(chmod:*)",
       "Bash(lsof:*)",
       "Bash(ps:*)",
       "Bash(kill:*)",
-      "Bash(curl:*)",
       "Bash(open:*)",
       "Bash(cd:*)",
       "Bash(echo:*)",
-      "Bash(export:*)",
-      "Bash(env:*)",
       "Bash(docker:*)",
       "Bash(docker compose:*)",
       "mcp__plugin_ecc_playwright__browser_take_screenshot",
@@ -66,6 +61,9 @@
       "mcp__plugin_ecc_playwright__browser_hover",
       "mcp__plugin_ecc_playwright__browser_file_upload",
       "mcp__plugin_ecc_playwright__browser_tabs"
+    ],
+    "deny": [
+      "Read(.env)"
     ],
     "additionalDirectories": [
       "~/.claude/plans"
@@ -152,7 +150,7 @@
   "skipWorkflowUsageWarning": true,
   "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": true,
-  "skipAutoPermissionPrompt": true,
+  "skipAutoPermissionPrompt": false,
   "model": "sonnet",
   "spinnerTipsEnabled": false
 }
