@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-07-12 (cont'd, plan 012 — SKILL_TRIGGERS.md diet)
+
+- **`docs/SKILL_TRIGGERS.md` slimmed 81 → 33 lines (12.3KB → 8.4KB, ~31% lighter)** — and this file loads into *every* session via CLAUDE.md's `@`-import, so the savings are per-session. Each skill's three-line block (name+desc, trigger, and a repeated "When the user types X, invoke the Skill tool" imperative) collapsed to a single line carrying the command + all natural-language trigger phrases. The per-skill imperative — which was identical 24 times — was replaced by ONE global routing rule at the top ("type a `/command` or match a trigger phrase → invoke that skill"), so explicit routing is preserved, not lost. All 25 trigger blocks intact, the `# skill-discovery` exception kept verbatim, orphan checker + verify.sh still green. (Opus-planned advisor-plans/012; the original collapse dropped the routing imperative entirely — caught in review and restored as the global rule before shipping.)
+
 ## 2026-07-12 (cont'd, plans 009 + 010 + 011)
 
 - **The four wired-but-untested hooks now have unit tests** (plan 009). `lockstep-guard`, `prompt-scan-nudge`, `caveman-activate`, and `caveman-config` get `hooks/tests/*.test.js` (27 asserts total) — covering the lockstep block/allow exit codes, the nudge's dated/garbage/missing-file branches, caveman mode transitions, and `caveman-config`'s default-mode resolution + a symlink-refusal safety check. `verify.sh` (and therefore CI) runs them on every push, so a regression in a hook fails the build instead of silently shipping.
