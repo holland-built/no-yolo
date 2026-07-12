@@ -20,13 +20,6 @@ skills/impeccable
 skills/emil-design-eng
 skills/animation-vocabulary
 skills/review-animations
-# ponytail-* = old name (pre-rename, still installed locally)
-skills/ponytail
-skills/ponytail-audit
-skills/ponytail-debt
-skills/ponytail-gain
-skills/ponytail-help
-skills/ponytail-review
 # trim-* = new name (after reinstall from holland-built/trim)
 skills/trim
 skills/trim-audit
@@ -103,7 +96,6 @@ mcp-needs-auth-cache.json
 # OS
 .DS_Store
 .agents/
-skills-lock.json
 
 # Claude Code runtime state (created when ~/.claude itself is opened as a project)
 .claude.json

@@ -1,0 +1,95 @@
+#!/usr/bin/env python3
+"""Regenerate skills/my-skills/RENDERED.md and RENDERED_FAST.md from the
+pipe-delimited catalog sources (CATEGORIES.md, TAGLINES.md,
+TAGLINES_SHORT.md, WHEN_TO_USE.md, WHY_TO_USE.md).
+
+Self-test / acceptance command (must print nothing):
+    python3 skills/my-skills/regen.py && \
+    git diff --exit-code skills/my-skills/RENDERED.md skills/my-skills/RENDERED_FAST.md
+
+Run this after editing any of the five source files. Never hand-edit
+RENDERED.md or RENDERED_FAST.md directly — they are derived output.
+"""
+from pathlib import Path
+
+HERE = Path(__file__).parent
+MISSING_MARK = "⚠️ missing"
+EMDASH = "—"
+
+
+def parse_pipe_file(path: Path) -> dict:
+    """name -> value, skipping blank lines and #-comment lines."""
+    result = {}
+    if not path.exists():
+        return result
+    for line in path.read_text().splitlines():
+        if not line.strip() or line.startswith("#"):
+            continue
+        name, _, value = line.partition("|")
+        result[name.strip()] = value.strip()
+    return result
+
+
+def parse_categories(path: Path) -> list:
+    """Ordered list of (section, [names])."""
+    sections = []
+    current_names = None
+    for line in path.read_text().splitlines():
+        stripped = line.strip()
+        if not stripped:
+            continue
+        if stripped.startswith("## "):
+            current_names = []
+            sections.append((stripped[3:], current_names))
+        elif current_names is not None:
+            current_names.append(stripped)
+    return sections
+
+
+def build_rendered(sections, taglines, when_to_use, why_to_use) -> str:
+    blocks = []
+    header = "| Skill | What it does | When to use | Why vs manual |\n| --- | --- | --- | --- |"
+    for section, names in sections:
+        rows = []
+        for name in names:
+            tagline = taglines.get(name, MISSING_MARK)
+            when = when_to_use.get(name, EMDASH)
+            why = why_to_use.get(name, EMDASH)
+            rows.append(f"| {name} | {tagline} | {when} | {why} |")
+        block = f"## {section}\n\n{header}\n" + "\n".join(rows)
+        blocks.append(block)
+    return "\n\n".join(blocks) + "\n"
+
+
+def build_rendered_fast(sections, taglines_short) -> str:
+    names = [name for _, section_names in sections for name in section_names]
+    header = "| Skill | What it does | Skill | What it does |\n| --- | --- | --- | --- |"
+    rows = []
+    for i in range(0, len(names), 2):
+        name_a = names[i]
+        tag_a = taglines_short.get(name_a, MISSING_MARK)
+        if i + 1 < len(names):
+            name_b = names[i + 1]
+            tag_b = taglines_short.get(name_b, MISSING_MARK)
+        else:
+            name_b, tag_b = EMDASH, EMDASH
+        rows.append(f"| {name_a} | {tag_a} | {name_b} | {tag_b} |")
+    return header + "\n" + "\n".join(rows) + "\n"
+
+
+def main():
+    categories = parse_categories(HERE / "CATEGORIES.md")
+    taglines = parse_pipe_file(HERE / "TAGLINES.md")
+    taglines_short = parse_pipe_file(HERE / "TAGLINES_SHORT.md")
+    when_to_use = parse_pipe_file(HERE / "WHEN_TO_USE.md")
+    why_to_use = parse_pipe_file(HERE / "WHY_TO_USE.md")
+
+    rendered = build_rendered(categories, taglines, when_to_use, why_to_use)
+    rendered_fast = build_rendered_fast(categories, taglines_short)
+
+    (HERE / "RENDERED.md").write_text(rendered)
+    (HERE / "RENDERED_FAST.md").write_text(rendered_fast)
+
+
+if __name__ == "__main__":
+    main()
