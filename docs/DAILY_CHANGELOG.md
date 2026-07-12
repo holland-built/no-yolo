@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-07-12 (cont'd, plan 007 — node shim + fail-closed lockstep)
+
+- **The lockstep edit-blocker can no longer silently fail open** (plan 007). The four Node-based hooks pinned an absolute nvm interpreter path (`.../v24.13.0/bin/node`); the next `nvm install`/`uninstall` deletes that dir and every hook dies with exit 127 — which Claude Code treats as *non-blocking*, so the "mechanically denied" lockstep gate would **stop blocking exactly when node vanished**. New `hooks/node-shim.sh` resolves a Node interpreter dynamically (PATH, then newest nvm install); if none is found it **fails closed (exit 2) for `lockstep-guard.js`** and stays quiet (exit 0) for the cosmetic hooks. All four hook commands in both `settings.example.json` (published) and the live `settings.json` now route through the shim. New isolated bash test (3 asserts incl. the fail-closed regression) — all pass. Also fixed a subtle bug in the shim itself: the interpreter name was matched with `basename`, which *itself* needs PATH — swapped to pure-bash `${script##*/}` so fail-closed holds even under a fully stripped PATH. (Opus-planned advisor-plans/007, drift-refreshed + Sonnet-built + reviewed.)
+
 ## 2026-07-12 (cont'd, plans 004 + 008 — release scope + reflect-hook fix)
 
 - **`/release` can now stage the code that runs on adopters' machines** (plan 004). Its stage scope was `skills/ docs/ README.md .gitignore` — so hook scripts, the installer (`setup.sh`), the config template, `SHIP.md`, and `CLAUDE.md` could be edited but never actually published. Widened to include `hooks/ setup.sh settings.example.json SHIP.md CLAUDE.md memory/bin/` (only `memory/bin/` from `memory/`, which stays a Guard). This is why the very next fix below could ship at all.

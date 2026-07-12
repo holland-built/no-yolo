@@ -77,7 +77,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"$HOME/.claude/hooks/caveman-activate.js\"",
+            "command": "bash \"$HOME/.claude/hooks/node-shim.sh\" \"$HOME/.claude/hooks/caveman-activate.js\"",
             "timeout": 5,
             "statusMessage": "Loading caveman mode..."
           }
@@ -87,7 +87,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"$HOME/.claude/hooks/prompt-scan-nudge.js\"",
+            "command": "bash \"$HOME/.claude/hooks/node-shim.sh\" \"$HOME/.claude/hooks/prompt-scan-nudge.js\"",
             "timeout": 5,
             "statusMessage": "Checking prompt-scan freshness..."
           }
@@ -100,7 +100,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"$HOME/.claude/hooks/lockstep-guard.js\"",
+            "command": "bash \"$HOME/.claude/hooks/node-shim.sh\" \"$HOME/.claude/hooks/lockstep-guard.js\"",
             "timeout": 5
           }
         ]
@@ -111,7 +111,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"$HOME/.claude/hooks/caveman-mode-tracker.js\"",
+            "command": "bash \"$HOME/.claude/hooks/node-shim.sh\" \"$HOME/.claude/hooks/caveman-mode-tracker.js\"",
             "timeout": 5,
             "statusMessage": "Tracking caveman mode..."
           }
