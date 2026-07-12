@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "skills": {
+    "animation-vocabulary": {
+      "source": "emilkowalski/skills",
+      "sourceType": "github",
+      "skillPath": "skills/animation-vocabulary/SKILL.md",
+      "computedHash": "39319fc9a33c15be08666b3685f58666f042ff36bb902b7814c0834a5ba99df4"
+    },
+    "emil-design-eng": {
+      "source": "emilkowalski/skills",
+      "sourceType": "github",
+      "skillPath": "skills/emil-design-eng/SKILL.md",
+      "computedHash": "8bdf9e4e6de7a4969147bf4828a4ad2c5aacd9fba4b690b250a85e0467ca387d"
+    },
+    "review-animations": {
+      "source": "emilkowalski/skills",
+      "sourceType": "github",
+      "skillPath": "skills/review-animations/SKILL.md",
+      "computedHash": "ca04aaa0a815f05e0910ded8fedbfbdfe0acdec8f52dfbb88277890070d134d4"
+    },
+    "trim": {
+      "source": "holland-built/trim",
+      "sourceType": "github",
+      "skillPath": "skills/trim/SKILL.md",
+      "computedHash": "6b7136bcb5a626cf5e67e1c82abc2d44fa7452ab75885587a6d4b67b0bdd6bbd"
+    },
+    "trim-audit": {
+      "source": "holland-built/trim",
+      "sourceType": "github",
+      "skillPath": "skills/trim-audit/SKILL.md",
+      "computedHash": "cc52fe77cef72904e4882acbb556d64ec67bdbc78460f00bd87f6a1f2c169504"
+    },
+    "trim-debt": {
+      "source": "holland-built/trim",
+      "sourceType": "github",
+      "skillPath": "skills/trim-debt/SKILL.md",
+      "computedHash": "0c9ea21b88fef56ef751fd1578ab729c87387f0800b5cbedac7280d659799c77"
+    },
+    "trim-gain": {
+      "source": "holland-built/trim",
+      "sourceType": "github",
+      "skillPath": "skills/trim-gain/SKILL.md",
+      "computedHash": "8561634bc972b6e12f8f684e0c2f004d73892f6ee6e320e5286049b50a736e90"
+    },
+    "trim-help": {
+      "source": "holland-built/trim",
+      "sourceType": "github",
+      "skillPath": "skills/trim-help/SKILL.md",
+      "computedHash": "59438479ac55b0798683201b4e0f60d2051acbb6fd0669fe3aadf6630cfdfc6a"
+    },
+    "trim-review": {
+      "source": "holland-built/trim",
+      "sourceType": "github",
+      "skillPath": "skills/trim-review/SKILL.md",
+      "computedHash": "f747bbc2ed829f1fa27c42f87088291e9932c682e213e6bf739839b71299e0e2"
+    }
+  }
+}
