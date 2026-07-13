@@ -31,7 +31,7 @@ trim-gain|Scorecard from benchmark medians — not a per-repo estimate.
 skill-audit|One pass instead of manually eyeballing every SKILL.md
 review|Replaces two separate commands with one routed pass — secret scan and antislop are automatic, not a separate step you remember to run
 lockstep|Mechanically denied by a PreToolUse hook — not a prompt the model can talk itself past
-worktree|Gate A echoes show-toplevel before any edit, subagents get the worktree abs path, Gate B proves the diff is on the branch with main clean
+worktree|A hard PreToolUse hook denies edits to the repo's main checkout while active — not a prompt the model can talk past — and protects every session, even a different Orca card's agent
 emil-design-eng|Vaul/Sonner-author taste rules catch wrong easing, wrong shadows, wrong timing agents usually miss
 animation-vocabulary|The right word gets a better result from any AI than a vague description does
 review-animations|Approval is earned, not assumed — catches animation mistakes a generic review misses

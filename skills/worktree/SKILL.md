@@ -1,8 +1,8 @@
 ---
 name: worktree
-description: Use this skill when the user types /worktree, says "start a worktree", "work in a worktree", "do this in a worktree", "spin up a worktree", or "branch this off in a worktree". Creates a git worktree AND guarantees all work — every edit, every subagent, the commit, the push — lands inside it, never the main checkout. Proves it with show-toplevel before the first edit and a branch+diff gate at the end.
+description: Use this skill when the user types /worktree, says "start a worktree", "work in a worktree", "do this in a worktree", "spin up a worktree", or "branch this off in a worktree". Creates a git worktree AND arms a hard PreToolUse hook (worktree-guard.js) that mechanically blocks any edit to the repo's main checkout until you land or cancel. `/worktree land` merges the branch into base, pushes, and removes the worktree; `/worktree off` cancels without merging.
 user-invocable: true
-argument-hint: "[worktree-name] (omit and I'll name it from the task)"
+argument-hint: "[name] | land | off (omit name and I'll derive one from the task)"
 allowed-tools:
   - Bash
   - Read
@@ -13,56 +13,96 @@ allowed-tools:
 
 # worktree
 
-The failure this prevents: a worktree gets created, but the work happens in the **main checkout** anyway. Two ways that goes wrong:
+The failure this prevents: a worktree gets created, but the work happens in the **main checkout** anyway (a subagent's cwd is pinned at launch, or an edit uses the old absolute path). A written reminder gets ignored — so this skill arms a **hard hook**: while a worktree is active, `hooks/worktree-guard.js` denies any `Edit`/`Write`/`NotebookEdit` whose target is inside the repo but outside the worktree. Not a prompt the model can talk past — a real deny, like `/lockstep`.
 
-1. **Subagent cwd is pinned at launch.** If a build/edit subagent is handed an absolute path into the main repo, it edits the main repo — worktree untouched.
-2. **Edits by old absolute path.** Referencing `<home>/proj/index.html` (the main checkout) instead of the worktree path writes to main even though the session "moved."
+Mode from `$ARGUMENTS`: a name (or empty) → **create**; `land` → **merge + remove**; `off`/`cancel` → **cancel**.
 
-A written reminder is not enough — that's exactly what gets ignored mid-conversation. This skill makes it a **checked protocol**: no edit happens until the worktree root is echoed and confirmed, and nothing is called done until a diff proves the work is on the worktree branch.
+Flags live in `$CLAUDE_CONFIG_DIR/.worktree-active/<name>.json` (falls back to `~/.claude`). One per active worktree; the hook reads them.
 
-Requested worktree name: $ARGUMENTS
+---
 
-## Protocol — run in order, do not skip a gate
+## CREATE  (`/worktree`, `/worktree <name>`, or a trigger phrase)
 
-### 1. Create the worktree
-Pick a branch/worktree name (from `$ARGUMENTS`, else derive a short kebab-case name from the task). Then:
-
+### 1. Make the worktree
 ```bash
-REPO=$(git rev-parse --show-toplevel)
-NAME="<chosen-name>"
-WT="$REPO/.worktrees/$NAME"     # or the repo's existing worktree dir convention
-git worktree add -b "$NAME" "$WT" 2>/dev/null || git worktree add "$WT" "$NAME"
-cd "$WT" && git rev-parse --show-toplevel
+REPO=$(git rev-parse --show-toplevel) || { echo "not in a git repo"; exit 1; }
+NAME="<from $ARGUMENTS, else a short kebab-case name from the task>"
+BASE=$(git -C "$REPO" symbolic-ref --short HEAD)   # branch you're forking from
+WT="$REPO/.worktrees/$NAME"
+git -C "$REPO" worktree add -b "$NAME" "$WT" 2>/dev/null || git -C "$REPO" worktree add "$WT" "$NAME"
 ```
 
-Prefer the `EnterWorktree` tool if available — it moves the session cwd for you. Either way, the next step is mandatory.
-
-### 2. GATE A — prove the root before ANY edit
-Before the first `Edit`/`Write`, run and show the user:
-
+### 2. Arm the guard (write the flag)
 ```bash
-git rev-parse --show-toplevel
+FLAGDIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/.worktree-active"
+mkdir -p "$FLAGDIR"
+cat > "$FLAGDIR/$NAME.json" <<EOF
+{ "repoRoot": "$REPO", "wtPath": "$WT", "name": "$NAME", "branch": "$NAME", "base": "$BASE" }
+EOF
+echo "guard armed: edits to $REPO outside $WT are now BLOCKED"
+git -C "$WT" rev-parse --show-toplevel   # must print the worktree path
 ```
 
-The output **must contain `/.worktrees/`** (or your chosen worktree dir). If it still points at the main checkout, STOP — cd into the worktree and re-check. Do not edit until this passes. Store the absolute worktree path; call it `WT`.
+Tell the user: worktree `<name>` created at `$WT`; the guard is armed. From here **every edit path is under `$WT`**. Any subagent you dispatch is told explicitly: *"Your working directory is `$WT`; all reads and edits are under that path — the main checkout is hook-blocked."* Then do the work.
 
-### 3. Do the work inside `WT`
-- Every file path you edit is under `$WT/...`. Never an absolute path into the main checkout.
-- **Every subagent you dispatch** gets told explicitly: "Your working directory is `$WT`. All reads and edits happen under that path. Do not touch the main checkout at `$REPO`." Pass `$WT` in the prompt — a subagent cannot inherit the session cwd move.
-- Commits and pushes run from `$WT` (or `git -C "$WT" ...`).
+> If you ever see `WORKTREE GUARD — blocked edit to the MAIN checkout`, you targeted the wrong path — re-issue the same edit under `$WT`. Do not try to disable the hook to get past it.
 
-### 4. GATE B — prove the work landed on the branch
-Before declaring done, run and show:
+---
+
+## LAND  (`/worktree land`, "land it", "release this worktree")
+
+Merge the worktree branch into its base, push, remove the worktree, disarm the guard. Repo-agnostic — does not need a SHIP.md.
 
 ```bash
-git -C "$WT" branch --show-current
-git -C "$WT" diff --stat HEAD    # staged+unstaged; use log --stat if already committed
-git -C "$REPO" status --short    # main checkout should be CLEAN of this work
+FLAGDIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/.worktree-active"
+# pick the flag for the current repo (or the only one active)
+REPO=$(git rev-parse --show-toplevel 2>/dev/null)
+FLAG=$(grep -l "\"repoRoot\": \"$REPO\"" "$FLAGDIR"/*.json 2>/dev/null | head -1)
+[ -z "$FLAG" ] && FLAG=$(ls "$FLAGDIR"/*.json 2>/dev/null | head -1)
+[ -z "$FLAG" ] && { echo "no active worktree to land"; exit 1; }
+
+read WT BR BASE REPO < <(python3 - "$FLAG" <<'PY'
+import json,sys
+f=json.load(open(sys.argv[1]))
+print(f["wtPath"], f["branch"], f.get("base","main"), f["repoRoot"])
+PY
+)
+
+# 1. commit anything still pending in the worktree
+git -C "$WT" add -A
+git -C "$WT" diff --cached --quiet || git -C "$WT" commit -m "worktree $BR: land"
+
+# 2. merge into base from the main checkout, push if there's a remote
+git -C "$REPO" checkout "$BASE"
+git -C "$REPO" merge --no-ff "$BR" -m "Merge worktree $BR into $BASE"
+git -C "$REPO" remote get-url origin >/dev/null 2>&1 && git -C "$REPO" push origin "$BASE"
+
+# 3. remove the worktree + branch, disarm the guard
+git -C "$REPO" worktree remove "$WT" --force
+git -C "$REPO" branch -d "$BR" 2>/dev/null || git -C "$REPO" branch -D "$BR"
+rm -f "$FLAG"
+echo "landed $BR -> $BASE, worktree removed, guard disarmed"
 ```
 
-The diff must be on the worktree branch, and the main checkout must show none of these changes. If the changes show up in `$REPO` instead — the protocol failed; report it, don't paper over it.
+If the merge conflicts, STOP and report the conflicting files — do not force. Leave the flag in place so the guard stays armed until it's resolved.
+
+---
+
+## OFF / CANCEL  (`/worktree off`, `/worktree cancel`)
+
+Abandon the worktree without merging (disarms the guard):
+```bash
+FLAGDIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/.worktree-active"
+REPO=$(git rev-parse --show-toplevel 2>/dev/null)
+FLAG=$(grep -l "\"repoRoot\": \"$REPO\"" "$FLAGDIR"/*.json 2>/dev/null | head -1)
+[ -z "$FLAG" ] && { echo "no active worktree"; exit 0; }
+WT=$(python3 -c "import json,sys;print(json.load(open(sys.argv[1]))['wtPath'])" "$FLAG")
+rm -f "$FLAG"
+echo "guard disarmed. worktree still on disk at $WT — remove with: git worktree remove \"$WT\" --force"
+```
+Only delete the checkout if the user says so — their uncommitted work may be in it.
 
 ## Notes
-- This is procedural, not hook-enforced — the teeth are Gate A and Gate B, which are visible commands the user can see pass or fail. If you want a *mechanical* block (a hook that denies any Edit whose target isn't under an active worktree, same style as `lockstep`), that's a separate follow-up worth building.
-- `.worktrees/` is the assumed dir; honor whatever convention the repo already uses (`git worktree list` shows existing ones).
-- Cleanup when merged: `git worktree remove "$WT"` then `git branch -d "$NAME"`.
+- The guard is a global `PreToolUse` hook (`worktree-guard.js`), so it protects **every** session touching that repo — including a different Orca card's agent that never loaded this skill. That's the point: the flag, not the skill, is what enforces.
+- Editing a *different* repo while a worktree is active is fine — the guard only blocks the flagged repo's main checkout.
+- One flag per worktree; multiple repos can each have an active worktree at once.

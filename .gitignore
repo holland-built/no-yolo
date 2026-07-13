@@ -94,6 +94,8 @@ history.jsonl
 .pending-tasks.md
 learnings.md
 .caveman-active
+.lockstep-active
+.worktree-active/
 .last-cleanup
 .last-update-result.json
 .learnings-turn-counter
