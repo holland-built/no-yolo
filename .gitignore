@@ -5,6 +5,10 @@ settings.local.json
 
 # machine-specific config (ship settings.example.json instead)
 settings.json
+settings.json.bak
+# Orca / environment machine-local runtime config
+policy-limits.json
+remote-settings.json
 
 # third-party plugins (own repos)
 plugins/
@@ -16,6 +20,10 @@ skills/design/vendor/
 # external symlinked skills
 skills/improve
 skills/impeccable
+# Orca-managed external skills (symlinks to ~/.agents/skills/)
+skills/computer-use
+skills/orca-cli
+skills/orchestration
 # emilkowalski/skills — animation/design-eng taste rules (npx skills@latest add emilkowalski/skills)
 skills/emil-design-eng
 skills/animation-vocabulary
