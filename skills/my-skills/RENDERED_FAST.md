@@ -12,4 +12,4 @@
 | eli5 | Plain-English explain anything | my-md | List all markdown files |
 | md-check | Audit + fix docs | skill-audit | Audit skill library health |
 | update | Check/apply setup updates | supacode-cli | Drive Supacode terminal app |
-| lockstep | Hard block on edits | — | — |
+| lockstep | Hard block on edits | worktree | Work stays in the worktree |
