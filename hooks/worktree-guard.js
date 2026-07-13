@@ -90,7 +90,7 @@ const corrupt = flags.find((f) => f.corrupt);
 if (corrupt) {
   deny(
     `WORKTREE GUARD — a worktree flag file (${corrupt.file}) is unreadable, so edits are blocked to stay safe. ` +
-      `Fix or remove ${path.join(flagDir, corrupt.file)} (or run /worktree off), then retry.`
+      `Fix or remove ${path.join(flagDir, corrupt.file)} (or say 'discard the worktree'), then retry.`
   );
 }
 
@@ -100,7 +100,7 @@ if (!target) {
   // risk a main-checkout leak.
   deny(
     'WORKTREE GUARD — a worktree is active but this edit has no readable target path, so it is blocked. ' +
-      'Run /worktree off if you meant to work outside the worktree.'
+      "Say 'discard the worktree' if you meant to work outside the worktree."
   );
 }
 
@@ -115,7 +115,7 @@ for (const flag of flags) {
         `  worktree: ${flag.wtPath}\n` +
         `All work for this worktree must go under the worktree path above, not the main checkout. ` +
         `Re-issue the edit against the ${flag.wtPath} copy of this file. ` +
-        `When the work is done, run "/worktree land" to merge it into the base branch and remove the worktree.`
+        `When the work is done, say 'release' to merge it into the base branch and remove the worktree.`
     );
   }
 }

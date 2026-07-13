@@ -32,7 +32,7 @@ quick-mockup|Fast throwaway HTML layout mockup — gray boxes, served live, brow
 skill-audit|Audits the whole skill library: bucket fit, missing pieces, unverified output, stale triggers.
 review|Unified diff review + codebase health. Bugs, bloat, secrets, slop — one command.
 lockstep|Hook-enforced gate: blocks Edit/Write/NotebookEdit until you say go.
-worktree|Creates a git worktree and arms a hard hook that blocks edits to the main checkout until you land; `land` merges to base + removes the worktree, `off` cancels.
+worktree|Creates a git worktree, arms a hard hook that blocks main-checkout edits, and does the work inside it; saying "release" merges to base and removes the worktree.
 emil-design-eng|Emil Kowalski's UI-polish and animation-taste rules — feeds /design and /design-audit.
 animation-vocabulary|Turns a vague animation description into its exact term.
 review-animations|Strict critique of animation/motion code against a high craft bar.
