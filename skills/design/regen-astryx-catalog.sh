@@ -84,6 +84,12 @@ node transform.cjs
 > \`package.json\` (e.g. a babel-standalone page): do NOT use Astryx — mock the behavior / hand-build.
 
 ## When to reach for Astryx (proactive rule)
+**Astryx is the GREENFIELD default, not a universal add-on.** Reach for it ONLY when the
+sourcing gate (\`skills/design/PREFAB_SOURCING.md\`) finds NO existing component library in a
+React + npm project — or when the project already uses Astryx. A project on
+shadcn/Radix/MUI/Chakra/etc. sources every component from THAT library instead; never place
+Astryx components beside a different library — mismatched twin systems look broken.
+
 A design "calls for a rich interaction" when it includes any of: a preview-on-hover (**HoverCard**),
 live/typeahead search (**Typeahead** / **PowerSearch**), a chat/messaging surface (**Chat**), a
 command palette (**CommandPalette**), stacked toasts (**Toast**), a media carousel or fullscreen
