@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-07-13 (cont'd — CORE_RULES rule 5 made model-agnostic)
+
+- **Rule 5 no longer hardcodes model names.** It was "Opus plans, Sonnet codes" — brittle, since model names churn (Fable 5 now, Sonnet 6 later…), and this session's Fable-plans→Opus-builds flow already went off-book. Rewrote it around the *role split* instead: a strong/high-ceiling model plans first, separate executor subagents build — Opus/Sonnet stay the default "teeth," other models (e.g. Fable for plan authoring) are sanctioned substitutions, never drifting to "any good model." Same future-proofing principle as rule 9 (latest-stable gate): encode the rule, not a name that goes stale. Absorbs Fable and every future model without another edit — which is why the alternative (a scoped memory fact) was rejected: it would have shadowed rule 5 and re-tripped the canon-duplication guard.
+
 ## 2026-07-13 (cont'd — kill duplicate rules in the always-loaded chain)
 
 - **Retired two memory facts that duplicated canon** and **added a guard so it can't recur.** The `/md-check` efficiency audit confirmed SPIKE 015's finding: `user-no-confirmation-questions` restated CORE_RULES rules 1 & 6, and `feedback-skill-triggers-location` restated CLAUDE.md's HARD RULE — both compiled into `CLAUDE.generated.md`, so the same rule loaded 2–3× every session. Deleted both facts and recompiled (`CLAUDE.generated.md` 2951→2433 bytes, **~518 bytes/session reclaimed**); the rules stay fully enforced by canon. Root-cause fix: `/remember-that`'s ADD flow gained a **canon-duplication guard (step 3b)** — before saving a global user/feedback fact it now reads CORE_RULES + CLAUDE.md and refuses to save anything canon already states (the old dup-check only compared facts against other facts, never against canon — which is how these slipped in). Prevents all future canon-duplication at the source, not just today's two.
