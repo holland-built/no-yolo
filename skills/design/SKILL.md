@@ -1,6 +1,6 @@
 ---
 name: design
-description: Use this skill when the user types /design, says 'design this', 'new design', 'redesign', 'fresh look', 'start over on the UI', 'mock this up', or 'show me design options'. Fresh generation only — never preserves the existing design. Pipeline: brand seed -> Taste generators -> 10 Opus mockups (8 distinct paradigms + 2 wild) -> slop validator -> AI picks best -> Chrome auto-opens -> you confirm or pick different -> Opus plan -> Sonnet build. Nothing builds before you confirm. Auto-redirects audit/review to /design-audit, existing-UI polish to the impeccable plugin. Second mode — component-pull: also fires on natural language like 'put a button here', 'add a chat box', 'drop in a card', or 'add a component'; in a React project it pulls a finished, project-themed component from Meta's open-source Astryx design system instead of hand-building it, and previews the themed component for your approval before placing it (React-only; falls back to normal /design otherwise).
+description: Use this skill when the user types /design, says 'design this', 'new design', 'redesign', 'fresh look', 'start over on the UI', 'mock this up', or 'show me design options'. Fresh generation only — never preserves the existing design. Pipeline: brand seed -> Taste generators -> 10 Opus mockups (8 distinct paradigms + 2 wild) -> slop validator -> AI picks best -> Chrome auto-opens -> you confirm or pick different -> Opus plan -> Sonnet build. Nothing builds before you confirm. Auto-redirects audit/review to /design-audit, existing-UI polish to the impeccable plugin. Second mode — component-pull: also fires on natural language like 'put a button here', 'add a chat box', 'drop in a card', or 'add a component'; in a React project it pulls a finished, project-themed component from Meta's open-source Astryx design system instead of hand-building it, and previews the themed component for your approval before placing it (React-only; falls back to normal /design otherwise). Third mode — mockup-match (MOCKUP-MATCH MODE): fires on 'make it match this mockup', 'match this mockup', 'port this mockup', 'make my site look like this mockup' when the user supplies an HTML mockup file/URL and names an existing surface; ports that surface VERBATIM into a new <Name>V2 component (never patches the old one) and gates done on a shown overlay screenshot of live-vs-mockup.
 user-invocable: true
 argument-hint: "[text | URL | screenshot | domain context] [--apply-spec <file>]"
 allowed-tools:
@@ -26,6 +26,12 @@ Decide the mode from `$ARGUMENTS` before anything else:
   **"add a card"**, **"drop in a component"**, **"add a component"** (naming a single UI piece
   to place into an app you are already building) -> **COMPONENT-PULL MODE** (section below).
   Skip the fresh-gen pipeline entirely.
+- Phrasing like **"make it match this mockup"**, **"match this mockup"**, **"port this mockup"**,
+  **"make my site look like this HTML/mockup"**, **"make <surface> look like <mockup>"** — the
+  user SUPPLIES an existing HTML mockup (file path or URL) AND points at an EXISTING surface/
+  component to converge on it -> **MOCKUP-MATCH MODE** (section below). Skip fresh-gen entirely.
+  Disambiguation: "mock this up" with NO existing mockup file = generate -> fresh-gen; "add a
+  <component>" = COMPONENT-PULL; a supplied mockup + a named existing surface = mockup-match wins.
 - Everything else (`design this`, `new design`, `redesign`, `mock this up`, a URL, a
   screenshot, `--apply-spec`) -> fall through to `## Redirects` and the fresh-gen pipeline
   (Steps 0-5) unchanged.
@@ -166,6 +172,76 @@ don't end up looking different. Always theme the Astryx component to the project
   the changed surface (load it, assert no console errors, toggle dark mode). Use the Playwright
   CLI — NOT the `ecc:playwright` MCP. Fix any error before finishing.
 - Run `/eli5` on the completed-work summary before presenting.
+
+---
+
+## MOCKUP-MATCH MODE (port an existing surface to a supplied mockup)
+Third mode. Reached only from **Mode select** when the user supplies an existing HTML mockup
+(file/URL) AND names an existing surface to make match it. Fresh-gen (Steps 0-5), COMPONENT-PULL,
+and APPLY-SPEC do not run here. This is also NOT Step 5's token-first build: token-first applies
+a fresh design app-wide via the design system; mockup-match converges ONE existing surface onto
+ONE given mockup, structure-first. Everything below is discovered per project — never hardcode
+any project's paths, ports, or component names.
+
+**Core inversion — PORT, don't patch.** Nudging the existing component toward a mockup fails
+(it failed 10+ times over 3 days); copying the mockup's structure into a NEW component and
+pouring the app's real data into it works. Canonical write-up:
+`~/.claude/projects/-Users-sholland-AI-Wayfinder/memory/feedback_html_mockup_matching.md`.
+
+### The 6 laws (all HARD)
+1. **Build a NEW component** (`<Name>V2`, a sibling file) that copies the mockup's HTML
+   structure + CSS VERBATIM — exact `grid-template-columns`, row heights, gaps, hex values,
+   computed values. Pour in the real data + EVERY handler the old component has (drag-and-drop,
+   inline-edit, expand/collapse, selects, menus) + EVERY `data-testid` the old component
+   exposes. NEVER edit the old component to "nudge" it toward the mockup. Structure is part of
+   the port: if the mockup is a div-grid, the new component is a div-grid — not a `<table>`
+   CSS-patched to look like one.
+2. **DONE = the overlay screenshot, SHOWN.** Done means one thing: a screenshot of the LIVE new
+   component beside/overlaid on the mockup, pixel-indistinguishable, captured and SHOWN to the
+   user. tsc-clean, tests-pass, "measured 44px" are NOT done. Only the visual overlay is done.
+3. **Verify the running instance before iterating.** Detect the project's dev server + port
+   (package.json scripts, running processes). A machine may run two checkouts of the same app
+   on different ports — confirm the browser hits the instance you are editing: drop a marker
+   file in the app's public/static dir and curl it through the served URL, or take a fresh
+   screenshot and confirm your latest change is visible. Rule out stale cache / wrong port
+   FIRST, and re-check any time an edit doesn't appear.
+4. **Measure computed values, never guess.** Open the mockup in a real browser and read its
+   COMPUTED values via `getComputedStyle` (grid templates, row heights, gaps, fonts, colors);
+   copy them verbatim into the new component.
+5. **DELETE/replace the old rendering** once the new component matches — never keep both, never
+   patch, never leave the old rendering reachable.
+6. **Give the AI EYES.** Screenshot the live app EVERY iteration — headless Chrome
+   `--screenshot=` or the Playwright CLI, NOT the `ecc:playwright` MCP. Without a per-iteration
+   screenshot the builder is blind and overclaims "it matches" when it doesn't.
+
+### FORBIDDEN (each one caused or extended the 3-day failure)
+- Patching/nudging the OLD component instead of porting into a new one.
+- Declaring "done"/"it matches" without SHOWING the overlay screenshot.
+- Matching individual numbers ("gap is now 8px") and calling the whole surface matched.
+- Touching the project's sizing/golden-master snapshot tests to make them pass.
+- Dropping any `data-testid` the old component exposed.
+- Adding new features. **Zero-new-features rule:** golden-master snapshots preserved
+  byte-identical, every testid preserved, same props/API surface — a pure visual port.
+
+### Procedure (verbatim port)
+1. **Inventory (read-only).** Read the mockup file. Read the old component + its direct
+   imports. List every handler, prop, and `data-testid` it exposes. Detect the dev server +
+   port and run the Law-3 instance check.
+2. **Measure.** Open/serve the mockup, extract computed values (Law 4) into a short spec:
+   structure outline + exact CSS values + a data-mapping table (mockup slot -> app data) +
+   the full testid list + what gets deleted at the end.
+3. **Plan.** The current model writes the verbatim-port plan from that spec — structure to
+   copy, data/handler mapping, testid list, deletion list. No code yet.
+4. **Build.** Dispatch a stronger model (Opus agent) to build `<Name>V2` from the plan:
+   verbatim structure + CSS first, then pour in data, handlers, and testids.
+5. **LOOP until indistinguishable.** Render the live V2, screenshot it (Law 6), place it
+   beside/over the mockup, fix ONLY what visibly differs, re-shoot. Any time a change doesn't
+   show up, re-run the Law-3 instance check before touching more code.
+6. **Swap + delete.** Point the app at V2 and delete the old rendering (Law 5). Run the
+   project's existing tests — golden-master/snapshot tests must pass UNCHANGED (never edit
+   them) and every testid must still resolve.
+7. **Show DONE.** Present the final side-by-side/overlay screenshot (Law 2) — that image, not
+   any metric, is the completion claim. Then run `/eli5` on the summary before presenting.
 
 ---
 
