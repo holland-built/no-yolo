@@ -23,9 +23,22 @@ SHIP="$REPO_ROOT/SHIP.md"
 echo "Repo: $REPO_ROOT"; [ -f "$SHIP" ] && echo "Playbook: found" || echo "Playbook: MISSING"
 ```
 
+## Step 0.5 — Active worktree teardown
+
+```bash
+FLAGDIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/.worktree-active"
+FLAGS=$(grep -l "\"repoRoot\": \"$REPO_ROOT\"" "$FLAGDIR"/*.json 2>/dev/null)
+```
+
+If `$FLAGS` is non-empty, at least one worktree is active for this repo. Run the `worktree` skill's **RELEASING** flow first: merge each worktree branch into its recorded base, remove each worktree, delete each branch, delete each flag. That flow self-pushes only when this repo has **no** `SHIP.md` — so:
+- **`SHIP.md` exists**: the teardown deliberately did not push. Continue to Step 2 on the now-current base branch — the rest of this skill pushes it via the playbook.
+- **`SHIP.md` missing**: the teardown already merged, pushed (if a remote exists), and released the work — there is nothing left for `/release` to do. Report what was released and finish here; do NOT hard-stop into Step 1. Optionally offer to author a `SHIP.md` for next time, but that offer is optional, not a gate.
+
+If a merge conflict occurred during teardown, it already stopped and left that flag armed — report it and finish; do not continue into Step 1/2.
+
 ## Step 1 — Missing playbook → LOCKSTEP (never push blind)
 
-If `SHIP.md` does NOT exist at the repo root:
+If `SHIP.md` does NOT exist at the repo root AND no worktree teardown just released the work:
 - **STOP. Do not commit, do not push, do not stage.** Announce: *"No SHIP.md in this repo — I won't push blind. Let's build the playbook first."*
 - This is lockstep posture: nothing ships until the playbook is authored AND you approve it. (Adopt the posture — do not toggle the lockstep hook, which would block writing the file.)
 - Interview one question at a time (use AskUserQuestion). Collect:
