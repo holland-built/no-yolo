@@ -1,6 +1,6 @@
 ---
 name: design-audit
-description: Use this skill when the user types /design-audit, says 'audit this UI', 'review the design', 'find design problems', or 'what's wrong with this UI'. Audits the current UI across 5 lenses -> adversarial verification of every Critical -> ranked violations table + P0/P1/P2 plan -> eli5 summary. Then asks if you want to fix: yes triggers 10-mockup fix pipeline (same as /design) scoped to audit findings, you pick a variant, then builds and verifies. If Paper Desktop's MCP is connected and the target is a single component, builds up to 6 variants live on Paper's canvas instead.
+description: Use this skill when the user types /design-audit, says 'audit this UI', 'review the design', 'find design problems', or 'what's wrong with this UI'. Audits the current UI across 5 lenses -> adversarial verification of every Critical -> ranked violations table + P0/P1/P2 plan -> eli5 summary. Then asks if you want to fix: yes triggers 10-mockup fix pipeline (same as /design) scoped to audit findings, you pick a variant, then builds and verifies.
 user-invocable: true
 argument-hint: "[surface to audit]"
 allowed-tools:
@@ -66,13 +66,6 @@ After the eli5 summary, ask exactly:
 ## Fix Flow (only runs when user answers y above)
 
 Full mockup-first fix pipeline. Every step is mandatory — do not skip.
-
-### F0.5 — Paper MCP check
-If `mcp__paper__*` tools are connected (call `get_basic_info` to confirm) AND the audit target
-is a single component/surface (not a full page) -> run **F3-PAPER** below instead of F3-F7's
-Chrome/HTML flow. Otherwise use F3-F7 as written. Paper's own docs warn against large or
-deeply-nested canvases ("start with small sections, not whole pages") — a full-page fix with
-10 variants stays on the Chrome/HTML path regardless of connection status.
 
 ### F1 — Brand seed
 Same as `/design` Step 0. Read CSS tokens, check Awesome DESIGN.md, write `.mockups/design-seed.md`.
@@ -166,27 +159,6 @@ show as resolved. If any P0 remains -> fix it before declaring done.
 Run `/eli5` on: P0s resolved, P1s resolved, files changed, build status, contrast status.
 
 ---
-
-## F3-PAPER — Paper MCP variant (single-component targets only)
-
-Runs instead of F3-F7 when F0.5's condition is met. Requires Paper Desktop open with a file.
-
-1. Call `get_guide({ topic: "paper-mcp-instructions" })` once this session, then `get_basic_info`
-   to see existing artboards/tokens/fonts.
-2. Create up to 6 artboards side by side (`create_artboard`), one per variant — fewer than the
-   10-mockup HTML flow, since each is a live canvas write, not a static file. Same P0-brief as
-   F3: "must visually resolve [findings], evolution not reinvention."
-3. Build each variant with `write_html` in small pieces (one visual group per call — header,
-   row, footer, etc.), per the guide's "write small, write often" rule. Use `get_font_family_info`
-   before first text styling. Screenshot each with `get_screenshot` after it's built and note a
-   one-line quality verdict per the guide's Review Checkpoints (spacing/type/contrast/alignment).
-4. Show all variant screenshots. Ask the same F7 question: **"Which variant? (confirm vN / pick
-   different vN / redo)"** — no `all.html` combined view needed, screenshots stand alone.
-5. For the picked variant: `get_jsx` + `get_computed_styles` on its root node for exact values —
-   never read sizes/colors from the screenshot. Hand these to F8's Opus plan in place of approved
-   mockup HTML.
-6. Call `finish_working_on_nodes` before moving to F8.
-7. Continue at F8 (Opus plan) — unchanged either way.
 
 ## FALLBACKS
 Same Taste / Swiss / UIwiki rule text as `/design`.
