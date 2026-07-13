@@ -25,12 +25,45 @@ echo "Repo: $REPO_ROOT"; [ -f "$SHIP" ] && echo "Playbook: found" || echo "Playb
 
 ## Step 0.5 — Active worktree teardown
 
+A worktree is "active" for this repo if a guard flag names it (flags are written by the `worktree-autoarm.js` SessionStart hook whenever a session runs inside a linked worktree — Orca sidebar, `git worktree add`, etc.). Tear every one of them down: merge each branch into its recorded base, remove each worktree, delete each branch, delete each flag. Self-push only when this repo has **no** `SHIP.md` (with a SHIP.md the playbook below owns the push).
+
 ```bash
 FLAGDIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/.worktree-active"
-FLAGS=$(grep -l "\"repoRoot\": \"$REPO_ROOT\"" "$FLAGDIR"/*.json 2>/dev/null)
+FOUND=0
+while IFS= read -r FLAG; do
+  [ -z "$FLAG" ] && continue
+  FOUND=1
+  read -r WT BR BASE < <(python3 - "$FLAG" <<'PY'
+import json,sys
+f=json.load(open(sys.argv[1]))
+print(f["wtPath"], f["branch"], f.get("base","main"))
+PY
+  )
+  [ -z "$WT" ] && { echo "skipping unreadable flag $FLAG"; continue; }
+  # 1. commit anything still pending in the worktree
+  git -C "$WT" add -A
+  git -C "$WT" diff --cached --quiet || git -C "$WT" commit -m "worktree $BR: release"
+  # 2. merge into base from the main checkout
+  git -C "$REPO_ROOT" checkout "$BASE"
+  if ! git -C "$REPO_ROOT" merge --no-ff "$BR" -m "Merge worktree $BR into $BASE"; then
+    echo "MERGE CONFLICT in $BR — STOP, report the conflicting files, leave this flag armed."; continue
+  fi
+  # 3. push only when this repo has NO SHIP.md (else the playbook pushes)
+  if [ ! -f "$REPO_ROOT/SHIP.md" ]; then
+    git -C "$REPO_ROOT" remote get-url origin >/dev/null 2>&1 && git -C "$REPO_ROOT" push origin "$BASE"
+  else
+    echo "push deferred to the SHIP.md playbook"
+  fi
+  # 4. remove worktree + branch, disarm the guard
+  git -C "$REPO_ROOT" worktree remove "$WT" --force
+  git -C "$REPO_ROOT" branch -d "$BR" 2>/dev/null || git -C "$REPO_ROOT" branch -D "$BR"
+  rm -f "$FLAG"
+  echo "released $BR -> $BASE, worktree removed, guard disarmed"
+done < <(grep -l "\"repoRoot\": \"$REPO_ROOT\"" "$FLAGDIR"/*.json 2>/dev/null)
+[ "$FOUND" = 0 ] && echo "no active worktree for this repo"
 ```
 
-If `$FLAGS` is non-empty, at least one worktree is active for this repo. Run the `worktree` skill's **RELEASING** flow first: merge each worktree branch into its recorded base, remove each worktree, delete each branch, delete each flag. That flow self-pushes only when this repo has **no** `SHIP.md` — so:
+If `$FOUND` was 1 (at least one worktree torn down):
 - **`SHIP.md` exists**: the teardown deliberately did not push. Continue to Step 2 on the now-current base branch — the rest of this skill pushes it via the playbook.
 - **`SHIP.md` missing**: the teardown already merged, pushed (if a remote exists), and released the work — there is nothing left for `/release` to do. Report what was released and finish here; do NOT hard-stop into Step 1. Optionally offer to author a `SHIP.md` for next time, but that offer is optional, not a gate.
 

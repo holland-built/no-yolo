@@ -40,4 +40,3 @@ skill-audit
 update
 supacode-cli
 lockstep
-worktree
