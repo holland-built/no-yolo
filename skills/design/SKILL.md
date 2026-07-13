@@ -74,11 +74,12 @@ phrasing. The fresh-gen pipeline (Steps 0-5) is untouched and does not run here.
 below is discovered **per project** — never hardcode any project's paths. It renders and screenshots the themed component in an isolated throwaway preview for your approval **before** placing anything in the real app — the same confirm-before-build gate the fresh-gen pipeline uses.
 
 **What Astryx is:** Meta's open-source React design system (`github.com/facebook/astryx`, MIT,
-150+ finished accessible components — buttons, chat box, hover cards, feed scroll). Drop-in:
+102 finished accessible components — buttons, chat, hover cards, command palette). Drop-in:
 its docs say *"the simplest setup is a few CSS imports plus a theme provider — no build plugin,
 no PostCSS or Babel config"* and *"override with `className` using Tailwind, CSS modules, or
-plain CSS."* Themed purely via **CSS custom properties**, so it coexists with Tailwind/Radix/
-shadcn. React-only.
+plain CSS."* StyleX-based; ships `dist/astryx.css` + a theme/token system (`Theme` provider,
+`defineTheme`) — coexists with Tailwind/Radix/shadcn, and per-instance overrides still work via
+`className`. React-only.
 
 ### 1. Detect React (guard — STOP-style, never crash)
 Read the current project's `package.json` (or a `frontend/`/`web/`/`app/` subdir's) and check
@@ -100,21 +101,28 @@ Extract palette + radius + type tokens. Never assume a filename — glob and use
 From `package.json`: Radix (`@radix-ui/*`), shadcn (`components.json` present), MUI (`@mui/*`),
 or none. Feeds the which-source rule (step 6).
 
-### 4. Ensure Astryx is installed in THIS project
+### 4. Ensure Astryx is installed AND WIRED in THIS project
 If `@astryxdesign/core` is absent from the project's `package.json`: detect the package manager
 from the lockfile (`pnpm-lock.yaml`->pnpm, `yarn.lock`->yarn, else `package-lock.json`->npm), tell
-the user you are adding the dependency, then run **in that project dir** (npm shown; swap the
-verb for the detected PM):
-`npm install @astryxdesign/core @astryxdesign/theme-neutral` and
-`npm install -D @astryxdesign/cli`.
+the user you are adding it, then run **in that project dir**: `npx astryx init` — the CLI does the
+proper setup (installs `@astryxdesign/core` + `@astryxdesign/theme-neutral`, imports
+`dist/astryx.css`, wires the `Theme` provider / token system). A bare `npm install` is NOT enough:
+Astryx is StyleX-based and components render UNSTYLED unless the shipped CSS + theme are wired.
+If `astryx init` is unavailable or fails, fall back to manual wiring: install the two packages,
+import `@astryxdesign/core/dist/astryx.css` at the app root, and mount the `Theme` provider per
+`npx astryx docs theme` — verify a `Button` renders styled before proceeding.
 **Never install globally.** If install fails (offline / registry / peer-dep conflict), STOP and
 report — do not hand-build a substitute silently.
 
 ### 5. Pull + theme (do NOT place yet)
-1. Pull the requested finished component from Astryx (the chat box, hover card, button, etc.).
-2. Map Astryx's CSS-custom-property tokens to the project's detected colors from step 2 (define
-   the `--astryx-*` / theme vars against the project's palette — do not ship Astryx's default
-   neutral theme). Result: Facebook-built, **project-colored — not looking like Facebook.**
+1. Confirm the exact component exists and get its real API first:
+   `node node_modules/@astryxdesign/core/docs.mjs <Name>` (or `npx astryx component <Name>` for
+   docs + related block templates). **Never import a name that isn't in
+   `skills/design/ASTRYX_CATALOG.md` / docs.mjs output.** Then pull it.
+2. Theme it to the project's detected colors from step 2 using Astryx's real theme system:
+   inspect tokens via `npx astryx docs tokens`, then define a project theme with
+   `theme/defineTheme` (build with `npx astryx theme build` if the project needs the compiled
+   output) — do not ship the default neutral theme. Result: Meta-built, **project-colored.**
 
 Placing into the real app happens only AFTER the preview gate below. Do not write the component
 into its final location before the user confirms.
@@ -335,11 +343,13 @@ reject list below + LIGHT+DARK rule. BOLD constraint added when BOLD MODE is on.
 Each brief also carries the **Astryx awareness line**: if this is a React + npm project (a
 `package.json` with `react` in deps and a lockfile — NOT a CDN/babel page), read
 `skills/design/ASTRYX_CATALOG.md` first; where the design calls for a rich interaction
-(hover preview, typeahead search, infinite feed, chat, rich composer, reactions), the mockup
-must **mock that Meta-quality behavior** (the mockup is static HTML, so simulate the
-interaction visually / with minimal inline JS) so the winning design already assumes the
-component exists — it will be pulled from Astryx, not hand-built, at build time. Non-React or
-CDN-React projects: ignore this line, hand-build as normal.
+(hover preview, typeahead/power search, chat, command palette, stacked toasts, carousel/
+lightbox, token input), the mockup must **mock that Meta-quality behavior** (the mockup is
+static HTML, so simulate the interaction visually / with minimal inline JS) so the winning
+design already assumes the component exists — it will be pulled from Astryx, not hand-built,
+at build time. Only interactions in the generated `skills/design/ASTRYX_CATALOG.md` count — it
+lists the package's real 90+ components. Non-React or CDN-React projects: ignore this line,
+hand-build as normal.
 
 ## Step 3 — Validator + combined view + AI pick
 
@@ -397,11 +407,14 @@ Ask: **"Which variant? (confirm * vN / pick different vN / mix vA layout + vB co
 
 ### Build-stage rule — pull, don't hand-build (React + npm only)
 Before dispatching the build of the chosen mockup, scan it for rich interactions listed in
-`skills/design/ASTRYX_CATALOG.md` (hover preview, typeahead, infinite feed, chat, composer,
-reactions, command palette, stacked toasts). For each one, in a **React + npm/bundler project**
+`skills/design/ASTRYX_CATALOG.md` (hover preview, typeahead, chat, command palette, stacked
+toasts, carousel/lightbox, token input). For each one, in a **React + npm/bundler project**
 (a `package.json` with `react` + a lockfile), **pull the finished Astryx component instead of
-hand-building it** — reuse COMPONENT-PULL MODE steps 4-6 (ensure `@astryxdesign/core` installed,
-theme to the project's detected tokens, preview-gate, place). Plain/static pieces: build normally.
+hand-building it** — reuse COMPONENT-PULL MODE steps 4-6 (wire via `npx astryx init`, confirm
+each export via `node node_modules/@astryxdesign/core/docs.mjs <Name>`, theme to the project's
+detected tokens, preview-gate, place). Plain/static pieces: build normally.
+**Never import a component name that isn't in the catalog / docs.mjs output — if it's not
+there, hand-build.**
 **Guard:** not React, or React delivered via CDN/babel with no `package.json` (e.g. <a-client-repo> MCP)
 -> do NOT attempt an Astryx install; hand-build the interaction. Never block a build on Astryx.
 
