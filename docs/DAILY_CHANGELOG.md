@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-07-13 (cont'd — kill duplicate rules in the always-loaded chain)
+
+- **Retired two memory facts that duplicated canon** and **added a guard so it can't recur.** The `/md-check` efficiency audit confirmed SPIKE 015's finding: `user-no-confirmation-questions` restated CORE_RULES rules 1 & 6, and `feedback-skill-triggers-location` restated CLAUDE.md's HARD RULE — both compiled into `CLAUDE.generated.md`, so the same rule loaded 2–3× every session. Deleted both facts and recompiled (`CLAUDE.generated.md` 2951→2433 bytes, **~518 bytes/session reclaimed**); the rules stay fully enforced by canon. Root-cause fix: `/remember-that`'s ADD flow gained a **canon-duplication guard (step 3b)** — before saving a global user/feedback fact it now reads CORE_RULES + CLAUDE.md and refuses to save anything canon already states (the old dup-check only compared facts against other facts, never against canon — which is how these slipped in). Prevents all future canon-duplication at the source, not just today's two.
+
 ## 2026-07-13 (cont'd — CORE_RULES rule 10: direction is a seed, not a spec)
 
 - **New CORE_RULES rule 10** forces Claude to build *past* a shared idea instead of mirroring it. When the user gives a direction ("here's where I'd look"), the response must add net-new thinking — an angle they didn't state, what's wrong/risky/harder about it, and a bigger/sharper alternative — never just restate + agree. Push must be useful, not contrarian reflex; if there's genuinely nothing to add, say so plainly. Deliberately installed in ONE place (canonical CORE_RULES, loads every session) rather than duplicating it as a memory fact — that duplication is the exact always-loaded waste SPIKE 015 flagged.
