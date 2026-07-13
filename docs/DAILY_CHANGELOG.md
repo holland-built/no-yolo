@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-07-13 (cont'd — CORE_RULES rule 10: direction is a seed, not a spec)
+
+- **New CORE_RULES rule 10** forces Claude to build *past* a shared idea instead of mirroring it. When the user gives a direction ("here's where I'd look"), the response must add net-new thinking — an angle they didn't state, what's wrong/risky/harder about it, and a bigger/sharper alternative — never just restate + agree. Push must be useful, not contrarian reflex; if there's genuinely nothing to add, say so plainly. Deliberately installed in ONE place (canonical CORE_RULES, loads every session) rather than duplicating it as a memory fact — that duplication is the exact always-loaded waste SPIKE 015 flagged.
+
 ## 2026-07-13 (cont'd — remove Paper MCP from /design-audit)
 
 - **Stripped the Paper Desktop MCP integration out of `/design-audit`** (user no longer uses it). Removed the description mention, the `F0.5 — Paper MCP check` branch, and the whole `F3-PAPER` variant section (build variants live on Paper's canvas). The audit's fix pipeline now runs the Chrome/HTML mockup flow (F3–F7) unconditionally — 192→164 lines. No MCP config was removed because none existed in `settings.json` (Paper is an external app-provided MCP, connected via the Paper Desktop app, never configured in `~/.claude`). The historical wire-in changelog entry stays as record.
