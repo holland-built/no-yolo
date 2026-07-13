@@ -330,7 +330,21 @@ theme to the project's detected tokens, preview-gate, place). Plain/static piece
 -> do NOT attempt an Astryx install; hand-build the interaction. Never block a build on Astryx.
 
 ## Step 5 — Implement
-1. Extract approved tokens from the chosen mockup to `.mockups/design-<slug>/approved-tokens.md`.
+1. **Token-first (do this BEFORE building any component).** Extract the chosen mockup's exact
+   tokens — palette hex, type families + sizes, spacing scale, radius, shadow/elevation, motion —
+   to `.mockups/design-<slug>/approved-tokens.md`, THEN write those exact values into the project's
+   real design system so components inherit the look via tokens (not hand-matched per component):
+   - **shadcn / CSS-variable projects** (a `globals.css`/`app.css` with `:root { --... }`, or a
+     `components.json`): set the mockup's values on the existing CSS custom properties
+     (`--background`, `--foreground`, `--primary`, `--radius`, `--font-*`, etc.) in `:root` and the
+     dark block. This is the same palette/token-swap the APPLY-SPEC branch performs — reuse it.
+   - **Tailwind projects:** also mirror the scale into `tailwind.config.{js,ts}` `theme.extend`
+     (colors, borderRadius, fontFamily, spacing) so utility classes resolve to the mockup's values.
+   - After writing, **ban arbitrary one-off values** in the build: components must reference tokens
+     (`bg-background`, `text-foreground`, `rounded-[var(--radius)]`), NOT inline `bg-[#3a2f1e]`.
+     A one-off arbitrary value in the built diff means a token is missing — add the token instead.
+   - If the project has NO detectable design-system file (no globals.css `:root`, no tailwind
+     config), fall back to today's behavior (build from `approved-tokens.md` directly) and note it.
 2. Detect stack (package.json) and select component library:
    - React + Tailwind -> shadcn/ui + MagicUI + Aceternity UI + Mantine
    - Tailwind only -> DaisyUI + HyperUI
@@ -345,7 +359,14 @@ theme to the project's detected tokens, preview-gate, place). Plain/static piece
 4.6. **Reuse + simplicity gate (HARD):** for every NEW component/hook/util the build introduced, grep the tree for an existing one with the same/similar name or role — a sibling component already doing this means reuse it, don't add a twin. If the diff added 3+ new components or duplicated an existing pattern (a second card/modal/table variant instead of extending the shared one), run `/trim` on the new files before proceeding — kills the abstraction/ceremony a mockup-to-code pass tends to add. Fix or explicitly triage with reason before continuing.
 5. `npx playwright test` smoke after build (load each changed surface, assert no console errors,
    toggle dark mode). Use CLI — NOT `ecc:playwright` MCP.
-6. Run `/eli5` on the completed-work summary before presenting.
+6. **Visual-diff gate (looks-like-the-mockup, not just no-errors).** For each built surface,
+   screenshot the rendered React page with the Playwright/Chrome CLI (same machinery Step 3 uses on
+   `all.html` — NOT the `ecc:playwright` MCP) and place it beside the chosen mockup's PNG
+   (`.mockups/design-<slug>/`). Compare: palette, type scale, spacing rhythm, radius, key layout.
+   If they diverge, the tokens did not fully land — fix (usually a missing/incorrect token from 5.1,
+   or a shadcn component default overriding a token) and re-shoot. Do NOT declare done on a visible
+   mismatch. State the comparison result in one line ("rendered matches mockup" / "fixed N drifts").
+7. Run `/eli5` on the completed-work summary before presenting.
 
 ---
 

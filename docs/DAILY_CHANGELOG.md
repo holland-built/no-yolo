@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-07-13 (plan 024 — /design token-first build + visual-diff gate)
+
+- **`/design` now closes the "mockup looks great, real site doesn't match" gap** — the slow, token-burning part of turning a mockup into a live React/Tailwind/shadcn app. Two Step-5 changes: (1) **token-first** — before building any component, the exact mockup values (palette, type, spacing, radius, motion) get written straight into the project's real design system (shadcn `:root` CSS variables + `tailwind.config theme.extend`), so components inherit the look via tokens instead of being hand-matched one by one; arbitrary one-off values like `bg-[#3a2f1e]` are banned (a one-off means a token is missing — add the token). (2) **Visual-diff gate** — after build, screenshot the rendered surface and compare it beside the mockup PNG; drift means a token didn't land, fix before declaring done. Previously Step 5 only checked "no console errors," never "looks like the mockup." Reuses the APPLY-SPEC token-swap; falls back to old behavior on projects with no design-system file. (Planned advisor-plans/024, **built via the Fable model** + reviewed.)
+
 ## 2026-07-12 (cont'd — strip ecc references from the published template)
 
 - **`settings.example.json` no longer references the `ecc` plugin.** Removed the 4 `ECC_*` env vars and the 11 `mcp__plugin_ecc_playwright__*` permission allows — a fresh install of no-yolo was pre-authorizing browser tools for a plugin the template doesn't require (and `/design` deliberately uses the Playwright CLI, not the ecc MCP). Template is now plugin-agnostic and slimmer. (Local side note: mid-session Stop-hook errors like "Plugin directory does not exist … ecc@ecc" are harmless leftovers from removing ecc while a session was live — they clear on restart and were never a tracked-repo issue.)
