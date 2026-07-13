@@ -116,6 +116,7 @@ If a merge conflicts, STOP and report the conflicting files for that worktree �
 If the user explicitly says something like "discard/throw away the worktree, don't merge": remove that worktree's flag (`rm -f "$FLAG"`) and tell them the checkout is still on disk — the guard is now disarmed but nothing was deleted. Only run `git worktree remove --force` (and delete the branch) if they separately confirm they want the checkout itself deleted; their uncommitted work may be in it.
 
 ## Notes
+- **Auto-arm.** You don't have to type `/worktree` for the guard to engage. A `SessionStart` hook (`worktree-autoarm.js`) detects when a session starts *inside* a linked worktree — created any way, including **Orca's sidebar** or a hand-run `git worktree add` — and arms the flag automatically. It never arms in the main checkout (that would lock the whole repo), and it prunes flags whose worktree was removed. `/worktree <task>` is still the one-shot "make it + work in it" path; auto-arm covers worktrees born outside the skill.
 - The guard is a global `PreToolUse` hook (`worktree-guard.js`), so it protects **every** session touching that repo — including a different Orca card's agent that never loaded this skill. That's the point: the flag, not the skill, is what enforces.
 - Editing a *different* repo while a worktree is active is fine — the guard only blocks the flagged repo's main checkout.
 - One flag per worktree; multiple repos — and multiple worktrees within the same repo — can each be active at once.
