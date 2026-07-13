@@ -1,14 +1,12 @@
 <!-- GENERATED FROM ~/.claude/memory/facts/ — DO NOT EDIT. Run /memory-compile. -->
-<!-- compiled 2026-06-23 -->
+<!-- compiled 2026-07-13 -->
 # Learned Preferences (compiled from curated memory)
 
 Compiled from the fact store. Each line links its source fact.
 
 ## Working Preferences
 - **Always run /eli5 on completed-work summaries** — After any forge/multi-step build completes, run /eli5 on the summary before presenting to user — plain English output, not technical jargon ([feedback-eli5-on-output](memory/facts/feedback-eli5-on-output.md))
-- **Skill triggers live in SKILL_TRIGGERS.md not CLAUDE.md** — New skill trigger blocks go in ~/.claude/SKILL_TRIGGERS.md — never directly in CLAUDE.md ([feedback-skill-triggers-location](memory/facts/feedback-skill-triggers-location.md))
 - **Auto-commit on push commands** — When the user says 'push to <branch>', auto-commit all local changes first (add, generate message, commit, push) without asking. ([user-auto-commit-on-push](memory/facts/user-auto-commit-on-push.md))
-- **No confirmation questions — act, don't ask** — Do not stop for clarifying/confirmation questions; make the reasonable call and continue until done and tested. User redirects if wrong. ([user-no-confirmation-questions](memory/facts/user-no-confirmation-questions.md))
 - **Bulleted/table output, never prose** — Default output is a bulleted list or markdown table; no long prose paragraphs. Code/commands in fenced blocks. ([user-output-format-bullets](memory/facts/user-output-format-bullets.md))
 - **Single-paste prompts always** — When the user needs to run something, give ONE consolidated copy-paste block, never a numbered list of separate prompts/commands. ([user-single-paste-prompts](memory/facts/user-single-paste-prompts.md))
 - **Always subagent-driven plan execution** — After writing any plan, immediately dispatch subagent-driven development; never ask 'inline or subagent', never offer inline. ([user-subagent-execution](memory/facts/user-subagent-execution.md))
