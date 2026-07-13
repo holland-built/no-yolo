@@ -38,16 +38,7 @@ This skill is project-agnostic. Before phase 0, detect the project's commands an
 - **Knowledge-graph tooling** — note if the project has one (e.g. `graphify` + `graphify-out/`) and its update command (e.g. `graphify update .`).
 - **Critical path** — the project's money path / core user flow that must never break (e.g. your app's primary user flow: checkout → payment → confirmation). Note how to exercise it.
 - **Latest-stable gate** (greenfield / new core dep) — when scaffolding a NEW project or adding a core dependency (runtime, framework, language, core lib), do NOT pin the version from memory (it lags — this is how a new MCP got React 18 when 19 was current). Query the registry for the current stable version and pin that, per **CORE_RULES.md Rule 9** (`npm view <pkg> version`, `pip index versions <pkg>`, etc.; stable tag only, compat beat if the newest major isn't supported yet). Applies to greenfield with no existing surface too.
-- **Astryx proactive-pull (React + npm only):** when building UI that calls for a rich interaction
-  (hover preview, typeahead/power search, chat, command palette, stacked toasts, carousel/lightbox,
-  token input), read `~/.claude/skills/design/ASTRYX_CATALOG.md` and prefer pulling the finished,
-  project-themed Meta/Astryx component over hand-building — the same drop-in the `/design`
-  COMPONENT-PULL MODE uses (`skills/design/SKILL.md` section "COMPONENT-PULL MODE"). Guard: only in
-  a React project with a `package.json` + lockfile; a CDN/babel React page with no npm project (e.g.
-  <a-client-repo> MCP) or a non-React stack -> hand-build, never attempt an install. Never block the build
-  on Astryx. The catalog is generated from the real package — confirm exact exports with
-  `node node_modules/@astryxdesign/core/docs.mjs <Name>` before importing; never import a name
-  not in it.
+- **Prefab component library (prefab-first — detect FIRST):** detect the project's component library per `~/.claude/skills/design/PREFAB_SOURCING.md` (Astryx deps → Astryx; components.json/@radix-ui/* → shadcn; @mui/*, @chakra-ui/*, …; none + React+lockfile → Astryx greenfield via `npx astryx init`; non-React/CDN-babel → none). Record `PREFAB` and state it in the stack line. Every interactive element in UI work is sourced from PREFAB by default — hand-building a primitive it provides is a flagged exception (sourcing gate, phase 3.5 Step D). Never install a second component library beside an existing one. Astryx path only: confirm exports with `node node_modules/@astryxdesign/core/docs.mjs <Name>`; never import a name not in `~/.claude/skills/design/ASTRYX_CATALOG.md`. Never block the build on any library.
 If a CLAUDE.md or project skill names these, use those values verbatim. State the detected stack in one line before proceeding.
 
 `<slug>` = kebab of feature. `<date>` = today.
@@ -171,6 +162,13 @@ Show screenshot inline. Output variant table:
 
 Stop and ask: **"Which mockup variant? (or redirect)"**
 Do NOT proceed until user names a variant. Lock the chosen variant — Sonnet builds to match it exactly.
+
+### Step D — Component sourcing gate (HARD)
+Emit the sourcing table (`skills/design/PREFAB_SOURCING.md` format) for the approved variant —
+every interactive element in it gets a row. Hand-build rows need a closed-list reason; a
+hand-build row on a primitive the detected library already provides is a gate failure. Do NOT
+proceed to phase 4 without the table shown.
+
 Mockup files stay in `mockups/<slug>/` until after phase 6; delete only after prove passes.
 
 ## 4 — TDD
@@ -186,6 +184,8 @@ Per behavior: write ONE failing test → run the detected test command (scoped t
 - Functions/components adjacent to the edit that must NOT be touched
 - `Already exists — do NOT recreate: <file>` note
 - If ui_change: which mockup variant section/element to match exactly
+- If ui_change and phase 3.5 was skipped (or new interactive elements appeared since), emit the sourcing table now — no UI dispatch without it
+- Its sourcing-table rows — import the mapped prefab components, do not hand-roll
 
 Fan out all agents in one parallel call (never one-at-a-time). Every agent MUST:
 - read its target file + direct imports before editing
@@ -223,6 +223,7 @@ Run the ALWAYS gates on every /build run; add CONDITIONAL gates only when the di
 - **Accessibility** — IF `ui_change: true` → run the a11y check (`accessibility-tester` / axe): keyboard reachability, roles/aria, contrast, focus order. Matches the project's keyboard-first / AA bar.
 - **Perf** — IF the change touches a hot path (sizing calc, large list/table render, a tight loop) → measure before/after (render time, query count, bundle delta) and confirm no regression.
 - **Code health** — IF the diff adds ≥3 new functions/components OR the feature is a major refactor → run `/review` on the changed paths. Fallow catches dead exports and duplication; trim catches YAGNI in the new code before it ships.
+- **Prefab-first compliance** — IF `ui_change: true` → scan the diff for bespoke implementations of primitives the sourcing table mapped to PREFAB (hand-written button/dropdown/modal/switch markup + CSS). Found → back to phase 5, swap in the mapped component.
 
 Do NOT proceed to phase 6 with an unresolved gate.
 

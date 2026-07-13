@@ -1,6 +1,6 @@
 ---
 name: design
-description: Use this skill when the user types /design, says 'design this', 'new design', 'redesign', 'fresh look', 'start over on the UI', 'mock this up', or 'show me design options'. Fresh generation only — never preserves the existing design. Pipeline: brand seed -> Taste generators -> 10 Opus mockups (8 distinct paradigms + 2 wild) -> slop validator -> AI picks best -> Chrome auto-opens -> you confirm or pick different -> Opus plan -> Sonnet build. Nothing builds before you confirm. Auto-redirects audit/review to /design-audit, existing-UI polish to the impeccable plugin. Second mode — component-pull: also fires on natural language like 'put a button here', 'add a chat box', 'drop in a card', or 'add a component'; in a React project it pulls a finished, project-themed component from Meta's open-source Astryx design system instead of hand-building it, and previews the themed component for your approval before placing it (React-only; falls back to normal /design otherwise). Third mode — mockup-match (MOCKUP-MATCH MODE): fires on 'make it match this mockup', 'match this mockup', 'port this mockup', 'make my site look like this mockup' when the user supplies an HTML mockup file/URL and names an existing surface; ports that surface VERBATIM into a new <Name>V2 component (never patches the old one) and gates done on a shown overlay screenshot of live-vs-mockup.
+description: Use this skill when the user types /design, says 'design this', 'new design', 'redesign', 'fresh look', 'start over on the UI', 'mock this up', or 'show me design options'. Fresh generation only — never preserves the existing design. Pipeline: brand seed -> Taste generators -> 10 Opus mockups (8 distinct paradigms + 2 wild) -> slop validator -> AI picks best -> Chrome auto-opens -> you confirm or pick different -> Opus plan -> Sonnet build. Nothing builds before you confirm. Auto-redirects audit/review to /design-audit, existing-UI polish to the impeccable plugin. Second mode — component-pull: also fires on natural language like 'put a button here', 'add a chat box', 'drop in a card', or 'add a component'; in a React project it pulls a finished, project-themed component from the project's own component library (shadcn/Radix/MUI/etc. — auto-detected), or Meta's open-source Astryx design system when the project has none, instead of hand-building it, and previews the themed component for your approval before placing it (React-only; falls back to normal /design otherwise). Third mode — mockup-match (MOCKUP-MATCH MODE): fires on 'make it match this mockup', 'match this mockup', 'port this mockup', 'make my site look like this mockup' when the user supplies an HTML mockup file/URL and names an existing surface; ports that surface VERBATIM into a new <Name>V2 component (never patches the old one) and gates done on a shown overlay screenshot of live-vs-mockup.
 user-invocable: true
 argument-hint: "[text | URL | screenshot | domain context] [--apply-spec <file>]"
 allowed-tools:
@@ -68,10 +68,14 @@ toggle switching `data-theme` on `<html>`. Both themes hand-tuned, not CSS inver
 
 ---
 
-## COMPONENT-PULL MODE (Astryx)
+## COMPONENT-PULL MODE (prefab-first)
 Additive second mode. Reached only from **Mode select** on "add/put/drop-in a <component>"
 phrasing. The fresh-gen pipeline (Steps 0-5) is untouched and does not run here. Everything
-below is discovered **per project** — never hardcode any project's paths. It renders and screenshots the themed component in an isolated throwaway preview for your approval **before** placing anything in the real app — the same confirm-before-build gate the fresh-gen pipeline uses.
+below is discovered **per project** — never hardcode any project's paths. It pulls from the
+project's detected prefab library (see `skills/design/PREFAB_SOURCING.md`); Astryx is the
+greenfield default when the project has no library, not a universal source. It renders and
+screenshots the themed component in an isolated throwaway preview for your approval **before**
+placing anything in the real app — the same confirm-before-build gate the fresh-gen pipeline uses.
 
 **What Astryx is:** Meta's open-source React design system (`github.com/facebook/astryx`, MIT,
 102 finished accessible components — buttons, chat, hover cards, command palette). Drop-in:
@@ -97,11 +101,14 @@ to match the project:
    `index.css`).
 Extract palette + radius + type tokens. Never assume a filename — glob and use what's there.
 
-### 3. Detect the existing component library
-From `package.json`: Radix (`@radix-ui/*`), shadcn (`components.json` present), MUI (`@mui/*`),
-or none. Feeds the which-source rule (step 6).
+### 3. Detect the prefab library
+Run the detection in `skills/design/PREFAB_SOURCING.md` and emit the sourcing table here —
+usually one row, the single component being pulled. **Outcome (a)** (an existing library was
+found) → pull the component from that project library; steps 4-5 below do NOT run. Outcomes
+(b) (no library, React + npm) and (c) feed steps 4-5 and the which-source rule (step 6).
 
 ### 4. Ensure Astryx is installed AND WIRED in THIS project
+**Astryx path only (outcome b / project already on Astryx).**
 If `@astryxdesign/core` is absent from the project's `package.json`: detect the package manager
 from the lockfile (`pnpm-lock.yaml`->pnpm, `yarn.lock`->yarn, else `package-lock.json`->npm), tell
 the user you are adding it, then run **in that project dir**: `npx astryx init` — the CLI does the
@@ -115,6 +122,7 @@ import `@astryxdesign/core/dist/astryx.css` at the app root, and mount the `Them
 report — do not hand-build a substitute silently.
 
 ### 5. Pull + theme (do NOT place yet)
+**Astryx path only (outcome b / project already on Astryx).**
 1. Confirm the exact component exists and get its real API first:
    `node node_modules/@astryxdesign/core/docs.mjs <Name>` (or `npx astryx component <Name>` for
    docs + related block templates). **Never import a name that isn't in
@@ -165,12 +173,13 @@ their app. Same principle as fresh-gen — *nothing lands before you confirm.*
 2. Where a per-instance tweak is needed, override with the project's own styling via `className`
    (its Tailwind / CSS modules / plain CSS) — the drop-in override Astryx documents.
 
-### 6. Which-source rule (prevent visual drift)
-If the project already has a component lib (Radix/shadcn/MUI): use **Astryx for the COMPLEX,
-high-polish pieces** (chat box, rich hover cards, feed-style scroll) where hand-building costs
-days; **keep the existing lib for the simple pieces** (plain buttons, inputs) so two buttons
-don't end up looking different. Always theme the Astryx component to the project's contract
-(step 2). State which rule you applied in your summary.
+### 6. Which-source rule (never mismatched twins — HARD)
+The sourcing gate's library is the ONLY prefab source for this run. Existing lib → EVERY pulled
+component comes from it, simple or complex; if it lacks the requested component, check that
+lib's own ecosystem/registry first, else compose from its primitives themed to the project —
+NEVER install Astryx (or any second library) beside it. No lib + React → Astryx for everything
+(greenfield). Always theme to the project's tokens (step 2). State which outcome applied in
+your summary.
 
 ### 7. Reuse gate + verify (reuse Step 4.6 spirit + the tsc/lint/build/playwright discipline)
 - **Reuse gate (HARD, mirrors Step 4.6):** before placing, grep the tree for an existing
@@ -346,8 +355,9 @@ Each brief also carries the **Astryx awareness line**: if this is a React + npm 
 (hover preview, typeahead/power search, chat, command palette, stacked toasts, carousel/
 lightbox, token input), the mockup must **mock that Meta-quality behavior** (the mockup is
 static HTML, so simulate the interaction visually / with minimal inline JS) so the winning
-design already assumes the component exists — it will be pulled from Astryx, not hand-built,
-at build time. Only interactions in the generated `skills/design/ASTRYX_CATALOG.md` count — it
+design already assumes the component exists — it will be pulled from the project's prefab
+library (or Astryx when the project has none — see `skills/design/PREFAB_SOURCING.md`), not
+hand-built, at build time. Only interactions in the generated `skills/design/ASTRYX_CATALOG.md` count — it
 lists the package's real 90+ components. Non-React or CDN-React projects: ignore this line,
 hand-build as normal.
 
@@ -405,18 +415,24 @@ Ask: **"Which variant? (confirm * vN / pick different vN / mix vA layout + vB co
 - `redo` -> regenerate Step 2 with a different paradigm set.
 - **Do not write a single line of production code until the user names a variant.**
 
-### Build-stage rule — pull, don't hand-build (React + npm only)
-Before dispatching the build of the chosen mockup, scan it for rich interactions listed in
-`skills/design/ASTRYX_CATALOG.md` (hover preview, typeahead, chat, command palette, stacked
-toasts, carousel/lightbox, token input). For each one, in a **React + npm/bundler project**
-(a `package.json` with `react` + a lockfile), **pull the finished Astryx component instead of
-hand-building it** — reuse COMPONENT-PULL MODE steps 4-6 (wire via `npx astryx init`, confirm
-each export via `node node_modules/@astryxdesign/core/docs.mjs <Name>`, theme to the project's
-detected tokens, preview-gate, place). Plain/static pieces: build normally.
+### Component sourcing gate (HARD — prefab-first, before any build dispatch)
+Before dispatching the build of the chosen mockup, run detection per
+`skills/design/PREFAB_SOURCING.md` and emit the **full sourcing table** for EVERY interactive
+element in the chosen mockup — not just the "rich interaction" pieces. This is the mandatory
+gate; do not dispatch build agents before the table is shown.
+- **Outcome (a)** (an existing library was found) → pull every mapped row from that library.
+- **Outcome (b)** (no library, React + npm/bundler project) → pull via COMPONENT-PULL MODE
+  steps 4-5: wire via `npx astryx init`, confirm each export via
+  `node node_modules/@astryxdesign/core/docs.mjs <Name>`, theme to the project's detected
+  tokens.
+- **Outcome (c)** (no prefab library applicable) → the one-line hand-build note from
+  `PREFAB_SOURCING.md`.
 **Never import a component name that isn't in the catalog / docs.mjs output — if it's not
 there, hand-build.**
 **Guard:** not React, or React delivered via CDN/babel with no `package.json` (e.g. <a-client-repo> MCP)
 -> do NOT attempt an Astryx install; hand-build the interaction. Never block a build on Astryx.
+**Note:** the full-build path skips the per-component 5.5 preview gate (unusable at 10+
+components) — Step 4's mockup confirm + Step 5.6's visual-diff gate are the visual gates here.
 
 ## Step 5 — Implement
 1. **Token-first (do this BEFORE building any component).** Extract the chosen mockup's exact
@@ -434,18 +450,20 @@ there, hand-build.**
      A one-off arbitrary value in the built diff means a token is missing — add the token instead.
    - If the project has NO detectable design-system file (no globals.css `:root`, no tailwind
      config), fall back to today's behavior (build from `approved-tokens.md` directly) and note it.
-2. Detect stack (package.json) and select component library:
-   - React + Tailwind -> shadcn/ui + MagicUI + Aceternity UI + Mantine
-   - Tailwind only -> DaisyUI + HyperUI
+2. Component library = the sourcing gate's PREFAB (already detected + table emitted above).
+   React: never introduce a second library beside it. Non-React fallbacks unchanged:
    - Vue -> Naive UI + PrimeVue
-   - none -> warn, proceed without a library.
+   - Tailwind only -> DaisyUI + HyperUI
+   - none -> warn, hand-build with tokens.
 3. Spawn an Opus agent to write `brainstorms/design-<slug>-plan-<date>.md` (presentation
    layer only; cites approved-tokens.md as source of truth; lists target files as "already
-   exists — do NOT recreate").
+   exists — do NOT recreate"; embeds the component sourcing table, with each target-file
+   entry listing its rows).
 4. Dispatch Sonnet subagents to build the approved mockup against the plan. Disjoint file
-   clusters, no overlap.
+   clusters, no overlap. Each agent spec carries its sourcing-table rows; agents MUST import
+   the mapped components, not hand-roll them.
 4.5. After all subagents complete, run tsc + lint + build (zero new errors) before the Playwright smoke. If any errors -> fix before proceeding.
-4.6. **Reuse + simplicity gate (HARD):** for every NEW component/hook/util the build introduced, grep the tree for an existing one with the same/similar name or role — a sibling component already doing this means reuse it, don't add a twin. If the diff added 3+ new components or duplicated an existing pattern (a second card/modal/table variant instead of extending the shared one), run `/trim` on the new files before proceeding — kills the abstraction/ceremony a mockup-to-code pass tends to add. Fix or explicitly triage with reason before continuing.
+4.6. **Reuse + simplicity gate (HARD):** for every NEW component/hook/util the build introduced, grep the tree for an existing one with the same/similar name or role — a sibling component already doing this means reuse it, don't add a twin. If the diff added 3+ new components or duplicated an existing pattern (a second card/modal/table variant instead of extending the shared one), run `/trim` on the new files before proceeding — kills the abstraction/ceremony a mockup-to-code pass tends to add. Fix or explicitly triage with reason before continuing. The diff must not contain a bespoke implementation of any primitive the sourcing table mapped to PREFAB — a violation means swap in the mapped component before proceeding.
 5. `npx playwright test` smoke after build (load each changed surface, assert no console errors,
    toggle dark mode). Use CLI — NOT `ecc:playwright` MCP.
 6. **Visual-diff gate (looks-like-the-mockup, not just no-errors).** For each built surface,
