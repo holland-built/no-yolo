@@ -71,6 +71,15 @@ else
   record FAIL "catalog lock stale — run catalog_lock.py --check (see /tmp/verify-catalog.log)"
 fi
 
+# 5bb. rendered menus match their sources. The catalog lock hashes the SOURCES, so
+#      editing a source and re-locking WITHOUT running regen left this green while
+#      RENDERED.md was stale. --check renders in memory and compares; it writes nothing.
+if python3 skills/my-skills/regen.py --check >/tmp/verify-regen.log 2>&1; then
+  record PASS "rendered menus current"
+else
+  record FAIL "rendered menus stale — run skills/my-skills/regen.py (see /tmp/verify-regen.log)"
+fi
+
 # 5c. local third-party patches still applied (see docs/THIRD_PARTY_SKILLS.md).
 #     These live outside git on gitignored symlinks, so `npx skills add` reverts them
 #     with no warning. Skip silently where the path doesn't exist (CI, fresh clone) —
