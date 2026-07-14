@@ -11,7 +11,7 @@ allowed-tools:
   - WebFetch
 ---
 
-Scan system prompts and build the learnings reference for `/better_prompt`.
+Scan system prompts and build the learnings reference for `/better-prompt`.
 
 ---
 
@@ -70,7 +70,7 @@ File: `~/.claude/learnings.md`
 ```markdown
 # Learnings — Claude Code prompt context
 
-> **How this file works:** §1–5 are a LIVING snapshot — /prompt-scan OVERWRITES them each run. §4 is derived from ~/.claude/docs/SKILL_TRIGGERS.md. §6 is an append-only dated log — each scan PREPENDS one entry. /better_prompt reads §1–6.
+> **How this file works:** §1–5 are a LIVING snapshot — /prompt-scan OVERWRITES them each run. §4 is derived from ~/.claude/docs/SKILL_TRIGGERS.md. §6 is an append-only dated log — each scan PREPENDS one entry. /better-prompt reads §1–6.
 
 ---
 
@@ -107,9 +107,9 @@ File: `~/.claude/learnings.md`
 
 ---
 
-## Step 3b — Verify the write (guard /better_prompt)
+## Step 3b — Verify the write (guard /better-prompt)
 
-`/better_prompt` parses sections §1–6. After writing, confirm all six headers exist:
+`/better-prompt` parses sections §1–6. After writing, confirm all six headers exist:
 ```bash
 grep -cE "^### [1-5]\.|^## 6\. Model delta" ~/.claude/learnings.md   # expect 6
 ```
@@ -120,5 +120,5 @@ If the count is not 6, the write is malformed — fix it before confirming.
 ## Step 4 — Confirm
 
 Tell user:
-> **learnings.md updated** (`~/.claude/learnings.md`). Run `/better_prompt "[rough prompt]"` to use it.
+> **learnings.md updated** (`~/.claude/learnings.md`). Run `/better-prompt "[rough prompt]"` to use it.
 > Next update: run `/prompt-scan` again when a new Claude model ships.

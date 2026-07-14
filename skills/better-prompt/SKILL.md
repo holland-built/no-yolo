@@ -1,6 +1,6 @@
 ---
 name: better-prompt
-description: Use this skill when the user types /better_prompt, says 'sharpen this prompt', or 'improve my prompt'. Rewrites a rough prompt against learned conventions from learnings.md.
+description: Use this skill when the user types /better-prompt, says 'sharpen this prompt', or 'improve my prompt'. Rewrites a rough prompt against learned conventions from learnings.md.
 user-invocable: true
 argument-hint: "[rough prompt text to sharpen]"
 allowed-tools:
@@ -39,7 +39,7 @@ If present: parse into working memory:
 ## Step 2 — Load Prompt
 
 If `$ARGUMENTS` is empty → stop:
-> `Paste the prompt you want sharpened after /better_prompt.`
+> `Paste the prompt you want sharpened after /better-prompt.`
 
 ---
 
