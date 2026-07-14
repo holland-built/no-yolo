@@ -115,19 +115,6 @@
           }
         ]
       }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash \"$HOME/.claude/hooks/reflect-claude-md-stop.sh\"",
-            "timeout": 10,
-            "async": true,
-            "statusMessage": "Capturing session for weekly review..."
-          }
-        ]
-      }
     ]
   },
   "statusLine": {

@@ -2,7 +2,7 @@ design|Fresh UI mockup generation
 design-audit|5-lens UI violation audit
 build|Full feature build pipeline
 plan|Pre-build decision interview
-review|Diff + codebase health check
+review|Diff, health + trend review
 last-30|Trending last 30 days
 video-to-kb|YouTube video to KB note
 ingest-docs|Docs to context files

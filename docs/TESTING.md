@@ -22,6 +22,14 @@ For multi-step work, append a per-step verification to each step: `[Step] → ve
 
 Use skill: `/tdd`.
 
+## A Check Must Prove It Can Fail
+
+A verifier that cannot go red is decoration, and worse than none — it reads as evidence while checking nothing. Three shipped this way in `~/.claude` before anyone noticed: `md-check --drift` grepped a file whose format had moved (always "no drift"), `skill-audit` echoed its report path instead of writing it, and `hooks/tests/*.test.sh` was executed by nothing.
+
+So: **never trust a green you haven't seen go red.** For every check, feed it one input that must pass and one that must fail, and confirm it says so. `verify-selftest.sh` does this for `verify.sh` — it sabotages each check in turn, asserts the FAIL appears, and restores. Run it whenever you add or edit a check.
+
+The same trap catches a *false red*: scope a grep wrong and it reports a problem that isn't there. Both directions come from never testing the check against a known answer.
+
 ## Stack-Specific Commands
 
 Project test/lint commands live in the project's `ARCHITECTURE.md` or `CLAUDE.md` — not here. Detect them at session start from `package.json` scripts, `README`, or project skill.

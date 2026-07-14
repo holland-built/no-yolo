@@ -22,14 +22,14 @@ better-prompt|Shows before/after with rationale instead of guessing why a prompt
 eli5|Forces the "wait, do you actually get this?" check before you say yes
 last-30|GitHub stars and HN posts from 3 years ago are noise. Last 30 days is actual traction
 md-check|Other skills call it with --pre before writing a new note, so you never get two files on one topic
-prompt-scan|Keeps /better_prompt's reference material from going stale
+prompt-scan|Keeps /better-prompt's reference material from going stale
 remember-that|Preferences decay between sessions. This makes them permanent without manual file editing
 release|One verb everywhere — each repo's SHIP.md holds its own recipe, so you never memorize per-repo commands
 debate|Ends with YES/NO/CONDITIONAL and the one reason that settles it — no "it depends"
 update|Rollback and restore-removed-skill built in — no manual git surgery if something breaks
 trim-gain|Scorecard from benchmark medians — not a per-repo estimate.
 skill-audit|One pass instead of manually eyeballing every SKILL.md
-review|Replaces two separate commands with one routed pass — secret scan and antislop are automatic, not a separate step you remember to run
+review|Replaces three separate commands with one routed pass — trend radar, secret scan and antislop are automatic, and you approve each fix one at a time instead of one blind batch
 lockstep|Mechanically denied by a PreToolUse hook — not a prompt the model can talk itself past
 emil-design-eng|Vaul/Sonner-author taste rules catch wrong easing, wrong shadows, wrong timing agents usually miss
 animation-vocabulary|The right word gets a better result from any AI than a vague description does

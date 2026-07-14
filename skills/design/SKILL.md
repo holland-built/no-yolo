@@ -297,21 +297,25 @@ Write the seed to `.mockups/design-seed.md`: palette hex, type families, spacing
 layout principles, component states, do's/don'ts. State one line summarizing the seed source.
 
 ## Step 1 — Taste generators
-Vendored at `skills/design/vendor/taste-skill/` (real content, MIT-licensed from
-Leonxlnx/taste-skill — see `vendor/taste-skill/SOURCE.md`). If the vendor dir is missing,
-fall back to the FALLBACKS block below and skip straight to Step 2.
+`TASTE_CORE.md` (next to this file) holds the distilled brief-inference, dials, and
+design-system map — it is tracked and always present, so Step 1 works even with no vendor dir.
+Full source is vendored at `skills/design/vendor/taste-skill/` (MIT, Leonxlnx/taste-skill, see
+`vendor/taste-skill/SOURCE.md`); it is gitignored, so open it only for the screenshot path or
+detail `TASTE_CORE.md` omits. FALLBACKS below is the last resort if both are gone.
 
-1. Read `vendor/taste-skill/taste-skill.md`. Apply **Section 0 (Brief Inference)**: state the
-   one-line **Design Read** — page kind, audience, vibe, leaning design-system/aesthetic.
-   Apply **Section 1 (Three Dials)**: set `DESIGN_VARIANCE` / `MOTION_INTENSITY` /
-   `VISUAL_DENSITY` from the inference table (baseline 8/6/4 if nothing overrides). Apply
-   **Section 2 (Brief -> Design System Map)**: if the brief matches a real design system
-   (Fluent/Material/Carbon/Polaris/Atlassian/Primer/GOV.UK/USWDS/Radix/shadcn), name it and use
-   the official package — do not hand-roll its CSS.
+1. Read `TASTE_CORE.md` (distilled from the vendor dir — ~7KB instead of ~100KB; read the
+   vendor files ONLY if it lacks something you need). Apply **Section 0 (Brief Inference)**:
+   state the one-line **Design Read** — page kind, audience, vibe, leaning
+   design-system/aesthetic. Apply **Section 1 (Three Dials)**: set `DESIGN_VARIANCE` /
+   `MOTION_INTENSITY` / `VISUAL_DENSITY` from the inference table (baseline 8/6/4 if nothing
+   overrides). Apply **Section 2 (Brief -> Design System Map)**: if the brief matches a real
+   design system (Fluent/Material/Carbon/Polaris/Atlassian/Primer/GOV.UK/USWDS/Radix/shadcn),
+   name it and use the official package — do not hand-roll its CSS.
 2. If a screenshot is provided -> read `vendor/taste-skill/image-to-code-skill.md` and follow
    it (generate reference image, analyze structure, translate faithfully).
-3. Read `vendor/taste-skill/redesign-skill.md` to set mockup generation direction (six
-   categories: typography, color/surfaces, layout, interactivity, content, components).
+3. Use `TASTE_CORE.md` **Section 3** to set mockup generation direction (six categories:
+   typography, color/surfaces, layout, interactivity, content, components). Only open
+   `vendor/taste-skill/redesign-skill.md` if you need its itemized problem/fix lists.
 4. If `MOTION_INTENSITY` > baseline (mockups will have real animation, not just static
    layout): invoke the `emil-design-eng` skill for transition/easing/timing decisions on
    the interactivity category. Skip silently if not installed — `/design` never depends

@@ -29,7 +29,7 @@ debate|Architecture calls, UI/UX choices, or "what should we build next" when yo
 update|Not sure if you should update
 trim-gain|When you want to see trim's ROI in numbers.
 skill-audit|Wondering if your skills are well-structured or missing something
-review|Before merging any non-trivial change, or when a codebase needs a cleanup pass
+review|Before merging any non-trivial change, when a codebase needs a cleanup pass, or when you want fixes informed by what's currently trending
 lockstep|You want "don't code yet" to actually hold, not just get ignored a few messages later
 emil-design-eng|Automatically, inside /design and /design-audit, when a mockup has real animation
 animation-vocabulary|You know the motion but not what to call it when prompting an AI or designer

@@ -17,6 +17,22 @@ else
   record FAIL "hook unit tests (see /tmp/verify-tests.log)"
 fi
 
+# 1b. hook shell tests — check 1's glob is *.test.js only, so *.test.sh ran nowhere.
+ok=1
+shopt -s nullglob
+sh_tests=(hooks/tests/*.test.sh)
+for t in "${sh_tests[@]}"; do
+  bash "$t" >>/tmp/verify-sh-tests.log 2>&1 || { echo "FAILED: $t"; ok=0; }
+done
+shopt -u nullglob
+if [ "${#sh_tests[@]}" -eq 0 ]; then
+  record PASS "hook shell tests (none present)"
+elif [ "$ok" = 1 ]; then
+  record PASS "hook shell tests (${#sh_tests[@]})"
+else
+  record FAIL "hook shell tests (see /tmp/verify-sh-tests.log)"
+fi
+
 # 2. bash -n over every tracked .sh
 ok=1
 while IFS= read -r f; do [ -z "$f" ] && continue; bash -n "$f" || ok=0; done < <(git ls-files '*.sh')

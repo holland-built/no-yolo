@@ -113,7 +113,7 @@ Design tokens are read as **context, not constraint** — a redesign can replace
 | `/debate` | Product-team persona debate → YES/NO/CONDITIONAL verdict | — |
 | `/eli5` | Plain-English explanation before you commit | — |
 | `/prompt-scan` | Snapshots system prompts + model release notes into `learnings.md` | — |
-| `/better_prompt` | Rewrites a rough prompt with target/scope/criterion (run `/prompt-scan` first) | — |
+| `/better-prompt` | Rewrites a rough prompt with target/scope/criterion (run `/prompt-scan` first) | — |
 | `/last-30` | Last-30-days trending signal from GitHub/HN/YouTube/X | — |
 | `/md-check` | Audits `~/.claude/` docs for bloat and duplicates | `--fix` · `--drift` · `--pre FILENAME` |
 | `/release` | Context-aware publish via repo-root `SHIP.md`; stops if none exists | `[env]` `--auto` |

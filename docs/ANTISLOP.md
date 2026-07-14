@@ -34,7 +34,8 @@
 ---
 
 ## GUI Slop
-> This section mirrors the slop fingerprint in `~/.claude/docs/UI_MOCKUPS.md`. Canonical copy for `/antislop` extraction. Update both files when adding patterns.
+> **This list is canonical.** `/antislop`, `/design`, `/build`, and `UI_MOCKUPS.md` all read it — add new patterns HERE and nowhere else.
+> `UI_MOCKUPS.md` holds a small set of deliberate mockup-specific kill rules *on top of* this list; it does not mirror it. Do not copy this list into a skill.
 
 - **Gradient hero banner** — purple→blue full-bleed top section as default page header
 - **Uniform card grid** — rounded cards with drop shadows as the default layout for any list
@@ -56,3 +57,37 @@
 - **Rounded pill buttons** — `border-radius: 9999px` on all buttons regardless of context
 - **Table with alternating row shading** — zebra stripe tables as default, even for small datasets
 - **"Powered by" footer badge** — attribution badge in bottom-right corner
+
+### Template & framing tells
+- **Starter-template look** — could pass as a Tailwind UI, shadcn, or Material UI starter with the copy swapped
+- **Accent-only color** — blue, purple, or teal as the ONLY accent, with zero typographic contrast
+- **Radius as the design** — rounded corners (>8px) carrying the entire visual identity
+- **Flat type** — sans-serif body with no hierarchy beyond font size
+- **Glassmorphism panels** — frosted blur panels used as decoration
+- **Fake dark mode** — navy (#1a1a2e) standing in for true dark
+- **Accordion-only** — everything collapsed behind chevrons with no other structural idea
+
+### Marketing-page tells
+- **"Trusted by X companies"** — logo strip / social-proof row
+- **Testimonial cards** — avatar + star rating + quote
+- **Three-tier pricing** — Starter / Pro / Enterprise, exactly three
+- **"Get started free"** — that or "Start for free" as primary CTA copy
+- **"How it works"** — numbered circle steps
+- **Four-column link footer**
+- **Feature grid** — icon + title + 2-line description in 3 equal columns
+- **Full-bleed image banner** — dark overlay + white centered headline
+- **Sticky nav opacity shift** — nav that fades or recolors on scroll
+
+### Component tells
+- **Hollow outline icons** — as the only iconography
+- **Uniform icon weight** — monochrome set where every icon reads identically
+- **Gradient CTA** — blue-to-purple, teal-to-green button fills
+- **Avatar overlap stack** — "+3 users" member-count pile
+- **Chip-only categorization** — colored tag badges as the only category signal
+- **Pill search bar** — full-width rounded search input
+- **Shadow-only dropdown** — white background plus a subtle box-shadow, nothing else
+- **Light-blue row hover** — table rows that highlight in pale blue only
+- **Bottom-right success toast** — green checkmark, corner placement
+- **Right-sliding modal/drawer** — with an × close button
+- **"Learn more →"** — generic link text
+- **Decorative animation** — fade-in on scroll, entrance bounces, motion serving no information purpose
