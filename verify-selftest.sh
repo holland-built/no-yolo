@@ -112,6 +112,17 @@ EOF
 assert_red "hook paths exist" "check 5 catches a hook path that does not exist"
 cp "$TMP/settings.example.json.bak" settings.example.json
 
+# 5b. catalog lock — edit a SKILL.md description, the lock must notice
+backup skills/eli5/SKILL.md
+python3 - <<'EOF'
+p = "skills/eli5/SKILL.md"
+s = open(p).read()
+s = s.replace("description: ", "description: SELFTEST SABOTAGE. ", 1)
+open(p, "w").write(s)
+EOF
+assert_red "catalog lock" "check 5b catches an edited SKILL.md description"
+cp "$TMP/SKILL.md.bak" skills/eli5/SKILL.md
+
 # 6. README format headings
 backup docs/README_FORMAT.md
 echo '## zz-selftest-heading-that-is-not-in-readme' >> docs/README_FORMAT.md
