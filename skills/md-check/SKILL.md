@@ -102,8 +102,14 @@ were verified as matching. Exit 0 = nothing has moved since then; **stop, report
 |---|---|
 | `TRUTH CHANGED: <skill>` | SKILL.md description edited — its rows may now lie |
 | `ROW CHANGED: <skill> @ <file>` | a catalog row was edited — may now misdescribe the skill |
+| `STRUCTURE CHANGED: <skill>` | SKILL.md `## ` headings moved — its `rel:` row describes the pipeline, so it may now lie |
 | `UNLOCKED: <skill>` | never verified — needs a Step 2 pass |
 | `ROW ADDED / REMOVED` | a catalog gained or lost a row |
+
+`rel:` rows describe a skill's INTERNALS, so their truth is the SKILL.md body — but hashing the
+whole body would flag on every typo and become noise you learn to ignore. It hashes the heading
+skeleton instead: a `rel:` row describes a pipeline, and the pipeline IS the `## ` headings.
+Headings move → real suspicion. Prose edits → silence.
 
 ### Step 2 — Judgment: ONLY on what Step 1 flagged
 
@@ -134,10 +140,15 @@ Only non-OK rows. Then: `X skills flagged by lock, Y drifted, lock re-sealed`.
 ### What this does NOT catch — state it in the output
 
 - **A row that was always wrong and never edited.** The lock proves *nothing moved*, not
-  *everything is true*. Only a full baseline sweep (Step 2 over every skill, `--drift --all`)
-  establishes truth; the lock preserves it afterward.
-- **`rel:` and `bolt:` rows** in STORIES.md are not hashed — they describe relationships, not a
-  skill's own description. Check them by hand during a baseline sweep.
+  *everything is true*. Only a full baseline sweep (Step 2 over every skill) establishes truth;
+  the lock preserves it afterward.
+- **A `rel:` row that goes stale without the headings moving.** Rewrite a phase's mechanics
+  while keeping its heading and the lock stays green. That is the deliberate price of not
+  flagging on every typo.
+- **`bolt:` rows** (`fallow`, `gh`, `draw`) are not hashed — they describe external tools with
+  no SKILL.md to hash against. Three rows, rarely change; check by hand.
+- **`rel:` rows for untracked third-party skills** (improve, trim*) are not hashed — no tracked
+  SKILL.md to compare against.
 - Never report "no drift" on a green lock. Report "nothing changed since last verified."
 
 ---

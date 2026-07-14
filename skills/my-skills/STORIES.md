@@ -41,19 +41,19 @@ trim-review|PR feels too big? `/trim-review` reads the diff and tells you what t
 
 # ── Section 3 — Relationships (prefix rel:) ───────────────────────────────────
 rel:review|Pulls a `/last-30` trend radar (Phase 0, skipped by "quick review"), loads CODE_REVIEW.md, then fans out three parallel diff passes (correctness/reuse, trim-review over-engineering, Karpathy surgical+simplicity) AND always runs the whole-codebase health pass (fallow dead-code/dupes/health/security/audit + trim-audit + trim-debt + improve) in the same run, no gates between phases. In `~/.claude` it adds md-check + skill-audit. Merges everything into one ranked list, then step-walks each fixable finding for individual approval (`--auto` batches instead). Secrets and Improve findings are never auto-applied, by design.
-rel:build|Full pipeline inline — evidence → plan → Opus plan → approval gate → mockup gate → TDD → Sonnet build → regression → quality gates → prove. Every gate is hard. Opus plans, Sonnet builds, no shortcuts.
+rel:build|Coordinator dispatches, never codes inline — evidence → plan → Opus plan → approval gate → mockup gate (only if ui_change) → TDD → Sonnet build → regression → quality gates → prove. Trivial fixes get a documented fast path skipping plan/mockup.
 rel:diagnose|Solo mode: stands alone — pure step-by-step root-cause debugging. --debate mode: reads the codebase itself before spawning 6 parallel Opus personas. No setup needed beyond a bug description.
 rel:last-30|Uses WebSearch and the exa MCP plugin to hit 4 sources in parallel. Requires exa plugin in settings.json for best results.
-rel:md-check|Stands alone — pure shell + Read. No setup. Other skills can call it with --pre flag as a pre-creation gate.
+rel:md-check|Drift mode shells to catalog_lock.py --check, then regen.py + --relock, reading catalog-lock.json; --fix adds Edit/Write behind an approve-all gate. Other skills call it with --pre as a pre-creation gate.
 rel:antislop|Reads ANTISLOP.md (writing tells + GUI slop). No subagents, no web calls — pure in-context pattern match.
 rel:prompt-scan|Reads 8 system MD files sequentially + WebFetch to Anthropic docs for release notes. Rewrites learnings.md sections 1-5 fresh on every run — only section 6 (dated release-note snapshots) appends over time.
 rel:better-prompt|Reads learnings.md then rewrite prompt inline. No subagents, no web calls — pure in-context reasoning against the learned rules.
 rel:design-audit|The audit itself is read-only. Fires 5 parallel lens agents (Taste/Swiss/UIwiki/WCAG/CSS-health), then a separate adversarial agent that must confirm each Critical with file:line or downgrade it. Calls Taste sub-skills when installed, embedded fallbacks otherwise. Saying "fix it" after triggers a real 10-mockup fix pipeline with build/lint/Playwright verification.
-rel:design|Step 0 seeds from Awesome DESIGN.md brand systems. Step 1 calls Taste image-to-code + redesign sub-skills. Step 2 fans out 10 Opus mockup agents (8 paradigms + 2 wild); a slop validator regenerates rejects. After the pick gate, an Opus agent plans and Sonnet subagents build against disjoint file clusters, then Playwright smokes it.
+rel:design|Three modes routed by Mode select: fresh-gen (10 Opus mockups, slop validator, pick gate, Opus plan, Sonnet build), COMPONENT-PULL (prefab pull + preview/confirm gate), MOCKUP-MATCH (verbatim port to <Name>V2, overlay-screenshot done gate). Plus an apply-spec branch. Real done gate is Step 5.6's visual diff, not Playwright.
 rel:drawio-skill|Uses the draw.io tool for hand-placed coordinates on normal diagrams; an optional Graphviz auto-layout script only kicks in for large, layout-heavy diagrams (>~15 nodes).
-rel:video-to-kb|Uses Groq Whisper to transcribe the video cheaply, then files it into your Obsidian notes. A one-hour talk is done in ~2 minutes.
+rel:video-to-kb|Two-phase with a hard manual gate: Phase 1 saves the transcript and stops, waiting for you to say "process it" before Phase 2 writes wiki pages. Fail-fast preflight checks vault + Groq key first; Whisper only runs if the video lacks native captions.
 rel:tdd|Runs your test command, and if a failing test is confusing it tells you to switch to `/diagnose` yourself — no automatic handoff.
-rel:plan|Uses the question-prompt tool to interview you one item at a time — no dependencies.
+rel:plan|Prose-driven interview, one question at a time, no question tool. Checkpoints every answer to a brainstorms/ file, and its Gate hard-requires routing the locked summary through better-prompt before dispatching /build or /design.
 rel:improve|Sends out explorer agents in parallel to survey the codebase, then writes plan files. Never edits code.
 rel:trim|Stands alone — no setup. The simplicity enforcer, always available.
 rel:trim-audit|Stands alone — no setup. Whole-repo over-engineering hunt.
@@ -62,7 +62,7 @@ rel:trim-review|Stands alone — no setup. Diff review for what to delete.
 rel:trim-help|Stands alone — no setup. The trim cheat-sheet.
 rel:my-skills|Stands alone — no setup. This inventory tool.
 rel:my-md|Stands alone — no setup. Lists your markdown files.
-rel:whats-next|Stands alone, read-only. Scans your in-progress work and git status.
+rel:whats-next|Queue-first gate: reads .pending-tasks.md, marks the next item done, and runs it — routing to a named skill or spawning Opus+Sonnet for a build task — then stops. Only scans git status as the empty-queue fallback.
 
 # ── Section 4 — Bolt-ons (prefix bolt:) ──────────────────────────────────────
 bolt:fallow|Finds code nobody uses — dead leftovers, dupes, junk. /review runs it in the health pass. Install: `npm install -g fallow`. Free, fast, no AI.

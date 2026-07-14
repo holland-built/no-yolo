@@ -9,6 +9,9 @@ INPUT=$(cat)
 CAVE=$(bash "$HOME/.claude/hooks/caveman-statusline.sh" 2>/dev/null)
 
 # --- parse stdin JSON (tab-delimited so paths with spaces survive) ---
+# MODEL_ID/TRANSCRIPT/COST are positional placeholders: unread, but required to
+# land the later fields (REASON..WK) in the right variables.
+# shellcheck disable=SC2034
 IFS=$'\x1f' read -r CWD MODEL_ID MODEL_NAME TRANSCRIPT COST REASON THINK CTX FIVEH WK <<EOF
 $(printf '%s' "$INPUT" | python3 -c '
 import json,sys,time
@@ -64,12 +67,6 @@ if [ -n "$BRANCH" ] && [ -n "$(git -C "$CWD" status --porcelain 2>/dev/null)" ];
   DIRTY="*"
 fi
 
-# --- cost: format "$0.42", blank when zero/absent ---
-COSTSTR=""
-if [ -n "$COST" ]; then
-  COSTSTR=$(COST="$COST" python3 -c 'import os; c=float(os.environ.get("COST") or 0); print(f"${c:.2f}" if c>0 else "")' 2>/dev/null)
-fi
-
 # --- cc-whoami: active config profile (work vs personal) ---
 CC_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude}"
 case "$CC_DIR" in
@@ -87,14 +84,14 @@ ENV_RAW="${APP_ENV:-${DEPLOY_ENV:-${ENVIRONMENT:-${ENV:-$NODE_ENV}}}}"
 if [ -z "$ENV_RAW" ]; then
   case "$BRANCH" in
     main|master|prod|production) ENV_RAW="prod" ;;
-    stag*|staging)               ENV_RAW="staging" ;;
+    stag*)                       ENV_RAW="staging" ;;
     dev|develop|development)     ENV_RAW="dev" ;;
     ""|HEAD)                     ENV_RAW="" ;;
     *)                           ENV_RAW="$BRANCH" ;;
   esac
 fi
 case "$ENV_RAW" in
-  prod*|production) ENV_COLOR="38;5;203" ;;  # red
+  prod*)            ENV_COLOR="38;5;203" ;;  # red
   stag*)            ENV_COLOR="38;5;215" ;;  # amber
   dev*)             ENV_COLOR="38;5;114" ;;  # green
   *)                ENV_COLOR="38;5;75"  ;;  # blue
