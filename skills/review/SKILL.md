@@ -1,8 +1,8 @@
 ---
 name: review
-description: Use this skill when the user types /review, says 'review this', 'check the diff', 'code health', 'run health pass', or 'review before merge'. One mode, always thorough — reviews the diff AND the whole codebase (fallow dead-code/dupes/health/security/audit + trim + improve), max effort, every time. Bakes in secret scan and antislop on any .md changes automatically. Shows one ranked findings list, waits for a single approve-all, then fixes everything approved. --auto skips that gate for unattended runs.
+description: Use this skill when the user types /review, says 'review this', 'check the diff', 'code health', 'run health pass', or 'review before merge'. One mode, always thorough — reviews the diff AND the whole codebase (fallow dead-code/dupes/health/security/audit + trim + improve), max effort, every time. Bakes in secret scan and antislop on any .md changes automatically. Shows one ranked findings list, waits for a single approve-all, then fixes everything approved. --auto skips that gate for unattended runs. --step walks findings one at a time instead of the batch gate.
 user-invocable: true
-argument-hint: "[path] [--auto]"
+argument-hint: "[path] [--auto] [--step]"
 allowed-tools:
   - Bash
   - Read
@@ -17,10 +17,11 @@ Arguments: $ARGUMENTS
 ## Flag Parsing
 
 - `--auto` present → skip the final approval gate; auto-apply every fixable finding (unattended/CI use)
+- `--step` present → walk fixable findings ONE AT A TIME in Phase 3 instead of the single approve-all gate. Mutually exclusive with `--auto` — if both given, `--auto` wins (note it in the roll-up).
 - Any remaining non-flag text → optional path target for the codebase pass (default: `.`)
 
 ```bash
-PATH_ARG=$(echo "$ARGUMENTS" | sed 's/--auto//g' | xargs)
+PATH_ARG=$(echo "$ARGUMENTS" | sed 's/--auto//g; s/--step//g' | xargs)
 PATH_ARG="${PATH_ARG:-.}"
 ```
 
@@ -176,6 +177,20 @@ Not installed → note in roll-up, skip. Installed → invoke `improve` with goa
 
 Types: **Token Waste**, **YAGNI**, **Over-engineering**, **Deterministic**. Improve never implements by design — it produces a plan/issue only. Fixable: **No**, always, regardless of approval — this is a hard rule, not a gate.
 
+### H4 — MD Hygiene (~/.claude only)
+
+Run only when `git rev-parse --show-toplevel` equals `$HOME/.claude` (this repo IS a skills/MD library). Otherwise skip and note `H4: skipped — not the ~/.claude repo` in the roll-up.
+
+```bash
+[ "$(git rev-parse --show-toplevel 2>/dev/null)" = "$HOME/.claude" ] && echo "claude-repo:yes" || echo "claude-repo:no"
+```
+
+When yes → invoke `md-check` via the Skill tool (audit mode: dupes, drift, orphans). Fold its findings into the Phase 3 unified table as 📝/🟡 rows. Duplicate-rule and orphan findings are informational (Fixable: No unless md-check itself would apply them). Table columns: `| Kind | File | Issue | Fixable |`.
+
+### H5 — Skill Structure (~/.claude only)
+
+Same ~/.claude gate as H4 (reuse the yes/no result). When yes → invoke `skill-audit` via the Skill tool (default audit mode: bucket fit, component gaps, missing verifiers, trigger conditions). Fold its findings into the Phase 3 unified table (Fixable: No — skill-audit reports, user decides). Table columns: `| Skill | Dimension | Issue |`. Note in roll-up if skipped.
+
 ---
 
 ## Phase 3 — Unified Findings & Approval
@@ -193,6 +208,12 @@ No praise, no summary prose — findings only.
 
 **Approval gate:**
 - `--auto` present → skip this prompt, proceed straight to Apply Findings for every Fixable: Yes row
+- `--step` present (and not `--auto`) → **Step mode**: do NOT show the single y/n. Instead walk each **Fixable: Yes** finding in severity order, one prompt each:
+
+  `[i/N] path:line — <emoji> <severity>: <problem>. Fix: <fix>.`
+  `Apply? (y = apply / n = skip / e = edit-then-apply / a = apply this + all remaining fixable / q = stop, apply nothing further)`
+
+  Rules for step mode: `y` applies that one finding immediately then advances; `n` skips and advances; `e` lets the user amend the fix before applying; `a` applies the current finding and every remaining fixable one without further prompts (the escape hatch); `q` stops — findings already applied stay, the rest are left. Non-fixable rows (🔑 Secret, Improve, trim-debt, fallow dupes/health/security/audit) are NEVER prompted — they're display-only, same as today. After the walk, continue to the normal Apply Findings summary table showing what was applied vs skipped.
 - Otherwise → ask exactly: **"Approve? Applies every Fixable finding above. (y/n)"**
   - y → Apply Findings
   - n → stop, nothing applied, findings list stands as the output
@@ -226,6 +247,8 @@ One master summary after everything completes:
 | H1 | Fallow (5 checks) | N | N (dead-code only) | N | ✅ / ⚠️ missing |
 | H2 | Trim audit + debt | N | N | N | ✅ / ⚠️ missing |
 | H3 | Improve | N | 0 | 0 | ✅ / ⚠️ missing |
+| H4 | MD hygiene (md-check) | N | N | N | ✅ / skipped (not ~/.claude) |
+| H5 | Skill structure (skill-audit) | N | 0 | 0 | ✅ / skipped (not ~/.claude) |
 | **Total** | | **N** | **N** | **N** | |
 
 ---
@@ -240,3 +263,5 @@ One master summary after everything completes:
 - Missing trim/improve/fallow = not a failure — skip that sub-phase silently, show it in the roll-up, keep going.
 - Never skip a Fallow command — run all five even if earlier ones find nothing.
 - One findings table, one approval gate. No per-phase prompts, no separate diff/health output blocks.
+- `--step` walks only Fixable findings, one prompt each, with `a` to batch-apply the rest and `q` to bail. Non-fixable findings are never prompted. Default (no flag) keeps the single approve-all gate.
+- H4 (md-check) and H5 (skill-audit) run ONLY when the reviewed repo is ~/.claude — they're hardwired to global config paths. In any other repo they're skipped and noted, so `/review` elsewhere is unchanged.
