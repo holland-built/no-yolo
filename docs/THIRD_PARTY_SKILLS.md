@@ -21,6 +21,15 @@ If the local path doesn't exist yet (fresh clone, or never installed), the skill
 fall back to their own built-in FALLBACKS block — nothing breaks, you just get the baked-in
 minimum instead of the real upstream rules until you run the install command.
 
+## Local patches applied on top of upstream (a reinstall silently reverts these)
+
+| Skill | Patch | Why | Re-apply after reinstall |
+|---|---|---|---|
+| improve | added `user-invocable: true` to its frontmatter | Upstream ships without it, so the `/improve` command this repo advertises in `SKILL_TRIGGERS.md` never fired. `/review`'s H3 was unaffected: invoking a skill via the Skill tool ignores that field. | Re-add the line to `~/.agents/skills/improve/SKILL.md` |
+
+Check this table after any `npx skills@latest add ...`. These patches live outside git (the
+paths are gitignored symlinks), so nothing warns you when an install wipes them.
+
 To add a new row: pick an install command (usually `curl`/`gh` pulling specific files, wired
 into `/update vendor <name>` — see `skills/update/SKILL.md` Step 11), add the gitignore line
 for its local path, add a row here. Never commit the fetched content itself.

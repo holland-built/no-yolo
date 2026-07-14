@@ -88,7 +88,7 @@ Are we aligned? (yes / keep going / fix X)
 ## Independent Pre-Read Rule
 
 Before the first question, **do not parrot the user's problem statement back.** Instead:
-1. Read relevant code/files/graphify output independently.
+1. Read the relevant code and files independently.
 2. Form your own diagnosis — what does the evidence say the actual problem is?
 3. State your independent read *before* asking Q1: "Here's what I see in the code: [X]. My working theory is [Y]. Now let me probe the gaps..."
 4. If your read differs from the user's description, name the conflict explicitly and ask about it first.

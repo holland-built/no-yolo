@@ -94,7 +94,7 @@ Format output:
 
 ```
 📦 What you'd get:
-  + /graphify skill (new)
+  + /quick-mockup skill (new)
   + /brief skill (new)
   ~ PLANNING.md updated (rules changed)
 
@@ -259,7 +259,7 @@ Show last 5 states as a numbered list with plain-English dates:
 Your recent setup history:
   1. Today (current) — added /brief skill, updated PLANNING.md
   2. 3 days ago — fixed README typos
-  3. Last week — added graphify token-saving docs
+  3. Last week — added token-saving docs
 
 Which one do you want to go back to? (type the number)
 ```

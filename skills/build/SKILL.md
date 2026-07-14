@@ -35,7 +35,6 @@ This skill is project-agnostic. Before phase 0, detect the project's commands an
 - **Hotpatch** (if containerized) — e.g. `docker cp <file> <container>:/app/<file> && docker restart <container>`; otherwise changes go live via dev server.
 - **Primary source files** — single-file SPA (`index.html`) vs component tree (`src/**`).
 - **Golden-master tests to NOT touch** — note any (e.g. `sizingGoldenMaster.test.ts`); write new behavior tests separately.
-- **Knowledge-graph tooling** — note if the project has one (e.g. `graphify` + `graphify-out/`) and its update command (e.g. `graphify update .`).
 - **Critical path** — the project's money path / core user flow that must never break (e.g. your app's primary user flow: checkout → payment → confirmation). Note how to exercise it.
 - **Latest-stable gate** (greenfield / new core dep) — when scaffolding a NEW project or adding a core dependency (runtime, framework, language, core lib), do NOT pin the version from memory (it lags — this is how a new MCP got React 18 when 19 was current). Query the registry for the current stable version and pin that, per **CORE_RULES.md Rule 9** (`npm view <pkg> version`, `pip index versions <pkg>`, etc.; stable tag only, compat beat if the newest major isn't supported yet). Applies to greenfield with no existing surface too.
 - **Prefab component library (prefab-first — detect FIRST):** detect the project's component library per `~/.claude/skills/design/PREFAB_SOURCING.md` (Astryx deps → Astryx; components.json/@radix-ui/* → shadcn; @mui/*, @chakra-ui/*, …; none + React+lockfile → Astryx greenfield via `npx astryx init`; non-React/CDN-babel → none). Record `PREFAB` and state it in the stack line. Every interactive element in UI work is sourced from PREFAB by default — hand-building a primitive it provides is a flagged exception (sourcing gate, phase 3.5 Step D). Never install a second component library beside an existing one. Astryx path only: confirm exports with `node node_modules/@astryxdesign/core/docs.mjs <Name>`; never import a name not in `~/.claude/skills/design/ASTRYX_CATALOG.md`. Never block the build on any library.
@@ -50,7 +49,7 @@ Pick the evidence type by task:
 
 **A. UI / layout / "it looks wrong"** → Open the surface in Playwright at the failing viewport; `browser_evaluate` to dump LIVE DOM numbers (`clientWidth` vs `scrollWidth`, computed `display`/`overflow`/`position`, every element wider/taller than its parent). Walk UP from the symptom to the FIRST ancestor where the measurement breaks — that ancestor is the cause. State it as **"X breaks because property Y = Z (measured)"**. **Stress-test:** inject worst-case content (64-char unbreakable string), re-measure; if it still breaks the diagnosis is wrong — redo.
 
-**B. Backend / logic / data** → gather the equivalent fact pack: `graphify query`/`path`/`explain` to map the real call graph; read the actual function + its callers; reproduce with a failing test or a logged value (the OBSERVED wrong output vs expected); inspect the schema/types involved. State the cause as **"function/path X produces Y because Z (observed at file:line)"** — never "probably" or "should be".
+**B. Backend / logic / data** → gather the equivalent fact pack: map the real call graph by grepping the callers; read the actual function + its callers; reproduce with a failing test or a logged value (the OBSERVED wrong output vs expected); inspect the schema/types involved. State the cause as **"function/path X produces Y because Z (observed at file:line)"** — never "probably" or "should be".
 
 **C. Either** → produce a **minimal reproduction** before any fix. A bug you can't reproduce on demand, you can't prove fixed.
 
@@ -165,7 +164,7 @@ Fan out all agents in one parallel call (never one-at-a-time). Every agent MUST:
 After all agents complete: if any used `isolation: worktree`, merge each branch into the working
 branch, confirm merged (`git merge-base --is-ancestor <sha> HEAD`), then clean up —
 `git worktree remove` each `.claude/worktrees/agent-*` dir + `git branch -D` its branch.
-Run the detected build/typecheck command (if any) to catch errors before testing. If the project is containerized, hotpatch with the detected command. If the project has knowledge-graph tooling, refresh it now (e.g. `graphify update .` — AST-only, no API cost) so the next /build run's Phase 0 evidence reads from an accurate graph, not a stale one.
+Run the detected build/typecheck command (if any) to catch errors before testing. If the project is containerized, hotpatch with the detected command.
 
 ## 5.5 — Regression gate + fix loop (HARD)
 After build passes, run the full test suite (detected test command).

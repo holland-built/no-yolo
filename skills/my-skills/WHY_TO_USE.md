@@ -7,8 +7,9 @@ my-skills|You forget you have tools. This is the map
 design-audit|Five independent lenses catch what one reviewer misses — audit is read-only, fix gate keeps you in control before anything builds
 tdd|The RED test is proof you actually fixed it. Without it you're asserting, not proving
 design|10 mockups at once (8 distinct paradigms + 2 wild) + slop validator kills the generic — one pick becomes a full build plan
+quick-mockup|Gray boxes served over http:// and auto-opened, no brand tokens or slop-judge — satisfies "never show ASCII mockups" without the full /design pipeline
 ingest-docs|Dedupes against what's already there and tracks changes in a manifest — re-runs only touch what's new
-supacode-cli|Auto-activates in-session; no slash command to remember
+supacode-cli|`/supacode-cli` works standalone, and it auto-activates in-session too
 video-to-kb|Talks are perishable. One command turns them into permanent, searchable KB nodes
 whats-next|Prevents starting something new while something is already half-done
 improve|Vets every subagent finding itself before reporting; plans are written for a weaker model with zero session context

@@ -1,6 +1,6 @@
 # Skill Library — Improvement Recommendations
 
-Sourced from personal knowledge base. These are **additive, not corrective** — the KB *validates* the current skill library (run `/my-skills` for the live count); in fact most existing skills (plan, tdd, diagnose, code-review, graphify, trim pack) were designed FROM this research. Nothing below is applied; pick what's worth doing.
+Sourced from personal knowledge base. These are **additive, not corrective** — the KB *validates* the current skill library (run `/my-skills` for the live count); in fact most existing skills (plan, tdd, diagnose, code-review, trim pack) were designed FROM this research. Nothing below is applied; pick what's worth doing.
 
 Each row cites its KB source. Audited 2026-06-18.
 
@@ -13,7 +13,7 @@ Each row cites its KB source. Audited 2026-06-18.
 | **plan-codex** | Cross-model adversarial review — Codex + Claude iterate ≤5 rounds. Round 2+ catches "false fixes" (claimed-but-unwired changes, still-blocking awaits). Pre-build gate, complements post-build review. | OpenAI $20/mo + Codex | vid-plan-codex-review, pattern-adversarial-review |
 | **Nvidia MCP security scanner** | Pre-install audit of third-party skills/MCP servers (scans for exec, curl-pipe, cookie-paste vectors). Run before installing any external skill. | ~$5/repo | vid-new-vibe-coding-repos |
 | **Handy** | Local Whisper voice-to-text (free, offline). Pairs with `improve`: dictate thoughts → improve → GitHub issues → overnight agent loop. | free | vid-new-vibe-coding-repos |
-| **claude-context / LSP** | Symbol-precise navigation for big repos. LSP shipped in v2.0.7, off by default — enable for multi-language repos. Third option alongside graphify (structural) and vector index (semantic). | free | pattern-claude-code-harness, tool-claude-context |
+| **claude-context / LSP** | Symbol-precise navigation for big repos. LSP shipped in v2.0.7, off by default — enable for multi-language repos. Structural counterpart to a semantic vector index. | free | pattern-claude-code-harness, tool-claude-context |
 
 ---
 

@@ -63,6 +63,14 @@ for p in $(grep -oE '(\$HOME|~)/\.claude/hooks/[a-zA-Z0-9._-]+' settings.example
 done
 [ "$ok" = 1 ] && record PASS "hook paths exist" || record FAIL "hook paths exist"
 
+# 5b. catalog lock current — the menu (STORIES/TAGLINES/.../SKILL_TRIGGERS) still matches the
+#     SKILL.md descriptions it was last verified against. Mechanical: pure sha256, no LLM.
+if python3 skills/my-skills/catalog_lock.py --check >/tmp/verify-catalog.log 2>&1; then
+  record PASS "catalog lock current"
+else
+  record FAIL "catalog lock stale — run catalog_lock.py --check (see /tmp/verify-catalog.log)"
+fi
+
 # 6. README format: every '## ' heading in docs/README_FORMAT.md exists in README.md
 ok=1
 while IFS= read -r h; do grep -qF "$h" README.md || { echo "README missing: $h"; ok=0; }; done < <(grep '^## ' docs/README_FORMAT.md)
