@@ -1,5 +1,5 @@
 <!-- GENERATED FROM ~/.claude/memory/facts/ — DO NOT EDIT. Run /memory-compile. -->
-<!-- compiled 2026-07-13 -->
+<!-- compiled 2026-07-14 -->
 # Learned Preferences (compiled from curated memory)
 
 Compiled from the fact store. Each line links its source fact.
@@ -13,8 +13,9 @@ Compiled from the fact store. Each line links its source fact.
 
 ## Patterns
 - **Read target + imports before dispatching a file-modifying agent** — Before dispatching any agent that edits an existing file, the coordinator reads that file and its direct imports and writes an explicit 'already exists — do NOT recreate' section; cap agent output ~300 words. ([pattern-agent-read-before-dispatch](memory/facts/pattern-agent-read-before-dispatch.md))
-- **New skill creation checklist — 4 required steps** — Creating a skill requires 4 updates: SKILL.md with user-invocable true, trigger in SKILL_TRIGGERS.md, story in STORIES.md, delete any commands/ version if migrating ([pattern-new-skill-checklist](memory/facts/pattern-new-skill-checklist.md))
+- **New skill creation checklist — 4 required steps** — Creating a skill requires 4 updates: SKILL.md with user-invocable true AND its triggers in that same description, catalog rows in my-skills, relock the catalog, delete any commands/ version if migrating ([pattern-new-skill-checklist](memory/facts/pattern-new-skill-checklist.md))
 
 ## Reference
+- **Orca global Settings — what it actually contains** — What Orca (com.stablyai.orca) global Settings actually contains — don't invent toggles ([reference-orca-settings-surface](memory/facts/reference-orca-settings-surface.md))
 - **KB-mined Claude Code best practices** — High-signal Claude Code rules mined from the Obsidian KB (Karpathy/Cherny/Kochel) not yet in the global MD chain — apply when relevant. ([user-kb-best-practices](memory/facts/user-kb-best-practices.md))
 

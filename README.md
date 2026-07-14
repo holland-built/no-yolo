@@ -155,7 +155,7 @@ Run `/update` in any folder — no git knowledge needed. It fetches from GitHub 
 
 ## Add a new skill
 
-Make `skills/<name>/SKILL.md` with `user-invocable: true`, then add one-line entries to `TAGLINES.md`, `WHEN_TO_USE.md`, `WHY_TO_USE.md`, and `STORIES.md` (all in `skills/my-skills/`), plus a trigger block in `docs/SKILL_TRIGGERS.md`. Run `/release` to publish. Full checklist: `docs/NO_YOLO.md`.
+Make `skills/<name>/SKILL.md` with `user-invocable: true` and its triggers in that same `description` (the harness injects it — no trigger block anywhere else). Then add one-line entries to `TAGLINES.md`, `WHEN_TO_USE.md`, `WHY_TO_USE.md`, and `STORIES.md` (all in `skills/my-skills/`), run `regen.py`, and re-seal with `catalog_lock.py --relock`. Run `/release` to publish. Full checklist: `docs/NO_YOLO.md`.
 
 ## Update memory preferences
 
