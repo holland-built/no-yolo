@@ -12,6 +12,18 @@ sweep (a human or agent checking every row against SKILL.md, then running
 --relock) blesses it as current. After that, any further edit to either
 side — the SKILL.md description or the catalog row — trips a mismatch.
 
+STORIES.md `rel:<skill>` rows describe a skill's INTERNALS (its pipeline /
+phases), not its `description` field. Their truth source is the SKILL.md
+BODY -- but hashing the whole body would flag on every prose typo and
+become ignorable noise. Instead we hash the heading skeleton (`^## `
+lines, in file order): a `rel:` row describes a pipeline, and the pipeline
+IS the `## ` headings, so a heading reorder/add/remove is genuinely
+suspect while a prose edit is not. See `structure_sha`.
+
+`bolt:` rows describe external tools (fallow, gh, Chrome, Playwright,
+Graphviz, draw.io, Groq Whisper) that have no SKILL.md to hash against, so
+they remain unhashed by design -- they're skipped entirely, same as before.
+
 Modes:
     --check   (default) compare current hashes to the lock, report drift,
               exit 1 on any mismatch/addition/removal, exit 0 if all match.
@@ -36,6 +48,7 @@ PIPE_FILES = [
     "WHY_TO_USE.md",
 ]
 TRIGGERS_FILE = "docs/SKILL_TRIGGERS.md"
+REL_ROW_KEY = "skills/my-skills/STORIES.md#rel"
 
 
 def sha256(text: str) -> str:
@@ -93,6 +106,51 @@ def desc_sha(name: str) -> str:
     return sha256(description)
 
 
+def structure_sha(name: str) -> str:
+    """sha256 of a skill's `## ` heading skeleton, in file order.
+
+    STORIES.md `rel:` rows describe a skill's pipeline/phases, not its
+    frontmatter description -- their truth source is the SKILL.md BODY.
+    Hashing the whole body would flag on every prose typo and become
+    ignorable noise. The heading skeleton IS the pipeline (each `## `
+    section is a phase), so hashing just those lines, in order, flags real
+    pipeline changes (a phase added/removed/reordered) while staying
+    silent on wording tweaks within a phase. Order is meaningful (it's the
+    pipeline sequence) -- do NOT sort. Only exact `## ` (not `### `) counts.
+    """
+    path = REPO_ROOT / "skills" / name / "SKILL.md"
+    headings = [
+        line for line in path.read_text().splitlines() if line.startswith("## ")
+    ]
+    return sha256("\n".join(headings))
+
+
+def parse_rel_rows(relpath: str) -> dict:
+    """my-skills/<relpath> -> {name: row_sha} for `rel:<name>|...` rows only.
+
+    Only STORIES.md has rel: rows (they describe a skill's internals, not
+    its catalog description), so this is only ever called with STORIES.md.
+    Kept separate from parse_pipe_file because a stripped `rel:` name would
+    collide with that same skill's plain row in the same file.
+    """
+    path = HERE / relpath
+    result = {}
+    if not path.exists():
+        return result
+    for lineno, raw in enumerate(path.read_text().splitlines(), start=1):
+        line = raw.rstrip("\n")
+        if not line.strip() or line.lstrip().startswith("#"):
+            continue
+        if not line.startswith("rel:"):
+            continue
+        if line.count("|") == 0:
+            raise ValueError(f"{relpath}:{lineno}: no pipe in row: {line!r}")
+        name, _, value = line.partition("|")
+        name = name[len("rel:"):].strip()
+        result[name] = sha256(value.strip())
+    return result
+
+
 def parse_pipe_file(relpath: str) -> dict:
     """my-skills/<relpath> -> {name: row_sha}. Ignores blank/#/section lines."""
     path = HERE / relpath
@@ -138,12 +196,14 @@ def parse_triggers_file() -> dict:
 
 
 def compute_current() -> dict:
-    """{name: {"descSha": ..., "rows": {relpath: sha}}} for every tracked skill."""
+    """{name: {"descSha": ..., "structureSha": ..., "rows": {relpath: sha}}}
+    for every tracked skill."""
     names = tracked_skill_names()
     row_sources = {}
     for relpath in PIPE_FILES:
         row_sources[f"skills/my-skills/{relpath}"] = parse_pipe_file(relpath)
     row_sources[TRIGGERS_FILE] = parse_triggers_file()
+    row_sources[REL_ROW_KEY] = parse_rel_rows("STORIES.md")
 
     current = {}
     for name in names:
@@ -151,7 +211,11 @@ def compute_current() -> dict:
         for relpath, mapping in row_sources.items():
             if name in mapping:
                 rows[relpath] = mapping[name]
-        current[name] = {"descSha": desc_sha(name), "rows": rows}
+        current[name] = {
+            "descSha": desc_sha(name),
+            "structureSha": structure_sha(name),
+            "rows": rows,
+        }
     return current
 
 
@@ -197,6 +261,18 @@ def check() -> int:
             problems.append(
                 f"TRUTH CHANGED: {name} — SKILL.md description edited; "
                 f"re-verify its rows: {relpaths}"
+            )
+
+        old_structure_sha = old.get("structureSha")
+        has_rel_row = REL_ROW_KEY in cur["rows"] or REL_ROW_KEY in old.get("rows", {})
+        if (
+            old_structure_sha is not None
+            and cur["structureSha"] != old_structure_sha
+            and has_rel_row
+        ):
+            problems.append(
+                f"STRUCTURE CHANGED: {name} — SKILL.md headings changed; "
+                "re-verify its rel: row"
             )
 
         cur_rows = cur["rows"]

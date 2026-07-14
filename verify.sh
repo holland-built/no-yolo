@@ -4,7 +4,7 @@
 # Repo root is derived from this script's own location — never hardcoded.
 set -uo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-cd "$ROOT"
+cd "$ROOT" || { echo "cannot cd to $ROOT"; exit 1; }
 
 fail=0
 results=()
@@ -71,20 +71,38 @@ else
   record FAIL "catalog lock stale — run catalog_lock.py --check (see /tmp/verify-catalog.log)"
 fi
 
+# 5c. local third-party patches still applied (see docs/THIRD_PARTY_SKILLS.md).
+#     These live outside git on gitignored symlinks, so `npx skills add` reverts them
+#     with no warning. Skip silently where the path doesn't exist (CI, fresh clone) —
+#     this guards a local install, not the repo.
+IMPROVE_SKILL="$HOME/.agents/skills/improve/SKILL.md"
+if [ -f "$IMPROVE_SKILL" ]; then
+  if grep -q '^user-invocable: true' "$IMPROVE_SKILL"; then
+    record PASS "third-party patches applied"
+  else
+    record WARN "improve lost its user-invocable patch — /improve is dead; see docs/THIRD_PARTY_SKILLS.md"
+  fi
+fi
+
 # 6. README format: every '## ' heading in docs/README_FORMAT.md exists in README.md
 ok=1
 while IFS= read -r h; do grep -qF "$h" README.md || { echo "README missing: $h"; ok=0; }; done < <(grep '^## ' docs/README_FORMAT.md)
 [ "$ok" = 1 ] && record PASS "README format headings" || record FAIL "README format headings"
 
-# 7. shellcheck IF installed (warn-only first pass)
+# 7. shellcheck — BLOCKING at warning severity and above.
+#    Was warn-only for months: `record WARN` never sets fail=1, so it ran on every
+#    CI push (ubuntu-latest ships shellcheck), found real things, and could not fail
+#    the build. Nobody read it. A check that cannot go red is decoration.
+#    -S warning: errors+warnings block; style/info notes (SC2015 A&&B||C, SC2016
+#    single-quoted regexes, SC2013 for-over-grep) are deliberate here and don't.
 if command -v shellcheck >/dev/null 2>&1; then
-  if git ls-files '*.sh' | xargs shellcheck >/tmp/verify-shellcheck.log 2>&1; then
+  if git ls-files '*.sh' | xargs shellcheck -S warning >/tmp/verify-shellcheck.log 2>&1; then
     record PASS "shellcheck"
   else
-    record WARN "shellcheck findings (see /tmp/verify-shellcheck.log)"
+    record FAIL "shellcheck findings (see /tmp/verify-shellcheck.log)"
   fi
 else
-  record WARN "shellcheck not installed — skipped"
+  record WARN "shellcheck not installed — skipped (CI has it; install locally: brew install shellcheck)"
 fi
 
 printf '\n%-6s  %s\n' RESULT CHECK

@@ -34,7 +34,7 @@ assert_eq "node present: lockstep-guard exit code" "0" "$rc1"
 FAKE_HOME="$(mktemp -d)"
 
 # --- Case 2: PATH stripped, no node anywhere -> lockstep-guard.js -> exit 2 (fail closed) ---
-out2=$(env -i PATH=/nonexistent HOME="$FAKE_HOME" "$BASH_BIN" "$SHIM" "$REPO/hooks/lockstep-guard.js" 2>&1)
+env -i PATH=/nonexistent HOME="$FAKE_HOME" "$BASH_BIN" "$SHIM" "$REPO/hooks/lockstep-guard.js" >/dev/null 2>&1
 rc2=$?
 assert_eq "no node: lockstep-guard fail-closed exit code" "2" "$rc2"
 

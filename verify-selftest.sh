@@ -12,7 +12,7 @@
 # an EXIT trap, so a Ctrl-C or a crash still puts the repo back.
 set -uo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-cd "$ROOT"
+cd "$ROOT" || { echo "cannot cd to $ROOT"; exit 1; }
 
 TMP="$(mktemp -d)"
 declare -a TOUCHED=()
@@ -122,6 +122,12 @@ open(p, "w").write(s)
 EOF
 assert_red "catalog lock" "check 5b catches an edited SKILL.md description"
 cp "$TMP/SKILL.md.bak" skills/eli5/SKILL.md
+
+# 7. shellcheck — blocking at warning severity
+backup hooks/statusline.sh
+printf '\nzz_selftest_unused_var=1\n' >> hooks/statusline.sh
+assert_red "shellcheck" "check 7 catches a shellcheck warning"
+cp "$TMP/statusline.sh.bak" hooks/statusline.sh
 
 # 6. README format headings
 backup docs/README_FORMAT.md
