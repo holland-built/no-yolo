@@ -33,6 +33,7 @@
 | diagnose | Root-cause analysis: solo 6-phase or --debate for 6 Opus personas. | Stuck on a bug > 20 min — solo for systematic, --debate when multiple plausible theories | Solo: forces systematic evidence-gathering. --debate: six theories surface the one you missed |
 | debate | 7-persona product-team debate → contradiction map → one decisive verdict. | Architecture calls, UI/UX choices, or "what should we build next" when you want real pushback | Ends with YES/NO/CONDITIONAL and the one reason that settles it — no "it depends" |
 | improve | Read-only codebase audit across 9 categories → ranked findings → self-contained plans for an executor model. | Want a deep audit-plus-plan pass, not just a diff review | Vets every subagent finding itself before reporting; plans are written for a weaker model with zero session context |
+| research-improve | Trend-informed improvement plans: /last-30 radar fed into /improve, advisory only. | Want improvement ideas grounded in current trends, not just static analysis | Plans that account for what changed this month; lighter than a full /review |
 
 ## Prompting
 
