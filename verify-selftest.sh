@@ -123,6 +123,14 @@ EOF
 assert_red "catalog lock" "check 5b catches an edited SKILL.md description"
 cp "$TMP/SKILL.md.bak" skills/eli5/SKILL.md
 
+# 5bb. rendered menus — hand-edit the generated output, the check must notice.
+#      (The real-world case is the inverse: a source edited and re-locked without
+#      regen. Same comparison, and this direction is safe to restore.)
+backup skills/my-skills/RENDERED.md
+printf '\n| zz-selftest | sabotage | sabotage | sabotage |\n' >> skills/my-skills/RENDERED.md
+assert_red "rendered menus" "check 5bb catches a stale/hand-edited RENDERED.md"
+cp "$TMP/RENDERED.md.bak" skills/my-skills/RENDERED.md
+
 # 7. shellcheck — blocking at warning severity
 backup hooks/statusline.sh
 printf '\nzz_selftest_unused_var=1\n' >> hooks/statusline.sh

@@ -3,13 +3,20 @@
 pipe-delimited catalog sources (CATEGORIES.md, TAGLINES.md,
 TAGLINES_SHORT.md, WHEN_TO_USE.md, WHY_TO_USE.md).
 
-Self-test / acceptance command (must print nothing):
-    python3 skills/my-skills/regen.py && \
-    git diff --exit-code skills/my-skills/RENDERED.md skills/my-skills/RENDERED_FAST.md
-
 Run this after editing any of the five source files. Never hand-edit
 RENDERED.md or RENDERED_FAST.md directly — they are derived output.
+
+Modes:
+    (no args)  regenerate both RENDERED files
+    --check    render in memory and compare to what's on disk. Exit 1 if either
+               is stale. Writes NOTHING — a check must not mutate what it checks.
+
+Why --check exists: editing a source and re-locking the catalog WITHOUT regen
+left verify.sh fully green while RENDERED.md was stale. The catalog lock hashes
+the SOURCES, not this derived output, so it cannot see that gap. verify.sh calls
+--check so the gap cannot ship.
 """
+import sys
 from pathlib import Path
 
 HERE = Path(__file__).parent
@@ -87,9 +94,22 @@ def main():
     rendered = build_rendered(categories, taglines, when_to_use, why_to_use)
     rendered_fast = build_rendered_fast(categories, taglines_short)
 
-    (HERE / "RENDERED.md").write_text(rendered)
-    (HERE / "RENDERED_FAST.md").write_text(rendered_fast)
+    targets = [(HERE / "RENDERED.md", rendered), (HERE / "RENDERED_FAST.md", rendered_fast)]
+
+    if "--check" in sys.argv:
+        stale = [p.name for p, want in targets
+                 if not p.exists() or p.read_text() != want]
+        if stale:
+            print("STALE (a source changed but regen never ran): " + ", ".join(stale))
+            print("fix: python3 skills/my-skills/regen.py")
+            return 1
+        print(f"rendered menus: current ({len(targets)} files)")
+        return 0
+
+    for p, want in targets:
+        p.write_text(want)
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
