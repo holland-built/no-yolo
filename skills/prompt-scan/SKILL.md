@@ -70,7 +70,7 @@ File: `~/.claude/learnings.md`
 ```markdown
 # Learnings — Claude Code prompt context
 
-> **How this file works:** §1–5 are a LIVING snapshot — /prompt-scan OVERWRITES them each run. §4 is derived from ~/.claude/docs/SKILL_TRIGGERS.md. §6 is an append-only dated log — each scan PREPENDS one entry. /better-prompt reads §1–6.
+> **How this file works:** §1–5 are a LIVING snapshot — /prompt-scan OVERWRITES them each run. §4 is derived from each skill's own SKILL.md `description`. §6 is an append-only dated log — each scan PREPENDS one entry. /better-prompt reads §1–6.
 
 ---
 
@@ -86,13 +86,16 @@ File: `~/.claude/learnings.md`
 <from CORE_RULES.md — Opus plans / Sonnet codes, no inline planning, subagent execution>
 
 ### 4. Skill triggers
-> Derived from ~/.claude/docs/SKILL_TRIGGERS.md. Regenerate on each scan; do not hand-edit.
+> Derived from each skill's own SKILL.md `description` — the source of truth the harness injects.
+> `docs/SKILL_TRIGGERS.md` no longer carries per-skill blocks (they duplicated these descriptions).
+> Regenerate on each scan; do not hand-edit.
 
 | Skill | Trigger | When to use |
 |-------|---------|-------------|
-<one row per skill — generate from SKILL_TRIGGERS.md, e.g.:>
-<  grep -E "^- \*\*" ~/.claude/docs/SKILL_TRIGGERS.md | sed -E 's/\(`[^`]*`\)//; s/\*\*//g'>
-<map each line to Skill | Trigger | condensed when-to-use>
+<one row per tracked skill — generate with:>
+<  for f in $(git -C ~/.claude ls-files 'skills/*/SKILL.md'); do>
+<    printf '%s\t%s\n' "$(basename $(dirname $f))" "$(grep -m1 '^description:' ~/.claude/$f | cut -d: -f2-)"; done>
+<map each to Skill | trigger phrases from its description | condensed when-to-use>
 
 ### 5. Slop patterns
 <banned patterns from UI_MOCKUPS.md slop fingerprint + ANTISLOP.md if present — one bullet per pattern>

@@ -14,7 +14,7 @@ When working here, you are authoring public skills — write for a stranger, not
   - `skills/<name>/SKILL.md` with `user-invocable: true` in frontmatter (required for blue slash command in UI; description = trigger condition)
   - One-line entry in `skills/my-skills/TAGLINES.md`, `WHEN_TO_USE.md`, and `WHY_TO_USE.md`
   - Entry in `skills/my-skills/STORIES.md`
-  - Trigger block in `docs/SKILL_TRIGGERS.md` (if user-invocable)
+  - Triggers go in the skill's own `description` ("Use this skill when the user types /x, says 'y'…") — NOT in `docs/SKILL_TRIGGERS.md`, which is a routing rule only
   - Row in `README.md` skill table — format: `` | `/name` | what it does | modes & flags | `` (backtick + slash prefix required)
 
 ## What is safe to publish

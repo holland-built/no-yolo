@@ -27,7 +27,8 @@ Project-specific rules belong in that project's `CLAUDE.md`
 ## HARD RULE — This file is a pointer only
 
 No content except file imports and the workflow pointer table.
-Skill triggers live in `docs/SKILL_TRIGGERS.md` — add new ones there, not here.
+A skill's triggers live in its own `description` frontmatter, which the harness already injects.
+Do not add trigger blocks here or to `docs/SKILL_TRIGGERS.md` — that file is a routing rule only.
 If you are about to add anything else — STOP. Find or create the right MD file and point to it instead.
 
 ## Workflow
