@@ -25,4 +25,3 @@ supacode-cli|Drive Supacode terminal app
 lockstep|Hard block on edits
 quick-mockup|Throwaway layout mockup
 trim|Forces the simplest solution
-research-improve|Trend-informed improve plans

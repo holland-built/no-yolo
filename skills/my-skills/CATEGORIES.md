@@ -18,7 +18,6 @@ ingest-docs
 diagnose
 debate
 improve
-research-improve
 
 ## Prompting
 prompt-scan
