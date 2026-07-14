@@ -1,8 +1,8 @@
 ---
 name: review
-description: Use this skill when the user types /review, says 'review this', 'check the diff', 'code health', 'run health pass', or 'review before merge'. One mode, always thorough — reviews the diff AND the whole codebase (fallow dead-code/dupes/health/security/audit + trim + improve), max effort, every time. Bakes in secret scan and antislop on any .md changes automatically. Shows one ranked findings list, waits for a single approve-all, then fixes everything approved. --auto skips that gate for unattended runs. --step walks findings one at a time instead of the batch gate. In the ~/.claude repo it auto-runs trend research + skill/MD audit + one-at-a-time apply with no flags; elsewhere it's the standard batch code review.
+description: Use this skill when the user types /review, says 'review this', 'check the diff', 'code health', 'run health pass', or 'review before merge'. One mode, always thorough — reviews the diff AND the whole codebase (fallow dead-code/dupes/health/security/audit + trim + improve), max effort, every time. Bakes in secret scan and antislop on any .md changes automatically. Shows one ranked findings list, waits for a single approve-all, then fixes everything approved. --auto skips that gate for unattended runs. --step walks findings one at a time instead of the batch gate. By default in every repo it pulls /last-30 trends and walks fixes one at a time; in ~/.claude it also audits your skills and MD files. Say 'quick review' to skip trends or --auto for a single batch apply.
 user-invocable: true
-argument-hint: "[path] [--auto] [--step] [--research]"
+argument-hint: "[path] [--auto] [--quick]"
 allowed-tools:
   - Bash
   - Read
@@ -18,11 +18,11 @@ Arguments: $ARGUMENTS
 
 - `--auto` present → skip the final approval gate; auto-apply every fixable finding (unattended/CI use)
 - `--step` present → walk fixable findings ONE AT A TIME in Phase 3 instead of the single approve-all gate. Mutually exclusive with `--auto` — if both given, `--auto` wins (note it in the roll-up).
-- `--research` present → run **Phase 0 — Radar** (live `/last-30` trends) before the review. Auto-enabled in the ~/.claude repo (see Mode Resolution); a manual override elsewhere.
+- `--quick` present (or the user says "quick review") → skip Phase 0 radar this run. Research is ON by default in every repo; this is the opt-out.
 - Any remaining non-flag text → optional path target for the codebase pass (default: `.`)
 
 ```bash
-PATH_ARG=$(echo "$ARGUMENTS" | sed 's/--auto//g; s/--step//g; s/--research//g' | xargs)
+PATH_ARG=$(echo "$ARGUMENTS" | sed 's/--auto//g; s/--step//g; s/--quick//g; s/--research//g' | xargs)
 PATH_ARG="${PATH_ARG:-.}"
 ```
 
@@ -33,10 +33,11 @@ PATH_ARG="${PATH_ARG:-.}"
 ```
 
 The effective modes the rest of the skill uses:
-- **RESEARCH on** when `--research` is given OR `CLAUDE_REPO=1`. Drives Phase 0.
-- **STEP on** when `--step` is given OR (`CLAUDE_REPO=1` AND `--auto` NOT given). Drives the Phase 3 walk.
+- **RESEARCH on by default in every repo.** OFF only when `--quick` is passed or the user says "quick review". Drives Phase 0.
+- **STEP on by default in every repo.** OFF only when `--auto` is passed (batch/CI). Drives the Phase 3 walk.
+- **Skill/MD audit (H4/H5) runs only when `CLAUDE_REPO=1`** — those tools (md-check, skill-audit) are hardwired to ~/.claude paths.
 
-In the ~/.claude repo, a bare `/review` (no flags) runs RESEARCH + H4/H5 + STEP automatically — the full skill/MD/code audit, walked one at a time. In any other repo none of these auto-fire and `/review` is the standard batch code review. A user who says "quick review" means: skip Phase 0 radar this run.
+So a bare `/review` in ANY repo = pull `/last-30` trends + review the code + walk fixes one at a time. In the ~/.claude repo it additionally audits your skills and MD files. "quick review" skips the trend pull; `--auto` applies everything in one batch instead of one-at-a-time.
 
 Effort is always max — exhaustive cross-file analysis on every pass. There is no lower setting.
 
@@ -291,4 +292,4 @@ One master summary after everything completes:
 - One findings table, one approval gate. No per-phase prompts, no separate diff/health output blocks.
 - `--step` walks only Fixable findings, one prompt each, with `a` to batch-apply the rest and `q` to bail. Non-fixable findings are never prompted. Default (no flag) keeps the single approve-all gate.
 - H4 (md-check) and H5 (skill-audit) run ONLY when the reviewed repo is ~/.claude — they're hardwired to global config paths. In any other repo they're skipped and noted, so `/review` elsewhere is unchanged.
-- In the ~/.claude repo, bare `/review` auto-runs Phase 0 radar + H4/H5 + step-walk (RESEARCH + STEP on by default) — no flags needed. Elsewhere all three stay off unless the matching flag is passed, so `/review` in any project is the unchanged batch code review. "quick review" = skip Phase 0 this run.
+- Bare `/review` in ANY repo runs Phase 0 radar + step-walk by default; in ~/.claude it also runs H4/H5 skill/MD audits. Opt-outs: `--quick` (or "quick review") skips the radar; `--auto` replaces the one-at-a-time walk with a single batch apply.
