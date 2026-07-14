@@ -2,7 +2,7 @@
 | --- | --- | --- | --- |
 | design | Fresh UI mockup generation | quick-mockup | Throwaway layout mockup |
 | build | Full feature build pipeline | plan | Pre-build decision interview |
-| review | Diff + codebase health check | last-30 | Trending last 30 days |
+| review | Diff, health + trend review | last-30 | Trending last 30 days |
 | video-to-kb | YouTube video to KB note | ingest-docs | Docs to context files |
 | diagnose | Root-cause bug analysis | debate | 7-persona decision debate |
 | improve | Deep audit, generates plans | prompt-scan | Scan prompts, log learnings |

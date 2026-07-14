@@ -19,7 +19,7 @@ Feature: $ARGUMENTS
 
 ## Routing — pick the right tool BEFORE running the pipeline
 - **Spatial/layout bug** (overlap, clip, truncation) → Phase 0A (Playwright DOM measurement). Trivial fix path if cause already measured.
-- **Color/typography/token/spacing nits** → NOT /build. Use `/design-audit` to find issues or `/design-fast` to see options.
+- **Color/typography/token/spacing nits** → NOT /build. Use `/design-audit` to find issues or `/design` to see options.
 - **Visual/aesthetic redesign** → /build WITH the mockup gate.
 - **Trivial fix** (1–2 files, cause already known) → fast path: phase 0 only → skip plan → approve → build.
 - **Code quality / dead code / YAGNI audit** → STOP, run `/review` instead.
@@ -88,7 +88,7 @@ Skip entirely for backend-only changes.
 [ -f design-system/MASTER.md ] && echo "MASTER_FOUND" || echo "NO_MASTER"
 ```
 
-- **If `design-system/MASTER.md` exists** (written by `/ui-ux --persist`): read it — use its color palette, typography, spacing scale, and layout rules as hard constraints for all 10 variants. Print: `Using design system from design-system/MASTER.md`.
+- **If `design-system/MASTER.md` exists** (hand-authored, or a DESIGN.md spec fed through `/design --apply-spec`): read it — use its color palette, typography, spacing scale, and layout rules as hard constraints for all 10 variants. Print: `Using design system from design-system/MASTER.md`.
 - **If no MASTER.md**: extract tokens from the project's CSS (`:root` variables, font-family declarations, color palette, spacing scale).
 
 Either way, every variant MUST use these tokens verbatim — no made-up hex codes or font names.
@@ -104,42 +104,11 @@ Build **exactly 10 variants** as individual files `.mockups/<slug>/<slug>-v1.htm
 After all 10 are built, spawn ONE judge agent with all 10 HTML files. Instructions:
 > "You are an adversarial design critic. Read each variant's HTML. Reject any variant that matches ANY pattern in the slop fingerprint list below. Also reject any variant whose layout is functionally identical to another variant already in the list (deduplicate). Return the survivors with a one-line reason each survived."
 
-**Slop fingerprint — instant reject if ANY of these match:**
-- Card grid as primary layout (3+ column card deck, the same `.card` box repeated N times with slightly different content)
-- Accordion-only pattern with no other structural differentiation (all groups collapsed behind a chevron, nothing else going on)
-- Floating white/dark cards on a slightly different background as the only visual device
-- Looks like it could be a Tailwind UI, shadcn, or Material UI starter template
-- Blue, purple, or teal as the ONLY accent color with zero typographic contrast
-- Rounded corners (>8px) as the primary design expression
-- Sans-serif body with no typographic hierarchy beyond size
-- Sidebar nav with icon + label rows as the page's structural feature
-- Progress bars or pill badges as the primary data visualization
-- Hollow outline icons as the only iconography
-- Gradient CTA buttons (blue-to-purple, teal-to-green, etc.)
-- Hero section with centered headline + subtext + CTA button
-- "Glassmorphism" blur panels as decoration
-- Animations that serve no information purpose (fade-in on scroll, entrance bounces)
-- Footer with 4 columns of links
-- "Trusted by X companies" logo strip / social proof row
-- Testimonial cards with avatar + star rating + quote
-- Pricing table with exactly 3 tiers (Starter / Pro / Enterprise)
-- "Get started free" or "Start for free" as primary CTA copy
-- Dark mode that's just navy (#1a1a2e) — not true dark
-- Sticky nav that changes opacity or color on scroll
-- "How it works" section with numbered circle steps
-- Empty state with centered illustration + "No [items] yet" text
-- Search bar as a full-width rounded pill
-- Feature grid: icon + title + 2-line description, 3 equal columns
-- Full-width image banner with dark overlay + white centered headline
-- Skeleton loader placeholders pulsing gray
-- Avatar overlap stack showing "+3 users" / member count
-- Dropdown menus: white background + subtle box-shadow only
-- Tag/chip badges with colored backgrounds as only category visualization
-- Table rows that highlight on hover with light blue only
-- Success toast: bottom-right corner, green checkmark icon
-- Monochrome icon set where every icon has identical visual weight
-- "Learn more →" as generic link text
-- Modal or drawer sliding in from the right with an × close button
+**Slop fingerprint — do NOT inline the list here.** Give the judge agent the canonical list, read fresh at run time:
+- `~/.claude/docs/ANTISLOP.md` → `## GUI Slop` (canonical — every pattern lives here)
+- `~/.claude/docs/UI_MOCKUPS.md` → the mockup-specific kill rules that sit on top of it
+
+Instant reject if a variant matches ANY pattern in either list.
 
 If **fewer than 6 variants survive**, respawn the rejected ones with instruction: "Your last concept matched [specific slop pattern]. Go structurally different — change the layout paradigm entirely, not just the color."
 

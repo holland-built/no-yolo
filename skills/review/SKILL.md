@@ -1,6 +1,6 @@
 ---
 name: review
-description: Use this skill when the user types /review, says 'review this', 'check the diff', 'code health', 'run health pass', or 'review before merge'. One mode, always thorough — reviews the diff AND the whole codebase (fallow dead-code/dupes/health/security/audit + trim + improve), max effort, every time. Bakes in secret scan and antislop on any .md changes automatically. Shows one ranked findings list, waits for a single approve-all, then fixes everything approved. --auto skips that gate for unattended runs. --step walks findings one at a time instead of the batch gate. By default in every repo it pulls /last-30 trends and walks fixes one at a time; in ~/.claude it also audits your skills and MD files. Say 'quick review' to skip trends or --auto for a single batch apply.
+description: Use this skill when the user types /review, says 'review this', 'check the diff', 'code health', 'run health pass', or 'review before merge'. One mode, always thorough — reviews the diff AND the whole codebase (fallow dead-code/dupes/health/security/audit + trim + improve), max effort, every time. Bakes in secret scan and antislop on any .md changes automatically. By default in every repo it pulls /last-30 trends and walks fixable findings one at a time; in ~/.claude it also audits your skills and MD files. Say 'quick review' to skip trends, or --auto to skip the walk and batch-apply everything fixable.
 user-invocable: true
 argument-hint: "[path] [--auto] [--quick]"
 allowed-tools:
@@ -16,12 +16,13 @@ Arguments: $ARGUMENTS
 
 ## Flag Parsing
 
-- `--auto` present → skip the final approval gate; auto-apply every fixable finding (unattended/CI use)
-- `--step` present → walk fixable findings ONE AT A TIME in Phase 3 instead of the single approve-all gate. Mutually exclusive with `--auto` — if both given, `--auto` wins (note it in the roll-up).
+- `--auto` present → skip the Phase 3 step-walk; auto-apply every fixable finding in one batch (unattended/CI use)
 - `--quick` present (or the user says "quick review") → skip Phase 0 radar this run. Research is ON by default in every repo; this is the opt-out.
 - Any remaining non-flag text → optional path target for the codebase pass (default: `.`)
 
 ```bash
+# --step and --research are retired (both are now the default). Still stripped so
+# stale muscle memory can't be parsed as a path.
 PATH_ARG=$(echo "$ARGUMENTS" | sed 's/--auto//g; s/--step//g; s/--quick//g; s/--research//g' | xargs)
 PATH_ARG="${PATH_ARG:-.}"
 ```
@@ -160,11 +161,14 @@ Clean tree or not installed → skip silently, note in roll-up.
 Run all five, always, even if earlier ones find nothing:
 
 ```bash
-fallow dead-code $PATH_ARG 2>&1
-fallow dupes $PATH_ARG 2>&1
-fallow health $PATH_ARG 2>&1
-fallow security $PATH_ARG 2>&1
-git rev-parse --git-dir 2>/dev/null && fallow audit $PATH_ARG 2>&1 || echo "not a git repo — skipping audit"
+# fallow takes NO positional path — it analyzes the working directory.
+# Passing one fails with: error: unexpected argument '.' found
+(cd "$PATH_ARG" && fallow dead-code 2>&1)
+(cd "$PATH_ARG" && fallow dupes 2>&1)
+(cd "$PATH_ARG" && fallow health 2>&1)
+(cd "$PATH_ARG" && fallow security 2>&1)
+(cd "$PATH_ARG" && git rev-parse --git-dir >/dev/null 2>&1 \
+  && fallow audit 2>&1 || echo "not a git repo — skipping audit")
 ```
 
 | Sub-phase | Columns |
@@ -234,15 +238,12 @@ No praise, no summary prose — findings only.
 
 **Approval gate:**
 - `--auto` present → skip this prompt, proceed straight to Apply Findings for every Fixable: Yes row
-- **STEP on** (see Mode Resolution — i.e. `--step`, or the ~/.claude repo without `--auto`) → Step mode: do NOT show the single y/n. Instead walk each **Fixable: Yes** finding in severity order, one prompt each:
+- **Otherwise (STEP on — the default in every repo)** → walk each **Fixable: Yes** finding in severity order, one prompt each:
 
   `[i/N] path:line — <emoji> <severity>: <problem>. Fix: <fix>.`
   `Apply? (y = apply / n = skip / e = edit-then-apply / a = apply this + all remaining fixable / q = stop, apply nothing further)`
 
   Rules for step mode: `y` applies that one finding immediately then advances; `n` skips and advances; `e` lets the user amend the fix before applying; `a` applies the current finding and every remaining fixable one without further prompts (the escape hatch); `q` stops — findings already applied stay, the rest are left. Non-fixable rows (🔑 Secret, Improve, trim-debt, fallow dupes/health/security/audit) are NEVER prompted — they're display-only, same as today. After the walk, continue to the normal Apply Findings summary table showing what was applied vs skipped.
-- Otherwise → ask exactly: **"Approve? Applies every Fixable finding above. (y/n)"**
-  - y → Apply Findings
-  - n → stop, nothing applied, findings list stands as the output
 
 ---
 
@@ -289,7 +290,7 @@ One master summary after everything completes:
 - $ARGUMENTS empty → path defaults to `.`; effort is always max.
 - Missing trim/improve/fallow = not a failure — skip that sub-phase silently, show it in the roll-up, keep going.
 - Never skip a Fallow command — run all five even if earlier ones find nothing.
-- One findings table, one approval gate. No per-phase prompts, no separate diff/health output blocks.
-- `--step` walks only Fixable findings, one prompt each, with `a` to batch-apply the rest and `q` to bail. Non-fixable findings are never prompted. Default (no flag) keeps the single approve-all gate.
+- One findings table, one gate. No per-phase prompts, no separate diff/health output blocks.
+- The step-walk covers only Fixable findings, one prompt each, with `a` to batch-apply the rest and `q` to bail. Non-fixable findings are never prompted. `--auto` replaces the walk with a single batch apply.
 - H4 (md-check) and H5 (skill-audit) run ONLY when the reviewed repo is ~/.claude — they're hardwired to global config paths. In any other repo they're skipped and noted, so `/review` elsewhere is unchanged.
 - Bare `/review` in ANY repo runs Phase 0 radar + step-walk by default; in ~/.claude it also runs H4/H5 skill/MD audits. Opt-outs: `--quick` (or "quick review") skips the radar; `--auto` replaces the one-at-a-time walk with a single batch apply.

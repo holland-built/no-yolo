@@ -14,7 +14,7 @@ MEMORY.md|Memory system reference — 4 types, fact file format, everyday workfl
 NO_YOLO.md|Skill authoring rules for when working in ~/.claude as the no-yolo repo — write for strangers, eli5 output standard, no-slop rules, what files are safe to publish.
 ANTISLOP.md|25 AI writing tells (filler openers, em-dash spam, forbidden words) + GUI slop patterns. Canonical extraction target for /prompt-scan and /antislop.
 CONTEXT_VOCAB.md|Shared vocabulary — name a concept here once, reference it in prompts to cut token cost. Has ~/.claude system terms; add project-specific terms while working, delete after.
-learnings.md|Compiled prompt conventions written by /prompt-scan. Feeds /better_prompt. Appends dated sections on each run — never overwrites prior entries.
+learnings.md|Compiled prompt conventions written by /prompt-scan. Feeds /better-prompt. Appends dated sections on each run — never overwrites prior entries.
 DAILY_CHANGELOG.md|Running log of every change shipped — /release appends a dated entry here before pushing. Open to see what changed and when.
 README_FORMAT.md|Spec file listing the 15 required README section headings. /release reads this and hard-blocks the commit if any section is missing or renamed.
 SKILL_TRIGGERS.md|Source of truth for every skill trigger rule — what phrases fire which skill. CLAUDE.md imports this. Edit here, not in CLAUDE.md directly.

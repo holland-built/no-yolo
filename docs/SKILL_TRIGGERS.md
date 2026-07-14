@@ -10,6 +10,7 @@
 - **lockstep** — `/lockstep`, "lock step", "hold off on code", "don't code yet": hook-enforced gate: blocks Edit/Write/NotebookEdit until you say go. Not just a prompt reminder — mechanically denied.
 - **plan** — `/plan`, "plan this", "help me think through", "plan before we build", "interview me about": pre-build planning interview: extracts design decisions, edge cases, constraints one question at a time before any code.
 - **build** — `/build`, "build", "build this feature end to end": full feature pipeline: evidence → plan → Opus plan → approval gate → UI mockup gate → TDD → build → regression gate → prove.
+- **tdd** — `/tdd`, "write tests first", "TDD this", "test-driven", "implement with tests": vertical-slice TDD — one test → one implementation → one green bar → repeat. Forbids all-tests-first horizontal slicing.
 - **drawio-skill** — `/drawio-skill`, or asks for a diagram/flowchart/architecture diagram/ER diagram/UML diagram/sequence diagram: generates diagrams (flowchart/architecture/ER/UML/sequence/network/mind-map) as .drawio XML, exports PNG/SVG/PDF/JPG via the native draw.io desktop CLI.
 - **my-md** — `/my-md`: list all markdown files: global ~/.claude/ docs + current project artifacts. (routes via SKILL.md description)
 - **whats-next** — `/whats-next`, "what's next", "what should I do", "now what": checks task queue first, runs next task; if empty, scans project and proposes. Never shows a static menu.

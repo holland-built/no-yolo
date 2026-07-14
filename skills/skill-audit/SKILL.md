@@ -151,10 +151,10 @@ Output table:
 
 ### Write Report
 
-Write all 4 phase tables to:
+Write all 4 phase tables with the Write tool to the path this prints:
 ```bash
-DATE=$(date +%Y-%m-%d)
-echo "~/.claude/brainstorms/skill-audit-$DATE.md"
+mkdir -p ~/.claude/brainstorms
+echo "$HOME/.claude/brainstorms/skill-audit-$(date +%Y-%m-%d).md"
 ```
 
 Format:

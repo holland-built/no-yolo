@@ -16,7 +16,7 @@
 
 | Skill | What it does | When to use | Why vs manual |
 | --- | --- | --- | --- |
-| review | Unified diff review + codebase health. Bugs, bloat, secrets, slop — one command. | Before merging any non-trivial change, or when a codebase needs a cleanup pass | Replaces two separate commands with one routed pass — secret scan and antislop are automatic, not a separate step you remember to run |
+| review | Diff + codebase health + /last-30 trends, with every fix walked past you one at a time. | Before merging any non-trivial change, when a codebase needs a cleanup pass, or when you want fixes informed by what's currently trending | Replaces three separate commands with one routed pass — trend radar, secret scan and antislop are automatic, and you approve each fix one at a time instead of one blind batch |
 
 ## Research
 
@@ -38,7 +38,7 @@
 
 | Skill | What it does | When to use | Why vs manual |
 | --- | --- | --- | --- |
-| prompt-scan | Reads global Claude MD files + current model's release notes, writes a dated snapshot to learnings.md. | Once on setup, and again whenever a new Claude model ships | Keeps /better_prompt's reference material from going stale |
+| prompt-scan | Reads global Claude MD files + current model's release notes, writes a dated snapshot to learnings.md. | Once on setup, and again whenever a new Claude model ships | Keeps /better-prompt's reference material from going stale |
 | better-prompt | Rewrites a rough prompt with a named target, scope boundary, success criterion, and correct skill route. | Before running a fuzzy prompt through any skill | Shows before/after with rationale instead of guessing why a prompt underperformed |
 
 ## Diagrams

@@ -4,8 +4,12 @@ settings.local.json
 *.local.json
 
 # machine-specific config (ship settings.example.json instead)
+# settings.json holds live API keys in `env` — it and EVERY backup of it must stay local.
+# Glob, not exact names: a one-off backup (settings.json.pre-hookfix.bak) once slipped
+# past the exact-name entries and would have been committed with live keys.
 settings.json
-settings.json.bak
+settings.json*.bak
+settings.json.*
 # Orca / environment machine-local runtime config
 policy-limits.json
 remote-settings.json

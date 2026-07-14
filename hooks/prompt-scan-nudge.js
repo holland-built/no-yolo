@@ -35,6 +35,6 @@ if (lastScan) {
   );
 } else {
   process.stdout.write(
-    'PROMPT-SCAN CHECK: no learnings.md found. Proactively offer to run /prompt-scan once to establish a baseline for /better_prompt.'
+    'PROMPT-SCAN CHECK: no learnings.md found. Proactively offer to run /prompt-scan once to establish a baseline for /better-prompt.'
   );
 }
