@@ -1,0 +1,50 @@
+# MCP Services & External Dependencies
+
+How skills in this repo depend on MCP servers, and how they must behave when one
+is unreachable. If a skill silently degrades and you don't know why, check here.
+
+This doc is generic on purpose — it describes the *contract*, not one person's
+setup. Your actual server addresses, keys, and network details live in your own
+(gitignored) `settings.json` / `settings.local.json`, never in a published doc.
+
+## Web data provider (Firecrawl)
+
+Some skills prefer an MCP web-data provider (Firecrawl) over the built-in
+`WebSearch`/`WebFetch` because it returns full page content and defeats crawl/
+login walls. This is configured per-environment:
+
+- **Hosted:** point the MCP at firecrawl.dev with an `fc-...` API key.
+- **Self-hosted:** set `FIRECRAWL_API_URL` to your instance. A self-hosted
+  instance typically runs keyless — no `FIRECRAWL_API_KEY` needed.
+
+**If you don't have Firecrawl configured, nothing breaks.** The skills fall back
+to built-in `WebSearch`/`WebFetch` — snippet-depth with soft date filters
+instead of full content with a hard recency gate. Degraded, not broken.
+
+### The fallback pattern (reference: `skills/last-30/SKILL.md`)
+
+Any skill that reaches for an optional MCP provider must degrade gracefully —
+the server may be unconfigured, or self-hosted and offline. The pattern:
+
+1. **One preflight probe** — a single cheap call up front to decide if the
+   provider is live. Do NOT discover it's down once per source; each dead call
+   can stall several seconds.
+2. **Pick the mode once** — probe succeeds → provider mode; probe fails →
+   built-in mode for the whole run, announced in one line.
+3. **Every source lists both forms** — the MCP call and the built-in
+   equivalent — so the fallback mode is fully usable and never worse than not
+   having the provider at all.
+
+Copy this shape into any new skill that depends on an optional MCP server.
+
+## Self-hosted / LAN-only servers: a reachability note
+
+If you point an MCP server at a private address (a LAN IP, a self-hosted box),
+that server is only reachable when the machine running the session can route to
+it — on the same network, or over a VPN/overlay (e.g. Tailscale with a subnet
+route). A common symptom: a session that suddenly can't reach any private-range
+host while the public internet still works has usually moved off-network. The
+service is fine; the path isn't. Check your VPN/overlay before concluding a
+self-hosted server is down.
+
+Keep the specific addresses in your own gitignored config, not here.
