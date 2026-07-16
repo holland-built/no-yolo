@@ -1,0 +1,7 @@
+# no-yolo deny-list — TEMPLATE. Copy to .no-yolo-deny.txt (gitignored) and edit.
+# One term per line, case-insensitive substring match. The pre-commit hook
+# blocks any commit whose added lines contain one of these — for company names,
+# internal domains, and private hostnames that must never reach a public repo.
+# Lines starting with # are ignored. Replace the placeholders below.
+your-company
+internal.example.com
