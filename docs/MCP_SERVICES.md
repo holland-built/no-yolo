@@ -28,8 +28,8 @@ is an optional upgrade, not a requirement to install this repo.
 - **Hosted:** sign up at firecrawl.dev, get an `fc-...` API key. Simplest.
 - **Self-hosted:** run the open-source server (Docker). It exposes an HTTP API
   on a port you choose and typically runs keyless. Good if you want no per-call
-  cost or you're crawling internal/large volume. Reachability is then your
-  concern — see the LAN note at the bottom.
+  cost or you're crawling internal/large volume. Making it reachable from
+  wherever you run sessions is your own networking concern.
 
 **2. Register the MCP server** (one command):
 ```
