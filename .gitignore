@@ -116,3 +116,6 @@ mcp-needs-auth-cache.json
 .claude/
 chrome/
 debug/
+
+# no-yolo local deny-list (company names / private hostnames — never published)
+.no-yolo-deny.txt
