@@ -65,14 +65,5 @@ the server may be unconfigured, or self-hosted and offline. The pattern:
 
 Copy this shape into any new skill that depends on an optional MCP server.
 
-## Self-hosted / LAN-only servers: a reachability note
-
-If you point an MCP server at a private address (a LAN IP, a self-hosted box),
-that server is only reachable when the machine running the session can route to
-it — on the same network, or over a VPN/overlay (e.g. Tailscale with a subnet
-route). A common symptom: a session that suddenly can't reach any private-range
-host while the public internet still works has usually moved off-network. The
-service is fine; the path isn't. Check your VPN/overlay before concluding a
-self-hosted server is down.
-
-Keep the specific addresses in your own gitignored config, not here.
+Keep the specific server addresses and keys in your own gitignored config
+(`settings.json` / `settings.local.json`), never in a published doc.
