@@ -117,11 +117,11 @@
       "structureSha": "2c143d02eaf886af437d330ff38a79775db99d2abfb59238b033a95252b0c89e"
     },
     "last-30": {
-      "descSha": "5af28c14026d413cfcc8619dadf481378ab00fd8f145e9a46e6c94475eec0068",
+      "descSha": "dc9e28318d719d252a8b5088333227c0cacf5e85027396365061bb7598630bf5",
       "rows": {
-        "skills/my-skills/STORIES.md": "4b11d0e035ff90c0415b565b87c1322afcef97a8b0eb67d9242bc3fd187d488c",
-        "skills/my-skills/STORIES.md#rel": "371be664d5a4766cfb6cacbe13a1cd8ff16e6f8f2d74f55159d067f79f873192",
-        "skills/my-skills/TAGLINES.md": "090417d18570d67fdd609063c4875b4e920d2312a53904d73d97bb7f6271abc8",
+        "skills/my-skills/STORIES.md": "8589835512b5b682125d22bee2f1d226a50a6b08b7bff0d6fd1848c08f54cd15",
+        "skills/my-skills/STORIES.md#rel": "8589835512b5b682125d22bee2f1d226a50a6b08b7bff0d6fd1848c08f54cd15",
+        "skills/my-skills/TAGLINES.md": "33c668b259b578ac1a6bf9004db10e26f941d38a5095c69c01e768e151c6f0ff",
         "skills/my-skills/TAGLINES_SHORT.md": "5bf6f564fdb3dd315e09011ea600657cb6ab0a8049b6a724e0b1c2099cac693e",
         "skills/my-skills/WHEN_TO_USE.md": "28655e52c54840bc92e0f9c7cdd14d7a17987bfd148fc335e066071ce7fb6b33",
         "skills/my-skills/WHY_TO_USE.md": "bf8be2f37ba2a0f08a55f6c29914ebb8e3a51d1c6ed237d348c3ab4a184fc090"

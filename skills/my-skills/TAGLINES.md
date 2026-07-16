@@ -21,7 +21,7 @@ eli5|Explains any skill, command, plan, or decision in plain English.
 debate|7-persona product-team debate → contradiction map → one decisive verdict.
 update|Two-way check between ~/.claude and GitHub — behind AND ahead/uncommitted — plus plugin versions and vendored-skill drift; applies or rolls back.
 release|The one context-aware publish command for any repo: reads the repo-root SHIP.md playbook and pushes to the right environment (dev/staging/prod). No SHIP.md yet? It stops and helps you build one before anything ships.
-last-30|Trending now (last 30 days) from GitHub, HN, YouTube, X.
+last-30|Trending now (last 30 days) from GitHub, HN, Reddit, YouTube, X.
 md-check|Audits ~/.claude docs for size, duplicate topics, and duplicate rules; `--drift` finds stale descriptions, `--orphans` finds dangling/unreferenced skills, `--fix` applies the fixes behind one approve-all gate, `--pre` is a pre-creation gate.
 antislop|Check text/UI for AI-slop tells. Violations table + verdict.
 prompt-scan|Reads global Claude MD files + current model's release notes, writes a dated snapshot to learnings.md.
