@@ -45,6 +45,7 @@ If you are about to add anything else — STOP. Find or create the right MD file
 - Memory system → `~/.claude/docs/MEMORY.md`
 - Hooks → `~/.claude/docs/HOOKS.md`
 - Skill authoring (no-yolo) → `~/.claude/docs/NO_YOLO.md`
+- MCP services & external deps (Firecrawl, Tailscale reachability, fallback pattern) → `~/.claude/docs/MCP_SERVICES.md`
 
 ---
 
