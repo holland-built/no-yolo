@@ -10,5 +10,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
+      # verify.sh shells to python3 (catalog_lock.py --check, regen.py --check).
+      # Don't rely on the runner image happening to preinstall it.
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
       - name: Run verify.sh
         run: bash verify.sh

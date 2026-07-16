@@ -34,6 +34,31 @@ else
   echo "    No hook scripts found — skipping"
 fi
 
+# Install the tracked pre-commit hook into this clone's .git/hooks. Without
+# this, a fresh clone of a PUBLIC template repo commits with NO secret scanning
+# — the guard that blocks personal data, LAN IPs, and deny-listed terms from
+# reaching GitHub would simply not exist. The source is tracked at
+# hooks/pre-commit; git never copies it into .git/hooks on its own.
+if [[ -f "$CLAUDE_DIR/hooks/pre-commit" ]] && git -C "$CLAUDE_DIR" rev-parse --git-dir >/dev/null 2>&1; then
+  HOOKS_DIR="$(git -C "$CLAUDE_DIR" rev-parse --git-path hooks)"
+  # rev-parse may return a path relative to CLAUDE_DIR
+  case "$HOOKS_DIR" in /*) : ;; *) HOOKS_DIR="$CLAUDE_DIR/$HOOKS_DIR" ;; esac
+  mkdir -p "$HOOKS_DIR"
+  cp "$CLAUDE_DIR/hooks/pre-commit" "$HOOKS_DIR/pre-commit"
+  chmod +x "$HOOKS_DIR/pre-commit"
+  echo "    Installed pre-commit secret-scanner into $HOOKS_DIR"
+else
+  echo "    No git dir or hooks/pre-commit — skipping hook install"
+fi
+
+# Seed the local (gitignored) deny-list from the template if absent, so the
+# deny-list mechanism is discoverable on a fresh install. Never overwrites an
+# existing one. Mirrors the settings.example.json -> settings.json pattern.
+if [[ -f "$CLAUDE_DIR/.no-yolo-deny.example.txt" && ! -f "$CLAUDE_DIR/.no-yolo-deny.txt" ]]; then
+  cp "$CLAUDE_DIR/.no-yolo-deny.example.txt" "$CLAUDE_DIR/.no-yolo-deny.txt"
+  echo "    Seeded .no-yolo-deny.txt from template (edit it for your company/private terms)"
+fi
+
 # ── MD-only: strip skill triggers from CLAUDE.md, then exit ─────────────────
 if [[ "$MODE" == "md-only" ]]; then
   echo ""
