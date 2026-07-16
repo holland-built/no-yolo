@@ -19,7 +19,35 @@ login walls. This is configured per-environment:
 
 **If you don't have Firecrawl configured, nothing breaks.** The skills fall back
 to built-in `WebSearch`/`WebFetch` — snippet-depth with soft date filters
-instead of full content with a hard recency gate. Degraded, not broken.
+instead of full content with a hard recency gate. Degraded, not broken. Firecrawl
+is an optional upgrade, not a requirement to install this repo.
+
+### Installing it (optional)
+
+**1. Get a Firecrawl endpoint** — pick one:
+- **Hosted:** sign up at firecrawl.dev, get an `fc-...` API key. Simplest.
+- **Self-hosted:** run the open-source server (Docker). It exposes an HTTP API
+  on a port you choose and typically runs keyless. Good if you want no per-call
+  cost or you're crawling internal/large volume. Reachability is then your
+  concern — see the LAN note at the bottom.
+
+**2. Register the MCP server** (one command):
+```
+claude mcp add firecrawl -- npx -y firecrawl-mcp
+```
+
+**3. Tell it where your endpoint is** — set ONE of these in your `settings.json`
+`env` block (or the server's env), matching step 1:
+```
+# hosted:
+FIRECRAWL_API_KEY=fc-...
+# self-hosted:
+FIRECRAWL_API_URL=http://<your-firecrawl-host>:<port>
+```
+
+Restart the session; `claude mcp list` should show `firecrawl … ✔ Connected`.
+From then on, skills that prefer Firecrawl use it automatically and fall back to
+`WebSearch` if it ever stops responding.
 
 ### The fallback pattern (reference: `skills/last-30/SKILL.md`)
 
