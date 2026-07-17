@@ -17,7 +17,7 @@ Every skill fits exactly ONE bucket — straddling two confuses the agent:
 | **Data Enrichment** | Pulls external data in | funnel-digest, competitor-analysis |
 | **Orchestration** | Chains other skills into a playbook | generate-report, weekly-standup |
 
-Orchestration calling sub-skills is NOT straddling. Build orchestration from sub-utility skills — update a utility, all orchestration skills that call it inherit the fix.
+Orchestration calling sub-skills is NOT straddling. Build orchestration from utility sub-skills — update a utility once and every orchestration skill that calls it inherits the fix.
 
 **Verification = highest ROI.** "If you give Claude a way to verify it will 2–3x the quality of the output." — Claude Code creator. Spend time here first.
 
@@ -42,7 +42,7 @@ Setup usability pattern:
 
 ## Skill Authoring Rules
 
-Authoring standards (description = trigger condition, gotchas discipline, new-skill checklist, publish rules) live in `~/.claude/docs/NO_YOLO.md` — follow those. One note not covered there: Claude Code scans skill descriptions on session start to route requests automatically, so the trigger phrasing directly controls routing.
+Authoring standards (description = trigger condition, gotchas discipline, new-skill checklist, publish rules) live in `~/.claude/docs/NO_YOLO.md` — follow those. Not covered there: Claude Code scans skill descriptions on session start to route requests automatically, so the trigger phrasing directly controls routing.
 
 ## Per-Project vs Global
 

@@ -33,7 +33,7 @@ Two hard rules, every time a mockup is created or changed:
    - It links/iframes every `*.html` under `.mockups/**` (grouped by folder, with a sticky jump-nav TOC + an "open standalone ↗" per mockup).
    - This is the canonical "show me all the designs" entry point. When the user asks "where are the mockups," send them here.
 
-Mockups live under `.mockups/<group>/<name>.html` in the current project root. The master `_index.html` aggregates them.
+Mockups live under `.mockups/<group>/<name>.html` in the current project root.
 
 ## Why
 
@@ -51,14 +51,12 @@ Mockups live under `.mockups/<group>/<name>.html` in the current project root. T
 | Full feature pipeline | `/build` | 10 (phase 3.5 gate) |
 | Fresh design + build pipeline | `/design` | 10 Opus mockups (8 paradigms + 2 wild) → confirmed one feeds the build |
 
-Use the manual flow (5–8) when no skill applies. Use the skill count when a skill is invoked — don't override it.
+Use the manual flow (5–8) when no skill applies. When a skill is invoked, use its count — don't override it.
 
-## How
-
-Use `/build` for full pipeline (includes 10-variant mockup gate at phase 3.5). Or manually:
+## Manual flow
 
 1. Create a single HTML file at `.mockups/mockup-<feature-name>.html` in the current project root.
-2. Include 5–8 distinct variations side-by-side, each labeled (Option A, B, C…). See decision tree above for skill-specific counts.
+2. Include 5–8 distinct variations side-by-side, each labeled (Option A, B, C…).
 3. Vary one or more of: layout, color, density, motion, copy, hierarchy.
 4. Show real content, not lorem ipsum.
 5. Show it to the user. Get a pick. Discard the rest.
@@ -102,8 +100,7 @@ Pick 5–8 from this list, depending on what's being designed:
 
 - One file per feature/change
 - HTML preferred (renders in browser)
-- Inline CSS or shared stylesheet — single file simplicity
-- Self-contained: no build step needed to preview
+- Inline CSS or shared stylesheet — single file, no build step needed to preview
 
 ## After User Picks
 

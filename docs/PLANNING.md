@@ -13,7 +13,7 @@ Trigger: user says "plan X" or task is non-trivial → auto-spawn an Opus planne
 
 ## Good Plan Structure
 
-Every plan produced by Opus must contain:
+Every Opus plan must contain:
 
 | Section | What it says |
 |---|---|

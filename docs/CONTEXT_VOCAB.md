@@ -1,8 +1,8 @@
 # Context Vocabulary
 
-Shared concept names for this setup. Name a concept here once — then reference it by name in any prompt to save ~½ the tokens needed to explain it each time.
+Shared concept names for this setup. Name a concept here once, then reference it by name in any prompt — that saves ~½ the tokens needed to explain it each time.
 
-**How to use:** When starting work on a project, paste or reference the relevant terms. Claude reads this file and treats the names as established vocabulary.
+**How to use:** when starting work on a project, paste or reference the relevant terms. Claude reads this file and treats the names as established vocabulary.
 
 ---
 
@@ -31,7 +31,7 @@ Add project-specific vocabulary here when working on a project. Delete after the
 
 ## Usage pattern
 
-When a prompt needs to reference a complex concept from this file:
+To reference a concept from this file in a prompt:
 
 ```
 [using context from CONTEXT_VOCAB.md] 

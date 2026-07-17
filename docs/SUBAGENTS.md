@@ -2,7 +2,7 @@
 
 ## Model Split (Opus plans, Sonnet codes)
 
-Always split by phase — Opus (the bigger, slower Claude model — best for planning) is slow/expensive but plans better; Sonnet (the faster Claude model — best for coding) is fast/cheap for execution.
+Always split by phase — Opus (the bigger, slower Claude model) plans better; Sonnet (the faster one) is fast/cheap for execution.
 
 Use model `opus` for planning agents, `sonnet` for coding agents.
 
@@ -13,7 +13,7 @@ Use model `opus` for planning agents, `sonnet` for coding agents.
 
 ## Before Dispatch (Rule: think before coding)
 
-Before firing any agent, in the dispatch prompt:
+In every dispatch prompt:
 - State assumptions explicitly — don't let the agent infer them silently.
 - If the request has multiple valid interpretations, surface them and pick one out loud; never resolve ambiguity silently inside the agent.
 - Push back in the plan if a simpler approach exists than the one requested.
@@ -21,7 +21,7 @@ Before firing any agent, in the dispatch prompt:
 
 ## Scope per Dispatch (Rule: only touch what you were asked to)
 
-Every dispatch prompt must bound how much other code this change could break:
+Every dispatch prompt must bound how much other code the change could break:
 - Name the exact files the agent may touch; forbid edits outside them.
 - Tell it to match existing style even where it would do otherwise.
 - It may flag unrelated dead code but must not delete it; it must clean up only orphans (imports/vars) its own change made unused.
@@ -42,7 +42,7 @@ Every dispatch prompt must bound how much other code this change could break:
 
 ## Daily-Driver Agents (in `~/.claude/agents/`)
 
-These are pre-built helper agent definitions in `~/.claude/agents/`. They work like specialists you can call on — each knows a specific domain.
+Pre-built specialist agent definitions — each knows a specific domain.
 
 > The `agents/` roster is a curated cut of the community subagents pack (VoltAgent-style definitions). Three are hard-wired into skills — `/build` dispatches `code-reviewer`, `security-auditor`, and `accessibility-tester` — the rest are an optional dispatch menu for the role tables below. Unused ones cost nothing at runtime; prune freely in your fork.
 
@@ -66,7 +66,6 @@ These are pre-built helper agent definitions in `~/.claude/agents/`. They work l
 - `api-designer` — REST/GraphQL design
 - `docker-expert` — containers
 
-
 ## Skill Alignment
 
 - `build` — full feature pipeline (plan → Opus plan → TDD → build → prove)
@@ -76,9 +75,7 @@ These are pre-built helper agent definitions in `~/.claude/agents/`. They work l
 
 ## Agent Teams (expert dispatch)
 
-You can run multiple agents at once. This table shows which ones work well together.
-
-Dispatch the matching team in parallel. Build → review pairs: builder writes, reviewer verifies.
+Agents that work well together. Dispatch the matching team in parallel. Build → review pairs: builder writes, reviewer verifies.
 
 | Team | Build | Review / Verify | Use for | Model |
 |---|---|---|---|---|

@@ -1,6 +1,6 @@
 # Skill Library — Improvement Recommendations
 
-Sourced from personal knowledge base. These are **additive, not corrective** — the KB *validates* the current skill library (run `/my-skills` for the live count); in fact most existing skills (plan, tdd, diagnose, code-review, trim pack) were designed FROM this research. Nothing below is applied; pick what's worth doing.
+Sourced from the personal knowledge base. **Additive, not corrective** — the KB validates the current skill library (run `/my-skills` for the live count); most existing skills (plan, tdd, diagnose, code-review, trim pack) were designed FROM this research. Nothing below is applied; pick what's worth doing.
 
 Each row cites its KB source. Audited 2026-06-18.
 

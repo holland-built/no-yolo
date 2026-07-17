@@ -1,10 +1,8 @@
 # Memory System
 
-Learned preferences live as small fact files and compile into one generated file that Claude reads at the start of every session — so it remembers your preferences even after a conversation ends.
+Learned preferences live as small fact files that compile into one generated file Claude reads at the start of every session — so preferences survive after a conversation ends.
 
 ## The loop
-
-Think of it like a preference notepad: you write a note, run a compile step, and from then on Claude reads it automatically.
 
 1. **Source of truth:** `memory/facts/<id>.md` — one fact per file.
 2. **Compile:** run `/memory-compile` in Claude Code → regenerates `memory/CLAUDE.generated.md`.
@@ -22,9 +20,9 @@ Think of it like a preference notepad: you write a note, run a compile step, and
 | `reference` | Where to find things in external systems | "bugs tracked in Linear project INGEST" |
 | `pattern` | A reusable working pattern (how to structure a task), promoted from repeated feedback | "read target + imports before dispatching a file-editing agent" |
 
-## Everyday workflow — 3 ways to add memories
+## 3 ways to add memories
 
-1. **Claude auto-saves** — during a session, Claude writes facts to `memory/facts/` automatically when it learns something worth keeping.
+1. **Claude auto-saves** — writes facts to `memory/facts/` when it learns something worth keeping during a session.
 2. **`/remember-that`** — explicit control: add, delete, audit, or compile memories by hand.
 3. **`/memory-compile`** — rebuilds `CLAUDE.generated.md` from all fact files. Run after any manual edit.
 
