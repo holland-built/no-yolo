@@ -25,7 +25,7 @@ minimum instead of the real upstream rules until you run the install command.
 
 | Skill | Patch | Why | Re-apply after reinstall |
 |---|---|---|---|
-| improve | added `user-invocable: true` to its frontmatter | Upstream ships without it, so typing `/improve` never fired. `/review`'s H3 was unaffected: invoking a skill via the Skill tool ignores that field. | Re-add the line to `~/.agents/skills/improve/SKILL.md` |
+| improve | added `user-invocable: true` to its frontmatter | Upstream ships without it, so typing `/improve` never fired. `/review`'s H3 was unaffected: invoking a skill via the Skill tool ignores that field. | `setup.sh` now re-applies it automatically after install; manual fallback: re-add the line to `~/.agents/skills/improve/SKILL.md` |
 
 Check this table after any `npx skills@latest add ...`. These patches live outside git (the
 paths are gitignored symlinks), so nothing warns you when an install wipes them.

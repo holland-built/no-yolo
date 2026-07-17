@@ -1,6 +1,6 @@
 ---
 name: my-skills
-description: Use this skill when the user types /my-skills, says 'my skills', 'list my skills', or 'skills I created'. Lists authored skills (not plugin packs) in a table plus a relationship map of skill dependencies.
+description: Use this skill when the user types /my-skills, says 'my skills', 'list my skills', or 'skills I created'. Lists this setup's skills — authored plus vendored third-party (not plugin packs) in a table plus a relationship map of skill dependencies.
 user-invocable: true
 argument-hint: "[deep]"
 model: haiku

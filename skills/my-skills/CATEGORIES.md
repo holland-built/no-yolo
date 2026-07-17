@@ -1,10 +1,12 @@
 ## Design
 design
 quick-mockup
+design-audit
 
 ## Build
 build
 plan
+tdd
 
 ## Review
 review
@@ -17,6 +19,7 @@ ingest-docs
 ## Quality
 diagnose
 debate
+antislop
 improve
 
 ## Prompting

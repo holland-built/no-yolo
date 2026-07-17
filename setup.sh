@@ -136,6 +136,14 @@ echo "    Installing trim..."
 npx skills@latest add holland-built/trim || echo "    ! trim install failed"
 echo "    Installing improve..."
 npx skills@latest add shadcn/improve || echo "    ! improve install failed"
+# upstream ships without user-invocable, which kills /improve — re-apply the
+# local patch (docs/THIRD_PARTY_SKILLS.md); harmless if already present
+IMPROVE_MD="$HOME/.agents/skills/improve/SKILL.md"
+if [ -f "$IMPROVE_MD" ] && ! grep -q '^user-invocable: true' "$IMPROVE_MD"; then
+  awk 'NR==1{print; print "user-invocable: true"; next} {print}' "$IMPROVE_MD" > "$IMPROVE_MD.tmp" \
+    && mv "$IMPROVE_MD.tmp" "$IMPROVE_MD" \
+    && echo "    Applied user-invocable patch to improve (see docs/THIRD_PARTY_SKILLS.md)"
+fi
 echo "    Installing emilkowalski/skills (design-eng taste rules — used by /design)..."
 npx skills@latest add emilkowalski/skills || echo "    ! emilkowalski/skills install failed"
 echo ""
@@ -163,6 +171,8 @@ if [ -f "$PLUGINS_JSON" ] && command -v python3 >/dev/null 2>&1; then
 else
   echo "    No installed_plugins.json found — install recommended plugins inside Claude Code:"
   echo "      /plugin marketplace add JuliusBrussee/caveman       # terse mode"
+  echo "      /plugin marketplace add pbakaus/impeccable          # frontend polish (/design hands off to it)"
+  echo "    Maintainer's extras (optional, not required by any skill):"
   echo "      /plugin marketplace add ecc-plugins/ecc             # agent types + code review"
   echo "      /plugin marketplace add karpathy/karpathy-skills     # Karpathy skill set"
   echo "      /plugin marketplace add design-plugins/design-and-refine  # UI design"

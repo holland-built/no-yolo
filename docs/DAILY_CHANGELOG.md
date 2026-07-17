@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-07-16 — second release (full-repo audit: the menu hid 3 skills, the docs taught the old architecture, and the new CI scanner caught a real leak on its first run)
+
+- `/my-skills` now shows `antislop`, `design-audit`, and `tdd` — all three were installed and working but invisible, because the menu renders only what `CATEGORIES.md` lists. The catalog check (`catalog_lock.py --check`) now hard-fails when any tracked skill is missing a row in any catalog file, so a skill can never silently vanish from the menu again.
+- `verify.sh` gained a tracked-content scan — the same private-network/infra patterns the local pre-commit hook checks, now enforced in CI where `--no-verify` can't skip it. On its first run it caught a real LAN IP shipped in three skills (`design`, `design-audit`, `ingest-docs`); scrubbed to placeholders.
+- `settings.example.json` now wires `worktree-autoclean.sh` (SessionStart + SessionEnd) — it shipped in the template but never ran on fresh clones. New smoke test in `hooks/tests/`.
+- `setup.sh` auto-applies the `user-invocable` patch to the improve skill after installing it — `/improve` used to be dead until you found the manual patch in THIRD_PARTY_SKILLS.md. Its optional-plugin list now matches the README's (caveman + impeccable first, extras labeled).
+- README drift sweep: "8 core rules" → 10, removed the stale claim that CLAUDE.md holds per-command trigger blocks (that architecture was deliberately deleted), replaced the nonexistent `session-reflect` hook with the real worktree/lockstep/nudge hooks, added a newcomer read-order line, documented `/watch` and `/memory-compile`, dropped the dated changelog pointer.
+- `docs/HOOKS.md` now documents `worktree-autoarm.js` and `worktree-guard.js` (the wired safety hooks it omitted), relabels the caveman helpers as not event-wired, and links to `HOOKS_INTERNALS.md` (previously unreachable from any doc).
+- `docs/MEMORY.md` documents the fifth fact type, `pattern`, which the schema and compiled memory already used.
+- `docs/SUBAGENTS.md` gets a provenance note: the `agents/` roster is an intentional dispatch menu; three are hard-wired into `/build`.
+- Deleted `commands/caveman.md` — the caveman plugin owns `/caveman`; two definitions of the same command drift.
+- `skills/supacode-cli` description now leads with real trigger phrases (`/supacode-cli`, 'supacode worktree', …).
+- `.no-yolo-deny.example.txt` placeholder terms are now comments — the seeded deny-list was live and could block legitimate docs text.
+- `SHIP.md` stage scope now includes `agents/`, `commands/`, and `skills-lock.json` — a fix to any of them could previously never ship.
+- `skills/my-md/GLOBAL_DESCRIPTIONS.md`: fixed stale counts (10 rules, 16 headings), added the missing `MCP_SERVICES.md` line.
+
 ## 2026-07-16 (the secret-scanner that protects a public template didn't ship with it)
 
 - **`/whats-next` found the guard built hours earlier only existed on this machine.** Tonight's hardened `no-yolo` pre-commit lived in `.git/hooks/pre-commit` — never tracked, no `hooksPath`, no install step — so a fresh clone of the PUBLIC `holland-built/no-yolo` template committed with ZERO secret scanning. The scanner that would have blocked tonight's LAN-IP leak didn't exist for anyone who installed the repo. Fixed: tracked the hook at `hooks/pre-commit` and `setup.sh` now installs it into each clone's `.git/hooks` (resolving the dir via `git rev-parse --git-path hooks`, portable to worktrees). This is the same "documented but doesn't run" shape the repo exists to kill, one level up — the tool that catches the class was itself an instance of it.

@@ -1,6 +1,6 @@
 ---
 name: supacode-cli
-description: Use this skill when running Supacode CLI commands from the terminal, managing worktrees, tabs, and surfaces programmatically, or when inside a Supacode terminal session.
+description: Use this skill when the user types /supacode-cli, says 'supacode', 'supacode worktree', or 'supacode tab' — running Supacode CLI commands from the terminal, managing worktrees, tabs, and surfaces programmatically, or when inside a Supacode terminal session.
 user-invocable: true
 ---
 

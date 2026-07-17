@@ -283,7 +283,7 @@ cat package.json 2>/dev/null | python3 -c "import json,sys; d=json.load(sys.stdi
      ```
      ```python
      from firecrawl import FirecrawlApp
-     app = FirecrawlApp(api_url="http://<your-firecrawl-host>:3002")  # self-hosted, no API key
+     app = FirecrawlApp(api_url="http://<your-firecrawl-host>:<port>")  # self-hosted, no API key
      result = app.scrape_url(url, formats=["html"])  # HTML — need raw CSS, not just markdown
      # result.html → parse inline + linked CSS for: palette hex, type families (font-family
      #   stacks), spacing scale (recurring px/rem gaps, padding, margins)

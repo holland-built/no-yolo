@@ -195,6 +195,38 @@ def parse_triggers_file() -> dict:
     return result
 
 
+def parse_categories() -> set:
+    """CATEGORIES.md -> set of skill names (non-blank, non-`#` lines)."""
+    path = HERE / "CATEGORIES.md"
+    names = set()
+    if not path.exists():
+        return names
+    for raw in path.read_text().splitlines():
+        line = raw.strip()
+        if not line or line.startswith("#"):
+            continue
+        names.add(line)
+    return names
+
+
+def check_completeness(names) -> list:
+    """Every tracked skill must have a row in every catalog surface.
+
+    One-directional: extra rows for non-tracked names (vendored third-party
+    skills) are allowed. Returns a list of `INCOMPLETE: <skill> missing from
+    <file>` strings, one per gap.
+    """
+    surfaces = {"CATEGORIES.md": parse_categories()}
+    for relpath in ["TAGLINES.md", "TAGLINES_SHORT.md", "WHEN_TO_USE.md", "WHY_TO_USE.md"]:
+        surfaces[relpath] = set(parse_pipe_file(relpath))
+    gaps = []
+    for name in names:
+        for relpath, present in surfaces.items():
+            if name not in present:
+                gaps.append(f"INCOMPLETE: {name} missing from {relpath}")
+    return gaps
+
+
 def compute_current() -> dict:
     """{name: {"descSha": ..., "structureSha": ..., "rows": {relpath: sha}}}
     for every tracked skill."""
@@ -238,6 +270,12 @@ def check() -> int:
             f"{LOCK_PATH}. Verify each skill's catalog rows against its "
             "SKILL.md description, then run --relock."
         )
+        return 1
+
+    gaps = check_completeness(tracked_skill_names())
+    if gaps:
+        for g in gaps:
+            print(g)
         return 1
 
     current = compute_current()

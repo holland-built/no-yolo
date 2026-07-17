@@ -5,13 +5,15 @@ Hook scripts in `~/.claude/hooks/` run automatically at harness events — thing
 ## Active hooks
 
 - **caveman-activate.js** — activates caveman terse mode when toggled on.
-- **caveman-config.js** — reads and applies caveman mode configuration.
 - **caveman-mode-tracker.js** — tracks caveman mode state across messages.
-- **caveman-stats.js** — reports token savings from caveman mode.
 - **caveman-statusline.sh / .ps1** — shows caveman state in the status bar (cross-platform).
 - **prompt-scan-nudge.js** — SessionStart; surfaces the model recorded in the last `/prompt-scan` so Claude can offer a re-scan if the current model differs.
 - **lockstep-guard.js** — PreToolUse (Edit/Write/NotebookEdit); denies file mutation while `.lockstep-active` exists. Toggle: `/lockstep`.
+- **worktree-autoarm.js** — SessionStart; arms the worktree guard when a session opens inside a linked git worktree, and prunes stale flags for deleted worktrees.
+- **worktree-guard.js** — PreToolUse (Edit/Write/NotebookEdit); once a worktree is armed for a repo, denies edits to that repo's main checkout outside the active worktree.
 - **statusline.sh** — displays context usage, your 5-hour usage limit, and your 7-day usage limit in the Claude Code status bar.
+
+Helpers (not event-wired): caveman-config.js, caveman-stats.js — invoked by the caveman scripts/skills.
 
 ## Caveman mode
 
@@ -27,3 +29,5 @@ chmod +x ~/.claude/hooks/*.sh
 ```
 
 Hooks are wired in `settings.json` under the `hooks` key. Machine-specific — see `settings.example.json` for the template.
+
+Deeper module reference → [HOOKS_INTERNALS.md](HOOKS_INTERNALS.md).
