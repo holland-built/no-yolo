@@ -3,5 +3,5 @@
 # blocks any commit whose added lines contain one of these — for company names,
 # internal domains, and private hostnames that must never reach a public repo.
 # Lines starting with # are ignored. Replace the placeholders below.
-your-company
-internal.example.com
+# your-company
+# internal.example.com

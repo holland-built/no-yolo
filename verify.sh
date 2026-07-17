@@ -114,6 +114,20 @@ else
   record WARN "shellcheck not installed — skipped (CI has it; install locally: brew install shellcheck)"
 fi
 
+# 8. tracked-content scan — CI backstop for the local pre-commit hook
+#    (pre-commit only guards staged diffs on machines that ran setup.sh; a
+#    --no-verify commit or a pre-setup commit would otherwise publish a leak).
+#    Patterns mirror INFRA_PATTERNS in hooks/pre-commit — if one changes, mirror
+#    the other. Excludes are ONLY files that legitimately document the patterns.
+INFRA_SCAN='192\.168\.[0-9]{1,3}\.[0-9]{1,3}|(^|[^0-9])10\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}|172\.(1[6-9]|2[0-9]|3[01])\.[0-9]{1,3}\.[0-9]{1,3}|100\.(6[4-9]|[7-9][0-9]|1[0-1][0-9]|12[0-7])\.[0-9]{1,3}\.[0-9]{1,3}|[a-z0-9-]+\.(internal|corp|lan|home)\b|[a-z0-9-]+\.[a-z0-9-]+\.local\b'
+SCAN_EXCLUDE=(':!hooks/pre-commit' ':!verify.sh' ':!skills/review/SKILL.md' ':!.no-yolo-deny.example.txt')
+# git grep exits 0 when it FINDS matches — inverted vs the other checks on purpose
+if git grep -nIE "$INFRA_SCAN" -- . "${SCAN_EXCLUDE[@]}" >/tmp/verify-scan.log 2>&1; then
+  record FAIL "tracked-content scan — private/infra value in a tracked file (see /tmp/verify-scan.log)"
+else
+  record PASS "tracked-content scan"
+fi
+
 printf '\n%-6s  %s\n' RESULT CHECK
 for r in "${results[@]}"; do printf '%-6s  %s\n' "${r%%|*}" "${r#*|}"; done
 exit "$fail"

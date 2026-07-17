@@ -85,6 +85,29 @@
             "statusMessage": "Checking prompt-scan freshness..."
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$HOME/.claude/hooks/worktree-autoclean.sh\"",
+            "timeout": 15,
+            "statusMessage": "Cleaning finished worktrees..."
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$HOME/.claude/hooks/worktree-autoclean.sh\"",
+            "timeout": 15,
+            "statusMessage": "Cleaning finished worktrees..."
+          }
+        ]
       }
     ],
     "PreToolUse": [

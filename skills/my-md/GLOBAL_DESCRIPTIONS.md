@@ -1,5 +1,5 @@
 CLAUDE.md|Loaded at the start of every session. Has the skill triggers, core rules, and your learned preferences. If Claude is behaving wrong, this is the first place to look.
-CORE_RULES.md|The 5 rules that govern how Claude works with you — think before coding, simplicity first, surgical changes only, goal-driven tasks, Opus plans and Sonnet codes. The ground rules everything else builds on.
+CORE_RULES.md|The 10 rules that govern how Claude works — plan first, simplicity, surgical changes, and 7 more. The ground rules everything else builds on.
 CODE_REVIEW.md|How /code-review reviews a diff — the 3-pass logic it uses, what it hunts for, what it ignores. Open this when you want to understand or tune how reviews work.
 CONTEXT.md|What to do when a session gets long and Claude starts losing track. Has the strategies for keeping context clean without starting over.
 PLANNING.md|The rules Claude follows before touching code — how to think through a task, what to settle before writing a line. Open this if Claude is jumping to solutions too fast.
@@ -16,9 +16,10 @@ ANTISLOP.md|25 AI writing tells (filler openers, em-dash spam, forbidden words) 
 CONTEXT_VOCAB.md|Shared vocabulary — name a concept here once, reference it in prompts to cut token cost. Has ~/.claude system terms; add project-specific terms while working, delete after.
 learnings.md|Compiled prompt conventions written by /prompt-scan. Feeds /better-prompt. Appends dated sections on each run — never overwrites prior entries.
 DAILY_CHANGELOG.md|Running log of every change shipped — /release appends a dated entry here before pushing. Open to see what changed and when.
-README_FORMAT.md|Spec file listing the 15 required README section headings. /release reads this and hard-blocks the commit if any section is missing or renamed.
+README_FORMAT.md|Spec file listing the 16 required README section headings. /release reads this and hard-blocks the commit if any section is missing or renamed.
 SKILL_TRIGGERS.md|The routing rule that says a matched trigger fires the Skill tool first, plus the skill-discovery fallback. CLAUDE.md imports it. Per-skill triggers live in each SKILL.md description, not here — the 27 blocks that used to live here cost ~2.4k tokens a session duplicating what the harness already injects.
 THIRD_PARTY_SKILLS.md|Registry of vendored (non-plugin) third-party skill content, pinned to an upstream commit per row. /update reads this to flag drift — read-only, never auto-pulls.
 .pending-tasks.md|Session task queue. /whats-next reads this first and runs the next unchecked item. Add tasks here to queue work across sessions.
 HOOKS_INTERNALS.md|Developer reference for the 4 caveman hook JS modules — what each does, when it fires, exports, and security notes.
+MCP_SERVICES.md|Optional MCP-backed services (Firecrawl web-data provider) — install steps, the try-MCP-then-fallback pattern skills use, and where endpoint values live (never in tracked files).
 SHIP.md|Release playbook for this repo — environments, pre-push steps, hard guards, optional GitHub release recipe. /release reads and runs it; never push without it.

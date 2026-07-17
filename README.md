@@ -7,8 +7,10 @@ My personal Claude Code setup, saved in git. Fork it and you get a working setup
 Claude Code reads `~/.claude/` every time it starts. This repo *is* that folder, saved in git:
 
 - **Rules** Claude reads at session start — plan before coding, surgical changes, right model for the job.
-- **27 custom commands**, plus 10 borrowed from plugins — type `/name` to run one. Run `/my-skills` for the full list.
+- **27 custom commands** (+2 utility commands), plus 10 borrowed from plugins — type `/name` to run one. Run `/my-skills` for the full list.
 - **Memory** that learns your preferences — say "remember that I prefer X" and it carries forward.
+
+New here? Read `CLAUDE.md` (the pointer map), then `docs/CORE_RULES.md`, then run `/my-skills` — everything else is routed from those.
 
 ## Prerequisites
 
@@ -44,7 +46,7 @@ Started with `--md-only` and want tools later? Re-run the full command.
 - Caveman (shorter replies, saves tokens): `/plugin marketplace add JuliusBrussee/caveman`
 - impeccable (frontend polish tool `/design` hands existing-UI work to): `/plugin marketplace add pbakaus/impeccable`
 
-**Cut the noise — optional session settings.** `settings.example.json` ships with friction-cutting defaults: no feedback survey, no telemetry/error reporting, no filler model calls, no spinner tips, earlier autocompact (75%). `setup.sh` copies them in; if you have an older `settings.json`, copy the `env` block and `spinnerTipsEnabled` from `settings.example.json` — details in `docs/DAILY_CHANGELOG.md` (2026-07-09 entry).
+**Cut the noise — optional session settings.** `settings.example.json` ships with friction-cutting defaults: no feedback survey, no telemetry/error reporting, no filler model calls, no spinner tips, earlier autocompact (75%). `setup.sh` copies them in; if you have an older `settings.json`, copy the `env` block and `spinnerTipsEnabled` from `settings.example.json` — each key in that `env` block is named for exactly what it disables or tunes.
 
 **Step 4 — Verify.** Open Claude Code anywhere and run `/my-skills` — a table of commands means setup is complete.
 
@@ -75,11 +77,11 @@ None required — skills create their own folders (e.g. `brainstorms/`). The one
 | Path | Purpose |
 |---|---|
 | `CLAUDE.md` | Main rules file — pointers only; loads memory, routes to topic files |
-| `docs/CORE_RULES.md` | The 8 core working rules |
-| `docs/*.md` | Topic rule files CLAUDE.md points at: PLANNING, TESTING, SUBAGENTS, CONTEXT, SKILLS, CODE_REVIEW, UI_MOCKUPS, MEMORY, SKILL_TRIGGERS, NO_YOLO (skill authoring), DAILY_CHANGELOG (public changelog, `/release` appends here) |
+| `docs/CORE_RULES.md` | The 10 core working rules |
+| `docs/*.md` | Topic rule files CLAUDE.md points at — e.g. PLANNING, TESTING, SUBAGENTS, CONTEXT, SKILLS, CODE_REVIEW, UI_MOCKUPS, MEMORY, SKILL_TRIGGERS, NO_YOLO (skill authoring), DAILY_CHANGELOG (public changelog, `/release` appends here) |
 | `memory/` | Saved preferences — `facts/` is source of truth, `CLAUDE.generated.md` is compiled |
 | `skills/` | Your skills plus symlinks to borrowed ones |
-| `hooks/` | Automation scripts: caveman mode, session-reflect, status line |
+| `hooks/` | Automation scripts: caveman mode, worktree guard/auto-clean, lockstep, prompt-scan nudge, status line |
 | `settings.example.json` | Starter settings, no secrets — `setup.sh` copies to `settings.json` |
 
 ## Skills inventory
@@ -129,6 +131,8 @@ Design tokens are read as **context, not constraint** — a redesign can replace
 | `/antislop` | Slop violations table + CLEAN/SLOP-DETECTED verdict | Auto-runs inside `/review` and `/release` |
 | `/tdd` | Failing test first, then make it pass | `/build` step 4 runs the same loop |
 
+Two utility commands live in `commands/`, not `skills/`: `/watch` (watch a video and answer questions about it) and `/memory-compile` (recompile learned preferences).
+
 `supacode-cli` isn't typed — it auto-activates inside a Supacode terminal session.
 
 ### Borrowed commands
@@ -175,7 +179,7 @@ Left to right: home dir · project folder · git branch · `●` = uncommitted c
 
 ## The CLAUDE.md instruction chain
 
-`CLAUDE.md` holds *only* pointers: `@docs/CORE_RULES.md` (the 8 core rules — see that file), `@memory/CLAUDE.generated.md` (compiled preferences), topic routing (Planning → `PLANNING.md`, etc.), and per-command trigger blocks. Never put real content in `CLAUDE.md` — put it in the right topic file and point to it.
+`CLAUDE.md` holds *only* pointers: `@docs/CORE_RULES.md` (the 10 core rules — see that file), `@memory/CLAUDE.generated.md` (compiled preferences), and topic routing (Planning → `PLANNING.md`, etc.). Never put real content in `CLAUDE.md` — put it in the right topic file and point to it.
 
 ## What's excluded
 

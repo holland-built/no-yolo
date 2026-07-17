@@ -44,6 +44,8 @@ Every dispatch prompt must bound how much other code this change could break:
 
 These are pre-built helper agent definitions in `~/.claude/agents/`. They work like specialists you can call on — each knows a specific domain.
 
+> The `agents/` roster is a curated cut of the community subagents pack (VoltAgent-style definitions). Three are hard-wired into skills — `/build` dispatches `code-reviewer`, `security-auditor`, and `accessibility-tester` — the rest are an optional dispatch menu for the role tables below. Unused ones cost nothing at runtime; prune freely in your fork.
+
 **Cross-cutting (use most days):**
 - `debugger` — bug hunts (Karpathy "write a failing test")
 - `code-reviewer` — PR gate
