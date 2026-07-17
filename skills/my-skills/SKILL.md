@@ -16,6 +16,8 @@ Two modes:
 - **Default** (empty) — paired-column, no section headers: Skill + What it does + Skill + What it does. 2-5 word summaries, 2 skills per row. Whole menu fits on one screen.
 - **deep** — 4-col (adds When + Why) + Relationships + Bolt-ons, grouped by category with section headers.
 
+Helpers tier: skills under `## Helpers` in CATEGORIES.md are called by other skills (antislop by /review, tdd by /build) — hidden from the fast menu, shown labeled in deep.
+
 Default mode's "What it does" uses TAGLINES_SHORT.md (2-5 word summaries). Deep mode uses TAGLINES.md (full one-liners) + WHEN_TO_USE.md + WHY_TO_USE.md.
 
 `$ARGUMENTS` = `deep` → 4-col all 4 sections. Empty (or anything else) → paired 4-col, no headers.

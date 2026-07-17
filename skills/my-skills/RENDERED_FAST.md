@@ -2,11 +2,10 @@
 | --- | --- | --- | --- |
 | design | Fresh UI mockup generation | quick-mockup | Throwaway layout mockup |
 | design-audit | 5-lens UI violation audit | build | Full feature build pipeline |
-| plan | Pre-build decision interview | tdd | Test-first red→green loop |
-| review | Diff, health + trend review | last-30 | Trending last 30 days |
-| video-to-kb | YouTube video to KB note | ingest-docs | Docs to context files |
-| diagnose | Root-cause bug analysis | debate | 7-persona decision debate |
-| antislop | Detect AI-slop tells | improve | Deep audit, generates plans |
+| plan | Pre-build decision interview | review | Diff, health + trend review |
+| last-30 | Trending last 30 days | video-to-kb | YouTube video to KB note |
+| ingest-docs | Docs to context files | diagnose | Root-cause bug analysis |
+| debate | 7-persona decision debate | improve | Deep audit, generates plans |
 | prompt-scan | Scan prompts, log learnings | better-prompt | Sharpen a rough prompt |
 | archify | Zero-dep diagram generator | remember-that | Save facts across sessions |
 | my-skills | This skill menu | whats-next | Shows unfinished work |

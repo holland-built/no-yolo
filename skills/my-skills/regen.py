@@ -69,7 +69,9 @@ def build_rendered(sections, taglines, when_to_use, why_to_use) -> str:
 
 
 def build_rendered_fast(sections, taglines_short) -> str:
-    names = [name for _, section_names in sections for name in section_names]
+    names = [name for section, section_names in sections
+             if not section.startswith("Helpers")
+             for name in section_names]
     header = "| Skill | What it does | Skill | What it does |\n| --- | --- | --- | --- |"
     rows = []
     for i in range(0, len(names), 2):
