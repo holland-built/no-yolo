@@ -1,6 +1,6 @@
 # Hooks
 
-Hook scripts in `~/.claude/hooks/` run automatically at harness events — things like session start, session end, or before a tool runs — configured in `settings.json`.
+Hook scripts in `~/.claude/hooks/` run automatically at harness events (session start, session end, before a tool runs). They are wired in `settings.json` under the `hooks` key — machine-specific; see `settings.example.json` for the template.
 
 ## Active hooks
 
@@ -27,7 +27,5 @@ Skill: `caveman:caveman`. State: `.caveman-active`.
 # Make hooks executable after clone (also done by setup.sh)
 chmod +x ~/.claude/hooks/*.sh
 ```
-
-Hooks are wired in `settings.json` under the `hooks` key. Machine-specific — see `settings.example.json` for the template.
 
 Deeper module reference → [HOOKS_INTERNALS.md](HOOKS_INTERNALS.md).

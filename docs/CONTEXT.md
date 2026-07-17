@@ -2,7 +2,7 @@
 
 ## Token Budget Awareness
 
-Claude has a context window — think of it like working memory. When it fills up, earlier messages get dropped. Managing tokens keeps your session sharp.
+Claude's context window is its working memory: when it fills up, earlier messages get dropped. Managing tokens keeps your session sharp.
 
 Global skills + hooks use ~30–40k tokens (chunks of text) before you type your first message. Be intentional about what loads.
 
@@ -30,6 +30,4 @@ Prefer **per-project** skill installs over global. Global skills bloat every ses
 
 ## Cache discipline
 
-Anthropic saves (caches) your conversation for 5 minutes to speed up responses. If you pause longer than that, the cache clears and the next response is slower.
-
-Anthropic prompt cache TTL = 5 min. Long sleeps past 300s lose cache. When polling, either stay under 270s or commit to 1200s+ between checks.
+Anthropic caches your conversation for 5 minutes (prompt cache TTL = 5 min) to speed up responses; pause longer and the cache clears, so the next response is slower. When polling, either stay under 270s between checks or commit to 1200s+ — sleeps just past 300s pay the cache cost for nothing.

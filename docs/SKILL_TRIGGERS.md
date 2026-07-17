@@ -5,11 +5,11 @@
 trigger phrases in that skill's `description`, invoke the Skill tool with that `skill:` before
 doing anything else.
 
-Do NOT add a per-skill trigger block here. Every skill's `description` frontmatter is already
-injected into context by the harness, so a block here is the same text loaded twice. This file
-listed 27 of them (~2.4k tokens every session) while 14 other skills had no block and routed
-fine — that was the proof it wasn't needed. **A new skill's triggers go in its own
-`description`, phrased as "Use this skill when the user types /x, says 'y' or 'z'."**
+Do NOT add a per-skill trigger block here. The harness already injects every skill's
+`description` frontmatter into context, so a block here is the same text loaded twice
+(27 blocks once cost ~2.4k tokens/session while 14 block-less skills routed fine).
+**A new skill's triggers go in its own `description`, phrased as
+"Use this skill when the user types /x, says 'y' or 'z'."**
 
 # skill-discovery
 When the user says "find skill for X", "what skill handles X", "which skill does X", or "what
