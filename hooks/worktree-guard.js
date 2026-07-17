@@ -15,7 +15,7 @@
 // Design choices:
 // - No flags -> exit 0 immediately (zero cost when the feature is unused).
 // - Edit target outside every flagged repo -> allowed (e.g. editing ~/.claude
-//   while an <a-client-repo> worktree is active is fine — different repo).
+//   while another repo's worktree is active is fine — different repo).
 // - Edit target inside a flagged repo but outside its worktree -> DENIED.
 // - Flags present but the target path can't be determined -> DENIED (safe side:
 //   if a worktree is active we would rather block an unclassifiable edit than
