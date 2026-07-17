@@ -11,7 +11,7 @@ debate|7-persona decision debate
 improve|Deep audit, generates plans
 prompt-scan|Scan prompts, log learnings
 better-prompt|Sharpen a rough prompt
-drawio-skill|Generate diagrams, export images
+archify|Zero-dep diagram generator
 remember-that|Save facts across sessions
 my-skills|This skill menu
 whats-next|Shows unfinished work
@@ -21,7 +21,6 @@ my-md|List all markdown files
 md-check|Audit + fix docs
 skill-audit|Audit skill library health
 update|Check/apply setup updates
-supacode-cli|Drive Supacode terminal app
 lockstep|Hard block on edits
 quick-mockup|Throwaway layout mockup
 trim|Forces the simplest solution

@@ -7,7 +7,7 @@ My personal Claude Code setup, saved in git. Fork it and you get a working setup
 Claude Code reads `~/.claude/` every time it starts. This repo *is* that folder, saved in git:
 
 - **Rules** Claude reads at session start — plan before coding, surgical changes, right model for the job.
-- **27 custom commands** (+2 utility commands), plus 10 borrowed from plugins — type `/name` to run one. Run `/my-skills` for the full list.
+- **25 custom commands** (+2 utility commands), plus 11 borrowed from plugins — type `/name` to run one. Run `/my-skills` for the full list.
 - **Memory** that learns your preferences — say "remember that I prefer X" and it carries forward.
 
 New here? Read `CLAUDE.md` (the pointer map), then `docs/CORE_RULES.md`, then run `/my-skills` — everything else is routed from those.
@@ -55,8 +55,7 @@ Started with `--md-only` and want tools later? Re-run the full command.
 | Tool | Used by | How to install |
 |---|---|---|
 | [gh (GitHub CLI)](https://cli.github.com/) | `review`, `release` | `brew install gh && gh auth login` |
-| [Graphviz](https://graphviz.org/) | `drawio-skill` | `brew install graphviz` |
-| [draw.io](https://www.drawio.com/) CLI | `drawio-skill` | `brew install --cask drawio` |
+| [archify](https://github.com/tt-a1i/archify) | diagrams | installed by setup.sh — zero extra deps |
 | [Groq Whisper](https://console.groq.com/) | `video-to-kb` | Free API key, then `export GROQ_API_KEY=...` in `~/.zshrc` |
 | [Chrome](https://www.google.com/chrome/) (headless) | `design`, `build` | Usually present; `brew install --cask google-chrome` |
 | [Playwright](https://playwright.dev/) | `build` | Add the `playwright` MCP server to `settings.json` (below) |
@@ -103,7 +102,6 @@ Design tokens are read as **context, not constraint** — a redesign can replace
 |---|---|---|
 | `/review` | Reviews the diff AND whole codebase, one approve-all gate, then fixes | `--auto` |
 | `/diagnose` | 6-step root-cause bug diagnosis | `--debate` (6-persona Opus) |
-| `/drawio-skill` | Draws diagrams, exports PNG/SVG/PDF | — |
 | `/build` | Full feature pipeline: evidence → Opus plan → mockup gate → TDD → prove | — |
 | `/plan` | One-question-at-a-time planning interview, routes result to the right skill | — |
 | `/my-md` | Lists every markdown file, global + project | — |
@@ -133,8 +131,6 @@ Design tokens are read as **context, not constraint** — a redesign can replace
 
 Two utility commands live in `commands/`, not `skills/`: `/watch` (watch a video and answer questions about it) and `/memory-compile` (recompile learned preferences).
 
-`supacode-cli` isn't typed — it auto-activates inside a Supacode terminal session.
-
 ### Borrowed commands
 
 | Skill | What it does | Install |
@@ -142,6 +138,7 @@ Two utility commands live in `commands/`, not `skills/`: `/watch` (watch a video
 | `/trim` + 5 sub-commands | Simplest-thing-that-works pressure, six commands in one install | `npx skills@latest add holland-built/trim` |
 | `/improve` | Ranked improvement plan, never changes anything | `npx skills@latest add shadcn/improve` |
 | `emil-design-eng`, `animation-vocabulary`, `review-animations` | Emil Kowalski's UI-polish/animation rules — feed `/design` and `/design-audit`, not typed directly | `npx skills@latest add emilkowalski/skills` |
+| `archify` | Architecture/flow/sequence/dataflow/state diagrams as zero-dep HTML+SVG | `npx skills@latest add tt-a1i/archify` |
 
 ## Model guidance
 

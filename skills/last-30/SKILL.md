@@ -110,6 +110,6 @@ Rules:
 - One row = one distinct signal. If HN + Reddit both flag the same thing, one row, stronger link.
 - Signal: concrete metric (CAPE >40, yield 5.18%, +2k stars this month). Never "high activity".
 - Takeaway: one sentence, plain English, no unexplained jargon.
-- Source links: short URLs → `[Title ↗](url)`. URLs longer than 60 chars → `[Here ↗](url)` with raw URL on the next indented line so Supacode renders it readable.
+- Source links: short URLs → `[Title ↗](url)`. URLs longer than 60 chars → `[Here ↗](url)` with raw URL on the next indented line so terminal apps render it readable.
 - Bottom line: 3–4 sentences max. No word cap — use what the signal requires.
 - Total output: under 300 words. No files written.

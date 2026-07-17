@@ -83,18 +83,6 @@
       },
       "structureSha": "a8e691d3eb21e96f10ef4e698a87b2fed9e474f9ff5a88a06434c95ec3e47011"
     },
-    "drawio-skill": {
-      "descSha": "2ffd20123ada9fb46328447c538ee00ca77c435af37ee4e0b2db027a5122858b",
-      "rows": {
-        "skills/my-skills/STORIES.md": "b91c4f1e61621136756d5b15dab1d7c5651cb43feba481772c42bef1cd38e64b",
-        "skills/my-skills/STORIES.md#rel": "f61385fb8800ac30274f6012389c4b29f5f44f0353e5179fd4692a8c54994f65",
-        "skills/my-skills/TAGLINES.md": "8a9abf3b0b889383f80f5d87057b069e23832633b311195ef1104e0e72687ad6",
-        "skills/my-skills/TAGLINES_SHORT.md": "d9f5641b5e91ce34f68bbd11638099c78d472773c9f667bb79a170748f2bb501",
-        "skills/my-skills/WHEN_TO_USE.md": "7f0e883a998cfd15de05e35606abaa8ba622aeaa79c962494f683ec4cb529eec",
-        "skills/my-skills/WHY_TO_USE.md": "12a3bd7ea967223153eaa27449e10f8349eb9cb680744145c32b2cd2b44ce686"
-      },
-      "structureSha": "40f1d05291aff9a25c321f776feca3bac0c9e69b24bf03513aba79d649830e34"
-    },
     "eli5": {
       "descSha": "aac9e3607a7692e7603e1ecf3e5313f8ee97543d10a49aac92c336073d924994",
       "rows": {
@@ -255,17 +243,6 @@
         "skills/my-skills/WHY_TO_USE.md": "770b6b3e8c6607dd49541c0c0bdb9e19b9c3c60b17f5bbb06cd02287f454befd"
       },
       "structureSha": "3913c7cf4642d1793d04ca877eca046c990aa6442d62749b7a8f014ba42fd86b"
-    },
-    "supacode-cli": {
-      "descSha": "1a2487461fa3921323014f153e97e2d237002f788012e80756487dd77c1b5973",
-      "rows": {
-        "skills/my-skills/STORIES.md": "ffd4376047a922bf22370aaf98115e0954fc0638a91e15225f4d4d44da0928d7",
-        "skills/my-skills/TAGLINES.md": "6f1c5902c95c94f764bbfb868a2c737010ef7ea6641ffdd6387e7dbe4289d725",
-        "skills/my-skills/TAGLINES_SHORT.md": "eef69c89402822e721de75037cf640803c48d1c20437e028bdf535b024bc55c9",
-        "skills/my-skills/WHEN_TO_USE.md": "94b4d4de288f4785ffe58681521c3f6802467c608845bfa295f2f6cbf360515f",
-        "skills/my-skills/WHY_TO_USE.md": "46d2e9cd1068d09855abc495ff9ca546ec586ac53bc03a8d6f0ffd59acd27af7"
-      },
-      "structureSha": "2672dbbf3a07e366aa78b598db4dc31908c479c1ed0df976aa56a10e27c02cdc"
     },
     "tdd": {
       "descSha": "5250a9d316782d2c6d1282b3108ef87e10b69954f27a083489b59aac336f0d50",

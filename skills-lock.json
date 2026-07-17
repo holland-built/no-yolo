@@ -7,11 +7,23 @@
       "skillPath": "skills/animation-vocabulary/SKILL.md",
       "computedHash": "39319fc9a33c15be08666b3685f58666f042ff36bb902b7814c0834a5ba99df4"
     },
+    "archify": {
+      "source": "tt-a1i/archify",
+      "sourceType": "github",
+      "skillPath": "archify/SKILL.md",
+      "computedHash": "4cec0aaade3dde0f63dff0824ef435d25ed68c54c996e6a637fb4054002f21af"
+    },
     "emil-design-eng": {
       "source": "emilkowalski/skills",
       "sourceType": "github",
       "skillPath": "skills/emil-design-eng/SKILL.md",
       "computedHash": "8bdf9e4e6de7a4969147bf4828a4ad2c5aacd9fba4b690b250a85e0467ca387d"
+    },
+    "improve": {
+      "source": "shadcn/improve",
+      "sourceType": "github",
+      "skillPath": "skills/improve/SKILL.md",
+      "computedHash": "912dd5f74843d6ff7d92af2eb40cdfec522c86b7ef3453731efbb37735017602"
     },
     "review-animations": {
       "source": "emilkowalski/skills",
@@ -54,12 +66,6 @@
       "sourceType": "github",
       "skillPath": "skills/trim-review/SKILL.md",
       "computedHash": "f747bbc2ed829f1fa27c42f87088291e9932c682e213e6bf739839b71299e0e2"
-    },
-    "improve": {
-      "source": "shadcn/improve",
-      "sourceType": "github",
-      "skillPath": "skills/improve/SKILL.md",
-      "computedHash": "912dd5f74843d6ff7d92af2eb40cdfec522c86b7ef3453731efbb37735017602"
     }
   }
 }

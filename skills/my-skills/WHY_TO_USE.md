@@ -1,5 +1,5 @@
 diagnose|Solo: forces systematic evidence-gathering. --debate: six theories surface the one you missed
-drawio-skill|An hour of manual fiddling becomes two minutes
+archify|Self-contained HTML with inline SVG, dark/light toggle, in-browser PNG/SVG export — no diagram app, no layout-engine install
 build|Nothing ships without a plan, tests, and proof. No more "works on my machine" done claims
 plan|First-try success goes from ~70% to ~90% when the hard calls are made up front, not mid-build
 my-md|One command instead of hunting across two directory trees
@@ -9,7 +9,6 @@ tdd|The RED test is proof you actually fixed it. Without it you're asserting, no
 design|10 mockups at once (8 distinct paradigms + 2 wild) + slop validator kills the generic — one pick becomes a full build plan
 quick-mockup|Gray boxes served over http:// and auto-opened, no brand tokens or slop-judge — satisfies "never show ASCII mockups" without the full /design pipeline
 ingest-docs|Dedupes against what's already there and tracks changes in a manifest — re-runs only touch what's new
-supacode-cli|`/supacode-cli` works standalone, and it auto-activates in-session too
 video-to-kb|Talks are perishable. One command turns them into permanent, searchable KB nodes
 whats-next|Prevents starting something new while something is already half-done
 improve|Vets every subagent finding itself before reporting; plans are written for a weaker model with zero session context

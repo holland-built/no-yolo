@@ -27,7 +27,7 @@ prompt-scan
 better-prompt
 
 ## Diagrams
-drawio-skill
+archify
 
 ## Memory
 remember-that
@@ -41,5 +41,4 @@ my-md
 md-check
 skill-audit
 update
-supacode-cli
 lockstep

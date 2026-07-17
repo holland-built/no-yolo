@@ -48,7 +48,7 @@
 
 | Skill | What it does | When to use | Why vs manual |
 | --- | --- | --- | --- |
-| drawio-skill | Generates a diagram (flowchart/architecture/sequence/ER/UML) and exports PNG/SVG/PDF. | Need a picture of how something works | An hour of manual fiddling becomes two minutes |
+| archify | Architecture/flow/sequence/dataflow/state diagrams as zero-dep HTML+SVG. Accepts Mermaid. | Any architecture, workflow, sequence, dataflow, or state diagram — or converting a Mermaid sketch | Self-contained HTML with inline SVG, dark/light toggle, in-browser PNG/SVG export — no diagram app, no layout-engine install |
 
 ## Memory
 
@@ -68,5 +68,4 @@
 | md-check | Audits ~/.claude docs for size, duplicate topics, and duplicate rules; `--drift` finds stale descriptions, `--orphans` finds dangling/unreferenced skills, `--fix` applies the fixes behind one approve-all gate, `--pre` is a pre-creation gate. | Notes piling up or repeating themselves | Other skills call it with --pre before writing a new note, so you never get two files on one topic |
 | skill-audit | Audits the whole skill library: bucket fit, missing pieces, unverified output, stale triggers. | Wondering if your skills are well-structured or missing something | One pass instead of manually eyeballing every SKILL.md |
 | update | Two-way check between ~/.claude and GitHub — behind AND ahead/uncommitted — plus plugin versions and vendored-skill drift; applies or rolls back. | Not sure if you should update | Rollback and restore-removed-skill built in — no manual git surgery if something breaks |
-| supacode-cli | Lets Claude drive the Supacode terminal app — tabs, worktrees, surfaces. | Working inside a Supacode terminal session | `/supacode-cli` works standalone, and it auto-activates in-session too |
 | lockstep | Hook-enforced gate: blocks Edit/Write/NotebookEdit until you say go. | You want "don't code yet" to actually hold, not just get ignored a few messages later | Mechanically denied by a PreToolUse hook — not a prompt the model can talk itself past |

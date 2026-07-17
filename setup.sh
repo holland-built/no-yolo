@@ -124,12 +124,6 @@ else
   echo "    ! gh missing — install: brew install gh && gh auth login"
 fi
 
-if command -v dot >/dev/null 2>&1; then
-  echo "    Graphviz already installed"
-else
-  echo "    ! Graphviz missing — install: brew install graphviz  (used by drawio-skill)"
-fi
-
 echo ""
 echo "==> 4. Plugin skills"
 echo "    Installing trim..."
@@ -146,6 +140,8 @@ if [ -f "$IMPROVE_MD" ] && ! grep -q '^user-invocable: true' "$IMPROVE_MD"; then
 fi
 echo "    Installing emilkowalski/skills (design-eng taste rules — used by /design)..."
 npx skills@latest add emilkowalski/skills || echo "    ! emilkowalski/skills install failed"
+echo "    Installing archify (zero-dep diagrams)..."
+npx skills@latest add tt-a1i/archify || echo "    ! archify install failed"
 echo ""
 echo "    Note: one more plugin installs inside Claude Code (not the terminal):"
 echo "      /plugin marketplace add JuliusBrussee/caveman  # terse mode (optional)"
