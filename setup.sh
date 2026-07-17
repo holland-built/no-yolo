@@ -168,7 +168,6 @@ else
   echo "      /plugin marketplace add JuliusBrussee/caveman       # terse mode"
   echo "      /plugin marketplace add pbakaus/impeccable          # frontend polish (/design hands off to it)"
   echo "    Maintainer's extras (optional, not required by any skill):"
-  echo "      /plugin marketplace add ecc-plugins/ecc             # agent types + code review"
   echo "      /plugin marketplace add karpathy/karpathy-skills     # Karpathy skill set"
   echo "      /plugin marketplace add design-plugins/design-and-refine  # UI design"
   echo "      /plugin marketplace add AgriciDaniel/claude-obsidian # Obsidian integration"
