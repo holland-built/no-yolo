@@ -63,7 +63,7 @@ Match **first token** in this order:
    - Refines existing → update that file: append to body, bump `updated:`.
    - Contradicts active → write new fact with `status: needs-review` + `conflicts-with: <id>`. Stop and ask user to resolve.
 
-3b. **Canon-duplication guard** (global `user`/`feedback` facts): before writing, read `~/.claude/docs/CORE_RULES.md` and `~/.claude/CLAUDE.md` and judge whether the fact's rule is already stated there. If it is, **do NOT save** — canon is authoritative and both load every session, so a fact restating it is pure always-loaded waste (this is how `user-no-confirmation-questions` + `feedback-skill-triggers-location` duplicated rules 1/6 and the HARD RULE). Tell the user: `Already covered by <CORE_RULES rule N | CLAUDE.md HARD RULE> — not saving a duplicate. Edit canon instead if you want to change it.` Only save when the fact adds something canon does not already say.
+3b. **Canon-duplication guard** (global `user`/`feedback` facts): before writing, read `~/.claude/docs/CORE_RULES.md` and `~/.claude/CLAUDE.md` and judge whether the fact's rule is already stated there. If it is, **do NOT save** — canon is authoritative and both load every session, so a fact restating it is pure always-loaded waste. Tell the user: `Already covered by <CORE_RULES rule N | CLAUDE.md HARD RULE> — not saving a duplicate. Edit canon instead if you want to change it.` Only save when the fact adds something canon does not already say.
 
 4. **Classify** `type`: `user` | `feedback` | `pattern` | `reference`
 

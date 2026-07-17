@@ -18,8 +18,8 @@ Target: $ARGUMENTS
 
 Disposable layout mockup. Build fast, open in browser, throw away once the layout decision is locked.
 
-**NOT /design.** This skill produces zero brand tokens, zero slop-judge passes, zero 10-variant
-pipelines. If the user wants polished multi-variant visual design, redirect them to `/design`.
+**NOT /design** — zero brand tokens, zero slop-judge passes, zero 10-variant pipelines.
+Polished multi-variant visual design → redirect to `/design`.
 
 ---
 

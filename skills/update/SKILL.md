@@ -24,61 +24,35 @@ Check if your Claude Code setup is out of date, preview what would change, and u
 ## How to run
 
 ### Step 1 — fetch remote state (no changes made yet)
-
 Run silently:
 ```bash
 cd ~/.claude
 git fetch origin main 2>/dev/null
 ```
 
-### Step 2 — reconcile both directions (not just "am I behind")
-
-`github.com/holland-built/no-yolo` is your published copy — the place you or anyone else
-copies this setup from. Reconciliation means checking BOTH directions, not just whether
-GitHub has something you don't:
-
+### Step 2 — reconcile both directions
+`github.com/holland-built/no-yolo` is your published copy. Check BOTH directions, not just "am I behind":
 ```bash
 cd ~/.claude
 BEHIND=$(git rev-list HEAD..origin/main --count)
 AHEAD=$(git rev-list origin/main..HEAD --count)
 DIRTY=$(git status --porcelain)
 ```
+- **BEHIND > 0** — GitHub has commits you don't → Steps 3-4.
+- **AHEAD > 0** — local commits GitHub doesn't have. List them (`git log origin/main..HEAD --oneline`, same prefix translation as Step 3). Tell user: "You have N local commit(s) not on GitHub yet. Run `/release` to publish them." Never push from here — `/release` is the sole publish command.
+- **DIRTY non-empty** — uncommitted files that neither BEHIND nor AHEAD can see (the most common gap: a whole work session sitting in `git status`). List the files from `$DIRTY` grouped Modified / New. Tell user: "You also have M uncommitted change(s) — not yet part of any commit."
 
-- **BEHIND > 0** — GitHub has commits your machine doesn't. Covered by Steps 3-4 below.
-- **AHEAD > 0** — your machine has commits GitHub doesn't (built locally, never published).
-  List them: `git log origin/main..HEAD --oneline` (same plain-English prefix translation as
-  Step 3). Tell user: "You have N local commit(s) not on GitHub yet. Run `/release` to publish
-  them." Never push from here — `/update`'s job is to report, `/release` is the sole publish
-  command.
-- **DIRTY non-empty** — files changed or created on disk that aren't even committed yet (the
-  most common gap: a whole work session sitting in `git status` that neither BEHIND nor AHEAD
-  can see, since it's not a commit at all). List the files from `$DIRTY` grouped as Modified /
-  New. Tell user: "You also have M uncommitted change(s) — not yet part of any commit."
-
-If BEHIND = 0 AND AHEAD = 0 AND DIRTY is empty: output "Your machine and GitHub are
-identical — everything reconciled." Skip Steps 3-4 (nothing remote to translate) but still run
-Steps 4.5-4.7 below — those check different things (plugins, vendored content, marketplaces)
-and must never be skipped just because the core repo is in sync.
+If BEHIND = 0 AND AHEAD = 0 AND DIRTY empty: output "Your machine and GitHub are identical — everything reconciled." Skip Steps 3-4 but still run Steps 4.5-4.7 — they check different things (plugins, vendored content, marketplaces) and must never be skipped just because the core repo is in sync.
 
 If BEHIND > 0: continue to Step 3.
 
 ### Step 3 — translate commits into plain English
-
 ```bash
 git log HEAD..origin/main --oneline
 ```
-
-For each commit line, translate the prefix into plain language:
-- `feat:` or `feat(` → "New:"
-- `fix:` or `fix(` → "Fixed:"
-- `docs:` or `docs(` → "Docs updated:"
-- `chore:` or `refactor:` → "Cleanup (no action needed):"
-- `remove` or `nuke` or `delete` in message → ⚠️ "Removed:"
-
-Show as a numbered list, newest first. No git hashes. No jargon.
+Prefix translation: `feat:`/`feat(` → "New:", `fix:`/`fix(` → "Fixed:", `docs:`/`docs(` → "Docs updated:", `chore:`/`refactor:` → "Cleanup (no action needed):", `remove`/`nuke`/`delete` in message → ⚠️ "Removed:". Show as a numbered list, newest first. No git hashes. No jargon.
 
 ### Step 4 — detect what's new and what's removed
-
 ```bash
 # New skills added remotely
 git diff HEAD origin/main --name-status | grep "^A.*skills/.*/SKILL\.md"
@@ -89,9 +63,7 @@ git diff HEAD origin/main --name-status | grep "^D.*skills/.*/SKILL\.md"
 # Rule files changed
 git diff HEAD origin/main --name-status | grep -E "^M.*(CLAUDE|CORE_RULES|PLANNING|TESTING|SUBAGENTS|CODE_REVIEW)\.md"
 ```
-
 Format output:
-
 ```
 📦 What you'd get:
   + /quick-mockup skill (new)
@@ -103,28 +75,19 @@ Format output:
 
 ℹ️  You are 3 updates behind.
 ```
+Nothing removed → skip the ⚠️ section entirely.
 
-If nothing is removed: skip the ⚠️ section entirely.
-
-### Step 4.5 — plugin status
-
-Read installed plugins (read-only — never auto-update):
-
+### Step 4.5 — plugin status (read-only — never auto-update)
 ```bash
 python3 "$HOME/.claude/hooks/list-plugins.py"
 ```
 (Shared lister — same script setup.sh Step 5 uses. Prints TSV `name<TAB>version<TAB>scope`, or "No plugins installed.")
 
-Show as a table: **Plugin | Installed version | Scope**. Flag any row whose version is `unknown` or `?` as ⚠️ "may be stale — reinstall to pin a version".
-
-Then output verbatim:
+Table: **Plugin | Installed version | Scope**. Flag version `unknown` or `?` as ⚠️ "may be stale — reinstall to pin a version". Then output verbatim:
 > To check for plugin updates, run `/plugin list` inside Claude Code, then `/plugin update <name>` for any that are outdated. Plugins can't be updated from outside the session.
 
 ### Step 4.6 — vendored third-party skill drift (read-only)
-
-Read `docs/THIRD_PARTY_SKILLS.md` for the list of names + local paths (none of this content is
-in git — see that file). For each row:
-
+Read `docs/THIRD_PARTY_SKILLS.md` for names + local paths (none of this content is in git — see that file). For each row:
 ```bash
 if [ ! -f "<local-path>/SOURCE.md" ]; then
   echo "<name>: NOT INSTALLED"
@@ -133,23 +96,13 @@ else
   HEAD=$(gh api repos/<upstream-repo>/commits/main --jq '.sha' 2>/dev/null)
 fi
 ```
-
-Show as a table: **Name | Status**. Status is `not installed — run /update vendor <name> to
-install` if `SOURCE.md` is missing (gitignored dir never fetched on this machine yet), `up to
-date` if `PINNED = HEAD`, else `⚠️ STALE — N commits behind` (get N via `gh api
-repos/<repo>/compare/<pinned>...main --jq '.ahead_by'`). If `gh` missing/unauthed or the table
-has no rows: skip this step silently.
+Table: **Name | Status** — `not installed — run /update vendor <name> to install` if `SOURCE.md` is missing, `up to date` if `PINNED = HEAD`, else `⚠️ STALE — N commits behind` (N via `gh api repos/<repo>/compare/<pinned>...main --jq '.ahead_by'`). If `gh` missing/unauthed or the table has no rows: skip this step silently.
 
 Never auto-update inside this check — output:
 > Vendored skill "<name>" is behind upstream. Run `/update vendor <name>` to re-vendor it.
 
 ### Step 4.7 — orphaned marketplaces (read-only)
-
-Some marketplaces are git-cloned directly into `plugins/marketplaces/<name>/` but have **no
-matching entry** in `installed_plugins.json` (no `<plugin>@<name>` key) — Step 4.5 silently
-skips these, so a skill can drift with zero warning (e.g. `impeccable`, cloned straight from
-`pbakaus/impeccable` with nothing installed through the normal plugin flow).
-
+Marketplaces git-cloned into `plugins/marketplaces/<name>/` with **no** `<plugin>@<name>` key in `installed_plugins.json` are invisible to Step 4.5, so a skill can drift with zero warning (e.g. `impeccable`, cloned straight from `pbakaus/impeccable`).
 ```bash
 python3 - "$HOME/.claude/plugins/known_marketplaces.json" "$HOME/.claude/plugins/installed_plugins.json" <<'PYEOF'
 import json, sys, os
@@ -165,22 +118,17 @@ for name, info in mkts.items():
         print(f"{name}\t{loc}")
 PYEOF
 ```
-
 For each orphaned marketplace printed, run in its directory:
 ```bash
 LOCAL=$(git rev-parse HEAD); REMOTE=$(git ls-remote origin HEAD | cut -f1)
 ```
-
-Show as a table: **Marketplace | Status**. `up to date` if `LOCAL = REMOTE`, else
-`⚠️ STALE — behind upstream`. If none are orphaned or `git`/network fails: skip silently.
+Table: **Marketplace | Status** — `up to date` if `LOCAL = REMOTE`, else `⚠️ STALE — behind upstream`. If none are orphaned or `git`/network fails: skip silently.
 
 Never auto-update inside this check — output:
 > "<name>" isn't tracked by the plugin system. Run `/update marketplace <name>` to pull it to latest.
 
 ### Step 5 — offer options (when run with no argument)
-
-After showing the summary, output:
-
+After the summary, output:
 ```
 What do you want to do?
   /update preview            — see the full detailed changelog
@@ -190,35 +138,25 @@ What do you want to do?
   /update vendor <name>       — re-vendor a stale third-party skill
   /update marketplace <name>  — git pull a stale orphaned marketplace
 ```
-(The last two only appear if Steps 4.6/4.7 found something STALE.)
-
-Then stop. Do not auto-pull.
+(The last two only appear if Steps 4.6/4.7 found something STALE.) Then stop. Do not auto-pull.
 
 ### Step 6 — if argument is `preview`
-
-Show the full git diff of changed markdown files in plain English. For each changed .md file:
-- State what file changed and what section was affected
-- Quote the before and after for changed lines (use simple "was: / now:" format)
-- Highlight any lines that were deleted (user may want to keep them)
-
-Do NOT show raw git diff output. Translate everything.
+For each changed .md file: state what file and section changed, quote before/after for changed lines ("was: / now:" format), highlight deleted lines (user may want to keep them). Do NOT show raw git diff output — translate everything.
 
 ### Shared: sync-and-run
-
 Used by Steps 7 and 8. Substitute `<SETUP_CMD>` with the caller's command.
 
 **Dirty-check stash guard:**
 ```bash
 cd ~/.claude && DIRTY=$(git status --porcelain)
 ```
-If DIRTY non-empty: tell user "You have local changes I'm setting aside safely before updating." Run `git stash push -m "pre-update stash $(date +%Y-%m-%d)"`. After pull completes run `git stash pop`. If stash pop has conflicts: "Some of your local changes conflicted with the update. Your originals are in git stash — run `git stash pop` in your terminal to review."
+If DIRTY non-empty: tell user "You have local changes I'm setting aside safely before updating." Run `git stash push -m "pre-update stash $(date +%Y-%m-%d)"`. After pull completes run `git stash pop`. If pop conflicts: "Some of your local changes conflicted with the update. Your originals are in git stash — run `git stash pop` in your terminal to review."
 
 **AHEAD detection:**
 ```bash
 cd ~/.claude
 AHEAD=$(git rev-list origin/main..HEAD --count 2>/dev/null || echo 0)
 ```
-
 **If AHEAD = 0:** `git merge --ff-only origin/main && <SETUP_CMD>`
 
 **If AHEAD > 0:** Tell user "You have [N] local commit(s). Rebasing on top of latest."
@@ -227,25 +165,19 @@ CONFLICTS=""
 git rebase origin/main; REBASE_EXIT=$?
 [ $REBASE_EXIT -ne 0 ] && CONFLICTS=$(git diff --name-only --diff-filter=U 2>/dev/null) && git rebase --abort
 ```
-If rebase failed: tell user commits are untouched, list CONFLICTS, print `git fetch origin main && git rebase origin/main` + `git rebase --continue`. STOP.
-If rebase succeeded: run `<SETUP_CMD>`.
+If rebase failed: tell user commits are untouched, list CONFLICTS, print `git fetch origin main && git rebase origin/main` + `git rebase --continue`. STOP. If rebase succeeded: run `<SETUP_CMD>`.
 
 ### Step 7 — if argument is `full`
-
 Confirm: "Pulling all updates and re-running setup. This takes about 30 seconds. Continue? (y/n)"
 
-Run the **Shared: sync-and-run** block above using `bash ~/.claude/setup.sh` as `<SETUP_CMD>`.
+Run **Shared: sync-and-run** with `bash ~/.claude/setup.sh` as `<SETUP_CMD>`.
 
-After success: show plain-English summary of what changed. Then run Steps 4.6 and 4.7's checks — for any row/marketplace reported STALE, ask once: "Also update third-party content — <names> — to latest? (y/n)". If yes, run Step 11 (`vendor <name>`) and/or Step 12 (`marketplace <name>`) for each. Tell user: "Reopen Claude Code to pick up the changes."
+After success: plain-English summary of what changed. Then re-run Steps 4.6 and 4.7's checks — for any row/marketplace STALE, ask once: "Also update third-party content — <names> — to latest? (y/n)". If yes, run Step 11 (`vendor <name>`) and/or Step 12 (`marketplace <name>`) for each. Tell user: "Reopen Claude Code to pick up the changes."
 
 ### Step 8 — if argument is `rules`
-
-Run the **Shared: sync-and-run** block above using `bash ~/.claude/setup.sh --md-only` as `<SETUP_CMD>`.
-
-Tell user: "Rules updated. Tool installs skipped. Reopen Claude Code to pick up changes."
+Run **Shared: sync-and-run** with `bash ~/.claude/setup.sh --md-only` as `<SETUP_CMD>`. Tell user: "Rules updated. Tool installs skipped. Reopen Claude Code to pick up changes."
 
 ### Step 9 — if argument is `rollback`
-
 **First: same dirty-check guard as Step 7.** If DIRTY non-empty: "You have unsaved local changes. Rolling back would delete them. Type `cancel` to stop." Wait for response.
 
 **Create a restore point before touching anything:**
@@ -263,40 +195,30 @@ Your recent setup history:
 
 Which one do you want to go back to? (type the number)
 ```
-
 After user picks, use `git revert` (keeps history, safe) NOT `git reset --hard` (permanent, destructive):
 ```bash
 git revert --no-commit <hash-range>
 git commit -m "rollback: reverted to <chosen-date>"
 ```
-
 Tell user: "Rolled back. Nothing permanently deleted — your history is preserved. Reopen Claude Code to pick up the changes."
 
 ### Step 10 — if argument is `restore <skill-name>`
-
 ```bash
 git show origin/main:skills/<skill-name>/SKILL.md > ~/.claude/skills/<skill-name>/SKILL.md
 ```
-
 If the skill doesn't exist on origin/main either, search recent history:
 ```bash
 git log --all --oneline -- skills/<skill-name>/SKILL.md
 ```
-
-Show the user what commits touched that skill and let them pick which version to restore.
-
-After restoring: remind user to add the trigger back to CLAUDE.md if they want `/skill-name` to work.
+Show which commits touched that skill and let the user pick which version to restore. After restoring: remind user to add the trigger back to CLAUDE.md if they want `/skill-name` to work.
 
 ### Step 11 — if argument is `vendor <name>`
-
 Look up `<name>` in `docs/THIRD_PARTY_SKILLS.md`. If no row matches: "No vendored third-party skill named '<name>' — see `/update` to see what's tracked." Stop.
 
-`<vendor-path>` is gitignored — this never touches git, never gets committed, and this command
-works identically whether it's a first install or a refresh.
+`<vendor-path>` is gitignored — never touches git, never committed; the command works identically for a first install or a refresh.
 
 If `<vendor-path>/SOURCE.md` doesn't exist yet: "Installing '<name>' from <upstream-repo> to <vendor-path> (local only, never published). Continue? (y/n)"
 If it exists: "Re-fetching '<name>' from <upstream-repo>. This overwrites the local copy under <vendor-path>. Continue? (y/n)"
-
 ```bash
 VENDOR_PATH="<vendor-path from the row>"
 REPO="<upstream-repo from the row>"
@@ -306,24 +228,20 @@ for base in <file basenames from the row's "Used by"/known file list, e.g. taste
   curl -s "https://raw.githubusercontent.com/$REPO/main/skills/$base/SKILL.md" -o "$VENDOR_PATH/$base.md"
 done
 ```
-
 (Convention: local `<vendor-path>/<x>.md` always maps to upstream `skills/<x>/SKILL.md`.)
 
 Write or update `<vendor-path>/SOURCE.md` with: Upstream, License, Pinned commit (`$NEW_SHA`), Vendored date (today), Files, Used by — same shape as the existing `taste-skill/SOURCE.md`.
 
-Show a `diff`-style summary of what changed (or "installed N files" if this was a first install). Tell user: "'<name>' ready at <vendor-path> (commit <NEW_SHA short>, local only). Review before your next `/design` run — these files directly drive what it builds."
+Show a `diff`-style summary of what changed (or "installed N files" if first install). Tell user: "'<name>' ready at <vendor-path> (commit <NEW_SHA short>, local only). Review before your next `/design` run — these files directly drive what it builds."
 
 ### Step 12 — if argument is `marketplace <name>`
-
 Look up `<name>` in `known_marketplaces.json`'s `installLocation`. If missing or not a git repo: "'<name>' isn't a git-cloned marketplace — nothing to pull." Stop.
 
 Confirm: "Pulling '<name>' to latest from its upstream repo. Continue? (y/n)"
-
 ```bash
 cd "<installLocation>"
 BEFORE=$(git rev-parse --short HEAD)
 git pull origin main 2>&1
 AFTER=$(git rev-parse --short HEAD)
 ```
-
 Tell user: "'<name>' updated from $BEFORE to $AFTER." If `BEFORE = AFTER`: "'<name>' was already up to date." If pull fails (conflicts/dirty tree in that clone): show the git error verbatim and stop — do not force anything.
