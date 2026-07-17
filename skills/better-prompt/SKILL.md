@@ -33,6 +33,7 @@ If present: parse into working memory:
 - Skill triggers table (§4)
 - Slop patterns (§5)
 - Model delta (§6)
+- Per-model prompt rules (§7): detect the session model family from context ("The exact model ID is …" → fable/opus/sonnet/haiku) and load ONLY that family's `### <family>` subsection — the rewrite must follow the rules for the model actually running; ignore the other three subsections
 
 ---
 

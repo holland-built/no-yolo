@@ -22,7 +22,7 @@ Read each file in order. If a file is missing, note "(file absent)" for that sec
 | Step | File | What to extract |
 |------|------|-----------------|
 | 1 | `~/.claude/CLAUDE.md` | All `# <skill>` trigger blocks + pointer table |
-| 2 | `~/.claude/docs/CORE_RULES.md` | All 5 Karpathy rules verbatim |
+| 2 | `~/.claude/docs/CORE_RULES.md` | All numbered core rules verbatim (10 as of 2026-07) |
 | 3 | `~/.claude/memory/CLAUDE.generated.md` | All compiled working preferences + patterns |
 | 4 | `~/.claude/docs/HOOKS.md` | Active hook names + behaviors |
 | 5 | `~/.claude/docs/SKILLS.md` | Daily-driver skill table |
@@ -55,9 +55,10 @@ Parse the model ID from the current session context ("The exact model ID is …"
 
 File: `~/.claude/learnings.md`
 
-**Structure — DO NOT append full dated blocks (that repeats §1–5 every scan and bloats the file). The file has two parts:**
+**Structure — DO NOT append full dated blocks (that repeats §1–5 every scan and bloats the file). The file has three parts:**
 1. **Living snapshot (§1–5)** — OVERWRITE in place each scan. These conventions rarely change, so they must NOT compound.
 2. **Dated model-delta log (§6)** — PREPEND one entry per scan (newest first). This is the only part that grows. If an entry for `<today>` already exists (e.g. re-scan after a `/model` switch), REPLACE it — never two same-day entries.
+3. **Per-model prompt rules (§7)** — four fixed subsections (`### fable`, `### opus`, `### sonnet`, `### haiku`). Each holds 3–6 bullets on how to prompt THAT family (effort/verbosity defaults, tokenizer cost, planning strengths, context/output limits). Update ONLY the subsection matching the detected session model; leave the other three untouched — they were written by scans running on those models. `/better-prompt` loads the subsection for whatever model the session runs on, so the right rules apply per model.
 
 **If file does not exist:** Write the full skeleton below.
 
@@ -106,17 +107,34 @@ File: `~/.claude/learnings.md`
 
 ### YYYY-MM-DD — <model-id>
 <what changed in <model-id> vs prior model — from release notes fetch>
+
+---
+
+## 7. Per-model prompt rules (update only the running model's subsection)
+
+### fable
+<bullets: how to prompt Fable-family sessions>
+
+### opus
+<bullets: how to prompt Opus-family sessions>
+
+### sonnet
+<bullets: how to prompt Sonnet-family sessions>
+
+### haiku
+<bullets: how to prompt Haiku-family sessions>
 ```
 
 ---
 
 ## Step 3b — Verify the write (guard /better-prompt)
 
-`/better-prompt` parses sections §1–6. After writing, confirm all six headers exist:
+`/better-prompt` parses sections §1–7. After writing, confirm the headers exist:
 ```bash
-grep -cE "^### [1-5]\.|^## 6\. Model delta" ~/.claude/learnings.md   # expect 6
+grep -cE "^### [1-5]\.|^## 6\. Model delta|^## 7\. Per-model" ~/.claude/learnings.md   # expect 7
+grep -cE "^### (fable|opus|sonnet|haiku)$" ~/.claude/learnings.md                      # expect 4
 ```
-If the count is not 6, the write is malformed — fix it before confirming.
+If either count is off, the write is malformed — fix it before confirming.
 
 ---
 
