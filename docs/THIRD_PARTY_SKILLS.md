@@ -11,6 +11,7 @@ locally after you (or `/update vendor <name>`) run the install command, but neve
 | trim (+5 sub-skills) | `holland-built/trim` | `npx skills@latest add holland-built/trim` (hashes pinned in `skills-lock.json`) | `skills/trim*` | `/review`, `/trim*` |
 | improve | `shadcn/improve` | `npx skills@latest add shadcn/improve` | `skills/improve` | `/review`, `/improve` |
 | emil-design-eng (+2) | `emilkowalski/skills` | `npx skills@latest add emilkowalski/skills` (hashes pinned in `skills-lock.json`) | `skills/emil-design-eng`, `skills/animation-vocabulary`, `skills/review-animations` | `/design`, `/design-audit` |
+| archify | `tt-a1i/archify` | `npx skills@latest add tt-a1i/archify` (hash pinned in `skills-lock.json`) | `.agents/skills/archify` | diagrams — replaced the tracked draw.io skill 2026-07-17 |
 
 taste-skill is **vendored** (a copy fetched locally, never on GitHub, per the preamble above).
 trim / improve / emil-design-eng are **npx-installed** as symlinks (not vendored) — two of the

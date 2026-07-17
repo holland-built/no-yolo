@@ -119,3 +119,6 @@ debug/
 
 # no-yolo local deny-list (company names / private hostnames — never published)
 .no-yolo-deny.txt
+
+# archify — npx-installed under .agents/; defensive entry
+skills/archify

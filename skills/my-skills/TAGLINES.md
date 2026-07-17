@@ -1,5 +1,5 @@
 diagnose|Root-cause analysis: solo 6-phase or --debate for 6 Opus personas.
-drawio-skill|Generates a diagram (flowchart/architecture/sequence/ER/UML) and exports PNG/SVG/PDF.
+archify|Architecture/flow/sequence/dataflow/state diagrams as zero-dep HTML+SVG. Accepts Mermaid.
 build|Full feature pipeline: plan → UI → code → tests → proof.
 plan|One-question-at-a-time interview that forces hard decisions before any code.
 my-skills|This menu.
@@ -15,7 +15,6 @@ my-md|Lists every markdown file — global Claude docs plus current project's no
 design-audit|Audit UI across 5 lenses → ranked violations → optional 10-mockup fix pipeline.
 design|Fresh UI generation: 10 Opus mockups (8 paradigms + 2 wild) → AI picks → you confirm → build.
 ingest-docs|Converts PDFs/decks/docs into dense context files Claude reads at runtime.
-supacode-cli|Lets Claude drive the Supacode terminal app — tabs, worktrees, surfaces.
 whats-next|Shows unfinished work or next-action list. Never static.
 eli5|Explains any skill, command, plan, or decision in plain English.
 debate|7-persona product-team debate → contradiction map → one decisive verdict.

@@ -1,5 +1,5 @@
 diagnose|Stuck on a bug > 20 min — solo for systematic, --debate when multiple plausible theories
-drawio-skill|Need a picture of how something works
+archify|Any architecture, workflow, sequence, dataflow, or state diagram — or converting a Mermaid sketch
 build|Starting any non-trivial feature from scratch
 plan|Fuzzy feature or system idea, before running /build
 my-md|Lost track of what notes exist
@@ -9,7 +9,6 @@ tdd|Bug fixes, new features, anywhere tests matter
 design|Starting a new design or full redesign — want truly fresh, not an incremental patch
 quick-mockup|Just need to see a layout before deciding, no brand polish needed yet
 ingest-docs|You have source material Claude should know about
-supacode-cli|Working inside a Supacode terminal session
 video-to-kb|Good talk or tutorial worth keeping permanently
 whats-next|Session start — orient before picking what to do
 improve|Want a deep audit-plus-plan pass, not just a diff review

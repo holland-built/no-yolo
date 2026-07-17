@@ -21,7 +21,7 @@ IS the `## ` headings, so a heading reorder/add/remove is genuinely
 suspect while a prose edit is not. See `structure_sha`.
 
 `bolt:` rows describe external tools (fallow, gh, Chrome, Playwright,
-Graphviz, draw.io, Groq Whisper) that have no SKILL.md to hash against, so
+Groq Whisper) that have no SKILL.md to hash against, so
 they remain unhashed by design -- they're skipped entirely, same as before.
 
 Modes:
