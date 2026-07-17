@@ -12,7 +12,6 @@
 | --- | --- | --- | --- |
 | build | Full feature pipeline: plan → UI → code → tests → proof. | Starting any non-trivial feature from scratch | Nothing ships without a plan, tests, and proof. No more "works on my machine" done claims |
 | plan | One-question-at-a-time interview that forces hard decisions before any code. | Fuzzy feature or system idea, before running /build | First-try success goes from ~70% to ~90% when the hard calls are made up front, not mid-build |
-| tdd | Failing test first, then make it pass. Red→green discipline. | Bug fixes, new features, anywhere tests matter | The RED test is proof you actually fixed it. Without it you're asserting, not proving |
 
 ## Review
 
@@ -34,7 +33,6 @@
 | --- | --- | --- | --- |
 | diagnose | Root-cause analysis: solo 6-phase or --debate for 6 Opus personas. | Stuck on a bug > 20 min — solo for systematic, --debate when multiple plausible theories | Solo: forces systematic evidence-gathering. --debate: six theories surface the one you missed |
 | debate | 7-persona product-team debate → contradiction map → one decisive verdict. | Architecture calls, UI/UX choices, or "what should we build next" when you want real pushback | Ends with YES/NO/CONDITIONAL and the one reason that settles it — no "it depends" |
-| antislop | Check text/UI for AI-slop tells. Violations table + verdict. | Before shipping any user-facing text or README — or when output feels generic | AI writing has 25 known tell patterns. This catches them before they reach users |
 | improve | Read-only codebase audit across 9 categories → ranked findings → self-contained plans for an executor model. | Want a deep audit-plus-plan pass, not just a diff review | Vets every subagent finding itself before reporting; plans are written for a weaker model with zero session context |
 
 ## Prompting
@@ -69,3 +67,10 @@
 | skill-audit | Audits the whole skill library: bucket fit, missing pieces, unverified output, stale triggers. | Wondering if your skills are well-structured or missing something | One pass instead of manually eyeballing every SKILL.md |
 | update | Two-way check between ~/.claude and GitHub — behind AND ahead/uncommitted — plus plugin versions and vendored-skill drift; applies or rolls back. | Not sure if you should update | Rollback and restore-removed-skill built in — no manual git surgery if something breaks |
 | lockstep | Hook-enforced gate: blocks Edit/Write/NotebookEdit until you say go. | You want "don't code yet" to actually hold, not just get ignored a few messages later | Mechanically denied by a PreToolUse hook — not a prompt the model can talk itself past |
+
+## Helpers (called by other skills)
+
+| Skill | What it does | When to use | Why vs manual |
+| --- | --- | --- | --- |
+| antislop | Check text/UI for AI-slop tells. Violations table + verdict. | Before shipping any user-facing text or README — or when output feels generic | AI writing has 25 known tell patterns. This catches them before they reach users |
+| tdd | Failing test first, then make it pass. Red→green discipline. | Bug fixes, new features, anywhere tests matter | The RED test is proof you actually fixed it. Without it you're asserting, not proving |
