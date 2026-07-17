@@ -40,20 +40,6 @@ skills/trim-gain
 skills/trim-help
 skills/trim-review
 
-# lazyweb = externally managed by lazyweb installer (symlinks to ~/.lazyweb/)
-skills/lazyweb/
-# lazyweb-* = externally managed by lazyweb installer (symlinks to ~/.lazyweb/)
-skills/lazyweb-ab-test-research
-skills/lazyweb-deep-design-research
-skills/lazyweb-design-best-practices
-skills/lazyweb-design-brainstorm
-skills/lazyweb-design-improve
-skills/lazyweb-lite-design-research
-skills/lazyweb-optimize-paywall
-skills/lazyweb-optimize-sign-up
-skills/lazyweb-paywall-cta
-skills/lazyweb-quick-search
-skills/lazyweb-update
 # interface-design = externally managed by npx skills@latest (symlink to ~/.agents/)
 skills/interface-design
 

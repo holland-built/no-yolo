@@ -19,4 +19,4 @@ When corrected, or you catch yourself mid-mistake: before continuing, add the le
 ## Lessons
 
 - (Claude adds rules here)
-- Before adding any external repo's files to this repo, check `.gitignore` for the existing "third-party stays local, never published" convention (`plugins/`, `skills/impeccable`, `lazyweb-*`, `trim-*`) — vendor it there (gitignored, fetched by an install command) instead of committing a copy.
+- Before adding any external repo's files to this repo, check `.gitignore` for the existing "third-party stays local, never published" convention (`plugins/`, `skills/impeccable`, `trim-*`) — vendor it there (gitignored, fetched by an install command) instead of committing a copy.

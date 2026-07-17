@@ -42,7 +42,6 @@ Everything optional lives here. Install one only when you want the skill it serv
 | [Chrome](https://www.google.com/chrome/) | Headless browser for mockup previews | `/design`, `/build` | Usually present; `brew install --cask google-chrome` |
 | [Playwright MCP](https://playwright.dev/) | Browser automation | `/build` | Add the `playwright` MCP server to `settings.json` (see below) |
 | [shadcn MCP](https://ui.shadcn.com/docs/mcp) | Component registry access | `/design` | `pnpm dlx shadcn@latest mcp init --client claude` |
-| [Lazyweb](https://github.com/aboul3ata/lazyweb-skill) | Design reference material | `/design`, `/design-audit` | `curl -fsSL https://www.lazyweb.com/install.sh \| bash` |
 | Firecrawl MCP | Web search/scrape data | optional web-data | See `docs/MCP_SERVICES.md` |
 
 > **MCP servers** give Claude extra tools via a config block in `settings.json` — see the [Claude MCP docs](https://docs.anthropic.com/en/docs/claude-code/mcp).
@@ -61,7 +60,7 @@ Nothing required — skills create their own folders (e.g. `brainstorms/`). The 
 |---|---|
 | `CLAUDE.md` | Main rules file — pointers only; loads memory, routes to topic files |
 | `docs/CORE_RULES.md` | The 10 core working rules |
-| `docs/*.md` | Topic rule files `CLAUDE.md` points at (PLANNING, TESTING, SUBAGENTS, MEMORY, NO_YOLO, …) |
+| `docs/*.md` | Topic rule files `CLAUDE.md` points at (PLANNING, TESTING, SUBAGENTS, MEMORY, NO_YOLO, …) — every file's one-line description lives in [`skills/my-md/GLOBAL_DESCRIPTIONS.md`](skills/my-md/GLOBAL_DESCRIPTIONS.md) |
 | `memory/` | Saved preferences — `facts/` is source of truth, `CLAUDE.generated.md` is compiled |
 | `skills/` | Your skills plus symlinks to borrowed ones |
 | `hooks/` | Automation scripts: caveman mode, worktree guard, lockstep, status line |
@@ -69,7 +68,25 @@ Nothing required — skills create their own folders (e.g. `brainstorms/`). The 
 
 ## Skills inventory
 
-A "skill" is a slash command, like `/review`. Run `/my-skills` for the full one-screen table; `/my-skills deep` explains each one. The count: 25 custom commands (+2 utility commands: `/watch` and `/memory-compile` in `commands/`), plus 11 borrowed from plugins.
+A "skill" is a slash command, like `/review`. The count: 25 custom commands (+2 utility commands: `/watch` and `/memory-compile` in `commands/`), plus 11 borrowed from plugins.
+
+| Skill | What it does | Skill | What it does |
+| --- | --- | --- | --- |
+| design | Fresh UI mockup generation | quick-mockup | Throwaway layout mockup |
+| design-audit | 5-lens UI violation audit | build | Full feature build pipeline |
+| plan | Pre-build decision interview | review | Diff, health + trend review |
+| last-30 | Trending last 30 days | video-to-kb | YouTube video to KB note |
+| ingest-docs | Docs to context files | diagnose | Root-cause bug analysis |
+| debate | 7-persona decision debate | improve | Deep audit, generates plans |
+| prompt-scan | Scan prompts, log learnings | better-prompt | Sharpen a rough prompt |
+| archify | Zero-dep diagram generator | remember-that | Save facts across sessions |
+| my-skills | This skill menu | whats-next | Shows unfinished work |
+| release | One command, any repo | eli5 | Plain-English explain anything |
+| my-md | List all markdown files | md-check | Audit + fix docs |
+| skill-audit | Audit skill library health | update | Check/apply setup updates |
+| lockstep | Hard block on edits | — | — |
+
+This table is a copy of [`skills/my-skills/RENDERED_FAST.md`](skills/my-skills/RENDERED_FAST.md) — inside Claude Code, run `/my-skills` (same table) or `/my-skills deep` (adds when/why per skill, from [`RENDERED.md`](skills/my-skills/RENDERED.md)).
 
 Borrowed sets install with one command each: `npx skills@latest add holland-built/trim` (six simplicity commands), `npx skills@latest add shadcn/improve`, `npx skills@latest add emilkowalski/skills` (UI-polish rules that feed `/design`), `npx skills@latest add tt-a1i/archify`.
 

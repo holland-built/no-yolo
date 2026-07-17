@@ -147,7 +147,6 @@ echo "    Note: one more plugin installs inside Claude Code (not the terminal):"
 echo "      /plugin marketplace add JuliusBrussee/caveman  # terse mode (optional)"
 echo ""
 echo "    Optional: design pipeline MCP servers (add to settings.json mcpServers block):"
-echo "      lazyweb (reference screens)      — github.com/aboul3ata/lazyweb-skill"
 echo "      interface-design (design memory) — github.com/Dammyjay93/interface-design"
 echo "      design-refine (variant compare)  — github.com/0xdesign/design-plugin"
 
