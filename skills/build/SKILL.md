@@ -210,7 +210,7 @@ Then append to `docs/DAILY_CHANGELOG.md` under `## <date> — <feature>` a table
 Task is NOT done until: success predicate met + stress test/repro survived + **regression test committed and green** + **critical path smoke-tested** + changelog appended + full suite green.
 
 ## 7 — Summary
-Print a markdown table summarizing everything completed this /build run:
+First run `/eli5` (Mode B) on the run's results and present that table FIRST — plain English: what just got done, where we are, what I'm asking you, next actions with exact commands. Then print the technical table below:
 
 | Phase | What happened | Files changed | Tests |
 |---|---|---|---|

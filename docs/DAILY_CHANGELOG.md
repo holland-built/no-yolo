@@ -2,6 +2,14 @@
 
 Fresh start 2026-07-17
 
+## 2026-07-18 — eli5 table format everywhere (entry #4)
+
+- `/eli5` — output is now always a table; new Mode B for finished work with fixed rows: What just got done / Where we are / What I'm asking you / Next actions (with exact commands).
+- `/whats-next` — suggestions and status now render as plain-English tables with a "Type this" column.
+- `/build` — end-of-run summary shows the eli5 Mode B table first, technical table after.
+- Memory fact `feedback-eli5-on-output` broadened: every completed-work summary, next-actions list, and question to the user uses the eli5 table; `CLAUDE.generated.md` recompiled.
+- my-skills catalog rows (TAGLINES, TAGLINES_SHORT, STORIES) + README inventory table resynced; catalog relocked; RENDERED menus regenerated.
+
 ## 2026-07-18 — Codex beyond planning (entry #3)
 
 - **/review Pass D**: Codex (gpt-5.6-sol) reviews the diff as a fourth parallel pass — findings adjudicated against the code, confirmed ones join the unified table tagged `[codex]`.

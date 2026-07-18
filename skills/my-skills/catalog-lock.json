@@ -84,11 +84,11 @@
       "structureSha": "a8e691d3eb21e96f10ef4e698a87b2fed9e474f9ff5a88a06434c95ec3e47011"
     },
     "eli5": {
-      "descSha": "aac9e3607a7692e7603e1ecf3e5313f8ee97543d10a49aac92c336073d924994",
+      "descSha": "cce68072b780c02dd33a604d74702815aaaac033dcf9b85f57b226aa6fa1abe1",
       "rows": {
-        "skills/my-skills/STORIES.md": "9448938095f95fab60d9d54e0ad86d00ac6708aef167983fb6cc4815a97d7231",
-        "skills/my-skills/TAGLINES.md": "a7588759ccc4074b9fdb0941593010a339375e94d487152d55e3a0db7a7c5526",
-        "skills/my-skills/TAGLINES_SHORT.md": "a32183a8b49048e36bb6c6bcec6eaa3cc971fa7bf2cdb09dc32536dbef020652",
+        "skills/my-skills/STORIES.md": "ba434c09e15c211002beff37471ca730b660fbb96cc9e34ebbe3fd6caae5cacf",
+        "skills/my-skills/TAGLINES.md": "60f1a5a9e395ad32236578088fd3ff12caa36c0a53fb72d26ea0186cdcda1420",
+        "skills/my-skills/TAGLINES_SHORT.md": "a8eeb786fb0804f36b956524428d0e368e5f62e50b01382b7e7bffe458ced6ee",
         "skills/my-skills/WHEN_TO_USE.md": "5711ace7d98e6b1b7d448237658a0bde52d906cd0c8652b3e0b44621cce8c3b5",
         "skills/my-skills/WHY_TO_USE.md": "a4ea56b6551de4f91e62a44e1703fb4d3b15283e6b7fbcac2e4d7a33de8d4a56"
       },
@@ -282,9 +282,9 @@
     "whats-next": {
       "descSha": "36c0a155af79e6cdd881320ea03263edb6fce743938bc94c0cdc0a828d1702a6",
       "rows": {
-        "skills/my-skills/STORIES.md": "06a49c971b52d824e4d4ce99956fa27e2457c0a789749418966f6c71caa10f60",
+        "skills/my-skills/STORIES.md": "8ab486a053d45a9591fcfccd4801323cb8ef9766ebdb73c7c04db39d0ba19891",
         "skills/my-skills/STORIES.md#rel": "2b9beafa6a2644b812b4993e4b95e94cb5718d9ac0450738b76d06c4ec1adc63",
-        "skills/my-skills/TAGLINES.md": "cc6506f59da2504e66532e18b8ee8d6225264efaf3e0efa7ec25d14c36c713d5",
+        "skills/my-skills/TAGLINES.md": "b5291025b5ae97dbd8ad5423779ee8a99ffeca736c50fb57c27da5f7418e3f33",
         "skills/my-skills/TAGLINES_SHORT.md": "f7869d01b2303bb263267f355782a6e0481541f892a7de84023ecee952ff66a3",
         "skills/my-skills/WHEN_TO_USE.md": "31f0faebd78c86f53a5d09150c70063bb91e71be7d04e7b58e524ea8cca2f473",
         "skills/my-skills/WHY_TO_USE.md": "fc02e725a7be1dcc58f69d44d7165a4617a5a986a4b336e16b2bbe3874e37e24"
