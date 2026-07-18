@@ -1,6 +1,6 @@
 ---
 name: eli5
-description: Use this skill when the user types /eli5. Explains any skill, command, plan, or decision in plain English before committing to it — no jargon.
+description: Use this skill when the user types /eli5, and automatically on every completed-work summary, next-actions list, or question to the user. Explains any skill, command, plan, decision, or finished work in plain English — table format, no jargon. Mode B table always includes "What I'm asking you" and "Where we are" rows.
 user-invocable: true
 argument-hint: "[skill name, plan text, command, or file path]"
 model: haiku
@@ -38,15 +38,32 @@ If the argument looks like a file path and the file exists, use the Read tool to
 
 If the argument is raw text (a command, a plan snippet, a decision), use it directly.
 
-### Step 2 — output exactly this structure
+### Step 2 — pick the mode
 
-**What this is:**
-2-3 sentences. Plain English. Explain it like the person reading has never heard of this before. What problem does it solve? What does it actually touch on the computer?
+Two modes. Pick by what the input IS:
 
-**What actually happens:**
-3-5 bullets. Real verbs, concrete steps. "It reads X", "It runs Y", "It writes to Z", "It sends to GitHub." No vague words like "processes" or "handles."
+- **Mode A — explain a thing** (a skill, a command, a plan not yet run): the user is deciding whether to say yes.
+- **Mode B — explain finished work / next steps** (a completion summary, "what was done", next actions, a question you need answered): the user is catching up and deciding what to do now.
 
-**Watch out for:**
-Only include this section if something in this action is irreversible, costs real money, touches something others can see, or can't be undone. One line per risk. Plain language. Examples: "This deletes files permanently." "This charges your Anthropic account." "This pushes to GitHub — your team will see it." "This overwrites the existing file."
+Both modes output a TABLE, never prose paragraphs.
 
-If nothing is risky: skip the Watch out section entirely. Do not write "nothing to worry about" or any equivalent. Just end after What actually happens.
+### Mode A — explain a thing
+
+| Question | Plain answer |
+|---|---|
+| **What is this?** | 1-2 sentences, like the reader has never heard of it. What problem does it solve? |
+| **What actually happens?** | Real verbs, concrete steps: "reads X", "runs Y", "pushes to GitHub". No "processes"/"handles". Use `<br>` for multiple steps. |
+| **Watch out** | ONLY if irreversible, costs money, or visible to others — e.g. "deletes files permanently", "pushes to GitHub, your team sees it". If nothing risky, OMIT this row entirely — never write "nothing to worry about". |
+
+### Mode B — finished work / next steps
+
+| Question | Plain answer |
+|---|---|
+| **What just got done** | 1-2 sentences per item, plain English. "Your login page now remembers users" — not "implemented session persistence middleware". |
+| **Where we are** | One sentence: how far along the overall job is, what's left. |
+| **What I'm asking you** | The single decision or answer needed from the user, phrased as a plain question with the choices spelled out. If nothing is needed, write exactly: "Nothing — just letting you know." |
+| **Next actions** | Numbered list. Each line: plain-English what + the exact command to type, e.g. `1. Publish it — type /release`. |
+
+Rules for Mode B:
+- The "What I'm asking you" row is the most important one. Never bury the ask in a paragraph. If there are options, list them as "Option A: … / Option B: …" with what each means in plain words.
+- Jargon translation is mandatory: every technical term gets replaced or explained inline ("the hook (a script that runs automatically)").

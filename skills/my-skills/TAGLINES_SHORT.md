@@ -16,7 +16,7 @@ remember-that|Save facts across sessions
 my-skills|This skill menu
 whats-next|Shows unfinished work
 release|One command, any repo
-eli5|Plain-English explain anything
+eli5|Plain-English table explain anything
 my-md|List all markdown files
 md-check|Audit + fix docs
 skill-audit|Audit skill library health

@@ -72,13 +72,24 @@ Based on what you see, generate **3 creative, project-specific suggestions** —
 - Say what's improvable and why it matters
 - Give the exact skill + argument to run it
 
-Format:
-```
-> Queue empty. Here's what I found:
+Format — ALWAYS this table, plain English (eli5 style), no jargon:
 
-1. **[specific thing]** — [why it matters]. Run: `/skill [args]`
-2. **[specific thing]** — [why it matters]. Run: `/skill [args]`
-3. **[specific thing]** — [why it matters]. Run: `/skill [args]`
+```
+> Queue empty. Here's where you are and what I'd do next:
+
+| Question | Plain answer |
+|---|---|
+| **Where we are** | [one sentence: state of the project right now, plain words] |
+| **What I'm asking you** | Pick one of the 3 options below, or tell me something else. |
+
+| # | What it is (plain English) | Why it matters | Type this |
+|---|---|---|---|
+| 1 | [specific thing, no jargon] | [plain-words payoff] | `/skill [args]` |
+| 2 | ... | ... | `/skill [args]` |
+| 3 | ... | ... | `/skill [args]` |
 ```
 
-Do NOT offer generic options like "audit codebase" or "review recent changes" without tying them to specific files or patterns you actually observed.
+Rules:
+- Every cell plain English — translate any technical term inline ("the hook (a script that runs automatically)").
+- Do NOT offer generic options like "audit codebase" or "review recent changes" without tying them to specific files or patterns you actually observed.
+- The Step 2 "report done + remaining tasks" output uses the same two-table shape: Where we are / What I'm asking you, then remaining tasks as a table with a **Type this** column.
