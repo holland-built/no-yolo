@@ -1,6 +1,6 @@
 ---
 name: ingest-docs
-description: Use this skill when the user types /ingest-docs, says 'ingest docs', 'process raw docs', or 'update context from docs'. Per-repo document ingestion pipeline that converts raw files (PDF, PPTX, DOCX, images) in docs/raw/ to clean .md context files in docs/context/ that Claude reads at runtime. Tracks changes via .manifest. Trigger /ingest-docs.
+description: Use this skill when the user types /ingest-docs, says 'ingest docs', 'process raw docs', or 'update context from docs'. Per-repo document ingestion pipeline that converts raw files (PDF, PPTX, DOCX, images) in docs/raw/ to clean .md context files in docs/context/ that Claude reads at runtime. Tracks changes via .manifest.
 user-invocable: true
 argument-hint: "[--force] [filename]"
 allowed-tools: Read,Write,Edit,Bash

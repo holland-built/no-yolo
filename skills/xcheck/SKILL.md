@@ -31,10 +31,12 @@ If `CODEX_MISSING` (or any codex call errors): print exactly one line — `xchec
 2. Send to Codex, read-only:
 
 ```bash
-codex exec --skip-git-repo-check --sandbox read-only -m gpt-5.6-sol "Read the file .xcheck/<slug>-r<N>.md — a plan/diagnosis authored by another AI. Critique it. Do NOT rewrite it. Return ONLY numbered findings, one per line, exactly this format:
+bash ~/.claude/skills/xcheck/scripts/codex-run.sh -m gpt-5.6-sol -t 300 "Read the file .xcheck/<slug>-r<N>.md — a plan/diagnosis authored by another AI. Critique it. Do NOT rewrite it. Return ONLY numbered findings, one per line, exactly this format:
 FINDING <n> | blocking|major|minor | <one-sentence issue> | <one-sentence suggested change>
-Blocking = plan fails or causes damage as written. Major = meaningful gap or wrong assumption. Minor = style/nice-to-have. Max 8 findings. No preamble." < /dev/null
+Blocking = plan fails or causes damage as written. Major = meaningful gap or wrong assumption. Minor = style/nice-to-have. Max 8 findings. No preamble."
 ```
+
+> `codex-run.sh` is the shared process-level runner (stdin close, git-repo skip, timeout, pinned-model fallback with a stderr warning). Any skill calling `codex exec` directly should use it instead — output parsing stays with the caller.
 
 Parse only lines matching `^FINDING` from the output (codex echoes the prompt and prints hook/token noise around them).
 
@@ -60,7 +62,6 @@ Skip the dissent block if nothing was rejected. Delete `.xcheck/` files after th
 
 ## Gotchas
 
-- `codex exec` without `< /dev/null` blocks forever on "Reading additional input from stdin..." when run non-interactively — always close stdin.
-- Without `--skip-git-repo-check`, codex hangs on a prompt outside a git repo.
-- A critique round takes 1–3 minutes — set Bash timeout ≥ 300000 and never run it backgrounded-and-forgotten inside a host skill gate.
-- Model is pinned with `-m` (critique quality matters more than cost here). If that model errors as unknown/deprecated, drop the `-m` flag — falls back to `~/.codex/config.toml`'s default — and tell the user to update the pin.
+- The stdin-hang, git-repo-prompt, timeout, and model-fallback gotchas are all handled inside `scripts/codex-run.sh` — never call `codex exec` directly from this skill.
+- A critique round takes 1–3 minutes — set Bash timeout ≥ 310000 (above the runner's own 300s) and never run it backgrounded-and-forgotten inside a host skill gate.
+- If the runner warns the pinned model was rejected, tell the user to update the pin in this file.

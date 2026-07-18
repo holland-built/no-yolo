@@ -63,6 +63,12 @@ fi
 if [[ "$MODE" == "md-only" ]]; then
   echo ""
   echo "==> 3. Strip skill triggers from CLAUDE.md"
+  # Reversible: keep the pristine file so a later full setup can restore the
+  # stripped @memory/@triggers imports (md-only edits CLAUDE.md in place).
+  if [[ ! -f "$CLAUDE_DIR/CLAUDE.md.pre-md-only" ]]; then
+    cp "$CLAUDE_DIR/CLAUDE.md" "$CLAUDE_DIR/CLAUDE.md.pre-md-only"
+    echo "    Backed up original -> CLAUDE.md.pre-md-only (full setup restores it)"
+  fi
   echo "    (reads current file — no hardcoded skill names)"
 
   python3 - "$CLAUDE_DIR/CLAUDE.md" <<'PYEOF'
@@ -106,6 +112,13 @@ PYEOF
 fi
 
 # ── Full install ─────────────────────────────────────────────────────────────
+
+# Undo a previous --md-only strip: restore the pristine CLAUDE.md so the
+# @memory and @docs/SKILL_TRIGGERS.md imports come back.
+if [[ -f "$CLAUDE_DIR/CLAUDE.md.pre-md-only" ]]; then
+  mv "$CLAUDE_DIR/CLAUDE.md.pre-md-only" "$CLAUDE_DIR/CLAUDE.md"
+  echo "    Restored full CLAUDE.md (undid earlier --md-only strip)"
+fi
 
 echo ""
 echo "==> 3. CLI tools"

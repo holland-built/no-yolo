@@ -108,3 +108,6 @@ debug/
 
 # archify — npx-installed under .agents/; defensive entry
 skills/archify
+
+# --md-only backup of CLAUDE.md (restored by full setup)
+CLAUDE.md.pre-md-only
