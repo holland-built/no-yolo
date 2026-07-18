@@ -43,6 +43,9 @@ do's/don'ts and component states.
 ## Step 2 — Adversarial verify
 Spawn an independent agent that challenges every **Critical** finding. Each Critical must be
 confirmed with file:line evidence or downgraded. Record the verdict per finding.
+Then run the `xcheck` skill (Skill tool, `skill: "xcheck"`) on the surviving Criticals list as a
+second verifier from another model family — a Critical that Codex refutes AND lacks file:line
+evidence downgrades to High. No-ops silently if Codex is unavailable.
 
 ## Step 3 — Output artifacts + fix gate
 

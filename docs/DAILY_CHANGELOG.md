@@ -1,6 +1,12 @@
 # Changelog
 
-Fresh start 2026-07-17 — the repo was overhauled end to end and this log restarts at entry #1. Older history lives in git.
+Fresh start 2026-07-17
+
+## 2026-07-18 — Codex cross-model critique (entry #2)
+
+- **New skill `/xcheck`**: sends a plan/diagnosis to OpenAI Codex for critique; Codex returns findings only (never rewrites), Claude accepts/rejects each with a reason and patches the artifact. Converges when a round adds no new accepted blocking/major findings; hard cap 2 rounds. Skips silently when Codex isn't installed.
+- **Wired into 5 skills**: `/plan` (after the "yes" gate), `/debate` (new Step 6.5 before the verdict), `/build` (new phase 2.5 before the approval gate), `/diagnose --debate` (new Step D4.5 — Codex can add a rival theory), `/design-audit` (second verifier on Criticals).
+- **Codex plugin documented**: README Add-ons row + setup.sh recommended-plugins line for `openai/codex-plugin-cc` (plugin itself stays local per third-party convention). — the repo was overhauled end to end and this log restarts at entry #1. Older history lives in git.
 
 ## 2026-07-17 — v1: full overhaul (entry #1)
 

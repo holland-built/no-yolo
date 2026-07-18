@@ -34,3 +34,4 @@ lockstep|Mechanically denied by a PreToolUse hook — not a prompt the model can
 emil-design-eng|Vaul/Sonner-author taste rules catch wrong easing, wrong shadows, wrong timing agents usually miss
 animation-vocabulary|The right word gets a better result from any AI than a vague description does
 review-animations|Approval is earned, not assumed — catches animation mistakes a generic review misses
+xcheck|A different model family catches blind spots self-review can't — findings-only protocol stops rewrite ping-pong, convergence gate stops endless nitpicking

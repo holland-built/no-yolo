@@ -34,3 +34,4 @@ lockstep|You want "don't code yet" to actually hold, not just get ignored a few 
 emil-design-eng|Automatically, inside /design and /design-audit, when a mockup has real animation
 animation-vocabulary|You know the motion but not what to call it when prompting an AI or designer
 review-animations|Automatically, inside /design-audit's Taste lens, when a surface has real animation
+xcheck|Automatically inside /plan, /debate, /build, /diagnose --debate, /design-audit — or /xcheck to bounce any plan off Codex manually

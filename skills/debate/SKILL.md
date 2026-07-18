@@ -119,6 +119,10 @@ Steps 4–6 are bound by the Chairman's rulings: DISCOUNTED arguments cannot app
 4. **Missing perspective** — is there an 8th angle that would change the conclusions?
 5. **Overall grade** — if a Stanford professor reviewed this, what grade and what would they fix?
 
+### Step 6.5 — Cross-model check (xcheck)
+
+Run the `xcheck` skill (Skill tool, `skill: "xcheck"`) on the Step 5 research briefing. Codex is an outside reviewer, not an 8th persona — Chairman rules still bind. ACCEPTED findings amend the briefing before Step 7; REJECTED findings go to the dissent block after the decision line. If Codex is unavailable, xcheck no-ops and Step 7 runs on the briefing as-is.
+
 ### Step 7 — Final Decision
 
 Do not run a new analysis. Collapse the synthesis from Steps 4–6 into one verdict and one reason. Output exactly one line, nothing after it:

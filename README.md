@@ -2,7 +2,7 @@
 
 ## What this is
 
-Claude Code reads `~/.claude/` every time it starts, and this repo *is* that folder, saved in git. Fork it and you get a working setup: 25 custom commands (+2 utility commands), plus 11 borrowed from plugins, strict coding rules, and a memory system that learns your preferences.
+Claude Code reads `~/.claude/` every time it starts, and this repo *is* that folder, saved in git. Fork it and you get a working setup: 26 custom commands (+2 utility commands), plus 11 borrowed from plugins, strict coding rules, and a memory system that learns your preferences.
 
 ## Install on a new machine
 
@@ -36,6 +36,7 @@ Everything optional lives here. Install one only when you want the skill it serv
 |---|---|---|---|
 | [Caveman plugin](https://github.com/JuliusBrussee/caveman) | Shorter replies, saves tokens | optional | `/plugin marketplace add JuliusBrussee/caveman` |
 | [impeccable plugin](https://github.com/pbakaus/impeccable) | Frontend polish on existing UI | `/design` handoff | `/plugin marketplace add pbakaus/impeccable` |
+| [Codex plugin](https://github.com/openai/codex-plugin-cc) | Run OpenAI Codex reviews/tasks from Claude Code | optional | `/plugin marketplace add openai/codex-plugin-cc` then `/plugin install codex@openai-codex` |
 | [archify](https://github.com/tt-a1i/archify) | Architecture/flow diagrams as zero-dep HTML+SVG | diagrams | installed by `setup.sh` |
 | [gh (GitHub CLI)](https://cli.github.com/) | GitHub from the terminal | `/review`, `/release` | `brew install gh && gh auth login` |
 | [Groq Whisper key](https://console.groq.com/) | Video transcription | `/video-to-kb` | Free API key, then `export GROQ_API_KEY=...` in `~/.zshrc` |
@@ -68,23 +69,23 @@ Nothing required — skills create their own folders (e.g. `brainstorms/`). The 
 
 ## Skills inventory
 
-A "skill" is a slash command, like `/review`. The count: 25 custom commands (+2 utility commands: `/watch` and `/memory-compile` in `commands/`), plus 11 borrowed from plugins.
+A "skill" is a slash command, like `/review`. The count: 26 custom commands (+2 utility commands: `/watch` and `/memory-compile` in `commands/`), plus 11 borrowed from plugins.
 
 | Skill | What it does | Skill | What it does |
 | --- | --- | --- | --- |
 | design | Fresh UI mockup generation | quick-mockup | Throwaway layout mockup |
 | design-audit | 5-lens UI violation audit | build | Full feature build pipeline |
 | plan | Pre-build decision interview | review | Diff, health + trend review |
-| last-30 | Trending last 30 days | video-to-kb | YouTube video to KB note |
-| ingest-docs | Docs to context files | diagnose | Root-cause bug analysis |
-| debate | 7-persona decision debate | improve | Deep audit, generates plans |
-| prompt-scan | Scan prompts, log learnings | better-prompt | Sharpen a rough prompt |
-| archify | Zero-dep diagram generator | remember-that | Save facts across sessions |
-| my-skills | This skill menu | whats-next | Shows unfinished work |
-| release | One command, any repo | eli5 | Plain-English explain anything |
-| my-md | List all markdown files | md-check | Audit + fix docs |
-| skill-audit | Audit skill library health | update | Check/apply setup updates |
-| lockstep | Hard block on edits | — | — |
+| xcheck | Codex second opinion on plans | last-30 | Trending last 30 days |
+| video-to-kb | YouTube video to KB note | ingest-docs | Docs to context files |
+| diagnose | Root-cause bug analysis | debate | 7-persona decision debate |
+| improve | Deep audit, generates plans | prompt-scan | Scan prompts, log learnings |
+| better-prompt | Sharpen a rough prompt | archify | Zero-dep diagram generator |
+| remember-that | Save facts across sessions | my-skills | This skill menu |
+| whats-next | Shows unfinished work | release | One command, any repo |
+| eli5 | Plain-English explain anything | my-md | List all markdown files |
+| md-check | Audit + fix docs | skill-audit | Audit skill library health |
+| update | Check/apply setup updates | lockstep | Hard block on edits |
 
 This table is a copy of [`skills/my-skills/RENDERED_FAST.md`](skills/my-skills/RENDERED_FAST.md) — inside Claude Code, run `/my-skills` (same table) or `/my-skills deep` (adds when/why per skill, from [`RENDERED.md`](skills/my-skills/RENDERED.md)).
 

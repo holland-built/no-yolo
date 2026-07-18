@@ -70,6 +70,9 @@ Then a **self-check pass** (same Opus agent, second turn): "What in this plan is
 
 Reject and re-plan if: the cause isn't grounded in evidence, there's no measurable success predicate, the blast radius is unbounded, or any claim cites an API/file that wasn't verified to exist. Save to `brainstorms/<slug>-plan-<date>.md`.
 
+## 2.5 — Cross-model check (xcheck)
+Run the `xcheck` skill (Skill tool, `skill: "xcheck"`) on the saved Opus plan. ACCEPTED blocking/major findings are folded into the plan file (re-invoke the Opus agent only if a fold-in changes ordering or blast radius); minors noted or dropped. Carry the dissent block into the approval gate so the user sees what Codex flagged and why it was rejected. No-ops silently if Codex is unavailable.
+
 ## 3 — Approval gate (HARD)
 Show the plan. Then stop and ask exactly: **"Approve this plan or redirect?"**
 Do NOT write code until the user says yes/go/approved. If they redirect, loop back to phase 1 or 2.

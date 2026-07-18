@@ -77,7 +77,7 @@ Are we aligned? (yes / keep going / fix X)
 - User says **keep going** or corrects something → continue grilling, re-surface summary when ready
 - Never self-declare complete — always wait for explicit "yes"
 
-**Gate:** Agreement confirmed. That single "yes" is the only approval needed — do NOT ask a second confirmation question (e.g. "build directly or route through /build?"). Immediately run the locked summary through the `better-prompt` skill (Skill tool, `skill: "better-prompt"`) to sharpen it and get its recommended skill route, then dispatch that recommended skill with the sharpened prompt — `/build` for a feature/system, `/design` for a UI-only ask, or whichever skill better-prompt names. Do NOT write any code from this output alone.
+**Gate:** Agreement confirmed. That single "yes" is the only approval needed — do NOT ask a second confirmation question (e.g. "build directly or route through /build?"). First run the locked summary through the `xcheck` skill (Skill tool, `skill: "xcheck"`) — Codex critiques, accepted findings amend **Decisions locked** (show the one-line dissent block if any; no-ops silently if Codex is unavailable). Then run the (possibly amended) summary through the `better-prompt` skill (Skill tool, `skill: "better-prompt"`) to sharpen it and get its recommended skill route, then dispatch that recommended skill with the sharpened prompt — `/build` for a feature/system, `/design` for a UI-only ask, or whichever skill better-prompt names. Do NOT write any code from this output alone.
 
 ---
 

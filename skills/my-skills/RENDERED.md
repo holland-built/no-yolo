@@ -18,6 +18,7 @@
 | Skill | What it does | When to use | Why vs manual |
 | --- | --- | --- | --- |
 | review | Diff + codebase health + /last-30 trends, with every fix walked past you one at a time. | Before merging any non-trivial change, when a codebase needs a cleanup pass, or when you want fixes informed by what's currently trending | Replaces three separate commands with one routed pass — trend radar, secret scan and antislop are automatic, and you approve each fix one at a time instead of one blind batch |
+| xcheck | Cross-model critique: Codex reviews your plan, Claude adjudicates, 2-round cap. | Automatically inside /plan, /debate, /build, /diagnose --debate, /design-audit — or /xcheck to bounce any plan off Codex manually | A different model family catches blind spots self-review can't — findings-only protocol stops rewrite ping-pong, convergence gate stops endless nitpicking |
 
 ## Research
 
