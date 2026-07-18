@@ -86,6 +86,76 @@ for slug, facts in project_facts.items():
             if mref.startswith("/Users/") and not os.path.exists(mref):
                 warnings.append(f"stale-path: {f['id']} references missing {mref}")
 
+# schema contract checks (SCHEMA.md) — severity depends on new/changed vs pre-existing.
+# new/changed = current sha differs from (or is absent from) the last compile-manifest.json;
+# a violation on a new/changed fact is an ERROR (aborts, same path as needs-review above);
+# the same violation on a pre-existing/unchanged fact is a WARN only. Metadata-only issues
+# (dates, provenance shape, supersede reciprocity) are always WARN regardless of freshness.
+TIER_ENUM = {"user", "project"}
+TYPE_ENUM = {"user", "feedback", "project", "reference", "pattern"}
+STATUS_ENUM = {"active", "superseded", "needs-review"}
+DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+
+def _sha(p): return hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest()[:12]
+try:
+    _old_shas = json.loads(MANIFEST.read_text(encoding="utf-8")).get("global_facts", {})
+except (FileNotFoundError, json.JSONDecodeError):
+    _old_shas = {}
+
+def _is_fresh(f):  # new or changed since the last compile
+    return _old_shas.get(f.get("id")) != _sha(f["_path"])
+
+def _as_list(v):  # parser leaves "[]"/"null" as bare scalar strings, real lists as raw entry strings
+    return v if isinstance(v, list) else []
+
+_all_global_ids = {f.get("id") for f in global_facts if f.get("id")}
+
+for f in global_facts:
+    fid = f.get("id", "?")
+    bucket = errors if _is_fresh(f) else warnings
+
+    if f.get("tier") not in TIER_ENUM:
+        bucket.append(f"bad-tier: {fid} tier={f.get('tier')!r} not in {sorted(TIER_ENUM)}")
+    if f.get("type") not in TYPE_ENUM:
+        bucket.append(f"bad-type: {fid} type={f.get('type')!r} not in {sorted(TYPE_ENUM)}")
+    if f.get("status") not in STATUS_ENUM:
+        bucket.append(f"bad-status: {fid} status={f.get('status')!r} not in {sorted(STATUS_ENUM)}")
+    if pathlib.Path(f["_path"]).stem != fid:
+        bucket.append(f"filename-mismatch: {pathlib.Path(f['_path']).name} has id={fid!r}")
+
+    for dk in ("captured", "updated"):
+        dv = f.get(dk, "")
+        if not DATE_RE.match(dv):
+            warnings.append(f"bad-date: {fid} {dk}={dv!r} does not match YYYY-MM-DD")
+
+    prov = _as_list(f.get("provenance"))
+    if not prov:
+        warnings.append(f"missing-provenance: {fid} has no provenance entries")
+    else:
+        for entry in prov:
+            if not any(tag in entry for tag in ("date:", "session:", "note:")):
+                warnings.append(f"provenance-shape: {fid} entry {entry!r} missing date:/session:/note:")
+                break
+
+    for sid in _as_list(f.get("supersedes")):
+        sid = sid.lstrip("- ").strip()
+        if sid and sid not in _all_global_ids:
+            bucket.append(f"dangling-supersedes: {fid} supersedes missing fact {sid!r}")
+
+    sb = f.get("superseded-by")
+    sb = sb if sb not in (None, "null", "None", "") else None
+    if sb and sb not in _all_global_ids:
+        bucket.append(f"dangling-superseded-by: {fid} superseded-by missing fact {sb!r}")
+
+    if f.get("status") == "superseded":
+        if not sb:
+            warnings.append(f"superseded-missing-target: {fid} status=superseded but superseded-by not set")
+        elif sb in _all_global_ids:
+            target = next((x for x in global_facts if x.get("id") == sb), None)
+            tsup = {s.lstrip("- ").strip() for s in _as_list(target.get("supersedes"))} if target else set()
+            if fid not in tsup:
+                warnings.append(f"supersede-reciprocity: {fid} superseded-by={sb} but {sb}.supersedes does not list it back")
+
 LINT_ONLY = "--lint" in sys.argv
 print("LINT:")
 for w in warnings: print(f"  WARN  {w}")

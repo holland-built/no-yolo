@@ -123,8 +123,7 @@ Show screenshot inline.
 **Codex second judge (skip silently if `command -v codex` fails):** one call with the rendered combined screenshot — a different model family grading visuals Claude generated AND judged:
 
 ```bash
-# prompt MUST come before -i: the variadic -i flag swallows a trailing prompt string
-codex exec --skip-git-repo-check --sandbox read-only -m gpt-5.6-sol "This image shows UI mockup variants, labeled. For each: verdict slop|clean + one-line reason (slop = generic AI-generated look: card grids, gradient CTAs, hero+centered-CTA, shadcn starter DNA). Then name your single top pick + one sentence why. No preamble." -i ".mockups/<slug>/<slug>-all.png" < /dev/null
+bash ~/.claude/skills/xcheck/scripts/codex-run.sh -m gpt-5.6-sol -s read-only -i ".mockups/<slug>/<slug>-all.png" "This image shows UI mockup variants, labeled. For each: verdict slop|clean + one-line reason (slop = generic AI-generated look: card grids, gradient CTAs, hero+centered-CTA, shadcn starter DNA). Then name your single top pick + one sentence why. No preamble."
 ```
 
 Codex is advisory — it never kills a variant alone; Claude's judge remains the gate. Cross-grading: Codex's verdict carries no weight on its own v9–v10; Claude's judge gates those. Output variant table with its column:
@@ -150,7 +149,7 @@ Per behavior: write ONE failing test → run the detected test command (scoped t
 **4.5 — Adversarial tests (Codex; skip silently if `command -v codex` fails).** Implementer-authored tests share the implementer's assumptions — break that with one cross-model call. Write the SPEC ONLY (plan's behavior list + the public interface signatures — never the implementation) to `.xcheck/<slug>-spec.md`, then:
 
 ```bash
-codex exec --skip-git-repo-check --sandbox read-only -m gpt-5.6-sol "Read .xcheck/<slug>-spec.md — a spec and public interface. Write edge-case tests the author likely missed (boundaries, empty/null, ordering, concurrency, malformed input). Return test code only, max 8 tests, in <framework> syntax. No preamble." < /dev/null
+bash ~/.claude/skills/xcheck/scripts/codex-run.sh -m gpt-5.6-sol -s read-only "Read .xcheck/<slug>-spec.md — a spec and public interface. Write edge-case tests the author likely missed (boundaries, empty/null, ordering, concurrency, malformed input). Return test code only, max 8 tests, in <framework> syntax. No preamble."
 ```
 
 Claude reviews each returned test: drop any that misread the spec, adapt the rest to project test conventions, run them. Failures = real findings → fix in phase 5 before proceeding. Passing tests that cover a genuine gap → keep in the suite; redundant ones → discard. Delete the temp file.

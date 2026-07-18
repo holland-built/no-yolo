@@ -7,18 +7,21 @@
 # FINDING lines, delimiter splits, and test/visual verdicts are different
 # formats, not one class.
 #
-# Usage: codex-run.sh [-m MODEL] [-t SECONDS] [-s SANDBOX] "PROMPT"
+# Usage: codex-run.sh [-m MODEL] [-t SECONDS] [-s SANDBOX] [-i IMAGE] "PROMPT"
 #   -m  pin a model; on unknown/deprecated it retries on the config default
 #   -t  timeout seconds (default 300; exit 124 on expiry)
 #   -s  sandbox mode (default read-only)
+#   -i  attach an image; codex's variadic -i flag swallows a trailing prompt
+#       string, so the runner appends it AFTER the prompt in the exec call
 set -uo pipefail
 
-MODEL="" TIMEOUT=300 SANDBOX="read-only"
-while getopts "m:t:s:" o; do
+MODEL="" TIMEOUT=300 SANDBOX="read-only" IMG=""
+while getopts "m:t:s:i:" o; do
   case $o in
     m) MODEL=$OPTARG ;;
     t) TIMEOUT=$OPTARG ;;
     s) SANDBOX=$OPTARG ;;
+    i) IMG=$OPTARG ;;
     *) exit 2 ;;
   esac
 done
@@ -38,7 +41,13 @@ with_timeout() {
 run() {
   # </dev/null: codex blocks forever on "Reading additional input from stdin..."
   # when run non-interactively; --skip-git-repo-check avoids a hang outside a repo.
-  with_timeout codex exec --skip-git-repo-check --sandbox "$SANDBOX" "$@" "$PROMPT" </dev/null
+  # -i is variadic and swallows a trailing prompt string, so it must come
+  # after "$PROMPT" in the invocation, not before it.
+  if [ -n "$IMG" ]; then
+    with_timeout codex exec --skip-git-repo-check --sandbox "$SANDBOX" "$@" "$PROMPT" -i "$IMG" </dev/null
+  else
+    with_timeout codex exec --skip-git-repo-check --sandbox "$SANDBOX" "$@" "$PROMPT" </dev/null
+  fi
 }
 
 if [ -n "$MODEL" ]; then

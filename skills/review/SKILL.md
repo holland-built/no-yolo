@@ -85,7 +85,7 @@ No branch divergence → diff against `HEAD~1`.
 **Pass D — Codex second reviewer** (cross-model; skip silently if `command -v codex` fails, note in roll-up). Write the diff to `.xcheck/review-diff-<date>.md`, then ONE call (xcheck's protocol — findings only, never a rewrite):
 
 ```bash
-codex exec --skip-git-repo-check --sandbox read-only -m gpt-5.6-sol "Read .xcheck/review-diff-<date>.md — a code diff. Review for bugs, security, and wrong assumptions ONLY. Return numbered lines: FINDING <n> | blocking|major|minor | file:line | <one-sentence issue> | <suggested fix>. Max 8. No preamble." < /dev/null
+bash ~/.claude/skills/xcheck/scripts/codex-run.sh -m gpt-5.6-sol -s read-only "Read .xcheck/review-diff-<date>.md — a code diff. Review for bugs, security, and wrong assumptions ONLY. Return numbered lines: FINDING <n> | blocking|major|minor | file:line | <one-sentence issue> | <suggested fix>. Max 8. No preamble."
 ```
 
 Adjudicate each finding against the actual code (read the cited file:line): confirmed → unified list with its severity mapped (blocking→🔴, major→🟠, minor→🟡), source-tagged `[codex]`; refuted → one-line dissent note in the roll-up. Delete the temp file after. This pass takes 1–3 min — launch it before Passes A–C so it runs while you review.
