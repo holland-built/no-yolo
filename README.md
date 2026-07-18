@@ -36,7 +36,7 @@ Everything optional lives here. Install one only when you want the skill it serv
 |---|---|---|---|
 | [Caveman plugin](https://github.com/JuliusBrussee/caveman) | Shorter replies, saves tokens | optional | `/plugin marketplace add JuliusBrussee/caveman` |
 | [impeccable plugin](https://github.com/pbakaus/impeccable) | Frontend polish on existing UI | `/design` handoff | `/plugin marketplace add pbakaus/impeccable` |
-| [Codex plugin](https://github.com/openai/codex-plugin-cc) | Run OpenAI Codex reviews/tasks from Claude Code | optional | `/plugin marketplace add openai/codex-plugin-cc` then `/plugin install codex@openai-codex` |
+| [Codex plugin](https://github.com/openai/codex-plugin-cc) | Run OpenAI Codex reviews/tasks from Claude Code | `/xcheck` cross-model critiques (skips silently if absent) | `/plugin marketplace add openai/codex-plugin-cc` then `/plugin install codex@openai-codex`; needs a ChatGPT login (free tier OK) or OpenAI API key — `/xcheck` pins `gpt-5.6-sol`, which may need a paid plan; it falls back to your Codex default model if unavailable |
 | [archify](https://github.com/tt-a1i/archify) | Architecture/flow diagrams as zero-dep HTML+SVG | diagrams | installed by `setup.sh` |
 | [gh (GitHub CLI)](https://cli.github.com/) | GitHub from the terminal | `/review`, `/release` | `brew install gh && gh auth login` |
 | [Groq Whisper key](https://console.groq.com/) | Video transcription | `/video-to-kb` | Free API key, then `export GROQ_API_KEY=...` in `~/.zshrc` |
