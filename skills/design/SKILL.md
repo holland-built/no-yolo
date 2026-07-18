@@ -202,12 +202,19 @@ Spawn ONE scoring agent. It reads all 10 variant HTML files and scores each on:
 - Swiss (grid, type scale, color count, negative space) — 0–10
 - UIwiki (20 rules, scored 1 each) — 0–20
 
-Returns the winner variant number + a single sentence why. Update `all.html` to mark the winner with * in its section header. Show this table:
+**Codex second judge (parallel with the scoring agent; skip silently if `command -v codex` fails):** a different model family grading visuals Claude both generated and judged — the self-grading bias breaker:
+
+```bash
+# prompt MUST come before -i: the variadic -i flag swallows a trailing prompt string
+codex exec --skip-git-repo-check --sandbox read-only -m gpt-5.6-sol "This image shows UI mockup variants, labeled v1-v10 (light|dark pairs). For each: verdict slop|clean + one-line reason (slop = generic AI look: card grids, gradient CTAs, hero+centered-CTA, glassmorphism, shadcn starter DNA). Then name your single top pick + one sentence why. No preamble." -i ".mockups/design-<slug>/all.png" < /dev/null
 ```
-| Variant | Paradigm | Score | Recommended |
-|---------|----------|-------|-------------|
-| v1      | Terminal/CLI | 34 | |
-| v3      | Bloomberg grid | 41 | * "Strongest data-ink discipline and only variant with true asymmetric balance" |
+
+Codex is advisory — never kills a variant alone; the validator pass remains the gate. Returns the winner variant number + a single sentence why. Update `all.html` to mark the winner with * in its section header. Show this table (Codex column from the second judge; both models agreeing on the winner = high-confidence, a split = show both picks and reasons — the disagreement is the signal):
+```
+| Variant | Paradigm | Score | Codex | Recommended |
+|---------|----------|-------|-------|-------------|
+| v1      | Terminal/CLI | 34 | clean | |
+| v3      | Bloomberg grid | 41 | clean · Codex pick | * "Strongest data-ink discipline and only variant with true asymmetric balance" |
 ```
 
 ### Chrome auto-open

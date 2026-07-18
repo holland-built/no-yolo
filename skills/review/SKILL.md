@@ -82,7 +82,15 @@ No branch divergence → diff against `HEAD~1`.
 
 **Pass C — Karpathy Filters** (from `CODE_REVIEW.md`): Surgical (every changed line traces to the stated request — flag any that don't) and Simplicity (would a senior engineer call this overcomplicated?).
 
-Findings from all three passes feed the unified list in Phase 3 — do not print them separately.
+**Pass D — Codex second reviewer** (cross-model; skip silently if `command -v codex` fails, note in roll-up). Write the diff to `.xcheck/review-diff-<date>.md`, then ONE call (xcheck's protocol — findings only, never a rewrite):
+
+```bash
+codex exec --skip-git-repo-check --sandbox read-only -m gpt-5.6-sol "Read .xcheck/review-diff-<date>.md — a code diff. Review for bugs, security, and wrong assumptions ONLY. Return numbered lines: FINDING <n> | blocking|major|minor | file:line | <one-sentence issue> | <suggested fix>. Max 8. No preamble." < /dev/null
+```
+
+Adjudicate each finding against the actual code (read the cited file:line): confirmed → unified list with its severity mapped (blocking→🔴, major→🟠, minor→🟡), source-tagged `[codex]`; refuted → one-line dissent note in the roll-up. Delete the temp file after. This pass takes 1–3 min — launch it before Passes A–C so it runs while you review.
+
+Findings from all four passes feed the unified list in Phase 3 — do not print them separately.
 
 ### Security Review Checklist (static — no tools, no cost)
 

@@ -115,6 +115,8 @@ open ".mockups/design-<slug>/all.html"
 
 ### F6 — AI recommendation
 Spawn ONE scoring agent. Scores all 10 on Taste + Swiss + UIwiki (same rubric as `/design`).
+Also run `/design`'s Codex second-judge call on `.mockups/design-<slug>/all.png` (same command,
+same rules: advisory only, skip silently without codex) and add its Codex column to the table.
 **Recommendation reason must be grounded in audit findings:**
 > "v6 — directly resolves the P0 contrast failures and type hierarchy issues flagged in the
 > audit, and has the strongest Swiss grid discipline of the survivors."

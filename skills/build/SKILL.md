@@ -117,12 +117,23 @@ Build ONE combined page `.mockups/<slug>/<slug>-all.html` — survivors only, st
 - `open ".mockups/<slug>/<slug>-all.html"`
 - `"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless --disable-gpu --window-size=1400,900 --screenshot=.mockups/<slug>/<slug>-all.png "file://$PWD/.mockups/<slug>/<slug>-all.html"`
 
-Show screenshot inline. Output variant table:
+Show screenshot inline.
 
-| Variant | Description | Survived judge? | Pick |
-|---|---|---|---|
-| vN | paradigm description | Yes — reason | |
-| vN | wildly different paradigm | Yes — reason | ★ recommended |
+**Codex second judge (skip silently if `command -v codex` fails):** one call with the rendered combined screenshot — a different model family grading visuals Claude generated AND judged:
+
+```bash
+# prompt MUST come before -i: the variadic -i flag swallows a trailing prompt string
+codex exec --skip-git-repo-check --sandbox read-only -m gpt-5.6-sol "This image shows UI mockup variants, labeled. For each: verdict slop|clean + one-line reason (slop = generic AI-generated look: card grids, gradient CTAs, hero+centered-CTA, shadcn starter DNA). Then name your single top pick + one sentence why. No preamble." -i ".mockups/<slug>/<slug>-all.png" < /dev/null
+```
+
+Codex is advisory — it never kills a variant alone; Claude's judge remains the gate. Output variant table with its column:
+
+| Variant | Description | Survived judge? | Codex | Pick |
+|---|---|---|---|---|
+| vN | paradigm description | Yes — reason | clean | |
+| vN | wildly different paradigm | Yes — reason | clean · Codex pick | ★ recommended |
+
+Both models picking the same variant = high-confidence recommend; a split = show both reasons — that disagreement is signal for the user.
 
 Stop and ask: **"Which mockup variant? (or redirect)"**
 Do NOT proceed until user names a variant. Lock the chosen variant — Sonnet builds to match it exactly.
@@ -134,6 +145,14 @@ Mockup files stay in `mockups/<slug>/` until after phase 6; delete only after pr
 
 ## 4 — TDD
 Per behavior: write ONE failing test → run the detected test command (scoped to the relevant file when supported) → confirm RED → minimum code to pass → confirm GREEN → repeat. No batching all tests first. Do NOT target any golden-master test noted during stack detection — write new behavior tests in a separate test file alongside the module.
+
+**4.5 — Adversarial tests (Codex; skip silently if `command -v codex` fails).** Implementer-authored tests share the implementer's assumptions — break that with one cross-model call. Write the SPEC ONLY (plan's behavior list + the public interface signatures — never the implementation) to `.xcheck/<slug>-spec.md`, then:
+
+```bash
+codex exec --skip-git-repo-check --sandbox read-only -m gpt-5.6-sol "Read .xcheck/<slug>-spec.md — a spec and public interface. Write edge-case tests the author likely missed (boundaries, empty/null, ordering, concurrency, malformed input). Return test code only, max 8 tests, in <framework> syntax. No preamble." < /dev/null
+```
+
+Claude reviews each returned test: drop any that misread the spec, adapt the rest to project test conventions, run them. Failures = real findings → fix in phase 5 before proceeding. Passing tests that cover a genuine gap → keep in the suite; redundant ones → discard. Delete the temp file.
 
 ## 5 — Sonnet build
 **Cap: max 5 agents at once.** If plan has >5 independent steps, batch into rounds of 5; wait for each round before the next (sequential deps respect ordering).
@@ -153,7 +172,8 @@ After build passes, run the full test suite (detected test command). If ANY test
 1. Spawn `Agent` (model: opus) with: failing test output + full diff so far. It produces a fix plan targeting only the broken behavior. Save to `brainstorms/<slug>-fix-<N>-<date>.md`.
 2. Spawn `Agent` (model: sonnet) per fix step (fan out independent steps). Every dispatch MUST read target file before editing + include "already exists — do NOT recreate" note.
 3. Hotpatch if needed; re-run the full test suite.
-4. Still failing → increment N, loop back to step 1. Cap at 3 iterations. Still red after 3 → stop and surface to user: "3 fix attempts failed. Paste output to continue."
+4. Still failing → increment N, loop back to step 1. Cap at 3 iterations.
+5. Still red after 3 → **Codex rescue (once, before bothering the user):** if the `codex:codex-rescue` agent is available, spawn it with the failing test output + full diff + the located root cause — fresh eyes from a different model family, exactly the stuck-loop case it exists for. If it lands a fix, re-run the full suite; green → proceed. Codex unavailable, or still red after rescue → stop and surface to user: "3 fix attempts + Codex rescue failed. Paste output to continue."
 
 Do NOT proceed to phase 6 with a red suite or failing build.
 
