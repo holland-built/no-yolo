@@ -2,6 +2,16 @@
 
 Fresh start 2026-07-17
 
+## 2026-07-18 — skill-audit + Codex xcheck fixes applied (entry #5)
+
+- `setup.sh --md-only` is now reversible: backs up `CLAUDE.md` before stripping imports; a later full setup auto-restores it (was a silent, permanent strip).
+- README memory-sync section rewritten: only compiled `memory/CLAUDE.generated.md` syncs; `memory/facts/` is deliberately gitignored + pre-commit-blocked (old text told users to commit a blocked path).
+- New shared Codex runner `skills/xcheck/scripts/codex-run.sh` (stdin close, git-repo skip, portable timeout, pinned-model fallback); `/xcheck` now calls it instead of inlining `codex exec`.
+- `argument-hint` added to `/update` (7 subcommands) and `/debate` (topic + `--ui`).
+- `/ingest-docs` description: dropped redundant trailing trigger.
+- README: fallow documented (Add-ons + uninstall), `verify.sh` surfaced as install check, python3 prereq row, Codex row lists all direct + transitive consumers, Playwright MCP link fixed, `pnpm dlx` → `npx`, Linux note, inventory-table clarification, caveman plugin requirement, rule-5 substitution note, interface-design/design-refine MCP rows, npx re-run caveat.
+- Full audit report (2 Codex rounds, 13 findings accepted): `brainstorms/skill-audit-2026-07-18.md`.
+
 ## 2026-07-18 — eli5 table format everywhere (entry #4)
 
 - `/eli5` — output is now always a table; new Mode B for finished work with fixed rows: What just got done / Where we are / What I'm asking you / Next actions (with exact commands).

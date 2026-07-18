@@ -2,6 +2,7 @@
 name: debate
 description: Use this skill when the user types /debate, says 'debate this', 'stress test this decision', 'get the team on this', or 'should we build this'. Seven-persona product-team debate — Senior Dev + Junior Dev + Sales Engineer + DevOps + Sales Leader + Eng Leader + Product Designer — Chairman oversight, contradiction map, synthesis, peer review. Flag `--ui` swaps in a 5-persona UI/UX panel grounded in the project's design docs.
 user-invocable: true
+argument-hint: "<topic or decision> [--ui]"
 ---
 
 # debate
