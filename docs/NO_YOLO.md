@@ -5,7 +5,7 @@ When working here, you are authoring public skills — write for a stranger, not
 
 ## Skill authoring standards
 
-- **eli5 output** — every skill's output must be readable by someone who has never used Claude Code. No jargon without explanation. If it needs a glossary, rewrite it.
+- **eli5 output** — every skill's output must be readable by someone who has never used Claude Code. No jargon without explanation. If it needs a glossary, rewrite it. Completion summaries, next-action lists, and any question to the user use the eli5 Mode B table (What just got done / Where we are / What I'm asking you / Next actions with exact commands) — never buried in prose.
 - **No AI slop** — all mockup-generating skills enforce the slop fingerprint (see `UI_MOCKUPS.md`). Never ship a card-grid or accordion-only design.
 - **Token economy** — skill files are scannable, not essays. Steps over paragraphs. Tables over lists of sentences.
 - **Description = trigger condition** — the `description` field in SKILL.md frontmatter must tell Claude WHEN to fire and WHO it serves, not summarize what the skill is. Pattern: "Use this skill when the user asks to [exact phrases]."

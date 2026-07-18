@@ -19,7 +19,7 @@ trim-help|Forgot a trim command
 trim-review|PR is too big — gut-check what's unnecessary
 antislop|Before shipping any user-facing text or README — or when output feels generic
 better-prompt|Before running a fuzzy prompt through any skill
-eli5|Before committing to something you're not sure you fully understand
+eli5|Before committing to something you don't fully understand — or after work finishes, to catch up in plain English
 last-30|Starting research on a topic and want signal from the past month, not all-time rankings
 md-check|Notes piling up or repeating themselves
 prompt-scan|Once on setup, and again whenever a new Claude model ships
