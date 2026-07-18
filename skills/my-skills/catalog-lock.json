@@ -34,7 +34,7 @@
         "skills/my-skills/WHEN_TO_USE.md": "48a44e6dd8706aa30b735063d47593b347fb01c319225109b688b5ac86335173",
         "skills/my-skills/WHY_TO_USE.md": "055026e98b0bed0af4522c0f47c4c3b5096a15e50388ab322c9f46642338a3e7"
       },
-      "structureSha": "8fe8df8cbfa64989baf3e5c7ebcc90d53a3a7119a6502d6a02133fcc26489a6c"
+      "structureSha": "42825bd0d4de88058c8edabc2ded32ce0ef1d405fccfb5f5cc47ea8d65553db5"
     },
     "debate": {
       "descSha": "c82146cfe8f59dc1e708601bb95a84c704db7a7217fad982a59f79630438d6fb",
@@ -290,6 +290,17 @@
         "skills/my-skills/WHY_TO_USE.md": "fc02e725a7be1dcc58f69d44d7165a4617a5a986a4b336e16b2bbe3874e37e24"
       },
       "structureSha": "2d7030ca8c01a0123a89616ec92349086be54f60b78e001b06530bff87c8f57d"
+    },
+    "xcheck": {
+      "descSha": "92b7d912ed29a5b5b837886af8c32550309959ea69cfdbf21d001ff184f8a233",
+      "rows": {
+        "skills/my-skills/STORIES.md": "be710e8fc267bdde87100c44bcd0aa55c12c1bed85fc01837e66b9ba5e33ae63",
+        "skills/my-skills/TAGLINES.md": "7520c510fbf4837fbf02b1630820610d0c29dbc1ef9c3f6ed1145f720caf8b79",
+        "skills/my-skills/TAGLINES_SHORT.md": "55fdc85abd2f00053f1b8085d33b5dab66c165aecb40a2cf1b006196dc7856f2",
+        "skills/my-skills/WHEN_TO_USE.md": "d76ae8eb92c081e334aa103eae114c1e9f636259c70f820f03cf9c9b1645e622",
+        "skills/my-skills/WHY_TO_USE.md": "c27b477c62ad55663643060641eee3e6c13a1544a9f315072220c186e1771bcc"
+      },
+      "structureSha": "bdce239b6abb9a8d93e31dd713b478b72a504a92c1091c96302df2a68101f52c"
     }
   },
   "version": 1

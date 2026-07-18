@@ -171,6 +171,7 @@ else
   echo "      /plugin marketplace add karpathy/karpathy-skills     # Karpathy skill set"
   echo "      /plugin marketplace add design-plugins/design-and-refine  # UI design"
   echo "      /plugin marketplace add AgriciDaniel/claude-obsidian # Obsidian integration"
+  echo "      /plugin marketplace add openai/codex-plugin-cc       # Codex from Claude Code (then /plugin install codex@openai-codex)"
 fi
 echo "    To check for plugin updates: run /plugin list in Claude Code, then /plugin update <name>"
 

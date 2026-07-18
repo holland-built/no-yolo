@@ -68,6 +68,10 @@ Each agent MUST return: **Theory** (file:line), **Evidence**, **Only I would cat
 
 Then: strongest persona, weakest, one question that resolves the biggest conflict, what ALL 6 agree on, what NONE addressed.
 
+### Step D4.5 — Cross-model check (xcheck)
+
+Run the `xcheck` skill (Skill tool, `skill: "xcheck"`) on the contradiction map + top 2 theories (include the code-excerpt bundle in the artifact file). Codex may challenge a theory or name a rival root cause — treat an ACCEPTED rival theory as a 7th voice when picking D5's winner. No-ops silently if Codex is unavailable.
+
 ### Step D5 — Final Diagnosis
 
 > **Most likely root cause:** `file:line` — one sentence.

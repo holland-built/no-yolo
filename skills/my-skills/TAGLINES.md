@@ -34,3 +34,4 @@ lockstep|Hook-enforced gate: blocks Edit/Write/NotebookEdit until you say go.
 emil-design-eng|Emil Kowalski's UI-polish and animation-taste rules — feeds /design and /design-audit.
 animation-vocabulary|Turns a vague animation description into its exact term.
 review-animations|Strict critique of animation/motion code against a high craft bar.
+xcheck|Cross-model critique: Codex reviews your plan, Claude adjudicates, 2-round cap.
