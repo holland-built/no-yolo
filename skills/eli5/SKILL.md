@@ -62,8 +62,14 @@ Both modes output a TABLE, never prose paragraphs.
 | **What just got done** | 1-2 sentences per item, plain English. "Your login page now remembers users" — not "implemented session persistence middleware". |
 | **Where we are** | One sentence: how far along the overall job is, what's left. |
 | **What I'm asking you** | The single decision or answer needed from the user, phrased as a plain question with the choices spelled out. If nothing is needed, write exactly: "Nothing — just letting you know." |
-| **Next actions** | Numbered list. Each line: plain-English what + the exact command to type, e.g. `1. Publish it — type /release`. |
+
+Then next actions as a SECOND table (never a numbered list in a cell):
+
+| # | Action (plain English) | Type this | Why do it / why skip it |
+|---|---|---|---|
+| 1 | what it does for you, no jargon | `/command` | the payoff if you do — or the honest reason it's fine to skip |
 
 Rules for Mode B:
 - The "What I'm asking you" row is the most important one. Never bury the ask in a paragraph. If there are options, list them as "Option A: … / Option B: …" with what each means in plain words.
+- The "Why" column is mandatory and honest: state the concrete benefit of doing it, or say plainly "safe to skip because …". Never leave the user guessing whether an action matters.
 - Jargon translation is mandatory: every technical term gets replaced or explained inline ("the hook (a script that runs automatically)").

@@ -2,6 +2,15 @@
 
 Fresh start 2026-07-17
 
+## 2026-07-18 — audit follow-ups: verifiers, codex wiring, memory lint (entry #6)
+
+- Shared Codex runner `codex-run.sh` gained `-i IMAGE` support; ALL inline `codex exec` calls in `/build`, `/review`, `/design` now route through it (`/design-audit` reference updated) — zero inline calls remain.
+- `/design` description shortened 1593 → 936 chars (no more harness truncation); all trigger phrases kept.
+- Output verifiers added: `/better-prompt` (structural checks + independent antislop critic), `/ingest-docs` (per-file frontmatter/density PASS/FAIL), `/video-to-kb` (schema + wikilink resolution check).
+- `memory_compile.py` now lints the full SCHEMA.md contract (enums, filename=id, dates, provenance, supersession links); new bad facts ERROR, legacy facts only WARN — compile never breaks on existing store.
+- `/eli5` Mode B refined: next actions are their own table with a "Why do it / why skip it" column (user feedback).
+- Trigger-overlap audit run: no unsafe collisions; `/review` name clash with built-in flagged for a future naming decision (report: brainstorms/skill-audit-2026-07-18.md, local).
+
 ## 2026-07-18 — skill-audit + Codex xcheck fixes applied (entry #5)
 
 - `setup.sh --md-only` is now reversible: backs up `CLAUDE.md` before stripping imports; a later full setup auto-restores it (was a silent, permanent strip).

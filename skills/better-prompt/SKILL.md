@@ -85,7 +85,21 @@ Wrong-skill handling: if the rough prompt names skill `/X` but learnings.md trig
 
 ---
 
-## Step 6 — Output
+## Step 6 — Verify (objective)
+
+**(a) Structural checks.** Run against the rewritten block. Any failure → fix, re-check once, then continue:
+- Single fenced block, nothing outside it
+- Names a concrete target (file, component, function, or path)
+- States an explicit scope boundary
+- States a success criterion
+- Output-format clause present when the ask is analytical
+- No unresolved placeholders — scan for `<…>`, `TODO`, `TBD`, `FIXME`, `XXX`, `[ ]`, bare `...`
+
+**(b) Independent critic pass.** Invoke the `antislop` skill (Skill tool) on the rewritten block — this is a separate critic pass, NOT a same-pass self-re-read. Surface any critic findings before emitting; fix and re-run (a) if the critic flags something structural.
+
+---
+
+## Step 7 — Output
 
 Output the rewritten prompt only — a single fenced block, nothing else. No "Before", no "Why", no rationale bullets, no "Run with" line.
 

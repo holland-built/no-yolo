@@ -84,6 +84,14 @@ Content rules:
 - Dense, fact-first. No fluff, no boilerplate from source.
 - Frontmatter required on every context file.
 
+### Step 5b — Per-file verify
+
+For each context/ file written or touched this run, check and emit PASS/FAIL:
+- Frontmatter present with the real fields the pipeline writes: `source:`, `updated:`, `action_log:`
+- Density: no nav chrome, no "Powered by" boilerplate, no repeated header/footer cruft carried over from source, fact-first content
+
+FAIL → fix the file, don't leave it as final output.
+
 **Step 6 — Update .manifest**
 JSON: `{ "filename": ..., "hash": sha256, "processed_at": ISO8601, "context_file": ... }`
 

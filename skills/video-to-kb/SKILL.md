@@ -127,6 +127,15 @@ topics: [topic-slug, topic-slug]
 
 7. Print final quota report (no new --log call, already logged in Phase 1)
 
+### Schema check
+
+Before declaring Phase 2 done, assert and emit PASS/FAIL:
+- Required frontmatter present on `wiki/sources/<slug>.md`: `title`, `type`, `source_type`, `date_ingested`, `raw_path`, `url`, `topics`
+- Every `[[wikilink]]` written (source page + topic page) resolves to an existing vault page — unresolved links are flagged, not silently written
+- `log.md` entry appended for this run
+
+FAIL on any check → fix before declaring done.
+
 ## Groq Quota Reporting
 
 After every Phase 1 completion, always run and display:
