@@ -134,7 +134,7 @@ Codex is advisory — it never kills a variant alone; Claude's judge remains the
 | vN | paradigm description | Yes — reason | clean | |
 | vN | wildly different paradigm | Yes — reason | clean · Codex pick | ★ recommended |
 
-Both models picking the same variant = high-confidence recommend; a split = show both reasons — that disagreement is signal for the user.
+Both models picking the same variant = high-confidence recommend; a split = show both reasons — that disagreement is signal for the user — AND triggers `/design` Step 3's Synthesis round (crossover v11/v12, adapted paths): run it, append both to the combined view, gate on all 12.
 
 Stop and ask: **"Which mockup variant? (or redirect)"**
 Do NOT proceed until user names a variant. Lock the chosen variant — Sonnet builds to match it exactly.
