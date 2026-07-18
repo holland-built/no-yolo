@@ -225,11 +225,22 @@ Codex is advisory — never kills a variant alone; the validator pass remains th
 | v3      | Bloomberg grid | 41 | clean · Codex pick | * "Strongest data-ink discipline and only variant with true asymmetric balance" |
 ```
 
+### Synthesis round (only when the judges split)
+Compare the scoring agent's winner with the Codex judge's top pick:
+- **Same variant** → converged; skip this round entirely, note "judges converged on vN".
+- **Different variants** → the disagreement is the trigger. Generate two crossover variants — **crossover, never consensus**: each keeps ONE parent's paradigm whole and grafts specific elements from the other. Averaging two layouts produces design-by-committee mush; banned.
+  1. **v11 (Claude-led):** read the Codex pick's HTML, name the 2–3 strongest concrete elements in it (a specific navigation pattern, a data-display treatment, a state-strip idea — not "the vibe"). Spawn one Opus agent: keep the Claude pick's paradigm, graft exactly those named elements. Header `<!-- VARIANT: v11 — synthesis, claude-led -->`.
+  2. **v12 (Codex-led):** one codex call (read-only; same stdout/delimiter/write-it-yourself machinery and split gotcha as the wild slots):
+     ```bash
+     codex exec --skip-git-repo-check --sandbox read-only -m gpt-5.6-sol "Read <codex-pick path> (your earlier pick) and <claude-pick path>. Name the 2-3 strongest concrete elements in <claude-pick>, then output ONE complete self-contained HTML document after a line ===V12===: keep <codex-pick>'s layout paradigm whole and graft exactly those elements in. Same rules as before: inline style only, no external deps, light+dark toggle, states strip, annotations. Do NOT average the two layouts." < /dev/null > .mockups/design-<slug>/codex-synth.out 2>&1
+     ```
+  3. Validate both (same checks as the wild slots; a failed synthesis slot is dropped, not regenerated — synthesis is a bonus, never a blocker), append to `all.html` marked `SYNTH`, re-screenshot, and include both in the Step 4 gate — the user picks from 12.
+
 ### Chrome auto-open
 ```bash
 open ".mockups/design-<slug>/all.html"
 ```
-Opens immediately — you see all 10 before answering anything.
+Opens immediately — you see all variants before answering anything.
 
 ## HARD GATE — Step 4 (no code before this)
 Ask: **"Which variant? (confirm * vN / pick different vN / mix vA layout + vB colors / redo)"**

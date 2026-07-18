@@ -9,6 +9,7 @@ Fresh start 2026-07-17
 - **/build phase 4.5**: Codex writes adversarial edge-case tests from the spec + public interface (never the implementation) — breaks implementer-authored-test bias.
 - **/build 3.5 + /design + /design-audit**: Codex judges the rendered mockup screenshot (`codex exec -i`) as a second slop judge with its own table column — advisory only, agreement = confidence, split = signal.
 - All additions skip silently when Codex isn't installed.
+- **Synthesis round on judge splits**: when Claude's scorer and the Codex judge pick different winners, two crossover variants generate — v11 (Claude's paradigm + Codex pick's best named elements) and v12 (the mirror, Codex-led). Crossover only, never layout-averaging; skipped entirely when the judges converge; a failed synthesis slot drops silently. In /design, /build 3.5, /design-audit F6.
 - **Codex authors the WILD mockup slots (v9–v10)** in /design, /build 3.5, and /design-audit F3 — cross-model generation breaks single-model taste DNA at the source. Codex stays read-only (returns HTML on stdout, Claude validates and writes the files); background launch = zero wall-clock cost; Opus regenerates any failed slot. Cross-grading rule: neither model's judge counts for its own variants.
 
 ## 2026-07-18 — Codex cross-model critique (entry #2)
