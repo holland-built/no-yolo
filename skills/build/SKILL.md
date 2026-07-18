@@ -95,6 +95,7 @@ Either way, every variant MUST use these tokens verbatim — no made-up hex code
 Build **exactly 10 variants** as individual files `.mockups/<slug>/<slug>-v1.html` … `v10.html` (fan out in ONE parallel call):
 - **v1–v7**: conservative to polished, all using real design tokens, each a DISTINCT layout paradigm — not the same card grid with different spacing.
 - **v8–v10**: WILDLY different — completely different layout paradigm, spatial arrangement, or visual language (command-line terminal, full-bleed hero with bold type, data-dense Bloomberg grid, floating action panel, bento-grid, magazine editorial). Must look like a different product team designed them — NOT a card-grid or accordion variation.
+- **Codex authors v9–v10** — run `/design` Step 2's Codex wild-slot block (same command, adapted paths: output to `.mockups/<slug>/codex-wild.out`, files `<slug>-v9.html`/`<slug>-v10.html`): background launch before the fan-out, Codex returns delimited HTML on stdout read-only, Claude reads/validates/Writes the files, any failure → that slot regenerates via the normal agent. Skip silently without codex.
 
 ### Step B — Slop judge pass (HARD gate — minimum 6 survivors required)
 Spawn ONE judge agent with all 10 HTML files. Instructions:
@@ -126,7 +127,7 @@ Show screenshot inline.
 codex exec --skip-git-repo-check --sandbox read-only -m gpt-5.6-sol "This image shows UI mockup variants, labeled. For each: verdict slop|clean + one-line reason (slop = generic AI-generated look: card grids, gradient CTAs, hero+centered-CTA, shadcn starter DNA). Then name your single top pick + one sentence why. No preamble." -i ".mockups/<slug>/<slug>-all.png" < /dev/null
 ```
 
-Codex is advisory — it never kills a variant alone; Claude's judge remains the gate. Output variant table with its column:
+Codex is advisory — it never kills a variant alone; Claude's judge remains the gate. Cross-grading: Codex's verdict carries no weight on its own v9–v10; Claude's judge gates those. Output variant table with its column:
 
 | Variant | Description | Survived judge? | Codex | Pick |
 |---|---|---|---|---|

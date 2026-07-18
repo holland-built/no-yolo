@@ -168,6 +168,14 @@ ONE parallel Agent call, `model: "opus"`. Each writes `.mockups/design-<slug>/vN
 
 **v9–v10**: WILD. A completely alien layout paradigm — impossible to mistake for a variation of v1–v8. Examples: physical-object skeuomorph, radial/circular nav, newspaper broadsheet, game HUD, brutalist raw grid with zero decoration. Label each with `WILD` in the header comment.
 
+**Codex authors v9–v10 (cross-model generation; skip if `command -v codex` fails → Opus authors them as before).** All-Claude batches share one model's taste DNA — the WILD slots go to a different family. Codex stays read-only and returns HTML on stdout; **Claude writes the files** (write authority never delegates). Launch in the BACKGROUND *before* the Opus fan-out so it costs zero wall-clock, and give the Opus call only v1–v8:
+
+```bash
+codex exec --skip-git-repo-check --sandbox read-only -m gpt-5.6-sol "Output two WILD UI mockup variants as complete self-contained HTML documents, delimited by lines ===V9=== and ===V10===. Each: completely alien layout paradigm (not card grids/dashboards), inline <style> only, no external deps, light + dark sections with a data-theme toggle button, a labeled states strip (hover/focus/empty/error/loading), 2-3 <!-- ANNOTATION: --> comments, header comment '<!-- VARIANT: vN — paradigm (WILD, codex) -->'. Use these tokens verbatim: <paste seed tokens>. Real data, no lorem ipsum. Banned: <paste slop reject list>. Output ONLY the delimited HTML." < /dev/null > .mockups/design-<slug>/codex-wild.out 2>&1 &
+```
+
+After the Opus agents finish, wait for the Codex job; split `codex-wild.out` and Write `v9.html` / `v10.html` yourself. **Split gotcha (verified):** codex echoes the prompt (which contains the delimiter strings) AND prints the answer twice (streamed + final) — match delimiters as whole lines only and use the LAST `===V9===`/`===V10===` pair; trim v10 at its final `</html>` — but first READ what came back: each document must be plain HTML/CSS/minimal-JS (no scripts fetching remote URLs, no external deps) and contain `<html`. Fails the check or missing → regenerate that slot with Opus (never block the round). Codex variants pass through the SAME validator as everyone.
+
 **Every variant must include:**
 - Light + dark sections with toggle (LIGHT+DARK rule above)
 - **States strip**: a thin labeled row at the bottom showing all 5 interactive states as small labeled boxes: `hover` · `focus` · `empty` · `error` · `loading`, each showing the relevant component in that state. Real styled boxes, not placeholder text.
@@ -209,7 +217,7 @@ Spawn ONE scoring agent. It reads all 10 variant HTML files and scores each on:
 codex exec --skip-git-repo-check --sandbox read-only -m gpt-5.6-sol "This image shows UI mockup variants, labeled v1-v10 (light|dark pairs). For each: verdict slop|clean + one-line reason (slop = generic AI look: card grids, gradient CTAs, hero+centered-CTA, glassmorphism, shadcn starter DNA). Then name your single top pick + one sentence why. No preamble." -i ".mockups/design-<slug>/all.png" < /dev/null
 ```
 
-Codex is advisory — never kills a variant alone; the validator pass remains the gate. Returns the winner variant number + a single sentence why. Update `all.html` to mark the winner with * in its section header. Show this table (Codex column from the second judge; both models agreeing on the winner = high-confidence, a split = show both picks and reasons — the disagreement is the signal):
+Codex is advisory — never kills a variant alone; the validator pass remains the gate. **Cross-grading rule:** nobody grades their own homework — Claude's validator/scorer gates the Codex-authored v9–v10; the Codex judge's verdict counts only for Claude-authored variants (its opinion of its own v9/v10 is noted but carries no weight). Returns the winner variant number + a single sentence why. Update `all.html` to mark the winner with * in its section header. Show this table (Codex column from the second judge; both models agreeing on the winner = high-confidence, a split = show both picks and reasons — the disagreement is the signal):
 ```
 | Variant | Paradigm | Score | Codex | Recommended |
 |---------|----------|-------|-------|-------------|

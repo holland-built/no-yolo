@@ -95,7 +95,9 @@ re-derive the scrape logic here; it is the same mechanism defined in `/design` S
 scrape fails, proceed with findings only.
 
 **v1–v8**: distinct paradigms (same paradigm list as `/design`).
-**v9–v10**: WILD — alien layout paradigm, still must address P0 findings.
+**v9–v10**: WILD — alien layout paradigm, still must address P0 findings. Codex authors these
+two per `/design` Step 2's wild-slot block (background, stdout-only, Claude writes the files,
+Opus fallback) — with the P0 findings list added to its prompt alongside the tokens.
 
 Every variant includes: light + dark sections, states strip (hover/focus/empty/error/loading),
 2–3 annotation callouts at key decisions.
