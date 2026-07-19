@@ -97,7 +97,7 @@ def build_flags_section(sections) -> str:
             rows.append((name, hint))
     rows.sort(key=lambda r: r[0])
     header = "## Flags & arguments\n\n| Skill | Arguments & flags |\n| --- | --- |"
-    body = "\n".join(f"| {name} | `{hint.replace('|', chr(92) + '|')}` |" for name, hint in rows)
+    body = "\n".join(f"| {name} | `{hint.replace('|', '\\|')}` |" for name, hint in rows)
     return f"{header}\n{body}\n"
 
 
@@ -126,8 +126,9 @@ def main():
     when_to_use = parse_pipe_file(HERE / "WHEN_TO_USE.md")
     why_to_use = parse_pipe_file(HERE / "WHY_TO_USE.md")
 
+    flags_section = build_flags_section(categories)
     rendered = build_rendered(categories, taglines, when_to_use, why_to_use)
-    rendered += "\n" + build_flags_section(categories)
+    rendered += "\n" + flags_section
     rendered_fast = build_rendered_fast(categories, taglines_short)
     flags_doc = (
         "# Flags & arguments — every skill\n\n"
@@ -137,7 +138,7 @@ def main():
         "Every argument and flag each skill accepts, straight from the skill "
         "files themselves. Typing the command in Claude Code shows the same "
         "hint inline.\n\n"
-        + build_flags_section(categories).split("\n", 1)[1].lstrip("\n")
+        + flags_section.split("\n", 1)[1].lstrip("\n")
     )
 
     targets = [(HERE / "RENDERED.md", rendered),

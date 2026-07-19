@@ -100,19 +100,27 @@ def _sha(p): return hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest()[:12
 try:
     _old_shas = json.loads(MANIFEST.read_text(encoding="utf-8")).get("global_facts", {})
 except (FileNotFoundError, json.JSONDecodeError):
-    _old_shas = {}
+    _old_shas = None  # absent/corrupt manifest: treat ALL facts as pre-existing (warn-only) — a fresh-machine restore must not abort its first compile
 
 def _is_fresh(f):  # new or changed since the last compile
+    if _old_shas is None: return False
     return _old_shas.get(f.get("id")) != _sha(f["_path"])
 
 def _as_list(v):  # parser leaves "[]"/"null" as bare scalar strings, real lists as raw entry strings
-    return v if isinstance(v, list) else []
+    if isinstance(v, list): return v
+    if isinstance(v, str):
+        v = v.strip()
+        if v.startswith("[") and v.endswith("]"):  # inline YAML list: [a, b] / []
+            inner = v[1:-1].strip()
+            return [x.strip().strip("'\"") for x in inner.split(",")] if inner else []
+    return []
 
 _all_global_ids = {f.get("id") for f in global_facts if f.get("id")}
 
-for f in global_facts:
+def check_contract(facts, id_pool, fresh_fn):
+  for f in facts:
     fid = f.get("id", "?")
-    bucket = errors if _is_fresh(f) else warnings
+    bucket = errors if fresh_fn(f) else warnings
 
     if f.get("tier") not in TIER_ENUM:
         bucket.append(f"bad-tier: {fid} tier={f.get('tier')!r} not in {sorted(TIER_ENUM)}")
@@ -139,22 +147,27 @@ for f in global_facts:
 
     for sid in _as_list(f.get("supersedes")):
         sid = sid.lstrip("- ").strip()
-        if sid and sid not in _all_global_ids:
+        if sid and sid not in id_pool:
             bucket.append(f"dangling-supersedes: {fid} supersedes missing fact {sid!r}")
 
     sb = f.get("superseded-by")
     sb = sb if sb not in (None, "null", "None", "") else None
-    if sb and sb not in _all_global_ids:
+    if sb and sb not in id_pool:
         bucket.append(f"dangling-superseded-by: {fid} superseded-by missing fact {sb!r}")
 
     if f.get("status") == "superseded":
         if not sb:
             warnings.append(f"superseded-missing-target: {fid} status=superseded but superseded-by not set")
-        elif sb in _all_global_ids:
-            target = next((x for x in global_facts if x.get("id") == sb), None)
+        elif sb in id_pool:
+            target = next((x for x in facts if x.get("id") == sb), None)
             tsup = {s.lstrip("- ").strip() for s in _as_list(target.get("supersedes"))} if target else set()
             if fid not in tsup:
                 warnings.append(f"supersede-reciprocity: {fid} superseded-by={sb} but {sb}.supersedes does not list it back")
+
+check_contract(global_facts, _all_global_ids, _is_fresh)
+# project-tier stores get the same contract; no manifest freshness tracking for them, so always warn-only
+for _slug, _pfacts in project_facts.items():
+    check_contract(_pfacts, {x.get("id") for x in _pfacts if x.get("id")}, lambda _f: False)
 
 LINT_ONLY = "--lint" in sys.argv
 print("LINT:")
@@ -212,9 +225,8 @@ for slug, facts in project_facts.items():
         print(f"WROTE {mp}")
 
 # ---- manifest ----
-def sha(p): return hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest()[:12]
 manifest = {"compiled": datetime.datetime.now().isoformat(timespec="seconds"),
-            "global_facts": {f["id"]: sha(f["_path"]) for f in global_facts},
+            "global_facts": {f["id"]: _sha(f["_path"]) for f in global_facts},
             "active_count": len(all_active),
             "warnings": warnings}
 if "--dry-run" not in sys.argv:

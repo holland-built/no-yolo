@@ -67,7 +67,9 @@ def conflicts(cand_name, cand_type, existing):
 
 # ---- get instincts ----
 if not CLI.exists():
-    print(f"instinct-cli not found at {CLI}"); sys.exit(1)
+    # ECC marketplace uninstalled — auto-capture promotion is optional, not a
+    # pipeline failure. Curated facts still compile; reinstall ecc to resume.
+    print(f"promote skipped — instinct-cli not installed ({CLI})"); sys.exit(0)
 res = subprocess.run([sys.executable, str(CLI), "export", "--scope", "global",
                       "--min-confidence", str(MIN_CONF)],
                      capture_output=True, text=True)

@@ -11,8 +11,14 @@ set -euo pipefail
 CLAUDE_DIR="${HOME}/.claude"
 MODE="full"
 case "${1:-}" in
+  "") ;;
   --md-only) MODE="md-only" ;;
   --core-only) MODE="core-only" ;;
+  *)
+    echo "Unknown option: ${1}"
+    echo "Usage: bash setup.sh [--md-only | --core-only]  (no flag = full install)"
+    exit 2
+    ;;
 esac
 
 echo "==> Mode: $MODE"
@@ -36,7 +42,21 @@ done
 pre_missing() { case "$PRE_MISSING" in *" $1 "*) return 0;; *) return 1;; esac; }
 
 if [[ "$MODE" == "full" || "$MODE" == "core-only" ]]; then
-  if pre_missing node || pre_missing npm; then
+  if pre_missing git; then
+    echo ""
+    echo "    ! git missing — required: the pre-commit secret-scanner install needs it."
+    echo "    Install: see README.md Prerequisites"
+    exit 1
+  fi
+  if [[ "$MODE" == "core-only" ]]; then
+    # core-only needs node only (hooks runtime) — npm is for third-party installs
+    if pre_missing node; then
+      echo ""
+      echo "    ! node missing — required for --core-only (hooks runtime)."
+      echo "    Install: https://nodejs.org/ (see README.md Prerequisites)"
+      exit 1
+    fi
+  elif pre_missing node || pre_missing npm; then
     echo ""
     echo "    ! node and/or npm missing — required for full install."
     echo "    Install: https://nodejs.org/ (see README.md Prerequisites)"
@@ -163,8 +183,13 @@ fi
 # Undo a previous --md-only strip: restore the pristine CLAUDE.md so the
 # @memory and @docs/SKILL_TRIGGERS.md imports come back.
 if [[ -f "$CLAUDE_DIR/CLAUDE.md.pre-md-only" ]]; then
-  mv "$CLAUDE_DIR/CLAUDE.md.pre-md-only" "$CLAUDE_DIR/CLAUDE.md"
-  echo "    Restored full CLAUDE.md (undid earlier --md-only strip)"
+  if ! grep -q '@memory/CLAUDE\.generated\.md' "$CLAUDE_DIR/CLAUDE.md"; then
+    mv "$CLAUDE_DIR/CLAUDE.md.pre-md-only" "$CLAUDE_DIR/CLAUDE.md"
+    echo "    Restored full CLAUDE.md (undid earlier --md-only strip)"
+  else
+    rm "$CLAUDE_DIR/CLAUDE.md.pre-md-only"
+    echo "    current CLAUDE.md already has imports — stale backup discarded"
+  fi
 fi
 
 echo ""

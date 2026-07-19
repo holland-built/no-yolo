@@ -9,9 +9,8 @@
 - **It maintains itself** — built-in checks catch stale docs, broken references, and drift every time it publishes; the toolkit audits its own skills for rot.
 - **It doesn't rot** — self-tests run in CI, docs are drift-locked to the code, and one command reconciles your machine with the published copy.
 - **It stays current** — it pulls the last 30 days from GitHub, Reddit, and Hacker News into reviews and decisions instead of trusting old training data.
-- **It improves itself on schedule** — audits find its own weaknesses, debates decide the fixes, and every fix ships the same day.
+- **It improves itself on schedule** — audits find its own weaknesses, debates decide the fixes, and every fix ships the same day — the changelog proves it.
 - **Anti-slop is enforced, not aspirational** — a written ban list, mechanical judges, and a review pass that flags AI-sounding text before it ships.
-- **Nothing here is frozen** — trends feed in weekly, skills get audited and rebuilt, and the changelog proves it.
 - **Works for any project type** — web, backend, CLI — the design tools only engage on UI work.
 - **Optional stays optional** — third-party add-ons and the second AI can be skipped at install (`--core-only`), and any step that needs a missing tool skips itself instead of erroring; the core never breaks without them.
 - **It spends less and picks the right brain** — simple skills run on cheap fast models, mechanical work on the mid-tier, and the expensive model only plans and judges; terse output and background helpers that return compressed reports keep long sessions from burning tokens.
@@ -68,7 +67,7 @@ Everything optional lives here. Install one only when you want the skill it serv
 | [impeccable plugin](https://github.com/pbakaus/impeccable) | Frontend polish on existing UI | `/design` handoff | `/plugin marketplace add pbakaus/impeccable` |
 | [Codex plugin](https://github.com/openai/codex-plugin-cc) | Run OpenAI Codex reviews/tasks from Claude Code | Shared optional dependency: `/xcheck`, `/health`, `/build`, `/design`, `/design-audit` directly — plus `/plan`, `/debate`, `/diagnose --debate` via their `/xcheck` step. All skip silently if absent | `/plugin marketplace add openai/codex-plugin-cc` then `/plugin install codex@openai-codex`; needs a ChatGPT login (free tier OK) or OpenAI API key — `/xcheck` pins `gpt-5.6-sol`, which may need a paid plan; it falls back to your Codex default model if unavailable |
 | [archify](https://github.com/tt-a1i/archify) | Architecture/flow diagrams as zero-dep HTML+SVG | diagrams | installed by `setup.sh` |
-| [fallow](https://www.npmjs.com/package/fallow) | Dead-code scan | `/health` | installed by `setup.sh` (`npm install -g fallow`) |
+| [fallow](https://www.npmjs.com/package/fallow) | Dead-code scan | `/health` | installed by `setup.sh` (`npm install -g fallow@2.98.0`) |
 | [gh (GitHub CLI)](https://cli.github.com/) | GitHub from the terminal | `/health`, `/release` | `brew install gh && gh auth login` |
 | [Groq Whisper key](https://console.groq.com/) | Video transcription | `/video-to-kb` | Free API key, then `export GROQ_API_KEY=...` in `~/.zshrc` |
 | [Chrome](https://www.google.com/chrome/) | Headless browser for mockup previews | `/design`, `/build` | Usually present; `brew install --cask google-chrome` |

@@ -122,8 +122,8 @@ ls ~/.agents/skills/ 2>/dev/null | grep -iE "^improve$" && echo "improve:ok" || 
 
 | Tool | Status | Install if missing |
 |---|---|---|
-| Fallow | ✅ / ❌ | `npm install -g fallow` |
-| Trim (review/audit/debt) | ✅ / ❌ | `npx skills@latest add DietrichGebert/trim` |
+| Fallow | ✅ / ❌ | `npm install -g fallow@2.98.0` |
+| Trim (review/audit/debt) | ✅ / ❌ | `npx skills@latest add holland-built/trim` |
 | Improve | ✅ / ❌ | `npx skills@latest add shadcn/improve` |
 
 Fallow missing → STOP, show the table, tell the user to install it first, exit. Trim or Improve missing → note it, skip that sub-phase silently, continue with the rest.
@@ -262,4 +262,4 @@ One master summary after everything completes:
 - Missing trim/improve/fallow = not a failure — skip that sub-phase silently, show it in the roll-up, keep going.
 - Never skip a Fallow command — run all five even if earlier ones find nothing.
 - One findings table, one gate. No per-phase prompts, no separate diff/health output blocks. The step-walk covers only Fixable findings; non-fixable findings are never prompted.
-- H4 (md-check) and H5 (skill-audit) run ONLY when the reviewed repo is ~/.claude — they're hardwired to global config paths. Elsewhere they're skipped and noted, so `/review` outside ~/.claude is unchanged.
+- H4 (md-check) and H5 (skill-audit) run ONLY when the reviewed repo is ~/.claude — they're hardwired to global config paths. Elsewhere they're skipped and noted, so `/health` outside ~/.claude is unchanged.
