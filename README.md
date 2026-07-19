@@ -13,6 +13,7 @@
 - **Anti-slop is enforced, not aspirational** — a written ban list, mechanical judges, and a review pass that flags AI-sounding text before it ships.
 - **Nothing here is frozen** — trends feed in weekly, skills get audited and rebuilt, and the changelog proves it.
 - **Works for any project type** — web, backend, CLI — the design tools only engage on UI work.
+- **Optional stays optional** — third-party add-ons and the second AI can be skipped at install (`--core-only`), and any step that needs a missing tool skips itself instead of erroring; the core never breaks without them.
 - **It spends less and picks the right brain** — simple skills run on cheap fast models, mechanical work on the mid-tier, and the expensive model only plans and judges; terse output and background helpers that return compressed reports keep long sessions from burning tokens.
 
 Fork it and it's yours.
