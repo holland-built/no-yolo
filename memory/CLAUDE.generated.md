@@ -1,11 +1,11 @@
 <!-- GENERATED FROM ~/.claude/memory/facts/ — DO NOT EDIT. Run /memory-compile. -->
-<!-- compiled 2026-07-18 -->
+<!-- compiled 2026-07-19 -->
 # Learned Preferences (compiled from curated memory)
 
 Compiled from the fact store. Each line links its source fact.
 
 ## Working Preferences
-- **Always eli5-table completed work, next actions, and asks** — Every completed-work summary, next-actions list, and question to the user must be an eli5 Mode B table (What just got done / Where we are / What I'm asking you / Next actions) — plain English, no jargon ([feedback-eli5-on-output](memory/facts/feedback-eli5-on-output.md))
+- **Always eli5-table completed work, next actions, and asks** — Every completed-work summary, next-actions list, and question to the user must be ONE eli5 Mode B 4-column table (Done/Ask | Why | Left + importance | Type this) — ≤12 words/cell, ≤5 rows, plain English ([feedback-eli5-on-output](memory/facts/feedback-eli5-on-output.md))
 - **Auto-commit on push commands** — When the user says 'push to <branch>', auto-commit all local changes first (add, generate message, commit, push) without asking. ([user-auto-commit-on-push](memory/facts/user-auto-commit-on-push.md))
 - **Bulleted/table output, never prose** — Default output is a bulleted list or markdown table; no long prose paragraphs. Code/commands in fenced blocks. ([user-output-format-bullets](memory/facts/user-output-format-bullets.md))
 - **Single-paste prompts always** — When the user needs to run something, give ONE consolidated copy-paste block, never a numbered list of separate prompts/commands. ([user-single-paste-prompts](memory/facts/user-single-paste-prompts.md))

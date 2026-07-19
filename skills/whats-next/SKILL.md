@@ -72,24 +72,19 @@ Based on what you see, generate **3 creative, project-specific suggestions** —
 - Say what's improvable and why it matters
 - Give the exact skill + argument to run it
 
-Format — ALWAYS this table, plain English (eli5 style), no jargon:
+Format — ALWAYS the eli5 Mode B table (≤12 words per cell, ≤5 rows, no jargon):
 
 ```
-> Queue empty. Here's where you are and what I'd do next:
+> Queue empty. Suggestions:
 
-| Question | Plain answer |
-|---|---|
-| **Where we are** | [one sentence: state of the project right now, plain words] |
-| **What I'm asking you** | Pick one of the 3 options below, or tell me something else. |
-
-| # | What it is (plain English) | Why it matters | Type this |
+| Done / Ask | Why | Left + importance | Type this |
 |---|---|---|---|
-| 1 | [specific thing, no jargon] | [plain-words payoff] | `/skill [args]` |
-| 2 | ... | ... | `/skill [args]` |
-| 3 | ... | ... | `/skill [args]` |
+| Ask: pick a suggestion | queue empty, project scanned | HIGH — nothing runs otherwise | answer here |
+| [specific improvement 1] | [plain-words payoff] | MED | `/skill [args]` |
+| [specific improvement 2] | [plain-words payoff] | LOW | `/skill [args]` |
 ```
 
 Rules:
-- Every cell plain English — translate any technical term inline ("the hook (a script that runs automatically)").
-- Do NOT offer generic options like "audit codebase" or "review recent changes" without tying them to specific files or patterns you actually observed.
-- The Step 2 "report done + remaining tasks" output uses the same two-table shape: Where we are / What I'm asking you, then remaining tasks as a table with a **Type this** column.
+- ≤12 words per cell, fragments not sentences; every cell plain English, technical terms translated inline.
+- Do NOT offer generic options like "audit codebase" without tying them to specific files or patterns you actually observed.
+- The Step 2 "report done + remaining tasks" output uses the same single 4-column table: one row per remaining task.

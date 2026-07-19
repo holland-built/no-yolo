@@ -2,6 +2,12 @@
 
 Fresh start 2026-07-17
 
+## 2026-07-19 — right-sized skill models + tighter eli5 format (entry #8)
+
+- Model right-sizing: lockstep→haiku; release, update, last-30, video-to-kb, ingest-docs, prompt-scan, quick-mockup→sonnet. Judgment skills (build, design, plan, xcheck, …) stay on the default model.
+- eli5 Mode B is now ONE 4-column table (Done/Ask | Why | Left + importance | Type this), ≤12 words/cell, ≤5 rows, fragments not sentences — the verbosity fix; /whats-next uses the same table.
+- Memory fact updated + recompiled; catalog relocked.
+
 ## 2026-07-19 — /review renamed to /health (entry #7)
 
 - The authored review skill is now `/health` — resolves the exact-name clash with Claude Code's built-in `/review` (GitHub PR review) found by the trigger-overlap audit. Same skill, same natural-language triggers ('review this', 'code health', 'run health pass'); only the typed command changed.

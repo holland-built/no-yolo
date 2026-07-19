@@ -2,6 +2,7 @@
 name: video-to-kb
 description: Use this skill when the user types /video-to-kb, says 'ingest video', 'process video', or 'save this talk to my KB'. Ingests YouTube/video URLs into the Knowledge Base Obsidian vault — two phases: it saves the raw transcript, then 'process it' writes wiki pages. Not the same as /watch, which just transcribes a video and answers questions about it without touching the KB.
 user-invocable: true
+model: sonnet
 argument-hint: "[YouTube URL or video path]"
 allowed-tools: Read,Write,Edit,Bash
 ---

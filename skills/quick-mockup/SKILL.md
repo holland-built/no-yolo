@@ -2,6 +2,7 @@
 name: quick-mockup
 description: Use this skill when the user types /quick-mockup, says 'quick mockup', 'sketch this', 'throwaway mockup', or 'just show me the layout'. Fast disposable placeholder-only HTML for layout/spatial decisions — the lightweight counterpart to /design. ONE self-contained HTML file, neutral gray boxes, system-ui font, generic labels ("Card 1", "Section A"). No real copy, no brand tokens, no slop-judge, no 10-variant pipeline. Hard rule: always serve over http:// and auto-open in the real browser — never describe the layout in prose or ASCII art, never use AskUserQuestion preview fields for visual choices. Routes from the global "never show ASCII mockups" rule: when the ask is small/quick, reach for this skill before /design.
 user-invocable: true
+model: sonnet
 argument-hint: "[what to lay out] [--variants N]"
 allowed-tools:
   - Bash

@@ -2,6 +2,7 @@
 name: release
 description: Use this skill when the user types /release, says 'release', 'push this', 'commit and push', or 'get this to github'. ONE context-aware publish command for ANY repo — reads the repo-root SHIP.md playbook and runs it, environment-aware (dev/staging/prod). If no SHIP.md exists, it STOPS (lockstep) and guides you to build one before anything is committed or pushed.
 user-invocable: true
+model: sonnet
 argument-hint: "[env: dev|staging|prod] [optional commit message] [--auto]"
 allowed-tools:
   - Bash

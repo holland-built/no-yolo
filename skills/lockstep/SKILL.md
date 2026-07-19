@@ -2,6 +2,7 @@
 name: lockstep
 description: Use this skill when the user types /lockstep, says "lock step", "hold off on code", or "don't code yet". Hard, hook-enforced gate that blocks Edit/Write/NotebookEdit until the user explicitly releases it — not just a prompt reminder.
 user-invocable: true
+model: haiku
 argument-hint: "[on|off] (omit to toggle on)"
 allowed-tools:
   - Bash
