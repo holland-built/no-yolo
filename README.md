@@ -2,9 +2,15 @@
 
 ## What this is
 
-A ready-made brain for Claude Code: clone this and your Claude gets 26 extra commands, strict working rules, and a memory. Fork it and it's yours.
+**A ready-made brain for Claude Code.** Clone it and Claude:
 
-**Why: out of the box, Claude forgets everything between sessions, edits before asking, and drifts into generic output — this setup wires in a memory, ask-first rules, and quality gates that don't rely on you remembering to prompt for them.**
+- plans and asks before touching your code — so you stop watching its every move
+- remembers your projects and preferences between sessions — so you stop re-explaining yourself
+- checks its own work before anything ships — so you stop redoing it
+
+Fork it and it's yours.
+
+Why: out of the box, Claude forgets everything between sessions, edits before asking, and drifts into generic output — this setup wires in a memory, ask-first rules, and checks that don't rely on you remembering to prompt for them.
 
 Claude Code reads `~/.claude/` every time it starts, and this repo *is* that folder, saved in git.
 
