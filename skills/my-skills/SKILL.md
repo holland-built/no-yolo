@@ -14,7 +14,7 @@ Mode: $ARGUMENTS
 
 Two modes:
 - **Default** (empty, or any non-`deep` arg) — paired-column, no section headers: Skill + What it does + Skill + What it does. 2-5 word summaries, 2 skills per row. Whole menu fits on one screen.
-- **deep** — 4-col (adds When + Why) + Relationships + Bolt-ons, grouped by category with section headers.
+- **deep** — 4-col (adds When + Why) + Relationships + Bolt-ons + Flags & arguments (per-skill argument-hint), grouped by category with section headers.
 
 Helpers tier: skills under `## Helpers` in CATEGORIES.md are called by other skills (antislop by /health, tdd by /build) — hidden from the fast menu, shown labeled in deep.
 

@@ -122,7 +122,7 @@ A "skill" is a slash command, like `/health`. The count: 26 custom commands (+2 
 | md-check | Audit + fix docs | skill-audit | Audit skill library health |
 | update | Check/apply setup updates | lockstep | Hard block on edits |
 
-The table shows the runnable menu: it includes 2 borrowed skills (`improve`, `archify`) and hides 2 custom helpers (`antislop`, `tdd` — see below), so it isn't a 1:1 list of the 26 custom commands. It is a copy of [`skills/my-skills/RENDERED_FAST.md`](skills/my-skills/RENDERED_FAST.md) — inside Claude Code, run `/my-skills` (same table) or `/my-skills deep` (adds when/why per skill, from [`RENDERED.md`](skills/my-skills/RENDERED.md)).
+The table shows the runnable menu: it includes 2 borrowed skills (`improve`, `archify`) and hides 2 custom helpers (`antislop`, `tdd` — see below), so it isn't a 1:1 list of the 26 custom commands. It is a copy of [`skills/my-skills/RENDERED_FAST.md`](skills/my-skills/RENDERED_FAST.md) — inside Claude Code, run `/my-skills` (same table) or `/my-skills deep` (adds when/why per skill, from [`RENDERED.md`](skills/my-skills/RENDERED.md), including every skill's flags).
 
 Borrowed sets install with one command each: `npx skills@latest add holland-built/trim` (six simplicity commands), `npx skills@latest add shadcn/improve`, `npx skills@latest add emilkowalski/skills` (UI-polish rules that feed `/design`), `npx skills@latest add tt-a1i/archify`.
 

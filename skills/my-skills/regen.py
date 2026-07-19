@@ -68,6 +68,39 @@ def build_rendered(sections, taglines, when_to_use, why_to_use) -> str:
     return "\n\n".join(blocks) + "\n"
 
 
+def parse_argument_hint(skill_md: Path) -> str:
+    """Extract the argument-hint: value from a SKILL.md frontmatter block."""
+    in_frontmatter = False
+    for line in skill_md.read_text().splitlines():
+        if line.strip() == "---":
+            if in_frontmatter:
+                break
+            in_frontmatter = True
+            continue
+        if in_frontmatter and line.startswith("argument-hint:"):
+            return line.split(":", 1)[1].strip().strip('"')
+    return ""
+
+
+def build_flags_section(sections) -> str:
+    """'## Flags & arguments' table — one row per skill with a non-empty
+    argument-hint in its SKILL.md frontmatter, alphabetical by skill name."""
+    rows = []
+    for _section, names in sections:
+        for name in names:
+            skill_md = HERE.parent / name / "SKILL.md"
+            if not skill_md.exists():
+                continue
+            hint = parse_argument_hint(skill_md)
+            if not hint:
+                continue
+            rows.append((name, hint))
+    rows.sort(key=lambda r: r[0])
+    header = "## Flags & arguments\n\n| Skill | Arguments & flags |\n| --- | --- |"
+    body = "\n".join(f"| {name} | `{hint.replace('|', chr(92) + '|')}` |" for name, hint in rows)
+    return f"{header}\n{body}\n"
+
+
 def build_rendered_fast(sections, taglines_short) -> str:
     names = [name for section, section_names in sections
              if not section.startswith("Helpers")
@@ -94,6 +127,7 @@ def main():
     why_to_use = parse_pipe_file(HERE / "WHY_TO_USE.md")
 
     rendered = build_rendered(categories, taglines, when_to_use, why_to_use)
+    rendered += "\n" + build_flags_section(categories)
     rendered_fast = build_rendered_fast(categories, taglines_short)
 
     targets = [(HERE / "RENDERED.md", rendered), (HERE / "RENDERED_FAST.md", rendered_fast)]

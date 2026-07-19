@@ -75,3 +75,31 @@
 | --- | --- | --- | --- |
 | antislop | Check text/UI for AI-slop tells. Violations table + verdict. | Before shipping any user-facing text or README — or when output feels generic | AI writing has 25 known tell patterns. This catches them before they reach users |
 | tdd | Failing test first, then make it pass. Red→green discipline. | Bug fixes, new features, anywhere tests matter | The RED test is proof you actually fixed it. Without it you're asserting, not proving |
+
+## Flags & arguments
+
+| Skill | Arguments & flags |
+| --- | --- |
+| antislop | `[text, code, or output to check]` |
+| better-prompt | `[rough prompt text to sharpen]` |
+| build | `[describe the feature to build]` |
+| debate | `<topic or decision> [--ui]` |
+| design | `[text \| URL \| screenshot \| domain context] [--apply-spec <file>]` |
+| design-audit | `[surface to audit]` |
+| diagnose | `[describe the bug or paste the error] [--debate]` |
+| eli5 | `[skill name, plan text, command, or file path]` |
+| health | `[path] [--auto] [--quick]` |
+| ingest-docs | `[--force] [filename]` |
+| last-30 | `[topic / library / tool / pattern to research]` |
+| lockstep | `[on\|off] (omit to toggle on)` |
+| md-check | `[--fix [--auto]] [--drift] [--orphans] [--pre <proposed-filename>] (omit for read-only audit)` |
+| my-skills | `[deep]` |
+| plan | `[describe the feature, system, or decision to plan]` |
+| quick-mockup | `[what to lay out] [--variants N]` |
+| release | `[env: dev\|staging\|prod] [optional commit message] [--auto]` |
+| remember-that | `<fact> \| d <id> \| m <id> \| audit \| compile \| (empty=extract from context)` |
+| skill-audit | `[--audit] [--build-verifier <skill-name>] [--gotchas] [--research]` |
+| tdd | `[describe the feature or function to implement]` |
+| update | `[preview\|full\|rules\|rollback\|restore <name>\|vendor <name>\|marketplace <name>]` |
+| video-to-kb | `[YouTube URL or video path]` |
+| xcheck | `[artifact to cross-check — plan text, file path, or 'last plan']` |
