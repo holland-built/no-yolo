@@ -20,33 +20,36 @@ echo ""
 
 # ── Preflight: tool availability ─────────────────────────────────────────────
 echo "==> Preflight"
-PRE_TOOLS=(git node npm npx python3 claude)
-declare -A PRE_FOUND=()
-for t in "${PRE_TOOLS[@]}"; do
+# NOTE: no bash-4-only constructs (associative arrays) anywhere in this file —
+# stock macOS ships bash 3.2, and the documented install command is `bash setup.sh`.
+PRE_TOOLS="git node npm npx python3 claude"
+PRE_MISSING=" "
+for t in $PRE_TOOLS; do
   if command -v "$t" >/dev/null 2>&1; then
-    PRE_FOUND["$t"]=1
     printf "    %-8s found\n" "$t"
   else
-    PRE_FOUND["$t"]=0
+    PRE_MISSING="${PRE_MISSING}${t} "
     printf "    %-8s missing\n" "$t"
   fi
 done
 
+pre_missing() { case "$PRE_MISSING" in *" $1 "*) return 0;; *) return 1;; esac; }
+
 if [[ "$MODE" == "full" || "$MODE" == "core-only" ]]; then
-  if [[ "${PRE_FOUND[node]}" != 1 || "${PRE_FOUND[npm]}" != 1 ]]; then
+  if pre_missing node || pre_missing npm; then
     echo ""
     echo "    ! node and/or npm missing — required for full install."
     echo "    Install: https://nodejs.org/ (see README.md Prerequisites)"
     exit 1
   fi
 else
-  if [[ "${PRE_FOUND[python3]}" != 1 ]]; then
+  if pre_missing python3; then
     echo ""
     echo "    ! python3 missing — required for --md-only (see README.md Prerequisites)"
     exit 1
   fi
 fi
-if [[ "${PRE_FOUND[claude]}" != 1 ]]; then
+if pre_missing claude; then
   echo "    ! claude (Claude Code) not found on PATH — install: https://docs.anthropic.com/en/docs/claude-code"
 fi
 

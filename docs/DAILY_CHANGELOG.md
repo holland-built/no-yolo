@@ -2,6 +2,13 @@
 
 Fresh start 2026-07-17
 
+## 2026-07-19 — stranger install test: bash 3.2 bug found + fixed (entry #20)
+
+- Sandboxed end-to-end install test (fake HOME, real clone): preflight, --core-only skips, --md-only backup/restore, fail-loud gate, all verify rows — PASS.
+- REAL DEFECT caught: setup.sh used a bash-4-only associative array; stock macOS ships bash 3.2, so the documented `bash setup.sh` failed on any un-provisioned Mac. Rewritten bash-3.2-clean and proven by running the install under /bin/bash 3.2.57.
+- New verify.sh guard "setup.sh bash-3.2 clean" (grep + /bin/bash -n) so a bash-4 construct can never ship again.
+- /prompt-scan refreshed learnings.md for claude-fable-5 (local file).
+
 ## 2026-07-19 — generated flags table in /my-skills deep (entry #19)
 
 - docs/FLAGS.md: standalone generated flags page in the repo, linked from the README — same no-drift guarantee (regen --check covers all 3 generated files).
