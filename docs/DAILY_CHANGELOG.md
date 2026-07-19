@@ -2,6 +2,13 @@
 
 Fresh start 2026-07-17
 
+## 2026-07-19 — debate rebuilt around real usage (entry #11)
+
+- Default panel retuned: Sales Engineer → The Alternative (steelmans the competing approach), Sales Leader → The Prioritizer (value vs effort, no revenue framing) — matches actual usage (approach validation + feature triage, never revenue).
+- New Step 4.5: one bounded Codex blind-spot call after the contradiction map, Chairman-adjudicated; final xcheck unchanged (Codex advises, never vetoes).
+- --ui panel: +The Benchmark (best-in-class comparison), The Prioritizer joins as 7th on ranking asks; grounding now loads emil-design-eng, ANTISLOP GUI, UI_MOCKUPS, dataviz.
+- Every debate now ends by naming the installed tool that executes the outcome.
+
 ## 2026-07-19 — caveman lite persists + build skill trimmed + judge live-tested (entry #10)
 
 - Caveman level reverting root-caused: SessionStart hook rewrites the flag with hardcoded 'full'; fixed via ~/.config/caveman/config.json {"defaultMode": "lite"} (user config, survives plugin updates).

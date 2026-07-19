@@ -1,6 +1,6 @@
 ---
 name: debate
-description: Use this skill when the user types /debate, says 'debate this', 'stress test this decision', 'get the team on this', or 'should we build this'. Seven-persona product-team debate — Senior Dev + Junior Dev + Sales Engineer + DevOps + Sales Leader + Eng Leader + Product Designer — Chairman oversight, contradiction map, synthesis, peer review. Flag `--ui` swaps in a 5-persona UI/UX panel grounded in the project's design docs.
+description: Use this skill when the user types /debate, says 'debate this', 'stress test this decision', 'get the team on this', or 'should we build this'. Seven-persona product-team debate — Senior Dev + Junior Dev + The Alternative + DevOps + The Prioritizer + Eng Leader + Product Designer — Chairman oversight, contradiction map, synthesis, peer review. Flag `--ui` swaps in a 6-persona UI/UX panel (7th seat joins on ranking asks) grounded in the project's design docs and installed design skills.
 user-invocable: true
 argument-hint: "<topic or decision> [--ui]"
 ---
@@ -11,7 +11,7 @@ Your product team argues your decision. You get the contradictions, the synthesi
 
 ## Flags
 
-- `--ui` — swap the default 7 business/eng personas for the **UI/UX panel** (5 design-focused debaters, see Appendix A). Use for visual/interaction/layout/color/a11y decisions. Before running, read the project's design docs if present (`DESIGN.md`, `COLOR_CONTRACT.md`, `UIUX_CHECKLIST.md`, `MOCKUPS.md`, `tailwind.config.*`, token/CSS files) and feed them to every persona so they argue grounded in the project's own rules, not generic taste. Everything else (Chairman → Steps 3–8) runs unchanged.
+- `--ui` — swap the default 7 business/eng personas for the **UI/UX panel** (5 design-focused debaters, see Appendix A). Use for visual/interaction/layout/color/a11y decisions. Before running, read the project's design docs if present (`DESIGN.md`, `COLOR_CONTRACT.md`, `UIUX_CHECKLIST.md`, `MOCKUPS.md`, `tailwind.config.*`, token/CSS files) plus installed knowledge — the `emil-design-eng` skill's rules (`~/.claude/skills/emil-design-eng/`), `~/.claude/docs/ANTISLOP.md` → `## GUI Slop`, `~/.claude/docs/UI_MOCKUPS.md`, and the `dataviz` skill's references when the surface includes charts/dashboards — and feed all of it to every persona so they argue against these standards, not generic taste. Everything else (Chairman → Steps 3–8) runs unchanged.
 
 No flag = default 7-persona product-team panel (Step 2 below).
 
@@ -50,11 +50,11 @@ Run all 7 in parallel as subagents (model: opus). Never inline — parallel is m
 - Is there a smaller, more obvious way to do this that we're overlooking?
 - *Only they would say:* "I don't get why we need this — and if I don't, neither will the next new hire or the new user."
 
-**THE SALES ENGINEER** — translates user needs into the platform story
-- What actual customer problem does this solve, in their words not ours?
-- How do I demo this to a prospect without it breaking or needing an asterisk?
-- Does this fit how customers already use the platform, or does it force a new mental model?
-- *Only they would say:* "Customers aren't asking for this — here's the request behind the request they're actually making."
+**THE ALTERNATIVE** — steelmans the strongest competing approach
+- What's the strongest approach we are NOT taking, and what's its best case if executed well?
+- What would have to be true in 6 months for the alternative to clearly beat what's proposed here?
+- If we pick wrong, what's the switching cost to change course later?
+- *Only they would say:* "I'm the approach you rejected — here's the strongest version of me, beat THAT, not the strawman."
 
 **THE DEVOPS ENGINEER** — deployment, reliability, who runs this at 3am
 - How does this get deployed, observed, and rolled back when it breaks?
@@ -62,11 +62,11 @@ Run all 7 in parallel as subagents (model: opus). Never inline — parallel is m
 - What new operational cost (infra, on-call, maintenance) are we signing up for forever?
 - *Only they would say:* "It works on your machine; tell me how it dies in production and who fixes it at 3am."
 
-**THE SALES LEADER** — revenue, ROI, customer promises
-- What's the revenue or retention impact, and how soon do we see it?
-- What have we already promised customers that this does or doesn't deliver?
-- Is this the highest-ROI thing the team could be doing right now?
-- *Only they would say:* "I can sell this — or I can't — and here's the deal it wins or loses us this quarter."
+**THE PRIORITIZER** — value vs. effort, opportunity cost
+- What's the value per unit of effort here, compared to everything else on the table right now?
+- What does doing this displace — what doesn't get done because this does?
+- If we could only ship half of this, which half earns its place?
+- *Only they would say:* "Everything here is worth doing — that's not the question. Rank it against what you're NOT doing."
 
 **THE ENGINEERING LEADER** — team feasibility, debt, roadmap
 - Can the team actually build and maintain this with who and what we have?
@@ -104,12 +104,22 @@ Steps 4–6 are bound by the Chairman's rulings: DISCOUNTED arguments cannot app
 4. What does EVERY perspective agree on? (Likely true — even opponents confirm it.)
 5. What did NONE of the perspectives address? (The blind spot — often the most valuable finding.)
 
+### Step 4.5 — Codex blind-spot check
+
+Skip silently if `command -v codex` fails. Otherwise make ONE bounded call:
+
+```bash
+bash ~/.claude/skills/xcheck/scripts/codex-run.sh -m gpt-5.6-sol -s read-only "Here is a contradiction map from a multi-persona debate: <paste Step 4 output>. Name up to 3 important considerations ALL personas missed. One line each, no preamble."
+```
+
+Claude adjudicates each returned item under the Chairman's evidence rules (Step 3): ADMITTED items join Step 4's blind-spot list (item 5); DISCOUNTED items are dropped with a one-line reason. Codex critiques, never authors a persona position — one call max.
+
 ### Step 5 — Research briefing
 
 1. **One-paragraph summary** — brief a CEO in 60 seconds, nuance not headline
 2. **5 key findings** — ranked by reliability; note which perspectives support/challenge each. ADMITTED arguments only — the Chairman's DISCOUNTED rulings are binding.
 3. **Hidden connection** — one non-obvious link that only shows up across all 7 perspectives
-4. **Actionable insight** — what should someone in the user's role actually DO differently? Specific.
+4. **Actionable insight** — what should someone in the user's role actually DO differently? Specific. End by naming which installed tool executes it (e.g. `/design` fresh UI, `/design-audit` find problems, impeccable plugin polish existing UI, `/design component-pull` add an element, `/build` feature, `/plan` interview) — every debate ends pointed at a tool, not just a verdict.
 5. **Frontier question** — the one question that, if answered, would change everything
 
 ### Step 6 — Peer review
@@ -153,9 +163,9 @@ Only include if the decision has an irreversible, costly, or team-visible conseq
 
 ## Appendix A — UI/UX panel (`--ui` flag)
 
-Replaces Step 2's seven personas with these **five**. Run all 5 in parallel as subagents (model: opus), same rules — never inline. Each answers their 3 questions, then delivers the one thing only they would say. Then Chairman (Step 3) and Steps 4–8 run identically.
+Replaces Step 2's seven personas with these **six**. Run all 6 in parallel as subagents (model: opus), same rules — never inline. Each answers their 3 questions, then delivers the one thing only they would say. Then Chairman (Step 3) and Steps 4–8 run identically.
 
-**Grounding (required before dispatch):** read any project design docs found (`DESIGN.md`, `COLOR_CONTRACT.md`, `UIUX_CHECKLIST.md`, `MOCKUPS.md`, `learnings.md`, `tailwind.config.*`, token/theme CSS). Pass the extracted rules (palette contract, named rules, density/type scale, banned aesthetics, both-theme requirement) into every persona's brief. If no design docs exist, personas argue from WCAG + the stated product context and say so.
+**Grounding (required before dispatch):** read any project design docs found (`DESIGN.md`, `COLOR_CONTRACT.md`, `UIUX_CHECKLIST.md`, `MOCKUPS.md`, `learnings.md`, `tailwind.config.*`, token/theme CSS), plus installed knowledge — the `emil-design-eng` skill's rules (`~/.claude/skills/emil-design-eng/`), `~/.claude/docs/ANTISLOP.md` → `## GUI Slop`, `~/.claude/docs/UI_MOCKUPS.md`, and the `dataviz` skill's references when the surface includes charts/dashboards. Pass the extracted rules (palette contract, named rules, density/type scale, banned aesthetics, both-theme requirement, slop tells) into every persona's brief so they argue against these standards, not generic taste. If no project design docs exist, personas still ground in the installed knowledge above plus WCAG + the stated product context, and say so.
 
 **THE RESTRAINT AUDITOR** — palette / color-contract cop
 - Does every color here earn its place, or is a hue encoding identity/decoration that should be neutral?
@@ -186,3 +196,11 @@ Replaces Step 2's seven personas with these **five**. Run all 5 in parallel as s
 - What's the minimum surgical change, and what's the blast radius / regression risk / duplicate-component trap?
 - Is there a prior fix in `learnings.md` this would re-break, or a named rule this would violate?
 - *Only they would say:* "You asked to fix what you see; the real defect is several components upstream — patching here just moves the bruise."
+
+**THE BENCHMARK** — argues from named best-in-class comparisons
+- How do the best products in this class actually solve this — name them?
+- Is ours at that bar, or does it just resemble it from a distance?
+- What specifically would close the gap — not "polish it more," the exact change?
+- *Only they would say:* "Name the best product that does this — I've seen it, ours isn't it yet, and here's the exact distance."
+
+When the ask is a ranking/triage ("score these, keep the best N"), THE PRIORITIZER (Step 2) joins the UI/UX panel as a seventh seat.
