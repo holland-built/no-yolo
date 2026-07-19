@@ -24,3 +24,4 @@ THIRD_PARTY_SKILLS.md|Registry of vendored (non-plugin) third-party skill conten
 HOOKS_INTERNALS.md|Developer reference for the 4 caveman hook JS modules — what each does, when it fires, exports, and security notes.
 MCP_SERVICES.md|Optional MCP-backed services (Firecrawl web-data provider) — install steps, the try-MCP-then-fallback pattern skills use, and where endpoint values live (never in tracked files).
 SHIP.md|Release playbook for this repo — environments, pre-push steps, hard guards, optional GitHub release recipe. /release reads and runs it; never push without it.
+FLAGS.md|Generated reference of every skill's arguments and flags — built by regen.py from skill frontmatter, never hand-edited.

@@ -4,6 +4,7 @@ Fresh start 2026-07-17
 
 ## 2026-07-19 — generated flags table in /my-skills deep (entry #19)
 
+- docs/FLAGS.md: standalone generated flags page in the repo, linked from the README — same no-drift guarantee (regen --check covers all 3 generated files).
 - regen.py now builds a "Flags & arguments" table into RENDERED.md from every skill's argument-hint frontmatter — machine-generated, alphabetical, covered by regen --check + verify.sh so it can never drift. First central place all skill flags are documented.
 
 ## 2026-07-19 — --core-only install + codex-aware preflight (entry #18)
