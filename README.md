@@ -14,6 +14,8 @@
 
 **All the time:** it remembers what you teach it, routes plain-English requests to the right tool on its own, answers in beginner-readable tables, and spends tokens like they're yours — because they are.
 
+**Any stack:** the method doesn't care what you build — plans, proofs, debates, and gates work the same for a Python API, a CLI tool, or infrastructure. The design wing runs web-deep, but it only wakes up when your change touches a screen; backend work walks right past it.
+
 Fork it and it's yours.
 
 Claude Code reads `~/.claude/` every time it starts, and this repo *is* that folder, saved in git.

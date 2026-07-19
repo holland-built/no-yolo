@@ -4,6 +4,7 @@ Fresh start 2026-07-17
 
 ## 2026-07-19 — README opener: the full pitch (entry #16)
 
+- "Any stack" beat added: method is stack-agnostic, the web-deep design wing only wakes on UI changes.
 - Opener replaced with the "working method" pitch: trust-earning framing + When you build / decide / design / publish / All the time sections — the full breadth (orchestration, routing, dual-AI checks, anti-slop, token frugality), user-picked from 5 drafted styles. Standalone Why sentence absorbed into the pitch.
 
 ## 2026-07-19 — README opener rewritten as capability→outcome bullets (entry #15)
