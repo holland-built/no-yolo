@@ -112,5 +112,5 @@ Output the rewritten prompt only — a single fenced block, nothing else. No "Be
 Rules:
 - Single fenced block, zero surrounding text
 - Never invent skills not in learnings.md Skill triggers
-- If a skill applies, include it as the first word of the rewritten prompt (e.g. `/review ...`)
+- If a skill applies, include it as the first word of the rewritten prompt (e.g. `/health ...`)
 - If wrong skill was named in the rough prompt, silently correct it in the rewrite

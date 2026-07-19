@@ -29,7 +29,7 @@ remember-that|Save, extract, delete, move, audit facts across sessions.
 trim-gain|Shows trim's measured impact: less code, less cost, more speed.
 quick-mockup|Fast throwaway HTML layout mockup — gray boxes, served live, browser-opens. Not /design.
 skill-audit|Audits the whole skill library: bucket fit, missing pieces, unverified output, stale triggers.
-review|Diff + codebase health + /last-30 trends, with every fix walked past you one at a time.
+health|Diff + codebase health + /last-30 trends, with every fix walked past you one at a time.
 lockstep|Hook-enforced gate: blocks Edit/Write/NotebookEdit until you say go.
 emil-design-eng|Emil Kowalski's UI-polish and animation-taste rules — feeds /design and /design-audit.
 animation-vocabulary|Turns a vague animation description into its exact term.

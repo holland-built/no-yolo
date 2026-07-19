@@ -2,6 +2,11 @@
 
 Fresh start 2026-07-17
 
+## 2026-07-19 — /review renamed to /health (entry #7)
+
+- The authored review skill is now `/health` — resolves the exact-name clash with Claude Code's built-in `/review` (GitHub PR review) found by the trigger-overlap audit. Same skill, same natural-language triggers ('review this', 'code health', 'run health pass'); only the typed command changed.
+- All references updated: build, better-prompt, my-skills, CORE_RULES, CODE_REVIEW, THIRD_PARTY_SKILLS, README (Add-ons + inventory), catalog rows + relock, RENDERED menus regenerated.
+
 ## 2026-07-18 — audit follow-ups: verifiers, codex wiring, memory lint (entry #6)
 
 - Shared Codex runner `codex-run.sh` gained `-i IMAGE` support; ALL inline `codex exec` calls in `/build`, `/review`, `/design` now route through it (`/design-audit` reference updated) — zero inline calls remain.

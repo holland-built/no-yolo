@@ -22,7 +22,7 @@ Feature: $ARGUMENTS
 - **Color/typography/token/spacing nits** → NOT /build. Use `/design-audit` to find issues or `/design` to see options.
 - **Visual/aesthetic redesign** → /build WITH the mockup gate.
 - **Trivial fix** (1–2 files, cause already known) → fast path: phase 0 only → skip plan → approve → build.
-- **Code quality / dead code / YAGNI audit** → STOP, run `/review` instead.
+- **Code quality / dead code / YAGNI audit** → STOP, run `/health` instead.
 - **Genuine multi-step feature** → full pipeline below.
 
 State which path you're taking in one line before proceeding.
@@ -190,7 +190,7 @@ Run the ALWAYS gates on every run; add CONDITIONAL gates only when the diff touc
 - **Security review** — IF the diff touches auth, API routes, secrets/env, DB queries, or user input → spawn `security-auditor` on those files. Check authz, injection, secret handling, input validation.
 - **Accessibility** — IF `ui_change: true` → run the a11y check (`accessibility-tester` / axe): keyboard reachability, roles/aria, contrast, focus order. Matches the project's keyboard-first / AA bar.
 - **Perf** — IF the change touches a hot path (sizing calc, large list/table render, a tight loop) → measure before/after (render time, query count, bundle delta) and confirm no regression.
-- **Code health** — IF the diff adds ≥3 new functions/components OR the feature is a major refactor → run `/review` on the changed paths. Fallow catches dead exports and duplication; trim catches YAGNI before it ships.
+- **Code health** — IF the diff adds ≥3 new functions/components OR the feature is a major refactor → run `/health` on the changed paths. Fallow catches dead exports and duplication; trim catches YAGNI before it ships.
 - **Prefab-first compliance** — IF `ui_change: true` → scan the diff for bespoke implementations of primitives the sourcing table mapped to PREFAB (hand-written button/dropdown/modal/switch markup + CSS). Found → back to phase 5, swap in the mapped component.
 
 Do NOT proceed to phase 6 with an unresolved gate.

@@ -2,7 +2,7 @@
 | --- | --- | --- | --- |
 | design | Fresh UI mockup generation | quick-mockup | Throwaway layout mockup |
 | design-audit | 5-lens UI violation audit | build | Full feature build pipeline |
-| plan | Pre-build decision interview | review | Diff, health + trend review |
+| plan | Pre-build decision interview | health | Diff, health + trend review |
 | xcheck | Codex second opinion on plans | last-30 | Trending last 30 days |
 | video-to-kb | YouTube video to KB note | ingest-docs | Docs to context files |
 | diagnose | Root-cause bug analysis | debate | 7-persona decision debate |
