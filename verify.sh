@@ -110,6 +110,15 @@ else
   record FAIL "README inventory current — README Skills inventory table drifted from skills/my-skills/RENDERED_FAST.md"
 fi
 
+# 6c. setup.sh bash-3.2 clean — stock macOS ships bash 3.2 and the documented
+#     install command is `bash setup.sh`; a bash-4-only construct hard-blocks
+#     every un-provisioned Mac (shipped once: declare -A in the preflight).
+if ! grep -q 'declare -A' setup.sh && /bin/bash -n setup.sh 2>/dev/null; then
+  record PASS "setup.sh bash-3.2 clean"
+else
+  record FAIL "setup.sh bash-3.2 clean — bash-4-only construct or syntax error (stock Mac bash is 3.2)"
+fi
+
 # 7. shellcheck — BLOCKING at warning severity and above.
 #    Was warn-only for months: `record WARN` never sets fail=1, so it ran on every
 #    CI push (ubuntu-latest ships shellcheck), found real things, and could not fail
