@@ -90,27 +90,17 @@ Skip entirely for backend-only changes.
 - **If no MASTER.md**: extract tokens from the project's CSS (`:root` variables, font-family declarations, color palette, spacing scale).
 
 Either way, every variant MUST use these tokens verbatim — no made-up hex codes or font names.
-
 ### Step A — Generate 10 variants
 Build **exactly 10 variants** as individual files `.mockups/<slug>/<slug>-v1.html` … `v10.html` (fan out in ONE parallel call):
 - **v1–v7**: conservative to polished, all using real design tokens, each a DISTINCT layout paradigm — not the same card grid with different spacing.
 - **v8–v10**: WILDLY different — completely different layout paradigm, spatial arrangement, or visual language (command-line terminal, full-bleed hero with bold type, data-dense Bloomberg grid, floating action panel, bento-grid, magazine editorial). Must look like a different product team designed them — NOT a card-grid or accordion variation.
 - **Codex authors v9–v10** — run `/design` Step 2's Codex wild-slot block (same command, adapted paths: output to `.mockups/<slug>/codex-wild.out`, files `<slug>-v9.html`/`<slug>-v10.html`): background launch before the fan-out, Codex returns delimited HTML on stdout read-only, Claude reads/validates/Writes the files, any failure → that slot regenerates via the normal agent. Skip silently without codex.
-
 ### Step B — Slop judge pass (HARD gate — minimum 6 survivors required)
-Spawn ONE judge agent with all 10 HTML files. Instructions:
-> "You are an adversarial design critic. Read each variant's HTML. Reject any variant that matches ANY pattern in the slop fingerprint list below. Also reject any variant whose layout is functionally identical to another variant already in the list (deduplicate). Return the survivors with a one-line reason each survived."
+Spawn ONE adversarial judge agent with all 10 HTML files. It rejects any variant matching ANY pattern in the canonical lists (read fresh at run time — never inlined here): `~/.claude/docs/ANTISLOP.md` → `## GUI Slop`, plus `~/.claude/docs/UI_MOCKUPS.md` kill rules. It also deduplicates functionally identical layouts, returning survivors with a one-line reason each.
 
-**Slop fingerprint — do NOT inline the list here.** Give the judge the canonical lists, read fresh at run time:
-- `~/.claude/docs/ANTISLOP.md` → `## GUI Slop` (canonical — every pattern lives here)
-- `~/.claude/docs/UI_MOCKUPS.md` → the mockup-specific kill rules that sit on top of it
-
-Instant reject if a variant matches ANY pattern in either list.
-
-If **fewer than 6 survive**, respawn the rejected ones with: "Your last concept matched [specific slop pattern]. Go structurally different — change the layout paradigm entirely, not just the color."
+If **fewer than 6 survive**, respawn the rejected ones naming the specific slop pattern matched: "Go structurally different — change the layout paradigm entirely, not just the color."
 
 Only survivors proceed to the combined view.
-
 ### Step C — Combined view + screenshot
 Build ONE combined page `.mockups/<slug>/<slug>-all.html` — survivors only, stacked vertically. Each section: variant label + one-line description + iframe. Mark recommended with ★.
 
@@ -126,18 +116,12 @@ Show screenshot inline.
 bash ~/.claude/skills/xcheck/scripts/codex-run.sh -m gpt-5.6-sol -s read-only -i ".mockups/<slug>/<slug>-all.png" "This image shows UI mockup variants, labeled. For each: verdict slop|clean + one-line reason (slop = generic AI-generated look: card grids, gradient CTAs, hero+centered-CTA, shadcn starter DNA). Then name your single top pick + one sentence why. No preamble."
 ```
 
-Codex is advisory — it never kills a variant alone; Claude's judge remains the gate. Cross-grading: Codex's verdict carries no weight on its own v9–v10; Claude's judge gates those. Output variant table with its column:
-
-| Variant | Description | Survived judge? | Codex | Pick |
-|---|---|---|---|---|
-| vN | paradigm description | Yes — reason | clean | |
-| vN | wildly different paradigm | Yes — reason | clean · Codex pick | ★ recommended |
+Codex is advisory — it never kills a variant alone; Claude's judge remains the gate, including for Codex's own v9–v10 (no self-grading weight). Output a variant table `| Variant | Description | Survived judge? | Codex | Pick |` — one row per variant, ★ on the recommend.
 
 Both models picking the same variant = high-confidence recommend; a split = show both reasons — that disagreement is signal for the user — AND triggers `/design` Step 3's Synthesis round (crossover v11/v12, adapted paths): run it, append both to the combined view, gate on all 12.
 
 Stop and ask: **"Which mockup variant? (or redirect)"**
 Do NOT proceed until user names a variant. Lock the chosen variant — Sonnet builds to match it exactly.
-
 ### Step D — Component sourcing gate (HARD)
 Emit the sourcing table (`skills/design/PREFAB_SOURCING.md` format) for the approved variant — every interactive element gets a row. Hand-build rows need a closed-list reason; a hand-build row on a primitive the detected library already provides is a gate failure. Do NOT proceed to phase 4 without the table shown.
 
@@ -209,23 +193,8 @@ Then append to `docs/DAILY_CHANGELOG.md` under `## <date> — <feature>` a table
 Task is NOT done until: success predicate met + stress test/repro survived + **regression test committed and green** + **critical path smoke-tested** + changelog appended + full suite green.
 
 ## 7 — Summary
-First run `/eli5` (Mode B) on the run's results and present that table FIRST — plain English: what just got done, where we are, what I'm asking you, next actions with exact commands. Then print the technical table below:
-
-| Phase | What happened | Files changed | Tests |
-|---|---|---|---|
-| Evidence | Reproduction + located root cause (file:line) + success predicate | `brainstorms/<slug>-diagnosis-<date>.md` | — |
-| Grill-me | Key decisions made | `brainstorms/<slug>-<date>.md` | — |
-| Opus plan | N steps planned | `brainstorms/<slug>-plan-<date>.md` | — |
-| UI mockups | Variant vN approved / skipped | `.mockups/<slug>/` or n/a | — |
-| TDD | N behaviors, N tests written | list test files | N green |
-| Sonnet build | N agents, N files edited | list each file | — |
-| Fix loop | N iterations / not needed | list files if any | — |
-| Quality gates | lint/typecheck + dup-scan + secret-scan + review (+ security/a11y/perf if triggered) | — | clean / triaged |
-| Prove | success predicate met + stress/repro survived + regression test committed + critical path smoke-tested | test file + `docs/DAILY_CHANGELOG.md` | all green |
+First run `/eli5` (Mode B) on the run's results and present that table FIRST. Then a technical table `| Phase | What happened | Files changed | Tests |` — one row per phase run (Evidence, Grill-me, Opus plan, UI mockups, TDD, Sonnet build, Fix loop, Quality gates, Prove), citing the brainstorm/mockup/test files each produced and pass status.
 
 ## Memory Checkpoint
-After the build phase completes, ask exactly once:
-
-> **Anything from this /build run worth saving to memory?** A non-obvious decision, a surprise/gotcha, or a reusable pattern. Reply with the fact or type `skip`.
-
-If user replies with content: create `~/.claude-work/projects/-Users-sholland/memory/facts/<slug>-<date>.md` (same format as build-feature checkpoint). Append line to MEMORY.md index. Tell user to run `/memory-compile`. If `skip` → end silently.
+Ask exactly once: **"Anything from this /build run worth saving to memory? Reply with the fact or `skip`."**
+Content → create the fact file (memory format), append to MEMORY.md index, point at `/memory-compile`. `skip` → end silently.
