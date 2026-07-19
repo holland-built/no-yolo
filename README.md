@@ -42,6 +42,8 @@ Then open Claude Code anywhere and run `/my-skills`. A table of commands means s
 
 `setup.sh` is safe to re-run; it skips finished steps and prints what it's doing — with one caveat: the borrowed-skill installs (`npx skills@latest add …`) re-run every time and may update those skills to their latest upstream versions. `bash ~/.claude/setup.sh --md-only` installs rules only (no tools; requires python3) — it backs up `CLAUDE.md` and a later full run restores it, so upgrading is safe.
 
+**No Codex? No problem.** The cross-check steps detect it's missing and skip themselves — nothing errors. Want zero third-party installs? `bash ~/.claude/setup.sh --core-only` sets up only this repo's own skills; re-run plain `setup.sh` later to add the rest.
+
 **Read next:** `CLAUDE.md` (the pointer map) → `docs/CORE_RULES.md` (the 10 working rules) → `/my-skills` (every command). Everything else is routed from those three.
 
 ## Prerequisites

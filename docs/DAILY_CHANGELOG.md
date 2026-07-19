@@ -2,6 +2,12 @@
 
 Fresh start 2026-07-17
 
+## 2026-07-19 — --core-only install + codex-aware preflight (entry #18)
+
+- setup.sh gains `--core-only`: skips every third-party install (fallow + the four npx skill packs), records them as SKIPPED (not FAILED), exits 0; plain setup.sh later adds them.
+- Preflight now detects Codex and says plainly whether cross-model checks are active or will skip themselves — informational, never an error.
+- README + INSTALL.md: "No Codex? No problem" caveat and minimal-install guidance.
+
 ## 2026-07-19 — README opener v3: plain-words bullet list (entry #17)
 
 - Working-method pitch replaced after user verdict ("AI garbage"): now a 2-sentence summary (non-slop output, self-checking repo, current research) + 9 plain bullets. Metaphor language ("design wing wakes up") banned and gone; all 10 user-approved lines shipped.
