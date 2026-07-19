@@ -44,6 +44,15 @@ Narrate the summary in plain English, step by step:
   table** — look up the row matching that tool and quote its "Install" column. Don't guess or
   invent a fallback; point at that table.
 
+## 3.5. Codex is optional
+
+The Preflight block also checks for `codex`. If it reads "not installed", tell the user in one
+plain sentence: Codex is optional, the cross-check steps in skills detect it's missing and skip
+themselves, and they can add it later via `/plugin install codex@openai-codex`. If the user asked
+for a minimal install, run `bash ~/.claude/setup.sh --core-only` instead of the plain command in
+step 3, and explain that it skips the third-party plugin-skill installs (trim, improve,
+emilkowalski/skills, archify) — they can add those later by re-running plain `setup.sh`.
+
 ## 4. Explain permission prompts
 
 If Claude Code shows a permission prompt during setup (asking to run a command or touch a

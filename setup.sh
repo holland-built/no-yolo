@@ -2,14 +2,18 @@
 # setup.sh — idempotent post-clone setup for ~/.claude (no-yolo)
 #
 # Usage:
-#   bash ~/.claude/setup.sh           # full install — tools, CLI plugins, skill symlinks
-#   bash ~/.claude/setup.sh --md-only # rules only — no tools, skill triggers stripped from CLAUDE.md
+#   bash ~/.claude/setup.sh             # full install — tools, CLI plugins, skill symlinks
+#   bash ~/.claude/setup.sh --md-only   # rules only — no tools, skill triggers stripped from CLAUDE.md
+#   bash ~/.claude/setup.sh --core-only # full install minus third-party plugin skills (step 4) — re-run plain setup.sh later to add them
 #
 set -euo pipefail
 
 CLAUDE_DIR="${HOME}/.claude"
 MODE="full"
-[[ "${1:-}" == "--md-only" ]] && MODE="md-only"
+case "${1:-}" in
+  --md-only) MODE="md-only" ;;
+  --core-only) MODE="core-only" ;;
+esac
 
 echo "==> Mode: $MODE"
 echo ""
@@ -28,7 +32,7 @@ for t in "${PRE_TOOLS[@]}"; do
   fi
 done
 
-if [[ "$MODE" == "full" ]]; then
+if [[ "$MODE" == "full" || "$MODE" == "core-only" ]]; then
   if [[ "${PRE_FOUND[node]}" != 1 || "${PRE_FOUND[npm]}" != 1 ]]; then
     echo ""
     echo "    ! node and/or npm missing — required for full install."
@@ -44,6 +48,12 @@ else
 fi
 if [[ "${PRE_FOUND[claude]}" != 1 ]]; then
   echo "    ! claude (Claude Code) not found on PATH — install: https://docs.anthropic.com/en/docs/claude-code"
+fi
+
+if command -v codex >/dev/null 2>&1; then
+  echo "    codex    found (cross-model checks active)"
+else
+  echo "    codex    not installed — cross-model check steps in skills will skip themselves; optional, add later via /plugin install codex@openai-codex"
 fi
 
 RESULTS=()
@@ -157,7 +167,10 @@ fi
 echo ""
 echo "==> 3. CLI tools"
 
-if command -v fallow >/dev/null 2>&1; then
+if [[ "$MODE" == "core-only" ]]; then
+  echo "    Skipped fallow install (--core-only) — add later: npm install -g fallow@2.98.0"
+  RESULTS+=("fallow: SKIPPED (--core-only)")
+elif command -v fallow >/dev/null 2>&1; then
   echo "    fallow already installed"
   RESULTS+=("fallow: OK")
 else
@@ -180,22 +193,27 @@ fi
 
 echo ""
 echo "==> 4. Plugin skills"
-echo "    Installing trim..."
-if npx skills@latest add holland-built/trim; then RESULTS+=("trim: OK"); else echo "    ! trim install failed"; RESULTS+=("trim: FAILED"); fi
-echo "    Installing improve..."
-if npx skills@latest add shadcn/improve; then RESULTS+=("improve: OK"); else echo "    ! improve install failed"; RESULTS+=("improve: FAILED"); fi
-# upstream ships without user-invocable, which kills /improve — re-apply the
-# local patch (docs/THIRD_PARTY_SKILLS.md); harmless if already present
-IMPROVE_MD="$HOME/.agents/skills/improve/SKILL.md"
-if [ -f "$IMPROVE_MD" ] && ! grep -q '^user-invocable: true' "$IMPROVE_MD"; then
-  awk 'NR==1{print; print "user-invocable: true"; next} {print}' "$IMPROVE_MD" > "$IMPROVE_MD.tmp" \
-    && mv "$IMPROVE_MD.tmp" "$IMPROVE_MD" \
-    && echo "    Applied user-invocable patch to improve (see docs/THIRD_PARTY_SKILLS.md)"
+if [[ "$MODE" == "core-only" ]]; then
+  echo "    Skipped third-party installs (--core-only) — add them later: bash setup.sh"
+  RESULTS+=("third-party: SKIPPED (--core-only)")
+else
+  echo "    Installing trim..."
+  if npx skills@latest add holland-built/trim; then RESULTS+=("trim: OK"); else echo "    ! trim install failed"; RESULTS+=("trim: FAILED"); fi
+  echo "    Installing improve..."
+  if npx skills@latest add shadcn/improve; then RESULTS+=("improve: OK"); else echo "    ! improve install failed"; RESULTS+=("improve: FAILED"); fi
+  # upstream ships without user-invocable, which kills /improve — re-apply the
+  # local patch (docs/THIRD_PARTY_SKILLS.md); harmless if already present
+  IMPROVE_MD="$HOME/.agents/skills/improve/SKILL.md"
+  if [ -f "$IMPROVE_MD" ] && ! grep -q '^user-invocable: true' "$IMPROVE_MD"; then
+    awk 'NR==1{print; print "user-invocable: true"; next} {print}' "$IMPROVE_MD" > "$IMPROVE_MD.tmp" \
+      && mv "$IMPROVE_MD.tmp" "$IMPROVE_MD" \
+      && echo "    Applied user-invocable patch to improve (see docs/THIRD_PARTY_SKILLS.md)"
+  fi
+  echo "    Installing emilkowalski/skills (design-eng taste rules — used by /design)..."
+  if npx skills@latest add emilkowalski/skills; then RESULTS+=("emilkowalski/skills: OK"); else echo "    ! emilkowalski/skills install failed"; RESULTS+=("emilkowalski/skills: FAILED"); fi
+  echo "    Installing archify (zero-dep diagrams)..."
+  if npx skills@latest add tt-a1i/archify; then RESULTS+=("archify: OK"); else echo "    ! archify install failed"; RESULTS+=("archify: FAILED"); fi
 fi
-echo "    Installing emilkowalski/skills (design-eng taste rules — used by /design)..."
-if npx skills@latest add emilkowalski/skills; then RESULTS+=("emilkowalski/skills: OK"); else echo "    ! emilkowalski/skills install failed"; RESULTS+=("emilkowalski/skills: FAILED"); fi
-echo "    Installing archify (zero-dep diagrams)..."
-if npx skills@latest add tt-a1i/archify; then RESULTS+=("archify: OK"); else echo "    ! archify install failed"; RESULTS+=("archify: FAILED"); fi
 echo ""
 echo "    Note: one more plugin installs inside Claude Code (not the terminal):"
 echo "      /plugin marketplace add JuliusBrussee/caveman  # terse mode (optional)"
