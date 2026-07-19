@@ -2,6 +2,10 @@
 
 Fresh start 2026-07-17
 
+## 2026-07-19 — README opener: the full pitch (entry #16)
+
+- Opener replaced with the "working method" pitch: trust-earning framing + When you build / decide / design / publish / All the time sections — the full breadth (orchestration, routing, dual-AI checks, anti-slop, token frugality), user-picked from 5 drafted styles. Standalone Why sentence absorbed into the pitch.
+
 ## 2026-07-19 — README opener rewritten as capability→outcome bullets (entry #15)
 
 - Second debate on the opener ruled the 6-clause capability sentence a NO: it promised optional add-ons a day-1 install lacks and named counts/vendors that drift. Shipped form: bold one-liner + 3 bullets, each "capability — so you stop X"; Why sentence un-bolded so one thing is loud; all optional-feature detail stays below the fold.

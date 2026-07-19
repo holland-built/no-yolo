@@ -2,15 +2,19 @@
 
 ## What this is
 
-**A ready-made brain for Claude Code.** Clone it and Claude:
+**A ready-made brain for Claude Code — not a settings file, a working method.** The idea is simple: an AI that must *earn* your trust at every step. It plans before touching code, proves before claiming done, and gets second-guessed — by expert debate panels, by a rival AI, by its own automated checks — before anything reaches you or your GitHub.
 
-- plans and asks before touching your code — so you stop watching its every move
-- remembers your projects and preferences between sessions — so you stop re-explaining yourself
-- checks its own work before anything ships — so you stop redoing it
+**When you build:** `/build` runs the whole pipeline — evidence gathering, a decision interview, a plan authored by the strongest model, your approval gate, test-first coding, and a final proof step where a claim without a passing measurement doesn't count.
+
+**When you decide:** `/debate` convenes seven expert personas who argue it out under a chairman who discards weak arguments; a rival AI then names what all seven missed.
+
+**When you design:** ten competing mockups render in your browser, an anti-slop judge kills the generic ones, two AIs score the survivors, and nothing gets built until you pick.
+
+**When you publish:** secret scans, path guards, and health checks run every time; a repo without a publishing playbook doesn't get pushed, it gets a playbook written.
+
+**All the time:** it remembers what you teach it, routes plain-English requests to the right tool on its own, answers in beginner-readable tables, and spends tokens like they're yours — because they are.
 
 Fork it and it's yours.
-
-Why: out of the box, Claude forgets everything between sessions, edits before asking, and drifts into generic output — this setup wires in a memory, ask-first rules, and checks that don't rely on you remembering to prompt for them.
 
 Claude Code reads `~/.claude/` every time it starts, and this repo *is* that folder, saved in git.
 
