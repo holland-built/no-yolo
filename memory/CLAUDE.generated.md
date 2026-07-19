@@ -6,6 +6,7 @@ Compiled from the fact store. Each line links its source fact.
 
 ## Working Preferences
 - **Always eli5-table completed work, next actions, and asks** — Every completed-work summary, next-actions list, and question to the user must be ONE eli5 Mode B 4-column table (Done/Ask | Why | Left + importance | Type this) — ≤12 words/cell, ≤5 rows, plain English ([feedback-eli5-on-output](memory/facts/feedback-eli5-on-output.md))
+- **Delegate ≥5-lookup scans to a subagent** — When answering one question needs ≥5 read-only tool calls (Grep/Glob/Read/read-only Bash), dispatch cavecrew-investigator (or Explore) instead of running them inline — quiet screen, slower context growth ([pattern-delegate-scans-to-subagents](memory/facts/pattern-delegate-scans-to-subagents.md))
 - **Auto-commit on push commands** — When the user says 'push to <branch>', auto-commit all local changes first (add, generate message, commit, push) without asking. ([user-auto-commit-on-push](memory/facts/user-auto-commit-on-push.md))
 - **Bulleted/table output, never prose** — Default output is a bulleted list or markdown table; no long prose paragraphs. Code/commands in fenced blocks. ([user-output-format-bullets](memory/facts/user-output-format-bullets.md))
 - **Single-paste prompts always** — When the user needs to run something, give ONE consolidated copy-paste block, never a numbered list of separate prompts/commands. ([user-single-paste-prompts](memory/facts/user-single-paste-prompts.md))
