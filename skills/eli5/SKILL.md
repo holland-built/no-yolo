@@ -1,6 +1,6 @@
 ---
 name: eli5
-description: Use this skill when the user types /eli5, and automatically on every completed-work summary, next-actions list, or question to the user. Explains any skill, command, plan, decision, or finished work in plain English — table format, no jargon. Mode B table always includes "What I'm asking you" and "Where we are" rows.
+description: Use this skill when the user types /eli5, and automatically on every completed-work summary, next-actions list, or question to the user. Explains any skill, command, plan, decision, or finished work in plain English — table format, no jargon. Mode B is ONE 4-column table (Done/Ask | Why | Left + importance | Type this), ≤12 words per cell, ≤5 rows.
 user-invocable: true
 argument-hint: "[skill name, plan text, command, or file path]"
 model: haiku
@@ -57,19 +57,19 @@ Both modes output a TABLE, never prose paragraphs.
 
 ### Mode B — finished work / next steps
 
-| Question | Plain answer |
-|---|---|
-| **What just got done** | 1-2 sentences per item, plain English. "Your login page now remembers users" — not "implemented session persistence middleware". |
-| **Where we are** | One sentence: how far along the overall job is, what's left. |
-| **What I'm asking you** | The single decision or answer needed from the user, phrased as a plain question with the choices spelled out. If nothing is needed, write exactly: "Nothing — just letting you know." |
+ONE table, exactly these 4 columns. One row per item — done items, asks, and leftovers all share it:
 
-Then next actions as a SECOND table (never a numbered list in a cell):
-
-| # | Action (plain English) | Type this | Why do it / why skip it |
+| Done / Ask | Why | Left + importance | Type this |
 |---|---|---|---|
-| 1 | what it does for you, no jargon | `/command` | the payoff if you do — or the honest reason it's fine to skip |
+| Renamed /review to /health | name clash with built-in | nothing — done | — |
+| Ask: pick column set | old format failed you | HIGH — blocks eli5 fix | answer here |
+| Live-test the judge | unproven path | LOW — optional | `/design` |
 
-Rules for Mode B:
-- The "What I'm asking you" row is the most important one. Never bury the ask in a paragraph. If there are options, list them as "Option A: … / Option B: …" with what each means in plain words.
-- The "Why" column is mandatory and honest: state the concrete benefit of doing it, or say plainly "safe to skip because …". Never leave the user guessing whether an action matters.
-- Jargon translation is mandatory: every technical term gets replaced or explained inline ("the hook (a script that runs automatically)").
+Hard rules for Mode B:
+- **≤12 words per cell. ≤5 rows.** Bullets/fragments, not sentences. Cut rows before cutting clarity — least important rows go first.
+- Ask rows start with "Ask:" and their importance is why the answer matters. Nothing needed from user → no Ask row at all.
+- "Why" is mandatory and honest — the concrete reason, or "safe to skip: …".
+- "Left + importance" = what remains + HIGH/MED/LOW (or "nothing — done").
+- "Type this" = exact command, "answer here" for asks, "—" otherwise.
+- No jargon anywhere; translate technical terms inline.
+- No prose paragraphs before/after the table — one lead-in sentence max.
