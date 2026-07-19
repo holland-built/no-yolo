@@ -21,3 +21,4 @@ When corrected, or you catch yourself mid-mistake: before continuing, add the le
 - (Claude adds rules here)
 - Before adding any external repo's files to this repo, check `.gitignore` for the existing "third-party stays local, never published" convention (`plugins/`, `skills/impeccable`, `trim-*`) — vendor it there (gitignored, fetched by an install command) instead of committing a copy.
 - The repo mirrors the live machine — a tracked reference to an external tool that is no longer installed locally is a bug, not history. When a tool is uninstalled, delete every reference (gitignore entries, setup.sh lines, README rows) in the same change; /release step 3.4 hard-blocks on the mismatch.
+- "Creative" user-facing prose (README, pitches) is where I ship slop — metaphor dressing ("the design wing wakes up") is exactly what ANTISLOP.md bans. Run /antislop on any README/pitch prose before shipping; plain words, one idea per sentence.
