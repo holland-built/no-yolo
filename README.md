@@ -2,7 +2,7 @@
 
 ## What this is
 
-**A ready-made brain for Claude Code.** Non-slop output, a repo that checks itself, and research that stays current — the three things vanilla Claude can't do. Clone it and this is what changes:
+**A ready-made brain for Claude Code.** Non-slop output, a repo that checks itself, research that stays current, and the cheapest model that can do each job — the things vanilla Claude can't do. Clone it and this is what changes:
 
 - **Its main job is output that doesn't look AI-made** — every design and doc runs through slop-detection that rejects generic patterns before you see them.
 - **It designs like it has taste** — ten competing versions, the generic ones killed, two AIs scoring survivors — and it never trusts its own taste alone.
@@ -13,6 +13,7 @@
 - **Anti-slop is enforced, not aspirational** — a written ban list, mechanical judges, and a review pass that flags AI-sounding text before it ships.
 - **Nothing here is frozen** — trends feed in weekly, skills get audited and rebuilt, and the changelog proves it.
 - **Works for any project type** — web, backend, CLI — the design tools only engage on UI work.
+- **It spends less and picks the right brain** — simple skills run on cheap fast models, mechanical work on the mid-tier, and the expensive model only plans and judges; terse output and background helpers that return compressed reports keep long sessions from burning tokens.
 
 Fork it and it's yours.
 
