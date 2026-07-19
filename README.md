@@ -14,6 +14,8 @@ bash ~/.claude/setup.sh
 
 Then open Claude Code anywhere and run `/my-skills`. A table of commands means setup is complete. For a deeper health check, run `bash ~/.claude/verify.sh` — all PASS means the clone is healthy (it's the same script CI runs).
 
+**You're done. Everything below this line is reference — read it when you need it, not before.**
+
 `setup.sh` is safe to re-run; it skips finished steps and prints what it's doing — with one caveat: the borrowed-skill installs (`npx skills@latest add …`) re-run every time and may update those skills to their latest upstream versions. `bash ~/.claude/setup.sh --md-only` installs rules only (no tools; requires python3) — it backs up `CLAUDE.md` and a later full run restores it, so upgrading is safe.
 
 **Read next:** `CLAUDE.md` (the pointer map) → `docs/CORE_RULES.md` (the 10 working rules) → `/my-skills` (every command). Everything else is routed from those three.

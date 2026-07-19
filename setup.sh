@@ -14,6 +14,40 @@ MODE="full"
 echo "==> Mode: $MODE"
 echo ""
 
+# ── Preflight: tool availability ─────────────────────────────────────────────
+echo "==> Preflight"
+PRE_TOOLS=(git node npm npx python3 claude)
+declare -A PRE_FOUND=()
+for t in "${PRE_TOOLS[@]}"; do
+  if command -v "$t" >/dev/null 2>&1; then
+    PRE_FOUND["$t"]=1
+    printf "    %-8s found\n" "$t"
+  else
+    PRE_FOUND["$t"]=0
+    printf "    %-8s missing\n" "$t"
+  fi
+done
+
+if [[ "$MODE" == "full" ]]; then
+  if [[ "${PRE_FOUND[node]}" != 1 || "${PRE_FOUND[npm]}" != 1 ]]; then
+    echo ""
+    echo "    ! node and/or npm missing — required for full install."
+    echo "    Install: https://nodejs.org/ (see README.md Prerequisites)"
+    exit 1
+  fi
+else
+  if [[ "${PRE_FOUND[python3]}" != 1 ]]; then
+    echo ""
+    echo "    ! python3 missing — required for --md-only (see README.md Prerequisites)"
+    exit 1
+  fi
+fi
+if [[ "${PRE_FOUND[claude]}" != 1 ]]; then
+  echo "    ! claude (Claude Code) not found on PATH — install: https://docs.anthropic.com/en/docs/claude-code"
+fi
+
+RESULTS=()
+
 # ── Step 1: settings.json ────────────────────────────────────────────────────
 echo "==> 1. settings.json"
 if [ -f "$CLAUDE_DIR/settings.json" ]; then
@@ -125,9 +159,16 @@ echo "==> 3. CLI tools"
 
 if command -v fallow >/dev/null 2>&1; then
   echo "    fallow already installed"
+  RESULTS+=("fallow: OK")
 else
   echo "    Installing fallow..."
-  npm install -g fallow || echo "    ! fallow install failed — install manually: npm install -g fallow"
+  # pinned; bump deliberately
+  if npm install -g fallow@2.98.0; then
+    RESULTS+=("fallow: OK")
+  else
+    echo "    ! fallow install failed — install manually: npm install -g fallow@2.98.0"
+    RESULTS+=("fallow: FAILED")
+  fi
 fi
 
 
@@ -140,9 +181,9 @@ fi
 echo ""
 echo "==> 4. Plugin skills"
 echo "    Installing trim..."
-npx skills@latest add holland-built/trim || echo "    ! trim install failed"
+if npx skills@latest add holland-built/trim; then RESULTS+=("trim: OK"); else echo "    ! trim install failed"; RESULTS+=("trim: FAILED"); fi
 echo "    Installing improve..."
-npx skills@latest add shadcn/improve || echo "    ! improve install failed"
+if npx skills@latest add shadcn/improve; then RESULTS+=("improve: OK"); else echo "    ! improve install failed"; RESULTS+=("improve: FAILED"); fi
 # upstream ships without user-invocable, which kills /improve — re-apply the
 # local patch (docs/THIRD_PARTY_SKILLS.md); harmless if already present
 IMPROVE_MD="$HOME/.agents/skills/improve/SKILL.md"
@@ -152,9 +193,9 @@ if [ -f "$IMPROVE_MD" ] && ! grep -q '^user-invocable: true' "$IMPROVE_MD"; then
     && echo "    Applied user-invocable patch to improve (see docs/THIRD_PARTY_SKILLS.md)"
 fi
 echo "    Installing emilkowalski/skills (design-eng taste rules — used by /design)..."
-npx skills@latest add emilkowalski/skills || echo "    ! emilkowalski/skills install failed"
+if npx skills@latest add emilkowalski/skills; then RESULTS+=("emilkowalski/skills: OK"); else echo "    ! emilkowalski/skills install failed"; RESULTS+=("emilkowalski/skills: FAILED"); fi
 echo "    Installing archify (zero-dep diagrams)..."
-npx skills@latest add tt-a1i/archify || echo "    ! archify install failed"
+if npx skills@latest add tt-a1i/archify; then RESULTS+=("archify: OK"); else echo "    ! archify install failed"; RESULTS+=("archify: FAILED"); fi
 echo ""
 echo "    Note: one more plugin installs inside Claude Code (not the terminal):"
 echo "      /plugin marketplace add JuliusBrussee/caveman  # terse mode (optional)"
@@ -196,6 +237,20 @@ cat <<'ENVEOF'
     export OBSIDIAN_VAULT="$HOME/path/to/your/vault"  # video-to-kb vault root
 
 ENVEOF
+
+echo ""
+echo "==> Install summary"
+SUMMARY_FAIL=0
+for r in "${RESULTS[@]}"; do
+  echo "    $r"
+  case "$r" in *FAILED) SUMMARY_FAIL=1 ;; esac
+done
+
+if [[ "$SUMMARY_FAIL" == 1 ]]; then
+  echo ""
+  echo "FAILED steps above — re-run setup.sh after fixing, or install manually (see README Add-ons)"
+  exit 1
+fi
 
 echo "==> Done."
 echo ""

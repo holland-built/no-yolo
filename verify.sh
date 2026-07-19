@@ -98,6 +98,18 @@ ok=1
 while IFS= read -r h; do grep -qF "$h" README.md || { echo "README missing: $h"; ok=0; }; done < <(grep '^## ' docs/README_FORMAT.md)
 [ "$ok" = 1 ] && record PASS "README format headings" || record FAIL "README format headings"
 
+# 6b. README inventory current — the skills table inside README.md's
+#     "## Skills inventory" section must be byte-identical to
+#     skills/my-skills/RENDERED_FAST.md, so the README copy can't drift from
+#     the generated source.
+readme_table=$(awk '/^## Skills inventory/{f=1;next} /^## /{f=0} f && /^\|/' README.md)
+rendered_table=$(grep '^|' skills/my-skills/RENDERED_FAST.md)
+if [ "$readme_table" = "$rendered_table" ]; then
+  record PASS "README inventory current"
+else
+  record FAIL "README inventory current — README Skills inventory table drifted from skills/my-skills/RENDERED_FAST.md"
+fi
+
 # 7. shellcheck — BLOCKING at warning severity and above.
 #    Was warn-only for months: `record WARN` never sets fail=1, so it ran on every
 #    CI push (ubuntu-latest ships shellcheck), found real things, and could not fail
