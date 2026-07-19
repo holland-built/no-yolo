@@ -2,19 +2,17 @@
 
 ## What this is
 
-**A ready-made brain for Claude Code — not a settings file, a working method.** The idea is simple: an AI that must *earn* your trust at every step. It plans before touching code, proves before claiming done, and gets second-guessed — by expert debate panels, by a rival AI, by its own automated checks — before anything reaches you or your GitHub.
+**A ready-made brain for Claude Code.** Non-slop output, a repo that checks itself, and research that stays current — the three things vanilla Claude can't do. Clone it and this is what changes:
 
-**When you build:** `/build` runs the whole pipeline — evidence gathering, a decision interview, a plan authored by the strongest model, your approval gate, test-first coding, and a final proof step where a claim without a passing measurement doesn't count.
-
-**When you decide:** `/debate` convenes seven expert personas who argue it out under a chairman who discards weak arguments; a rival AI then names what all seven missed.
-
-**When you design:** ten competing mockups render in your browser, an anti-slop judge kills the generic ones, two AIs score the survivors, and nothing gets built until you pick.
-
-**When you publish:** secret scans, path guards, and health checks run every time; a repo without a publishing playbook doesn't get pushed, it gets a playbook written.
-
-**All the time:** it remembers what you teach it, routes plain-English requests to the right tool on its own, answers in beginner-readable tables, and spends tokens like they're yours — because they are.
-
-**Any stack:** the method doesn't care what you build — plans, proofs, debates, and gates work the same for a Python API, a CLI tool, or infrastructure. The design wing runs web-deep, but it only wakes up when your change touches a screen; backend work walks right past it.
+- **Its main job is output that doesn't look AI-made** — every design and doc runs through slop-detection that rejects generic patterns before you see them.
+- **It designs like it has taste** — ten competing versions, the generic ones killed, two AIs scoring survivors — and it never trusts its own taste alone.
+- **It maintains itself** — built-in checks catch stale docs, broken references, and drift every time it publishes; the toolkit audits its own skills for rot.
+- **It doesn't rot** — self-tests run in CI, docs are drift-locked to the code, and one command reconciles your machine with the published copy.
+- **It stays current** — it pulls the last 30 days from GitHub, Reddit, and Hacker News into reviews and decisions instead of trusting old training data.
+- **It improves itself on schedule** — audits find its own weaknesses, debates decide the fixes, and every fix ships the same day.
+- **Anti-slop is enforced, not aspirational** — a written ban list, mechanical judges, and a review pass that flags AI-sounding text before it ships.
+- **Nothing here is frozen** — trends feed in weekly, skills get audited and rebuilt, and the changelog proves it.
+- **Works for any project type** — web, backend, CLI — the design tools only engage on UI work.
 
 Fork it and it's yours.
 

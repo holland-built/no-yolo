@@ -2,6 +2,10 @@
 
 Fresh start 2026-07-17
 
+## 2026-07-19 — README opener v3: plain-words bullet list (entry #17)
+
+- Working-method pitch replaced after user verdict ("AI garbage"): now a 2-sentence summary (non-slop output, self-checking repo, current research) + 9 plain bullets. Metaphor language ("design wing wakes up") banned and gone; all 10 user-approved lines shipped.
+
 ## 2026-07-19 — README opener: the full pitch (entry #16)
 
 - "Any stack" beat added: method is stack-agnostic, the web-deep design wing only wakes on UI changes.
