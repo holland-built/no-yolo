@@ -1,6 +1,6 @@
 ---
-name: review
-description: Use this skill when the user types /review, says 'review this', 'check the diff', 'code health', 'run health pass', or 'review before merge'. One mode, always thorough — reviews the diff AND the whole codebase (fallow dead-code/dupes/health/security/audit + trim + improve), max effort, every time. Bakes in secret scan and antislop on any .md changes automatically. By default in every repo it pulls /last-30 trends and walks fixable findings one at a time; in ~/.claude it also audits your skills and MD files. Say 'quick review' to skip trends, or --auto to skip the walk and batch-apply everything fixable.
+name: health
+description: Use this skill when the user types /health, says 'review this', 'check the diff', 'code health', 'run health pass', or 'review before merge'. One mode, always thorough — reviews the diff AND the whole codebase (fallow dead-code/dupes/health/security/audit + trim + improve), max effort, every time. Bakes in secret scan and antislop on any .md changes automatically. By default in every repo it pulls /last-30 trends and walks fixable findings one at a time; in ~/.claude it also audits your skills and MD files. Say 'quick review' to skip trends, or --auto to skip the walk and batch-apply everything fixable.
 user-invocable: true
 argument-hint: "[path] [--auto] [--quick]"
 allowed-tools:

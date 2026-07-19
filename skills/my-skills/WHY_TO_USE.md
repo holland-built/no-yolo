@@ -29,7 +29,7 @@ debate|Ends with YES/NO/CONDITIONAL and the one reason that settles it — no "i
 update|Rollback and restore-removed-skill built in — no manual git surgery if something breaks
 trim-gain|Scorecard from benchmark medians — not a per-repo estimate.
 skill-audit|One pass instead of manually eyeballing every SKILL.md
-review|Replaces three separate commands with one routed pass — trend radar, secret scan and antislop are automatic, and you approve each fix one at a time instead of one blind batch
+health|Replaces three separate commands with one routed pass — trend radar, secret scan and antislop are automatic, and you approve each fix one at a time instead of one blind batch
 lockstep|Mechanically denied by a PreToolUse hook — not a prompt the model can talk itself past
 emil-design-eng|Vaul/Sonner-author taste rules catch wrong easing, wrong shadows, wrong timing agents usually miss
 animation-vocabulary|The right word gets a better result from any AI than a vague description does

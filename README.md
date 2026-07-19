@@ -37,10 +37,10 @@ Everything optional lives here. Install one only when you want the skill it serv
 |---|---|---|---|
 | [Caveman plugin](https://github.com/JuliusBrussee/caveman) | Shorter replies, saves tokens | optional | `/plugin marketplace add JuliusBrussee/caveman` |
 | [impeccable plugin](https://github.com/pbakaus/impeccable) | Frontend polish on existing UI | `/design` handoff | `/plugin marketplace add pbakaus/impeccable` |
-| [Codex plugin](https://github.com/openai/codex-plugin-cc) | Run OpenAI Codex reviews/tasks from Claude Code | Shared optional dependency: `/xcheck`, `/review`, `/build`, `/design`, `/design-audit` directly — plus `/plan`, `/debate`, `/diagnose --debate` via their `/xcheck` step. All skip silently if absent | `/plugin marketplace add openai/codex-plugin-cc` then `/plugin install codex@openai-codex`; needs a ChatGPT login (free tier OK) or OpenAI API key — `/xcheck` pins `gpt-5.6-sol`, which may need a paid plan; it falls back to your Codex default model if unavailable |
+| [Codex plugin](https://github.com/openai/codex-plugin-cc) | Run OpenAI Codex reviews/tasks from Claude Code | Shared optional dependency: `/xcheck`, `/health`, `/build`, `/design`, `/design-audit` directly — plus `/plan`, `/debate`, `/diagnose --debate` via their `/xcheck` step. All skip silently if absent | `/plugin marketplace add openai/codex-plugin-cc` then `/plugin install codex@openai-codex`; needs a ChatGPT login (free tier OK) or OpenAI API key — `/xcheck` pins `gpt-5.6-sol`, which may need a paid plan; it falls back to your Codex default model if unavailable |
 | [archify](https://github.com/tt-a1i/archify) | Architecture/flow diagrams as zero-dep HTML+SVG | diagrams | installed by `setup.sh` |
-| [fallow](https://www.npmjs.com/package/fallow) | Dead-code scan | `/review` | installed by `setup.sh` (`npm install -g fallow`) |
-| [gh (GitHub CLI)](https://cli.github.com/) | GitHub from the terminal | `/review`, `/release` | `brew install gh && gh auth login` |
+| [fallow](https://www.npmjs.com/package/fallow) | Dead-code scan | `/health` | installed by `setup.sh` (`npm install -g fallow`) |
+| [gh (GitHub CLI)](https://cli.github.com/) | GitHub from the terminal | `/health`, `/release` | `brew install gh && gh auth login` |
 | [Groq Whisper key](https://console.groq.com/) | Video transcription | `/video-to-kb` | Free API key, then `export GROQ_API_KEY=...` in `~/.zshrc` |
 | [Chrome](https://www.google.com/chrome/) | Headless browser for mockup previews | `/design`, `/build` | Usually present; `brew install --cask google-chrome` |
 | [Playwright MCP](https://github.com/microsoft/playwright-mcp) | Browser automation | `/build` | Add the `playwright` MCP server to `settings.json` (see below) |
@@ -75,13 +75,13 @@ Nothing required — skills create their own folders (e.g. `brainstorms/`). The 
 
 ## Skills inventory
 
-A "skill" is a slash command, like `/review`. The count: 26 custom commands (+2 utility commands: `/watch` and `/memory-compile` in `commands/`), plus 11 borrowed from plugins.
+A "skill" is a slash command, like `/health`. The count: 26 custom commands (+2 utility commands: `/watch` and `/memory-compile` in `commands/`), plus 11 borrowed from plugins.
 
 | Skill | What it does | Skill | What it does |
 | --- | --- | --- | --- |
 | design | Fresh UI mockup generation | quick-mockup | Throwaway layout mockup |
 | design-audit | 5-lens UI violation audit | build | Full feature build pipeline |
-| plan | Pre-build decision interview | review | Diff, health + trend review |
+| plan | Pre-build decision interview | health | Diff, health + trend review |
 | xcheck | Codex second opinion on plans | last-30 | Trending last 30 days |
 | video-to-kb | YouTube video to KB note | ingest-docs | Docs to context files |
 | diagnose | Root-cause bug analysis | debate | 7-persona decision debate |
@@ -97,7 +97,7 @@ The table shows the runnable menu: it includes 2 borrowed skills (`improve`, `ar
 
 Borrowed sets install with one command each: `npx skills@latest add holland-built/trim` (six simplicity commands), `npx skills@latest add shadcn/improve`, `npx skills@latest add emilkowalski/skills` (UI-polish rules that feed `/design`), `npx skills@latest add tt-a1i/archify`.
 
-Two commands are hidden from `/my-skills` but still real: `/antislop` (runs inside `/review` and `/release`) and `/tdd` (same loop `/build` step 4 runs).
+Two commands are hidden from `/my-skills` but still real: `/antislop` (runs inside `/health` and `/release`) and `/tdd` (same loop `/build` step 4 runs).
 
 ## Model guidance
 

@@ -10,7 +10,7 @@ Flag any changed lines that don't trace directly to the stated request. Scope cr
 ### Simplicity Filter (Rule 2)
 Apply this test: "Would a senior engineer say this is overcomplicated?" If yes, flag it. Don't soften it — overcomplicated code is a defect.
 
-## When Running /review
+## When Running /health
 
 - State what was in-scope before reviewing, so the reviewer can spot edits that weren't part of the task
 - Include what "done" actually looks like for this task

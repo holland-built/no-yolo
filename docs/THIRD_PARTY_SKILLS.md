@@ -8,8 +8,8 @@ after you (or `/update vendor <name>`) run the install command, but never on Git
 | Name | Upstream repo | Install command | Local path (gitignored) | Used by |
 |---|---|---|---|---|
 | taste-skill | `Leonxlnx/taste-skill` | `/update vendor taste-skill` (first run installs, later runs re-fetch latest) | `skills/design/vendor/taste-skill/` | `/design` Step 1 only (fresh-gen dials + routing) |
-| trim (+5 sub-skills) | `holland-built/trim` | `npx skills@latest add holland-built/trim` (hashes pinned in `skills-lock.json`) | `skills/trim*` | `/review`, `/trim*` |
-| improve | `shadcn/improve` | `npx skills@latest add shadcn/improve` | `skills/improve` | `/review`, `/improve` |
+| trim (+5 sub-skills) | `holland-built/trim` | `npx skills@latest add holland-built/trim` (hashes pinned in `skills-lock.json`) | `skills/trim*` | `/health`, `/trim*` |
+| improve | `shadcn/improve` | `npx skills@latest add shadcn/improve` | `skills/improve` | `/health`, `/improve` |
 | emil-design-eng (+2) | `emilkowalski/skills` | `npx skills@latest add emilkowalski/skills` (hashes pinned in `skills-lock.json`) | `skills/emil-design-eng`, `skills/animation-vocabulary`, `skills/review-animations` | `/design`, `/design-audit` |
 | archify | `tt-a1i/archify` | `npx skills@latest add tt-a1i/archify` (hash pinned in `skills-lock.json`) | `.agents/skills/archify` | diagrams — replaced the tracked draw.io skill 2026-07-17 |
 
@@ -26,7 +26,7 @@ instead of the real upstream rules until you run the install command.
 
 | Skill | Patch | Why | Re-apply after reinstall |
 |---|---|---|---|
-| improve | added `user-invocable: true` to its frontmatter | Upstream ships without it, so typing `/improve` never fired. `/review`'s H3 was unaffected: invoking a skill via the Skill tool ignores that field. | `setup.sh` now re-applies it automatically after install; manual fallback: re-add the line to `~/.agents/skills/improve/SKILL.md` |
+| improve | added `user-invocable: true` to its frontmatter | Upstream ships without it, so typing `/improve` never fired. `/health`'s H3 was unaffected: invoking a skill via the Skill tool ignores that field. | `setup.sh` now re-applies it automatically after install; manual fallback: re-add the line to `~/.agents/skills/improve/SKILL.md` |
 
 Check this table after any `npx skills@latest add ...`. The patches live outside git on
 gitignored symlinks, so nothing warns you when an install wipes them.
