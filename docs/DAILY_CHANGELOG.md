@@ -2,6 +2,12 @@
 
 Fresh start 2026-07-17
 
+## 2026-07-19 — beginner install path (audience: beginners) (entry #13)
+
+- New INSTALL.md: agent-guided install — beginners paste "walk me through installing this — read ~/.claude/INSTALL.md" into Claude Code; Claude checks their machine, runs setup.sh, narrates every step in plain English, never skips a failure.
+- README first screen rewritten beginner-first: plain one-sentence pitch, "New to this?" pointer to the guided install, 4-row glossary (skill/plugin/MCP/hook) after the You're-done divider.
+- SHIP.md stage scope + GLOBAL_DESCRIPTIONS cover the new file.
+
 ## 2026-07-19 — install stops lying (debate verdict built) (entry #12)
 
 - setup.sh: new preflight (git/node/npm/npx/python3/claude — hard-fail on missing required tools), per-step OK/FAILED tracking, and a truthful end-of-run Install summary that exits 1 when any step failed — no more green "Done" over a half-broken install.
