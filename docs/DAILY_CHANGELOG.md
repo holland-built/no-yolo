@@ -2,6 +2,13 @@
 
 Fresh start 2026-07-17
 
+## 2026-07-19 — install stops lying (debate verdict built) (entry #12)
+
+- setup.sh: new preflight (git/node/npm/npx/python3/claude — hard-fail on missing required tools), per-step OK/FAILED tracking, and a truthful end-of-run Install summary that exits 1 when any step failed — no more green "Done" over a half-broken install.
+- README: "You're done. Everything below this line is reference" divider after the install block.
+- verify.sh: new "README inventory current" check — the README skills table must be byte-identical to RENDERED_FAST.md (the drift that shipped once can't ship again).
+- fallow pinned to 2.98.0 in setup.sh; emilkowalski/skills confirmed already hash-locked in skills-lock.json.
+
 ## 2026-07-19 — debate rebuilt around real usage (entry #11)
 
 - Default panel retuned: Sales Engineer → The Alternative (steelmans the competing approach), Sales Leader → The Prioritizer (value vs effort, no revenue framing) — matches actual usage (approach validation + feature triage, never revenue).
