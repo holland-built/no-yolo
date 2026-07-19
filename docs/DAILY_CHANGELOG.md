@@ -2,6 +2,12 @@
 
 Fresh start 2026-07-17
 
+## 2026-07-19 — caveman lite persists + build skill trimmed + judge live-tested (entry #10)
+
+- Caveman level reverting root-caused: SessionStart hook rewrites the flag with hardcoded 'full'; fixed via ~/.config/caveman/config.json {"defaultMode": "lite"} (user config, survives plugin updates).
+- skills/build/SKILL.md trimmed 232 → 200 lines: summary/variant tables defined not enumerated, judge prose compressed, memory checkpoint shortened — zero behavioral change, all headings intact.
+- /design's Codex screenshot-judge path live-tested through codex-run.sh -i: Codex correctly read a generated test image.
+
 ## 2026-07-19 — hard scan-delegation rule (entry #9)
 
 - New global rule (memory fact + docs/CONTEXT.md): ≥5 read-only lookups for one question must go to cavecrew-investigator (fallback Explore) — one collapsed line on screen instead of a grep waterfall, raw output stays out of session context. Exceptions: user watching live, sequential lookups, skills with their own agents.
