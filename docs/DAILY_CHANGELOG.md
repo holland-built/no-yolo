@@ -2,6 +2,11 @@
 
 Fresh start 2026-07-17
 
+## 2026-07-19 — /health dogfood run: 15 findings fixed (entry #21)
+
+- Full /health pass on today's 44-file diff (6 parallel workers + Codex second reviewer). Fixed: unknown setup.sh flags now rejected (typo can't trigger a full install), git made fatal (secret-scanner can't be silently skipped), md-only restore can't clobber a newer CLAUDE.md, core-only needs node only, wrong trim repo in health skill hint, stale /review references, dead scan-exclude entry, bash-4 guard extended to the whole construct class, memory compiler hardened (fresh-machine manifest, inline YAML lists, project-tier facts, deduped helper), regen.py flags table computed once, fallow hints pinned, INSTALL.md drift-proofed, README bullet redundancy merged.
+- Clean: secrets, fallow dupes/security, surgical filter. Informational: vendored caveman hook complexity, radar gap — measure our own session-preamble token cost (community hot topic).
+
 ## 2026-07-19 — stranger install test: bash 3.2 bug found + fixed (entry #20)
 
 - Sandboxed end-to-end install test (fake HOME, real clone): preflight, --core-only skips, --md-only backup/restore, fail-loud gate, all verify rows — PASS.

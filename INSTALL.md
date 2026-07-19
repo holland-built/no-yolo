@@ -50,8 +50,8 @@ The Preflight block also checks for `codex`. If it reads "not installed", tell t
 plain sentence: Codex is optional, the cross-check steps in skills detect it's missing and skip
 themselves, and they can add it later via `/plugin install codex@openai-codex`. If the user asked
 for a minimal install, run `bash ~/.claude/setup.sh --core-only` instead of the plain command in
-step 3, and explain that it skips the third-party plugin-skill installs (trim, improve,
-emilkowalski/skills, archify) — they can add those later by re-running plain `setup.sh`.
+step 3, and explain that it skips every third-party install (setup.sh's step 4 list) — they can add
+those later by re-running plain `setup.sh`.
 
 ## 4. Explain permission prompts
 

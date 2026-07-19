@@ -26,7 +26,7 @@ while getopts "m:t:s:i:" o; do
   esac
 done
 shift $((OPTIND - 1))
-PROMPT=${1:?usage: codex-run.sh [-m model] [-t secs] [-s sandbox] PROMPT}
+PROMPT=${1:?usage: codex-run.sh [-m model] [-t secs] [-s sandbox] [-i image] PROMPT}
 
 command -v codex >/dev/null || { echo "codex-run: codex CLI not installed" >&2; exit 127; }
 
