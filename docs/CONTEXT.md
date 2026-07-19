@@ -14,10 +14,11 @@ Prefer **per-project** skill installs over global. Global skills bloat every ses
 - At 60% context full → `/compact focus on <module>` to trim history.
 - `/statusline` to monitor context %, 5h limit %, 7d limit %.
 
-## When context is fragile
+## Scan delegation (hard rule, not advice)
 
-- Prefer `Explore` subagent over inline file reads when output is large.
-- Delegate research to subagents — they return digests, not raw output.
+- **≥5 read-only tool calls for one question → MUST delegate** to `caveman:cavecrew-investigator` (fallback `Explore`); report findings only. Under 5 → inline fine.
+- Exceptions: user asks to watch live; sequential lookups (each depends on the last); skills that already dispatch their own agents.
+- Why it's hard: soft "prefer subagents" advice sat here for weeks and changed nothing — inline grep waterfalls kept filling screens and context.
 - For UI work, use text-based checks before screenshots — they're faster.
 
 ## Long-running work

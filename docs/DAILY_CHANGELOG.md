@@ -2,6 +2,10 @@
 
 Fresh start 2026-07-17
 
+## 2026-07-19 — hard scan-delegation rule (entry #9)
+
+- New global rule (memory fact + docs/CONTEXT.md): ≥5 read-only lookups for one question must go to cavecrew-investigator (fallback Explore) — one collapsed line on screen instead of a grep waterfall, raw output stays out of session context. Exceptions: user watching live, sequential lookups, skills with their own agents.
+
 ## 2026-07-19 — right-sized skill models + tighter eli5 format (entry #8)
 
 - Model right-sizing: lockstep→haiku; release, update, last-30, video-to-kb, ingest-docs, prompt-scan, quick-mockup→sonnet. Judgment skills (build, design, plan, xcheck, …) stay on the default model.
