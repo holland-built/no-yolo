@@ -4,6 +4,8 @@
 
 A ready-made brain for Claude Code: clone this and your Claude gets 26 extra commands, strict working rules, and a memory. Fork it and it's yours.
 
+**Why: out of the box, Claude forgets everything between sessions, edits before asking, and drifts into generic output — this setup wires in a memory, ask-first rules, and quality gates that don't rely on you remembering to prompt for them.**
+
 Claude Code reads `~/.claude/` every time it starts, and this repo *is* that folder, saved in git.
 
 ## Install on a new machine

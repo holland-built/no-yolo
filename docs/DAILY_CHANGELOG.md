@@ -2,6 +2,10 @@
 
 Fresh start 2026-07-17
 
+## 2026-07-19 — README why-sentence (debate verdict) (entry #14)
+
+- One bolded Why sentence added after the What: names the out-of-the-box gaps (no memory, edits-before-asking, generic drift) and the mechanisms this repo wires in. Debate ruled one sentence over a Why section (rots) or before/after strip (over-promises, pushes install below fold).
+
 ## 2026-07-19 — beginner install path (audience: beginners) (entry #13)
 
 - New INSTALL.md: agent-guided install — beginners paste "walk me through installing this — read ~/.claude/INSTALL.md" into Claude Code; Claude checks their machine, runs setup.sh, narrates every step in plain English, never skips a failure.
