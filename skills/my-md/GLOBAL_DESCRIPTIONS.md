@@ -4,6 +4,7 @@ CODE_REVIEW.md|How /code-review reviews a diff — the 3-pass logic it uses, wha
 CONTEXT.md|What to do when a session gets long and Claude starts losing track. Has the strategies for keeping context clean without starting over.
 PLANNING.md|The rules Claude follows before touching code — how to think through a task, what to settle before writing a line. Open this if Claude is jumping to solutions too fast.
 README.md|Install guide and reference for the no-yolo setup — prerequisites, install steps, directory layout, skills inventory, and how the CLAUDE.md chain works.
+INSTALL.md|Agent-guided install walkthrough — instructions FOR Claude to follow when a beginner asks to be walked through installing this repo after cloning.
 SKILL_RECOMMENDATIONS.md|Ideas for new skills and tools sourced from your knowledge base — not built yet, just on deck. Open this when you're wondering what to build next.
 SKILLS.md|How the skill and plugin system works — what a SKILL.md does, how triggers fire, how arguments get passed. Open this if you're building or debugging a skill.
 SUBAGENTS.md|Rules for dispatching parallel agents — when to fan out, how to coordinate, what to watch out for. Open this before running a multi-agent task.

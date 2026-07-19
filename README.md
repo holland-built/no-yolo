@@ -2,7 +2,9 @@
 
 ## What this is
 
-Claude Code reads `~/.claude/` every time it starts, and this repo *is* that folder, saved in git. Fork it and you get a working setup: 26 custom commands (+2 utility commands), plus 11 borrowed from plugins, strict coding rules, and a memory system that learns your preferences.
+A ready-made brain for Claude Code: clone this and your Claude gets 26 extra commands, strict working rules, and a memory. Fork it and it's yours.
+
+Claude Code reads `~/.claude/` every time it starts, and this repo *is* that folder, saved in git.
 
 ## Install on a new machine
 
@@ -14,7 +16,16 @@ bash ~/.claude/setup.sh
 
 Then open Claude Code anywhere and run `/my-skills`. A table of commands means setup is complete. For a deeper health check, run `bash ~/.claude/verify.sh` — all PASS means the clone is healthy (it's the same script CI runs).
 
+**New to this?** After cloning, open Claude Code and say: `walk me through installing this — read ~/.claude/INSTALL.md` — it checks your machine and explains every step.
+
 **You're done. Everything below this line is reference — read it when you need it, not before.**
+
+| Word | Plain meaning |
+|---|---|
+| skill | a slash command like `/health` — task instructions Claude follows |
+| plugin | an add-on bundle of skills |
+| MCP server | a connection that gives Claude an extra tool, like a browser |
+| hook | a small script that runs automatically at set moments |
 
 `setup.sh` is safe to re-run; it skips finished steps and prints what it's doing — with one caveat: the borrowed-skill installs (`npx skills@latest add …`) re-run every time and may update those skills to their latest upstream versions. `bash ~/.claude/setup.sh --md-only` installs rules only (no tools; requires python3) — it backs up `CLAUDE.md` and a later full run restores it, so upgrading is safe.
 
