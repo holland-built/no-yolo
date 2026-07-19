@@ -2,6 +2,10 @@
 
 Fresh start 2026-07-17
 
+## 2026-07-19 — generated flags table in /my-skills deep (entry #19)
+
+- regen.py now builds a "Flags & arguments" table into RENDERED.md from every skill's argument-hint frontmatter — machine-generated, alphabetical, covered by regen --check + verify.sh so it can never drift. First central place all skill flags are documented.
+
 ## 2026-07-19 — --core-only install + codex-aware preflight (entry #18)
 
 - setup.sh gains `--core-only`: skips every third-party install (fallow + the four npx skill packs), records them as SKIPPED (not FAILED), exits 0; plain setup.sh later adds them.
