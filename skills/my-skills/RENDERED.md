@@ -69,6 +69,7 @@
 | update | Two-way check between ~/.claude and GitHub — behind AND ahead/uncommitted — plus plugin versions and vendored-skill drift; applies or rolls back. | Not sure if you should update | Rollback and restore-removed-skill built in — no manual git surgery if something breaks |
 | lockstep | Hook-enforced gate: blocks Edit/Write/NotebookEdit until you say go. | You want "don't code yet" to actually hold, not just get ignored a few messages later | Mechanically denied by a PreToolUse hook — not a prompt the model can talk itself past |
 | checkup | One read-only wellness pass over your ~/.claude skill library — plumbing gates, doc drift and dead references, how far behind or ahead of GitHub you are, prose slop, the skill-library audit, and a memory lint; auto-fixes only the safe regenerated menus, then pauses with a plain-English summary before you pick what to fix. | You want one health check of your whole ~/.claude setup | Runs every existing check for you in one go and only touches the safe auto-generated files — nothing else changes without your OK |
+| literal | Turns off AI's push-back for a stretch — it just does exactly what you say, no proposals, no mockups, until you flip it back. | You're making rapid changes and want zero push-back for a while | The challenge-by-default posture is great for direction, but during fast knob-turning you just want it done — this mutes it. |
 
 ## Helpers (called by other skills)
 
@@ -93,6 +94,7 @@
 | health | `[path] [--auto] [--quick]` |
 | ingest-docs | `[--force] [filename]` |
 | last-30 | `[topic / library / tool / pattern to research]` |
+| literal | `[on\|off] (omit to toggle on)` |
 | lockstep | `[on\|off] (omit to toggle on)` |
 | md-check | `[--fix [--auto]] [--drift] [--orphans] [--pre <proposed-filename>] (omit for read-only audit)` |
 | my-skills | `[deep]` |

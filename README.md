@@ -103,7 +103,7 @@ Nothing required — skills create their own folders (e.g. `brainstorms/`). The 
 
 ## Skills inventory
 
-A "skill" is a slash command, like `/health`. The count: 27 custom commands (+2 utility commands: `/watch` and `/memory-compile` in `commands/`), plus 11 borrowed from plugins.
+A "skill" is a slash command, like `/health`. The count: 28 custom commands (+2 utility commands: `/watch` and `/memory-compile` in `commands/`), plus 11 borrowed from plugins.
 
 | Skill | What it does | Skill | What it does |
 | --- | --- | --- | --- |
@@ -120,9 +120,9 @@ A "skill" is a slash command, like `/health`. The count: 27 custom commands (+2 
 | eli5 | Plain-English explain anything, no jargon | my-md | List all markdown files |
 | md-check | Audit + fix docs | skill-audit | Audit skill library health |
 | update | Check/apply setup updates | lockstep | Hard block on edits |
-| checkup | Full skill-library health pass | — | — |
+| checkup | Full skill-library health pass | literal | Obey exactly, no push-back |
 
-The table shows the runnable menu: it includes 2 borrowed skills (`improve`, `archify`) and hides 2 custom helpers (`antislop`, `tdd` — see below), so it isn't a 1:1 list of the 27 custom commands. It is a copy of [`skills/my-skills/RENDERED_FAST.md`](skills/my-skills/RENDERED_FAST.md) — inside Claude Code, run `/my-skills` (same table) or `/my-skills deep` (adds when/why per skill, from [`RENDERED.md`](skills/my-skills/RENDERED.md), including every skill's flags). Every skill's flags also live in their own page: [`docs/FLAGS.md`](docs/FLAGS.md) — machine-generated, always current.
+The table shows the runnable menu: it includes 2 borrowed skills (`improve`, `archify`) and hides 2 custom helpers (`antislop`, `tdd` — see below), so it isn't a 1:1 list of the 28 custom commands. It is a copy of [`skills/my-skills/RENDERED_FAST.md`](skills/my-skills/RENDERED_FAST.md) — inside Claude Code, run `/my-skills` (same table) or `/my-skills deep` (adds when/why per skill, from [`RENDERED.md`](skills/my-skills/RENDERED.md), including every skill's flags). Every skill's flags also live in their own page: [`docs/FLAGS.md`](docs/FLAGS.md) — machine-generated, always current.
 
 Borrowed sets install with one command each: `npx skills@latest add holland-built/trim` (six simplicity commands), `npx skills@latest add shadcn/improve`, `npx skills@latest add emilkowalski/skills` (UI-polish rules that feed `/design`), `npx skills@latest add tt-a1i/archify`.
 

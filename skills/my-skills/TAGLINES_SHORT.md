@@ -28,3 +28,4 @@ trim|Forces the simplest solution
 antislop|Detect AI-slop tells
 tdd|Test-first red→green loop
 xcheck|Codex second opinion on plans
+literal|Obey exactly, no push-back
