@@ -164,6 +164,18 @@
       },
       "structureSha": "ffa6720fd81fcab1ac38b03f22023902f3775d1900f868f12dc0dd35498bffe3"
     },
+    "match-all": {
+      "descSha": "5671201505df52c60679fd13ca3e7a009dc9a13e9363589c2508bf695db23069",
+      "rows": {
+        "skills/my-skills/STORIES.md": "b4c222250920ab3ceda6979a8d27d44d2f7adc767250318d68eb90763528e330",
+        "skills/my-skills/STORIES.md#rel": "43e3f5ef7c0ac7a293050694da4dd136bf3ee32711f697ae77ebb6a19fafee03",
+        "skills/my-skills/TAGLINES.md": "6b9b000e780ff354bc43340bd4b39e358a6d9a980a8ae169b2f06c9a74b91134",
+        "skills/my-skills/TAGLINES_SHORT.md": "f0574d791e71016b750d3c5328d83b2988255022431c591aea8dc2e993797e6a",
+        "skills/my-skills/WHEN_TO_USE.md": "09178a165005eab517c4dea10c0717eff81ee4f107c3116cf383a909d7687712",
+        "skills/my-skills/WHY_TO_USE.md": "84a96f36f8527e589cd5a22f9c9d28eacaebc29ae533b8614d681db6b6da9511"
+      },
+      "structureSha": "5983258f64533f3896dddc721f492f94ee22f1afb0012ea1fd91091995e51aa2"
+    },
     "md-check": {
       "descSha": "5f0d3f76320ee842c9d505dc68de96114052d10a6a406718fbde1d9b0b412d18",
       "rows": {

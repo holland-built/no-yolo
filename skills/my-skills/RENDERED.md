@@ -5,6 +5,7 @@
 | design | Fresh UI generation: 10 Opus mockups (8 paradigms + 2 wild) → AI picks → you confirm → build. | Starting a new design or full redesign — want truly fresh, not an incremental patch | 10 mockups at once (8 distinct paradigms + 2 wild) + slop validator kills the generic — one pick becomes a full build plan |
 | quick-mockup | Fast throwaway HTML layout mockup — gray boxes, served live, browser-opens. Not /design. | Just need to see a layout before deciding, no brand polish needed yet | Gray boxes served over http:// and auto-opened, no brand tokens or slop-judge — satisfies "never show ASCII mockups" without the full /design pipeline |
 | design-audit | Audit UI across 5 lenses → ranked violations → optional 10-mockup fix pipeline. | Any UI that feels off — audit first, then optionally fix with 10 mockups in the same command | Five independent lenses catch what one reviewer misses — audit is read-only, fix gate keeps you in control before anything builds |
+| match-all | Point at one perfected UI instance; conform every sibling to its design language, adapted not cloned. | One instance looks right and its siblings don't — make them all match it without hand-editing each | Broadcasts the good one's language, not a copy — too-basic siblings get elevated, empty content gets hidden or a sensible fallback, never a pasted placeholder |
 
 ## Build
 
@@ -96,6 +97,7 @@
 | last-30 | `[topic / library / tool / pattern to research]` |
 | literal | `[on\|off] (omit to toggle on)` |
 | lockstep | `[on\|off] (omit to toggle on)` |
+| match-all | `[golden: component name \| file:line \| 'this rendered thing'] [--scope <dir>] [--batch <n>]` |
 | md-check | `[--fix [--auto]] [--drift] [--orphans] [--pre <proposed-filename>] (omit for read-only audit)` |
 | my-skills | `[deep]` |
 | plan | `[describe the feature, system, or decision to plan]` |

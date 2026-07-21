@@ -37,3 +37,4 @@ animation-vocabulary|Turns a vague animation description into its exact term.
 review-animations|Strict critique of animation/motion code against a high craft bar.
 xcheck|Cross-model critique: Codex reviews your plan, Claude adjudicates, 2-round cap.
 literal|Turns off AI's push-back for a stretch — it just does exactly what you say, no proposals, no mockups, until you flip it back.
+match-all|Point at one perfected UI instance; conform every sibling to its design language, adapted not cloned.

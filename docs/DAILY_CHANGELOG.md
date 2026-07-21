@@ -2,6 +2,12 @@
 
 Fresh start 2026-07-17
 
+## 2026-07-21 — new /match-all skill: conform siblings to one golden (entry #25)
+
+- New /match-all skill (Design bucket): point at ONE perfected UI instance and it conforms every sibling to that instance's design LANGUAGE — adapted per sibling, never a clone. Too-basic siblings get elevated to the standard; empty/missing/variable content is hidden, given a sensible fallback, or resized (never a pasted placeholder or empty box). Discovery proposes candidate siblings with a reason each (identity by import+name+role, default exclusions for node_modules/generated/third-party/intentional-variants, batch cap 8); a hard uncheck-gate + disposable before/after preview means no production file is touched until the user confirms; every changed surface is screenshotted and side-by-side compared to the golden before done.
+- Reuses /design's proven machinery (headless-Chrome screenshot loop, Step 5.6 visual-diff gate, .mockups disposable convention, approved-tokens.md format, PREFAB import-grep primitive); adds the two pieces /design lacked — multi-instance sibling discovery and extract-from-one-rendered-instance-then-adapt-per-sibling. Opus coordinates/judges, Sonnet subagents make the per-sibling edits.
+- Built /plan → recon of /design internals → Opus plan (self-checked, Codex F5/F7 folded from the earlier round) → 2 parallel Sonnet agents → verify.sh all-green. This closes Piece B; the challenge-posture + /literal (Piece A) shipped earlier today. Note: ~/.claude has no app, so /match-all is proven by verify + its spec, not a live UI run.
+
 ## 2026-07-21 — challenge-by-default posture + /literal off-switch (entry #24)
 
 - CORE_RULES now makes substance-challenge the DEFAULT: on a real change/complaint/direction, AI proposes its version and waits ("here's what I'd do instead — yours or mine?") before touching anything; for visual asks the counter-proposal is a /quick-mockup. Bare permission-questions stay banned. Reconciled rules 1/3/6/7/10 with a new "Challenge posture — precedence" block so they don't fight (propose-broad-but-execute-surgical; wait on direction, state-and-continue on internal assumptions).

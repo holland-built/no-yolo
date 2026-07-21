@@ -2,6 +2,7 @@
 design
 quick-mockup
 design-audit
+match-all
 
 ## Build
 build
