@@ -24,7 +24,7 @@ Every argument and flag each skill accepts, straight from the skill files themse
 | md-check | `[--fix [--auto]] [--drift] [--orphans] [--pre <proposed-filename>] (omit for read-only audit)` |
 | my-skills | `[deep]` |
 | plan | `[describe the feature, system, or decision to plan]` |
-| quick-mockup | `[what to lay out] [--variants N]` |
+| quick-mockup | `[what to lay out] [--variants N, default 5]` |
 | release | `[env: dev\|staging\|prod] [optional commit message] [--auto]` |
 | remember-that | `<fact> \| d <id> \| m <id> \| audit \| compile \| (empty=extract from context)` |
 | skill-audit | `[--audit] [--build-verifier <skill-name>] [--gotchas] [--research]` |

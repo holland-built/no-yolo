@@ -7,7 +7,7 @@ my-skills|You forget you have tools. This is the map
 design-audit|Five independent lenses catch what one reviewer misses — audit is read-only, fix gate keeps you in control before anything builds
 tdd|The RED test is proof you actually fixed it. Without it you're asserting, not proving
 design|10 mockups at once (8 distinct paradigms + 2 wild) + slop validator kills the generic — one pick becomes a full build plan
-quick-mockup|Gray boxes served over http:// and auto-opened, no brand tokens or slop-judge — satisfies "never show ASCII mockups" without the full /design pipeline
+quick-mockup|Five style-matched functional variants on one page, served over http:// and auto-opened — satisfies "never show ASCII mockups" without the full /design pipeline
 ingest-docs|Dedupes against what's already there and tracks changes in a manifest — re-runs only touch what's new
 video-to-kb|Talks are perishable. One command turns them into permanent, searchable KB nodes
 whats-next|Prevents starting something new while something is already half-done

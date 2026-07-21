@@ -27,7 +27,7 @@ prompt-scan|Reads global Claude MD files + current model's release notes, writes
 better-prompt|Rewrites a rough prompt with a named target, scope boundary, success criterion, and correct skill route.
 remember-that|Save, extract, delete, move, audit facts across sessions.
 trim-gain|Shows trim's measured impact: less code, less cost, more speed.
-quick-mockup|Fast throwaway HTML layout mockup — gray boxes, served live, browser-opens. Not /design.
+quick-mockup|Up to 5 style-matched, lightly-functional layout candidates on one page with an AI pick — reads your CSS tokens, native HTML so dropdowns work; much lighter than /design.
 skill-audit|Audits the whole skill library: bucket fit, missing pieces, unverified output, stale triggers.
 health|Diff + codebase health + /last-30 trends, with every fix walked past you one at a time.
 lockstep|Hook-enforced gate: blocks Edit/Write/NotebookEdit until you say go.

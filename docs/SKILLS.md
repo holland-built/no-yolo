@@ -61,7 +61,7 @@ Token-budget guidance (global-skill bloat, prefer per-project installs) lives in
 | `build` | Full feature pipeline: evidence → plan → Opus plan → approval gate → mockup gate → TDD → build → regression → prove |
 | `review` | Diff review AND full codebase health pass (fallow + trim + improve) — one ranked findings list, one approve-all gate |
 | `design` | Fresh design generation: 10 Opus mockups (8 paradigms + 2 wild) → slop validator → you confirm → Opus plan → Sonnet build |
-| `quick-mockup` | Fast disposable placeholder-only HTML mockup for layout/spatial decisions — no brand tokens, no pipeline |
+| `quick-mockup` | Fast disposable layout mockups — up to 5 style-matched candidates on one page with an AI pick; reads the project's CSS tokens; much lighter than /design |
 | `design-audit` | Read-only design audit: 5 parallel lenses (Taste/Swiss/UIwiki/a11y/code-health) → violations table + top-10 |
 
 ## Symlinks vs Real Skill Dirs

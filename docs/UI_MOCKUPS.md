@@ -46,7 +46,7 @@ Mockups live under `.mockups/<group>/<name>.html` in the current project root.
 
 | Situation | Tool | Variations |
 |---|---|---|
-| Fast throwaway layout sketch, no build | `/quick-mockup` | 1 placeholder-only file |
+| Fast throwaway layout sketch, no build | `/quick-mockup` | up to 5 style-matched functional variants, one page |
 | Manual or ad-hoc mockup (no skill) | this doc's manual flow | 5–8 |
 | Full feature pipeline | `/build` | 10 (phase 3.5 gate) |
 | Fresh design + build pipeline | `/design` | 10 Opus mockups (8 paradigms + 2 wild) → confirmed one feeds the build |
@@ -113,5 +113,5 @@ Pick 5–8 from this list, depending on what's being designed:
 
 - `/build` — full feature pipeline with 10-variant mockup gate (phase 3.5)
 - `/design-audit` — read-only audit: 5 lenses → violations table + top-10 improvements
-- `/quick-mockup` — fast disposable placeholder-only HTML mockup for layout/spatial decisions, no code
+- `/quick-mockup` — fast disposable layout mockups: up to 5 style-matched, lightly-functional candidates on one combined page with an AI pick, reads the project's CSS tokens
 - `/design` — fresh design pipeline: 10 Opus mockups (8 paradigms + 2 wild) → slop validator → confirm → Opus plan → Sonnet build

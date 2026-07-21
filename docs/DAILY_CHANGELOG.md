@@ -2,6 +2,13 @@
 
 Fresh start 2026-07-17
 
+## 2026-07-21 — /quick-mockup upgrade: 5 style-matched functional variants on one page (entry #26)
+
+- /quick-mockup went from "1-3 placeholder-only gray static variants in separate tabs" to "up to 5 style-matched, lightly-functional layout candidates on ONE combined page with an AI ★ pick" — while staying much lighter than /design (no slop-judge, no brand-seed, no 10-variant pipeline). Default is now 5 (--variants clamps 2-5).
+- Style-match: a bounded CSS-token read (globals/app/index/styles.css :root + tailwind.config, excludes node_modules/dist/build/.next) so variants use the project's font, colors, and corner radius; per-token fallback, font stack always keeps a system fallback (degrades if the font needs local files), clean-neutral fallback when no tokens exist. Functional via native HTML only (real <select>/<input>/<details>, no frameworks). Labels stay generic — style not content.
+- Two-pass pick: render 5 unranked + a combined all.html → screenshot with the headless-Chrome CLI (falls back to just opening the page if Chrome CLI is absent) → write a one-line rationale per variant + a ★ on one winner → reopen. After the pick it prints a one-line pointer to /build or /design mockup-match. Kept the http:// serve + auto-open + disposable hard rules.
+- Fixed every now-stale description (docs/SKILLS.md, docs/UI_MOCKUPS.md x2, WHY_TO_USE, TAGLINES, TAGLINES_SHORT, STORIES) that still called it placeholder-only/gray. Built /plan → xcheck (8 findings folded) → 2 Sonnet agents → verify.sh all-green.
+
 ## 2026-07-21 — new /match-all skill: conform siblings to one golden (entry #25)
 
 - New /match-all skill (Design bucket): point at ONE perfected UI instance and it conforms every sibling to that instance's design LANGUAGE — adapted per sibling, never a clone. Too-basic siblings get elevated to the standard; empty/missing/variable content is hidden, given a sensible fallback, or resized (never a pasted placeholder or empty box). Discovery proposes candidate siblings with a reason each (identity by import+name+role, default exclusions for node_modules/generated/third-party/intentional-variants, batch cap 8); a hard uncheck-gate + disposable before/after preview means no production file is touched until the user confirms; every changed surface is screenshotted and side-by-side compared to the golden before done.

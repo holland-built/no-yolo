@@ -1,6 +1,6 @@
 | Skill | What it does | Skill | What it does |
 | --- | --- | --- | --- |
-| design | Fresh UI mockup generation | quick-mockup | Throwaway layout mockup |
+| design | Fresh UI mockup generation | quick-mockup | 5 style-matched layout candidates |
 | design-audit | 5-lens UI violation audit | match-all | Conform siblings to one golden |
 | build | Full feature build pipeline | plan | Pre-build decision interview |
 | health | Diff, health + trend review | xcheck | Codex second opinion on plans |
