@@ -3,7 +3,7 @@
 | Skill | What it does | When to use | Why vs manual |
 | --- | --- | --- | --- |
 | design | Fresh UI generation: 10 Opus mockups (8 paradigms + 2 wild) → AI picks → you confirm → build. | Starting a new design or full redesign — want truly fresh, not an incremental patch | 10 mockups at once (8 distinct paradigms + 2 wild) + slop validator kills the generic — one pick becomes a full build plan |
-| quick-mockup | Fast throwaway HTML layout mockup — gray boxes, served live, browser-opens. Not /design. | Just need to see a layout before deciding, no brand polish needed yet | Gray boxes served over http:// and auto-opened, no brand tokens or slop-judge — satisfies "never show ASCII mockups" without the full /design pipeline |
+| quick-mockup | Up to 5 style-matched, lightly-functional layout candidates on one page with an AI pick — reads your CSS tokens, native HTML so dropdowns work; much lighter than /design. | Just need to see a layout before deciding, no brand polish needed yet | Five style-matched functional variants on one page, served over http:// and auto-opened — satisfies "never show ASCII mockups" without the full /design pipeline |
 | design-audit | Audit UI across 5 lenses → ranked violations → optional 10-mockup fix pipeline. | Any UI that feels off — audit first, then optionally fix with 10 mockups in the same command | Five independent lenses catch what one reviewer misses — audit is read-only, fix gate keeps you in control before anything builds |
 | match-all | Point at one perfected UI instance; conform every sibling to its design language, adapted not cloned. | One instance looks right and its siblings don't — make them all match it without hand-editing each | Broadcasts the good one's language, not a copy — too-basic siblings get elevated, empty content gets hidden or a sensible fallback, never a pasted placeholder |
 
@@ -101,7 +101,7 @@
 | md-check | `[--fix [--auto]] [--drift] [--orphans] [--pre <proposed-filename>] (omit for read-only audit)` |
 | my-skills | `[deep]` |
 | plan | `[describe the feature, system, or decision to plan]` |
-| quick-mockup | `[what to lay out] [--variants N]` |
+| quick-mockup | `[what to lay out] [--variants N, default 5]` |
 | release | `[env: dev\|staging\|prod] [optional commit message] [--auto]` |
 | remember-that | `<fact> \| d <id> \| m <id> \| audit \| compile \| (empty=extract from context)` |
 | skill-audit | `[--audit] [--build-verifier <skill-name>] [--gotchas] [--research]` |

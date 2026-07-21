@@ -23,7 +23,7 @@ skill-audit|Audit skill library health
 update|Check/apply setup updates
 lockstep|Hard block on edits
 checkup|Full skill-library health pass
-quick-mockup|Throwaway layout mockup
+quick-mockup|5 style-matched layout candidates
 trim|Forces the simplest solution
 antislop|Detect AI-slop tells
 tdd|Test-first red→green loop

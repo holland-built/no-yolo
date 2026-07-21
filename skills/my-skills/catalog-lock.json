@@ -237,15 +237,15 @@
       "structureSha": "75adebc6bc912d9a158f2c3099461cc76a3f393cbd77df722dcb93bce9d023b8"
     },
     "quick-mockup": {
-      "descSha": "9377892d6bf3f0ab1f362d62b13775d1cb0e4f12733be43f6238f85ace64d8c1",
+      "descSha": "b31640bcd083b8c3713ee9c9b84ea89b5c6593f10f0707a1e7a15c676f7ca9b0",
       "rows": {
-        "skills/my-skills/STORIES.md": "2bb6691acae9cbc1f30cb64fcfa7f94b64e4b2c886f31d4274c834f2b2380a5e",
-        "skills/my-skills/TAGLINES.md": "0f29509b82727f4d42bab4eb0dcc9dbd4fcad75894ef0ed9e4ef8121c3ff6c4d",
-        "skills/my-skills/TAGLINES_SHORT.md": "5ddd33154c6333af1d84fb45f4cb94cd8e2280dea02ae3fb5321a151c2029b2b",
+        "skills/my-skills/STORIES.md": "bb0cbc50185934eacec554a97e5456a444f3982c914429bb2c536a4ae94eca30",
+        "skills/my-skills/TAGLINES.md": "84b6ebcc1dc7950e16f5a05046276bd990e94ee7f404d0ebdc02f4ca14b7da27",
+        "skills/my-skills/TAGLINES_SHORT.md": "f8ec2048683d1ea81689d71aa37e4cb4ea908001ab2a77f470be31da14f50f2f",
         "skills/my-skills/WHEN_TO_USE.md": "e5c347e6c47ee8b314039a3a29b57a8772ab88e3da1af250dc06bb199d42296e",
-        "skills/my-skills/WHY_TO_USE.md": "18f64c504493151bbf09a36ed67abd4de7b1f727f7d7e2002c30e277eb8df519"
+        "skills/my-skills/WHY_TO_USE.md": "4a070c8e867a1c8a5b4a36da3c3e513f316cd23085a2b2ee3b78bc8ba4f2d90d"
       },
-      "structureSha": "8d022e8c8f027a4dae22097aa3b26323e4f8f634974fb6100d5d70a1dffd5095"
+      "structureSha": "b60123919d3c97b41446fa79516ae9e52911c11f2dfdaf1c1285a3c60e4ce907"
     },
     "release": {
       "descSha": "72676f56c5e44dd3163bf6311dae23a6b510ef6e5b3a74d98ef4bad6e3be72c9",
