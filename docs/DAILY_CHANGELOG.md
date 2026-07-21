@@ -2,6 +2,14 @@
 
 Fresh start 2026-07-17
 
+## 2026-07-21 — stop parroting + plain-language eli5 (entry #22)
+
+- New behavior rule "act like AI, don't parrot": mined from 41 real sessions where the loudest, most-repeated frustration was AI echoing the literal ask and padding with invented/static values. Codified the 5-move recipe from the one turn the user praised — root-cause first, own debated ideas, real-data browser mockup, refuse to fabricate, close with one plain choice. (Global rule lives in the private fact store; compiled into CLAUDE.generated.md.)
+- eli5 output overhauled — plain, short, no jargon is the constant. A simple ask or single next step is now ONE plain sentence; a small chart is used only for a list (what's done / what's left / options). Dropped the mandatory 4-column "why" table that three prior refinements never fixed. Synced every consumer: eli5 SKILL.md, whats-next SKILL.md, docs/NO_YOLO.md, and the eli5 catalog rows (STORIES/TAGLINES/TAGLINES_SHORT).
+- CORE_RULES rule 10 gained two teeth: never present invented/static values as real data (labeled fixtures OK), and for UI asks show a working browser mockup by default instead of describing one — real data via /design or /build, layout-only sketch via /quick-mockup.
+- quick-mockup stays placeholder-only: added an explicit redirect so "real data / working prototype" asks route to /design or /build, never into a gray-box sketch.
+- Purged the stray `skills/supacode-cli/` directory for good — it was marked removed back in entry-with-archify but a local untracked copy kept lingering. Confirmed no plugin/install source or memory fact resurrects it; deleted permanently.
+
 ## 2026-07-19 — /health dogfood run: 15 findings fixed (entry #21)
 
 - Full /health pass on today's 44-file diff (6 parallel workers + Codex second reviewer). Fixed: unknown setup.sh flags now rejected (typo can't trigger a full install), git made fatal (secret-scanner can't be silently skipped), md-only restore can't clobber a newer CLAUDE.md, core-only needs node only, wrong trim repo in health skill hint, stale /review references, dead scan-exclude entry, bash-4 guard extended to the whole construct class, memory compiler hardened (fresh-machine manifest, inline YAML lists, project-tier facts, deduped helper), regen.py flags table computed once, fallow hints pinned, INSTALL.md drift-proofed, README bullet redundancy merged.

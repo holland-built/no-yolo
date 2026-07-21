@@ -1,11 +1,13 @@
 <!-- GENERATED FROM ~/.claude/memory/facts/ — DO NOT EDIT. Run /memory-compile. -->
-<!-- compiled 2026-07-19 -->
+<!-- compiled 2026-07-21 -->
 # Learned Preferences (compiled from curated memory)
 
 Compiled from the fact store. Each line links its source fact.
 
 ## Working Preferences
-- **Always eli5-table completed work, next actions, and asks** — Every completed-work summary, next-actions list, and question to the user must be ONE eli5 Mode B 4-column table (Done/Ask | Why | Left + importance | Type this) — ≤12 words/cell, ≤5 rows, plain English ([feedback-eli5-on-output](memory/facts/feedback-eli5-on-output.md))
+- **Act like AI — don't parrot the ask or pad with fake/static filler** — The user's #1 recurring complaint across MCP + Wayfinder — AI myopically repeats the literal ask and adds made-up/static values to appease, instead of thinking. The fix is a proven 5-move recipe. ([feedback-act-like-ai-not-parrot](memory/facts/feedback-act-like-ai-not-parrot.md))
+- **eli5 output — plain, short, no jargon; chart only for status/options, one sentence for a simple ask** — Completion summaries, next actions, and questions to the user must be plain + short + zero jargon. Use a small chart/table only when showing what's done / what's left / options; use one plain sentence for a simple ask or reminder. Drop the mandatory "why" column. ([feedback-eli5-plain-short](memory/facts/feedback-eli5-plain-short.md))
+- **Ship UI redesigns surface-by-surface into the real app, screenshot each** — For large UI redesigns, build one surface at a time straight into the running app and verify each in the browser before the next — don't iterate on abstract mockups/plans. ([feedback-realapp-incremental-ui](memory/facts/feedback-realapp-incremental-ui.md))
 - **Delegate ≥5-lookup scans to a subagent** — When answering one question needs ≥5 read-only tool calls (Grep/Glob/Read/read-only Bash), dispatch cavecrew-investigator (or Explore) instead of running them inline — quiet screen, slower context growth ([pattern-delegate-scans-to-subagents](memory/facts/pattern-delegate-scans-to-subagents.md))
 - **Auto-commit on push commands** — When the user says 'push to <branch>', auto-commit all local changes first (add, generate message, commit, push) without asking. ([user-auto-commit-on-push](memory/facts/user-auto-commit-on-push.md))
 - **Bulleted/table output, never prose** — Default output is a bulleted list or markdown table; no long prose paragraphs. Code/commands in fenced blocks. ([user-output-format-bullets](memory/facts/user-output-format-bullets.md))

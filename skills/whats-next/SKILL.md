@@ -72,19 +72,20 @@ Based on what you see, generate **3 creative, project-specific suggestions** —
 - Say what's improvable and why it matters
 - Give the exact skill + argument to run it
 
-Format — ALWAYS the eli5 Mode B table (≤12 words per cell, ≤5 rows, no jargon):
+Format — eli5 Mode B: a small chart, since this is a list of options (plain, short, no jargon):
 
 ```
 > Queue empty. Suggestions:
 
-| Done / Ask | Why | Left + importance | Type this |
-|---|---|---|---|
-| Ask: pick a suggestion | queue empty, project scanned | HIGH — nothing runs otherwise | answer here |
-| [specific improvement 1] | [plain-words payoff] | MED | `/skill [args]` |
-| [specific improvement 2] | [plain-words payoff] | LOW | `/skill [args]` |
+| What | Why it matters | Type this |
+|---|---|---|
+| [specific improvement 1] | [plain-words payoff] | `/skill [args]` |
+| [specific improvement 2] | [plain-words payoff] | `/skill [args]` |
+| [specific improvement 3] | [plain-words payoff] | `/skill [args]` |
 ```
 
 Rules:
-- ≤12 words per cell, fragments not sentences; every cell plain English, technical terms translated inline.
+- Short cells, fragments not sentences; every cell plain English, technical terms translated inline or cut.
+- No jargon, no "why" padding beyond the one short payoff phrase.
 - Do NOT offer generic options like "audit codebase" without tying them to specific files or patterns you actually observed.
-- The Step 2 "report done + remaining tasks" output uses the same single 4-column table: one row per remaining task.
+- The Step 2 "report done + remaining tasks" output uses the same small chart: one row per remaining task.

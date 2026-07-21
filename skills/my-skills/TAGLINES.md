@@ -16,7 +16,7 @@ design-audit|Audit UI across 5 lenses → ranked violations → optional 10-mock
 design|Fresh UI generation: 10 Opus mockups (8 paradigms + 2 wild) → AI picks → you confirm → build.
 ingest-docs|Converts PDFs/decks/docs into dense context files Claude reads at runtime.
 whats-next|Shows unfinished work or next actions as a plain-English table with a "type this" column. Never static.
-eli5|Explains any skill, plan, or finished work in a plain-English table — always shows "what I'm asking you" and "where we are".
+eli5|Explains any skill, plan, or finished work in plain English — short, no jargon; a small chart when there's a list, one plain sentence when there isn't.
 debate|7-persona product-team debate → contradiction map → one decisive verdict.
 update|Two-way check between ~/.claude and GitHub — behind AND ahead/uncommitted — plus plugin versions and vendored-skill drift; applies or rolls back.
 release|The one context-aware publish command for any repo: reads the repo-root SHIP.md playbook and pushes to the right environment (dev/staging/prod). No SHIP.md yet? It stops and helps you build one before anything ships.
