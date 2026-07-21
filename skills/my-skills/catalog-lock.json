@@ -84,11 +84,11 @@
       "structureSha": "a8e691d3eb21e96f10ef4e698a87b2fed9e474f9ff5a88a06434c95ec3e47011"
     },
     "eli5": {
-      "descSha": "2f9606d4e78a7d863028fcc49cc77d92fd51589cc0968f289c5a78a4064a3ff6",
+      "descSha": "4e021bb97ae496be0a3a0fbd1d00928feea3818b61a04ade89b64ee49a059666",
       "rows": {
-        "skills/my-skills/STORIES.md": "ba434c09e15c211002beff37471ca730b660fbb96cc9e34ebbe3fd6caae5cacf",
-        "skills/my-skills/TAGLINES.md": "60f1a5a9e395ad32236578088fd3ff12caa36c0a53fb72d26ea0186cdcda1420",
-        "skills/my-skills/TAGLINES_SHORT.md": "a8eeb786fb0804f36b956524428d0e368e5f62e50b01382b7e7bffe458ced6ee",
+        "skills/my-skills/STORIES.md": "97c6639df3cc437fb3c98acb2c6dd8d16d4e6261c2b036278280396fe2d22cec",
+        "skills/my-skills/TAGLINES.md": "9a55982442ab0aa72486d6c455c1d2e1a551ed83bf23248ecae53627114b41ca",
+        "skills/my-skills/TAGLINES_SHORT.md": "396eead1b3790e25622d03a41b420409fe4288248e0cd651520fe32001879850",
         "skills/my-skills/WHEN_TO_USE.md": "9ff177c04f8d091c1cb2e373e691a72ed46a34e66c5318ad5da710d7cdc8f7d3",
         "skills/my-skills/WHY_TO_USE.md": "a4ea56b6551de4f91e62a44e1703fb4d3b15283e6b7fbcac2e4d7a33de8d4a56"
       },

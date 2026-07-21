@@ -117,7 +117,7 @@ A "skill" is a slash command, like `/health`. The count: 26 custom commands (+2 
 | better-prompt | Sharpen a rough prompt | archify | Zero-dep diagram generator |
 | remember-that | Save facts across sessions | my-skills | This skill menu |
 | whats-next | Shows unfinished work | release | One command, any repo |
-| eli5 | Plain-English table explain anything | my-md | List all markdown files |
+| eli5 | Plain-English explain anything, no jargon | my-md | List all markdown files |
 | md-check | Audit + fix docs | skill-audit | Audit skill library health |
 | update | Check/apply setup updates | lockstep | Hard block on edits |
 

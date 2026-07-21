@@ -1,6 +1,6 @@
 ---
 name: eli5
-description: Use this skill when the user types /eli5, and automatically on every completed-work summary, next-actions list, or question to the user. Explains any skill, command, plan, decision, or finished work in plain English — table format, no jargon. Mode B is ONE 4-column table (Done/Ask | Why | Left + importance | Type this), ≤12 words per cell, ≤5 rows.
+description: Use this skill when the user types /eli5, and automatically on every completed-work summary, next-actions list, or question to the user. Explains any skill, command, plan, decision, or finished work in plain English, short, no jargon. Mode B: a simple ask/reminder/single next step is ONE plain sentence; a status list (what's done / what's left / options) is a small chart. No mandatory "why" padding.
 user-invocable: true
 argument-hint: "[skill name, plan text, command, or file path]"
 model: haiku
@@ -57,19 +57,22 @@ Both modes output a TABLE, never prose paragraphs.
 
 ### Mode B — finished work / next steps
 
-ONE table, exactly these 4 columns. One row per item — done items, asks, and leftovers all share it:
+The user is non-technical. Plain, short, no jargon is the constant. **Pick the form by the content:**
 
-| Done / Ask | Why | Left + importance | Type this |
-|---|---|---|---|
-| Renamed /review to /health | name clash with built-in | nothing — done | — |
-| Ask: pick column set | old format failed you | HIGH — blocks eli5 fix | answer here |
-| Live-test the judge | unproven path | LOW — optional | `/design` |
+**One thing to say — a simple ask, a reminder, or a single next step → ONE plain sentence.** No table.
+> Saved and switched on. Next: run `/memory-compile` when you want it live.
+
+**A status list — what's done, what's left, or a set of options → a small chart.** Use it only when there really is a list:
+
+| What | Status | Type this |
+|---|---|---|
+| Renamed /review to /health | done | — |
+| Pick eli5 format | need your call | answer here |
+| Live-test the judge | optional | `/design` |
 
 Hard rules for Mode B:
-- **≤12 words per cell. ≤5 rows.** Bullets/fragments, not sentences. Cut rows before cutting clarity — least important rows go first.
-- Ask rows start with "Ask:" and their importance is why the answer matters. Nothing needed from user → no Ask row at all.
-- "Why" is mandatory and honest — the concrete reason, or "safe to skip: …".
-- "Left + importance" = what remains + HIGH/MED/LOW (or "nothing — done").
-- "Type this" = exact command, "answer here" for asks, "—" otherwise.
-- No jargon anywhere; translate technical terms inline.
-- No prose paragraphs before/after the table — one lead-in sentence max.
+- **Shorter always wins.** A few words per cell, ≤5 rows. Fragments, not sentences.
+- **No jargon anywhere.** Translate any technical term inline, or cut it. "md file", "supersede", "compile" → say what it does.
+- **No mandatory "why."** Add a reason ONLY if it's short and changes the decision — never a paragraph, never history/justification padding.
+- Asks say plainly what you need; options spelled "A: … / B: …" in plain words.
+- No prose walls before/after — one lead-in sentence max. When unsure between a sentence and a chart, use the sentence.

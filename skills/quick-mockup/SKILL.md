@@ -178,6 +178,7 @@ If the user says "update the mockup" / "change the layout" / "move X to Y":
 
 ## When to redirect
 
+- **User wants REAL DATA in the mockup (real rows, real values, a "working" prototype) → this is NOT quick-mockup.** Quick-mockup is placeholder gray boxes only. Route by intent: exploring a look/direction → `/design`; building the actual component to keep → `/build`. Never pour real data into a quick-mockup sketch.
 - User wants brand tokens, dark/light variants, slop-judge, or 10 options → redirect to `/design`.
 - User wants a polished production component built to spec → redirect to `/build`.
 - User wants to audit an existing UI → redirect to `/design-audit`.
