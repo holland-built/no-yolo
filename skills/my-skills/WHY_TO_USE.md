@@ -31,6 +31,7 @@ trim-gain|Scorecard from benchmark medians — not a per-repo estimate.
 skill-audit|One pass instead of manually eyeballing every SKILL.md
 health|Replaces three separate commands with one routed pass — trend radar, secret scan and antislop are automatic, and you approve each fix one at a time instead of one blind batch
 lockstep|Mechanically denied by a PreToolUse hook — not a prompt the model can talk itself past
+checkup|Runs every existing check for you in one go and only touches the safe auto-generated files — nothing else changes without your OK
 emil-design-eng|Vaul/Sonner-author taste rules catch wrong easing, wrong shadows, wrong timing agents usually miss
 animation-vocabulary|The right word gets a better result from any AI than a vague description does
 review-animations|Approval is earned, not assumed — catches animation mistakes a generic review misses

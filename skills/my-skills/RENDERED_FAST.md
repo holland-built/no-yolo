@@ -13,3 +13,4 @@
 | eli5 | Plain-English explain anything, no jargon | my-md | List all markdown files |
 | md-check | Audit + fix docs | skill-audit | Audit skill library health |
 | update | Check/apply setup updates | lockstep | Hard block on edits |
+| checkup | Full skill-library health pass | — | — |

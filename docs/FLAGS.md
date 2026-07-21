@@ -9,6 +9,7 @@ Every argument and flag each skill accepts, straight from the skill files themse
 | antislop | `[text, code, or output to check]` |
 | better-prompt | `[rough prompt text to sharpen]` |
 | build | `[describe the feature to build]` |
+| checkup | `(no arguments — one full read-only pass)` |
 | debate | `<topic or decision> [--ui]` |
 | design | `[text \| URL \| screenshot \| domain context] [--apply-spec <file>]` |
 | design-audit | `[surface to audit]` |

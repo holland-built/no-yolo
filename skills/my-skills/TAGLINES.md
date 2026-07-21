@@ -31,6 +31,7 @@ quick-mockup|Fast throwaway HTML layout mockup — gray boxes, served live, brow
 skill-audit|Audits the whole skill library: bucket fit, missing pieces, unverified output, stale triggers.
 health|Diff + codebase health + /last-30 trends, with every fix walked past you one at a time.
 lockstep|Hook-enforced gate: blocks Edit/Write/NotebookEdit until you say go.
+checkup|One read-only wellness pass over your ~/.claude skill library — plumbing gates, doc drift and dead references, how far behind or ahead of GitHub you are, prose slop, the skill-library audit, and a memory lint; auto-fixes only the safe regenerated menus, then pauses with a plain-English summary before you pick what to fix.
 emil-design-eng|Emil Kowalski's UI-polish and animation-taste rules — feeds /design and /design-audit.
 animation-vocabulary|Turns a vague animation description into its exact term.
 review-animations|Strict critique of animation/motion code against a high craft bar.

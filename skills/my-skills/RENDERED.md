@@ -68,6 +68,7 @@
 | skill-audit | Audits the whole skill library: bucket fit, missing pieces, unverified output, stale triggers. | Wondering if your skills are well-structured or missing something | One pass instead of manually eyeballing every SKILL.md |
 | update | Two-way check between ~/.claude and GitHub — behind AND ahead/uncommitted — plus plugin versions and vendored-skill drift; applies or rolls back. | Not sure if you should update | Rollback and restore-removed-skill built in — no manual git surgery if something breaks |
 | lockstep | Hook-enforced gate: blocks Edit/Write/NotebookEdit until you say go. | You want "don't code yet" to actually hold, not just get ignored a few messages later | Mechanically denied by a PreToolUse hook — not a prompt the model can talk itself past |
+| checkup | One read-only wellness pass over your ~/.claude skill library — plumbing gates, doc drift and dead references, how far behind or ahead of GitHub you are, prose slop, the skill-library audit, and a memory lint; auto-fixes only the safe regenerated menus, then pauses with a plain-English summary before you pick what to fix. | You want one health check of your whole ~/.claude setup | Runs every existing check for you in one go and only touches the safe auto-generated files — nothing else changes without your OK |
 
 ## Helpers (called by other skills)
 
@@ -83,6 +84,7 @@
 | antislop | `[text, code, or output to check]` |
 | better-prompt | `[rough prompt text to sharpen]` |
 | build | `[describe the feature to build]` |
+| checkup | `(no arguments — one full read-only pass)` |
 | debate | `<topic or decision> [--ui]` |
 | design | `[text \| URL \| screenshot \| domain context] [--apply-spec <file>]` |
 | design-audit | `[surface to audit]` |
