@@ -2,6 +2,12 @@
 
 Fresh start 2026-07-17
 
+## 2026-07-21 — new /checkup skill: one-command library health pass (entry #23)
+
+- New `/checkup` skill (Meta bucket): one read-only wellness pass over the whole ~/.claude library. Thin wrapper — shells to existing owners (`verify.sh`, `/md-check --drift`/`--orphans`, bare `/update`, `/antislop`, `/skill-audit`, `memory_compile.py`), never re-implements a check. Auto-fixes only deterministic regen output, then pauses with one plain-English summary before you pick findings → `/plan` → approval → subagent build → `/release`. Never pushes blind. Built via /plan → xcheck (8 Codex findings folded) → Opus plan → Sonnet build.
+- Caught a real repo gap while building it: a new skill's `SKILL.md` must be `git add`-ed before `catalog_lock.py --relock` (the locker reads `git ls-files`), or it ships unlocked while verify.sh stays green. Added that line to the docs/NO_YOLO.md new-skill checklist.
+- Memory hygiene: backfilled honest provenance on 7 facts flagged by the memory lint (1 reformatted from a dict, 6 given a "origin not recorded, backfilled today" note — no invented history); memory recompiles WARN-free.
+
 ## 2026-07-21 — stop parroting + plain-language eli5 (entry #22)
 
 - New behavior rule "act like AI, don't parrot": mined from 41 real sessions where the loudest, most-repeated frustration was AI echoing the literal ask and padding with invented/static values. Codified the 5-move recipe from the one turn the user praised — root-cause first, own debated ideas, real-data browser mockup, refuse to fabricate, close with one plain choice. (Global rule lives in the private fact store; compiled into CLAUDE.generated.md.)

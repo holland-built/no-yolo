@@ -16,6 +16,7 @@ When working here, you are authoring public skills — write for a stranger, not
   - Entry in `skills/my-skills/STORIES.md`
   - Triggers go in the skill's own `description` ("Use this skill when the user types /x, says 'y'…") — NOT in `docs/SKILL_TRIGGERS.md`, which is a routing rule only
   - Row in `README.md` skill table — format: `` | `/name` | what it does | modes & flags | `` (backtick + slash prefix required)
+  - **`git add skills/<name>/SKILL.md` BEFORE `catalog_lock.py --relock`** — the locker reads `git ls-files`, so an untracked new SKILL.md is skipped and ships unlocked while verify.sh still passes green. Confirm relock prints `added: [<name>]` and the skill count went up. See `reference-new-skill-git-track-before-relock`.
 
 ## What is safe to publish
 

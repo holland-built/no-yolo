@@ -41,6 +41,7 @@ md-check
 skill-audit
 update
 lockstep
+checkup
 
 ## Helpers (called by other skills)
 antislop

@@ -31,6 +31,7 @@ trim-gain|When you want to see trim's ROI in numbers.
 skill-audit|Wondering if your skills are well-structured or missing something
 health|Before merging any non-trivial change, when a codebase needs a cleanup pass, or when you want fixes informed by what's currently trending
 lockstep|You want "don't code yet" to actually hold, not just get ignored a few messages later
+checkup|You want one health check of your whole ~/.claude setup
 emil-design-eng|Automatically, inside /design and /design-audit, when a mockup has real animation
 animation-vocabulary|You know the motion but not what to call it when prompting an AI or designer
 review-animations|Automatically, inside /design-audit's Taste lens, when a surface has real animation
