@@ -7,6 +7,7 @@ INPUT=$(cat)
 
 # --- caveman badge (reuse hardened script) ---
 CAVE=$(bash "$HOME/.claude/hooks/caveman-statusline.sh" 2>/dev/null)
+LIT=$(bash "$HOME/.claude/hooks/literal-statusline.sh" 2>/dev/null)
 
 # --- parse stdin JSON (tab-delimited so paths with spaces survive) ---
 # MODEL_ID/TRANSCRIPT/COST are positional placeholders: unread, but required to
@@ -101,8 +102,10 @@ esac
 SEP="\033[38;5;240m · \033[0m"
 # caveman badge: strip [brackets], match plain font (keep amber color)
 CAVE_TXT="${CAVE//\[CAVEMAN\]/CAVEMAN}"
+LIT_TXT="${LIT//\[LITERAL\]/LITERAL}"
 OUT=""
 [ -n "$CAVE_TXT" ] && OUT="${CAVE_TXT}${SEP}"
+[ -n "$LIT_TXT" ] && OUT="${OUT}${LIT_TXT}${SEP}"
 OUT="${OUT}\033[38;5;245m${MODEL_SEG}\033[0m"
 [ -n "$CTX" ]   && OUT="${OUT}${SEP}\033[38;5;245m${CTX}ctx\033[0m"
 [ -n "$FIVEH" ] && OUT="${OUT}${SEP}\033[38;5;245m5h ${FIVEH}\033[0m"

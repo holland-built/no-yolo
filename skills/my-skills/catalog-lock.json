@@ -141,6 +141,18 @@
       },
       "structureSha": "66fa1fcb7f39de9bd084b72ce6db539331f723948f47c17d93b5a2c6c9c49aa4"
     },
+    "literal": {
+      "descSha": "c3aa37dd72a6c1cb72619f162d4076dc21f597b32dcfed19fba88b6036c5ca20",
+      "rows": {
+        "skills/my-skills/STORIES.md": "fe280ff058cb2f2d1cf2892526269814abd1fe4cc4f439626813b26ca8d8397b",
+        "skills/my-skills/STORIES.md#rel": "0c18a3661e7585c25e3f4fd36e1d119400d9fdf8d0fc42905284e4211ff70791",
+        "skills/my-skills/TAGLINES.md": "713c1e7c3838790fbef8d9bb755f5ff755b53d6b54733cee475c43497d92bf62",
+        "skills/my-skills/TAGLINES_SHORT.md": "dac3c322e6cef01f1162c52ab9af02814e3d01465378146fb0758e1700411116",
+        "skills/my-skills/WHEN_TO_USE.md": "df5c3745eb249ad52fb9a681abbfd84e59ca22f289eb97c70e5f9ff1d088b33d",
+        "skills/my-skills/WHY_TO_USE.md": "d9a220aa595c57815de72a73eec6338a0f160d177d25580ec821034eb6a08450"
+      },
+      "structureSha": "8beee6a69d4ed25561ec8565690f5cbc090197ac417c0416264e80b763ef8184"
+    },
     "lockstep": {
       "descSha": "e6b1a3bdc00654d6f0fdf11251f7f344e019cf75ee5e6884d094fbcf1506ae65",
       "rows": {

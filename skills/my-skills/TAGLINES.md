@@ -36,3 +36,4 @@ emil-design-eng|Emil Kowalski's UI-polish and animation-taste rules — feeds /d
 animation-vocabulary|Turns a vague animation description into its exact term.
 review-animations|Strict critique of animation/motion code against a high craft bar.
 xcheck|Cross-model critique: Codex reviews your plan, Claude adjudicates, 2-round cap.
+literal|Turns off AI's push-back for a stretch — it just does exactly what you say, no proposals, no mockups, until you flip it back.

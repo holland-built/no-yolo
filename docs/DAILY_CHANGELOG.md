@@ -2,6 +2,12 @@
 
 Fresh start 2026-07-17
 
+## 2026-07-21 — challenge-by-default posture + /literal off-switch (entry #24)
+
+- CORE_RULES now makes substance-challenge the DEFAULT: on a real change/complaint/direction, AI proposes its version and waits ("here's what I'd do instead — yours or mine?") before touching anything; for visual asks the counter-proposal is a /quick-mockup. Bare permission-questions stay banned. Reconciled rules 1/3/6/7/10 with a new "Challenge posture — precedence" block so they don't fight (propose-broad-but-execute-surgical; wait on direction, state-and-continue on internal assumptions).
+- New /literal skill + off-switch: a sticky mode (existence-based `.literal-active`, mirroring caveman/lockstep) that suppresses the challenge posture for a stretch — AI obeys the letter, no proposals, no mockups — until `/literal off`. A UserPromptSubmit hook (literal-mode-tracker.js) injects the suppression each turn while active, handles inline one-off safewords ("just do it", "do exactly what i say", "no ai") without writing the flag, and a cyan [LITERAL] status-bar badge shows when it's on. Wired into settings.example.json; 6 hook tests incl. a false-positive guard so ordinary uses of "literal" don't trigger it.
+- Built /plan → xcheck (8 Codex findings folded) → Opus plan (self-checked) → 5 parallel Sonnet agents → 46 hook tests green + verify.sh all-green. Piece B (/match-all propagation skill) deferred to its own build — xcheck showed its sibling-discovery + per-item adaptation is genuinely new logic, not a /design wrapper.
+
 ## 2026-07-21 — new /checkup skill: one-command library health pass (entry #23)
 
 - New `/checkup` skill (Meta bucket): one read-only wellness pass over the whole ~/.claude library. Thin wrapper — shells to existing owners (`verify.sh`, `/md-check --drift`/`--orphans`, bare `/update`, `/antislop`, `/skill-audit`, `memory_compile.py`), never re-implements a check. Auto-fixes only deterministic regen output, then pauses with one plain-English summary before you pick findings → `/plan` → approval → subagent build → `/release`. Never pushes blind. Built via /plan → xcheck (8 Codex findings folded) → Opus plan → Sonnet build.

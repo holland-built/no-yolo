@@ -42,6 +42,7 @@ skill-audit
 update
 lockstep
 checkup
+literal
 
 ## Helpers (called by other skills)
 antislop

@@ -36,3 +36,4 @@ emil-design-eng|Vaul/Sonner-author taste rules catch wrong easing, wrong shadows
 animation-vocabulary|The right word gets a better result from any AI than a vague description does
 review-animations|Approval is earned, not assumed — catches animation mistakes a generic review misses
 xcheck|A different model family catches blind spots self-review can't — findings-only protocol stops rewrite ping-pong, convergence gate stops endless nitpicking
+literal|The challenge-by-default posture is great for direction, but during fast knob-turning you just want it done — this mutes it.
