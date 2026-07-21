@@ -20,6 +20,7 @@ Every argument and flag each skill accepts, straight from the skill files themse
 | last-30 | `[topic / library / tool / pattern to research]` |
 | literal | `[on\|off] (omit to toggle on)` |
 | lockstep | `[on\|off] (omit to toggle on)` |
+| match-all | `[golden: component name \| file:line \| 'this rendered thing'] [--scope <dir>] [--batch <n>]` |
 | md-check | `[--fix [--auto]] [--drift] [--orphans] [--pre <proposed-filename>] (omit for read-only audit)` |
 | my-skills | `[deep]` |
 | plan | `[describe the feature, system, or decision to plan]` |

@@ -37,3 +37,4 @@ animation-vocabulary|The right word gets a better result from any AI than a vagu
 review-animations|Approval is earned, not assumed — catches animation mistakes a generic review misses
 xcheck|A different model family catches blind spots self-review can't — findings-only protocol stops rewrite ping-pong, convergence gate stops endless nitpicking
 literal|The challenge-by-default posture is great for direction, but during fast knob-turning you just want it done — this mutes it.
+match-all|Broadcasts the good one's language, not a copy — too-basic siblings get elevated, empty content gets hidden or a sensible fallback, never a pasted placeholder

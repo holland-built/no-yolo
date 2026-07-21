@@ -37,3 +37,4 @@ animation-vocabulary|You know the motion but not what to call it when prompting 
 review-animations|Automatically, inside /design-audit's Taste lens, when a surface has real animation
 xcheck|Automatically inside /plan, /debate, /build, /diagnose --debate, /design-audit — or /xcheck to bounce any plan off Codex manually
 literal|You're making rapid changes and want zero push-back for a while
+match-all|One instance looks right and its siblings don't — make them all match it without hand-editing each
