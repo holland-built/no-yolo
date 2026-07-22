@@ -1,6 +1,6 @@
 ---
 name: design-audit
-description: Use this skill when the user types /design-audit, says 'audit this UI', 'review the design', 'find design problems', or 'what's wrong with this UI'. Audits the current UI across 5 lenses -> adversarial verification of every Critical -> ranked violations table + P0/P1/P2 plan -> eli5 summary. Then asks if you want to fix: yes triggers 10-mockup fix pipeline (same as /design) scoped to audit findings, you pick a variant, then builds and verifies.
+description: Use this skill when the user types /design-audit, says 'audit this UI', 'find design problems', or 'what's wrong with this UI'. Audits the current UI across 5 lenses -> adversarial verification of every Critical -> ranked violations table + P0/P1/P2 plan -> eli5 summary. Then asks if you want to fix: yes triggers 10-mockup fix pipeline (same as /design) scoped to audit findings, you pick a variant, then builds and verifies.
 user-invocable: true
 argument-hint: "[surface to audit]"
 allowed-tools:

@@ -37,11 +37,11 @@
       "structureSha": "42825bd0d4de88058c8edabc2ded32ce0ef1d405fccfb5f5cc47ea8d65553db5"
     },
     "checkup": {
-      "descSha": "d6109756f37be0561a409e763dbefb875d3823ac19142c1ee355f22815c816c0",
+      "descSha": "a3f19eda7913423c47f1fe32ff4087513dfd805dc04aca36ff22f1ad1a3d4aba",
       "rows": {
         "skills/my-skills/STORIES.md": "ba0f1f9967c63b51442dca196a0738fb8a21c82ce9aace37c124f66c5e33f60e",
         "skills/my-skills/STORIES.md#rel": "c8be9886e890ffb6dbf7b6f322279fc65382a6c38d382647940691784631d307",
-        "skills/my-skills/TAGLINES.md": "02b20ca4aae2c1b0991e308f0dd7eb56aa65b186586ba8bd0ec27392fe602b8c",
+        "skills/my-skills/TAGLINES.md": "0c89fb70dbcd50b616d588a8fff0cabf1592d0e1cf9004a10ccf5afbe7d59b70",
         "skills/my-skills/TAGLINES_SHORT.md": "035d5c2c188c6a2541ea69ee7b408465d2ff2e8d53f47c45277fe755570bdeb3",
         "skills/my-skills/WHEN_TO_USE.md": "3e60cd080daabcaa572a577b74af0555187f27cf73a5701beb26719a69fa5588",
         "skills/my-skills/WHY_TO_USE.md": "8e9c7ba49a1069a442b3bdcd278993160de8814a97a4c9aea759712ceede9792"
@@ -49,7 +49,7 @@
       "structureSha": "c44cd9d4abdb92d7ac5db0093500535e52e37dc3acc218cc33c2501039b60e0a"
     },
     "debate": {
-      "descSha": "327a2bf4126874cc58f5164f0c3c8bade157e70fb2eb574600d4f08cb92f87d0",
+      "descSha": "a4edf4b202c3c3c51178eff76f015ca0d54b44a9bf917888dd5de456c25d6d78",
       "rows": {
         "skills/my-skills/STORIES.md": "deb500c6a9101671e98fd0c4f3a60cbd760ba03adad9dd080131c190eab77090",
         "skills/my-skills/TAGLINES.md": "f6c30d2292cb6ef46b91d6b56a0a3ae21c116e245c58741e11a8203c5abd2e39",
@@ -60,7 +60,7 @@
       "structureSha": "adfc0ce45b3ebf69149241a6dc3ec3f75c31046cb8daccb5d6f46182dfb17b4b"
     },
     "design": {
-      "descSha": "1ee24f2a60401620ba0bbe40d66f59258200f91b68f31927bf4cfc892cd2339b",
+      "descSha": "bcb1b7ef3a7319fb79a0b18da674691e3857683e274cae84ed7baa5fed919f03",
       "rows": {
         "skills/my-skills/STORIES.md": "0c7724179a5c8cb8e02a62267715a464b592080f5ad5bfbe8c8a2430eb321505",
         "skills/my-skills/STORIES.md#rel": "b300494d7ac8be50fc7be26c57d39007b8ac92c5714ed792240c50642b52f5b4",
@@ -72,7 +72,7 @@
       "structureSha": "cae61138482d856d3fb4001a6c9bf07e9bc9f0d028ddd80d237e000079e87ec8"
     },
     "design-audit": {
-      "descSha": "9dbf19ba1fb4ec72f9c682c2d687cf73cb89848e47b268c7a79913e1e4d46bb6",
+      "descSha": "f7e3215919093222c770c1dfceb7891245e3c2c12d5bbf7a916679c8089e6583",
       "rows": {
         "skills/my-skills/STORIES.md": "4382d8d5b1c7f47db0043d95230a371ebfceba98ce919ac30dd63410696d81ca",
         "skills/my-skills/STORIES.md#rel": "2b38ba8d360fc7b267d2a3af338ad93f8161c861474f0be8864cd6b62f7e71b4",
@@ -107,7 +107,7 @@
       "structureSha": "aab100f36c425309563ffb1dda4a6f03a557c3ff37e74299a90641c8a7029176"
     },
     "health": {
-      "descSha": "b15f7fa0598086556869d609ccb4e34ea233ff6fde16fccac511d5ff7c0daa3b",
+      "descSha": "bce44aaad60ac4167d68336dc016c6994dc6999b1e9e7bdef4a66dee8d65c20f",
       "rows": {
         "skills/my-skills/STORIES.md": "bbdfb9619529d6b8c759b447f47697715ff53018734170b3a85fe680f316d9e3",
         "skills/my-skills/STORIES.md#rel": "614a68e414e7b0094c04760a3ab0d3cf0e0a1cfb8277e7e5662a7ff2367a2d7b",
@@ -293,7 +293,7 @@
       "structureSha": "6f5ae69c99969260fdb6d28eddc38bd007e46567aff3a06d08467d1b455fceac"
     },
     "update": {
-      "descSha": "7f2f6376bacf6582d5e2dd863439d6499c1adf42f8a6b1b23396331ad7aef2e2",
+      "descSha": "d3763f2028a3f1f7d7f0330f6196c4599e5638d5e25654be0577ed2c450a74ae",
       "rows": {
         "skills/my-skills/STORIES.md": "0142eedaf674ed365b210cb4b639a711159599603427f7449450e432f5fe5bfd",
         "skills/my-skills/TAGLINES.md": "1cd7ee07823e7be6a10e9f5f617f6de115241e9ef4ebad989a079efbb0b077b2",
