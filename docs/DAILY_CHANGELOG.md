@@ -2,6 +2,12 @@
 
 Fresh start 2026-07-17
 
+## 2026-07-21 — skill trigger-collision cleanup + checkup read-only fix (entry #27)
+
+- Tightened 6 skill descriptions to kill routing collisions found in an /improve audit: `design` drops "mock this up" (was stealing quick-mockup's small-ask lane), `health` drops the over-broad bare "review this", `design-audit` drops "review the design", `debate` drops "should we build this" (read as a whats-next query), `update` "what's new" → "what's new in my setup" (was colliding with last-30 trend queries), and `improve` is now anchored to /improve with an explicit hand-off note (over-engineering-only → /trim-audit, diff health → /health).
+- Corrected `checkup`'s description AND its my-skills tagline from the flat "read-only wellness pass" to "read-only except safe regen" — it runs regen.py, so the old claim was inaccurate.
+- Relocked the catalog to bless the 6 description edits (regen.py rebuilt RENDERED.md; catalog-lock.json updated); verify.sh all-green. Surfaced by /improve → fixed inline → /checkup caught the resulting catalog drift → relocked.
+
 ## 2026-07-21 — /quick-mockup upgrade: 5 style-matched functional variants on one page (entry #26)
 
 - /quick-mockup went from "1-3 placeholder-only gray static variants in separate tabs" to "up to 5 style-matched, lightly-functional layout candidates on ONE combined page with an AI ★ pick" — while staying much lighter than /design (no slop-judge, no brand-seed, no 10-variant pipeline). Default is now 5 (--variants clamps 2-5).

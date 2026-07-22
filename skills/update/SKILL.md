@@ -1,6 +1,6 @@
 ---
 name: update
-description: Use this skill when the user types /update, says 'check for updates', 'am I out of date', 'what's new', 'update my setup', or 'rollback'. Two-way reconciliation between your local ~/.claude and its published copy on GitHub — checks not just what GitHub has that you don't (behind), but what you have that GitHub doesn't yet (ahead, or plain uncommitted work — points to /release to publish). Also covers plugin version status and vendored third-party skill drift (docs/THIRD_PARTY_SKILLS.md). `/update vendor <name>` and `/update marketplace <name>` actually apply third-party updates (re-vendor / git pull) — the only steps that touch third-party content, always behind a confirm.
+description: Use this skill when the user types /update, says 'check for updates', 'am I out of date', 'what's new in my setup', 'update my setup', or 'rollback'. Two-way reconciliation between your local ~/.claude and its published copy on GitHub — checks not just what GitHub has that you don't (behind), but what you have that GitHub doesn't yet (ahead, or plain uncommitted work — points to /release to publish). Also covers plugin version status and vendored third-party skill drift (docs/THIRD_PARTY_SKILLS.md). `/update vendor <name>` and `/update marketplace <name>` actually apply third-party updates (re-vendor / git pull) — the only steps that touch third-party content, always behind a confirm.
 user-invocable: true
 model: sonnet
 argument-hint: "[preview|full|rules|rollback|restore <name>|vendor <name>|marketplace <name>]"
