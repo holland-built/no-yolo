@@ -2,6 +2,13 @@
 
 Fresh start 2026-07-17
 
+## 2026-07-24 — debate persona sharpening: User Advocate seat + evidence lanes (entry #29)
+
+- Swapped `debate`'s default-panel Product Designer seat for **The User Advocate** — argues the user's outcome/job-to-be-done instead of pixels, so it bites on code and product calls (the Product Designer's screen lens stays on the `--ui` panel where it belongs).
+- Added a **sharpening contract** binding every persona on both panels: cite a specific fact (file/rule/failure) or the Chairman discounts it, judge against the project's own standards not generic taste. Validated by live-testing sharpened personas on both panels — they cited real anchors (CORE_RULES, WCAG ratios, named products) and stayed distinct.
+- Added **soft evidence lanes**: each seat leads with its own evidence class (DevOps→failure modes, Prioritizer→opportunity cost, Eng Leader→capacity/debt/ownership, etc.) to fight documented persona-collapse, but may still flag cross-cutting points. The Chairman now runs an explicit collapse check — two seats citing the same evidence for the same claim get the weaker one down-weighted.
+- Removed the Eng Leader ↔ Prioritizer overlap: Eng Leader's third question moved from roadmap opportunity-cost (the Prioritizer's lane) to maintainer/ownership.
+
 ## 2026-07-24 — model/effort presets + debate project-grounding (entry #28)
 
 - Model preset changes: `build`'s plan-authoring agent now runs on Fable at high effort (was Opus), `checkup` drops from Opus to Sonnet (it orchestrates other checks, doesn't reason deeply), and the `debugger` agent moves from Sonnet to Opus (root-cause work is the one build task that needs it).
