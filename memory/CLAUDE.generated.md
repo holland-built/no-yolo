@@ -1,5 +1,5 @@
 <!-- GENERATED FROM ~/.claude/memory/facts/ — DO NOT EDIT. Run /memory-compile. -->
-<!-- compiled 2026-07-21 -->
+<!-- compiled 2026-07-24 -->
 # Learned Preferences (compiled from curated memory)
 
 Compiled from the fact store. Each line links its source fact.
@@ -17,6 +17,7 @@ Compiled from the fact store. Each line links its source fact.
 
 ## Patterns
 - **Read target + imports before dispatching a file-modifying agent** — Before dispatching any agent that edits an existing file, the coordinator reads that file and its direct imports and writes an explicit 'already exists — do NOT recreate' section; cap agent output ~300 words. ([pattern-agent-read-before-dispatch](memory/facts/pattern-agent-read-before-dispatch.md))
+- **Verify prompt/persona changes with a live test, not just desk review** — To confirm a prompt/persona/skill-behavior change actually works, dispatch the real agents and observe their output (live test) — static desk review finds structural issues but cannot prove behavior. Run desk review as a cheap pre-filter, then a live test to verify. ([pattern-live-test-over-desk-review](memory/facts/pattern-live-test-over-desk-review.md))
 - **New skill creation checklist — 4 required steps** — Creating a skill requires 4 updates: SKILL.md with user-invocable true AND its triggers in that same description, catalog rows in my-skills, relock the catalog, delete any commands/ version if migrating ([pattern-new-skill-checklist](memory/facts/pattern-new-skill-checklist.md))
 
 ## Reference
