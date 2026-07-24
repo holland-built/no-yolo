@@ -4,6 +4,7 @@ description: Use this skill when the user types /antislop, says 'check for slop'
 user-invocable: true
 argument-hint: "[text, code, or output to check]"
 model: haiku
+effort: low
 allowed-tools:
   - Read
   - Bash

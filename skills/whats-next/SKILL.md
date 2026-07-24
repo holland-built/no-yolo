@@ -4,6 +4,7 @@ description: Use this skill when the user types /whats-next, says 'what's next',
 user-invocable: true
 argument-hint: ""
 model: haiku
+effort: low
 allowed-tools:
   - Bash
   - Read

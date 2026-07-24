@@ -3,6 +3,7 @@ name: literal
 description: Use this skill when the user types /literal, says 'stop challenging', 'just do it', 'do exactly what I say', or 'literal mode'. Toggles a sticky mode that suppresses AI's challenge-by-default posture — AI obeys your words to the letter, proposes nothing, shows no mockups, until you turn it off. Off = challenging resumes.
 user-invocable: true
 model: haiku
+effort: low
 argument-hint: "[on|off] (omit to toggle on)"
 allowed-tools:
   - Bash

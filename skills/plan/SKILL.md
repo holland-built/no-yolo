@@ -2,6 +2,7 @@
 name: plan
 description: Use this skill when the user types /plan, says 'plan this', 'help me think through', 'plan before we build', or 'interview me about'. Pre-build planning interview — extracts design decisions, edge cases, constraints one question at a time before any code.
 user-invocable: true
+effort: high
 argument-hint: "[describe the feature, system, or decision to plan]"
 allowed-tools:
   - Bash

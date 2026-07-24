@@ -4,6 +4,7 @@ description: Use this skill when the user types /eli5, and automatically on ever
 user-invocable: true
 argument-hint: "[skill name, plan text, command, or file path]"
 model: haiku
+effort: low
 allowed-tools:
   - Bash
   - Read

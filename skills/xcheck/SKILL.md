@@ -2,6 +2,7 @@
 name: xcheck
 description: Use this skill when the user types /xcheck, says 'bounce this off codex', 'cross-check this plan', or 'second model opinion'. Sends a plan/diagnosis/decision to OpenAI Codex for critique, Claude adjudicates each finding, patches the artifact, max 2 rounds. Also invoked internally by /plan, /debate, /build, /diagnose --debate, /design-audit.
 user-invocable: true
+effort: high
 argument-hint: "[artifact to cross-check — plan text, file path, or 'last plan']"
 allowed-tools:
   - Bash

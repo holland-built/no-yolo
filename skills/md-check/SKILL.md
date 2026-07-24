@@ -4,6 +4,7 @@ description: Use this skill when the user types /md-check, says 'check md files'
 user-invocable: true
 argument-hint: "[--fix [--auto]] [--drift] [--orphans] [--pre <proposed-filename>] (omit for read-only audit)"
 model: haiku
+effort: low
 allowed-tools:
   - Bash
   - Read

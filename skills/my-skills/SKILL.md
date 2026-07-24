@@ -4,6 +4,7 @@ description: Use this skill when the user types /my-skills, says 'my skills', 'l
 user-invocable: true
 argument-hint: "[deep]"
 model: haiku
+effort: low
 allowed-tools:
   - Bash
 ---

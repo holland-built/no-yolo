@@ -3,6 +3,7 @@ name: last-30
 description: Use this skill when the user types /last-30, says 'what's trending in', 'last 30 days', or 'what's hot right now'. Pulls gaining-traction signal from GitHub, HN, Reddit, YouTube, X — last 30 days only, not all-time rankings.
 user-invocable: true
 model: sonnet
+effort: low
 argument-hint: "[topic / library / tool / pattern to research]"
 allowed-tools:
   - mcp__firecrawl__firecrawl_search

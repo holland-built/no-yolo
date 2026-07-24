@@ -3,7 +3,7 @@ name: checkup
 description: Use this skill when the user types /checkup, says 'checkup', 'check up my skills', 'health check my library', or 'is my setup healthy'. One wellness pass (read-only except deterministic regen artifacts) over the ~/.claude skill library — shells to verify.sh, /md-check, /update, /antislop, /skill-audit and the memory lint (never re-implements a check), auto-fixes only deterministic derived output (regen.py), then pauses with one plain-English summary before you pick findings to fix via /plan → approval → subagent build → /release.
 user-invocable: true
 argument-hint: "(no arguments — one full read-only pass)"
-model: opus
+model: sonnet
 allowed-tools:
   - Bash
   - Read

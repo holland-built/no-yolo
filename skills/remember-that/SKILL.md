@@ -4,6 +4,7 @@ description: Use this skill when the user types /remember-that, says 'remember t
 user-invocable: true
 argument-hint: "<fact> | d <id> | m <id> | audit | compile | (empty=extract from context)"
 model: haiku
+effort: low
 allowed-tools:
   - Bash
   - Read
