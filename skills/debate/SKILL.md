@@ -1,6 +1,6 @@
 ---
 name: debate
-description: Use this skill when the user types /debate, says 'debate this', 'stress test this decision', or 'get the team on this'. Seven-persona product-team debate — Senior Dev + Junior Dev + The Alternative + DevOps + The Prioritizer + Eng Leader + Product Designer — Chairman oversight, contradiction map, synthesis, peer review. Both panels ground personas in an in-memory project primer (built fresh per run from the repo's own docs, never written to disk) so they argue against your real codebase, not generically. Flag `--ui` swaps in a 6-persona UI/UX panel (7th seat joins on ranking asks) grounded in the project's design docs and installed design skills.
+description: Use this skill when the user types /debate, says 'debate this', 'stress test this decision', or 'get the team on this'. Seven-persona product-team debate — Senior Dev + Junior Dev + The Alternative + DevOps + The Prioritizer + Eng Leader + User Advocate — Chairman oversight, contradiction map, synthesis, peer review. Both panels ground personas in an in-memory project primer (built fresh per run from the repo's own docs, never written to disk) so they argue against your real codebase, not generically. Flag `--ui` swaps in a 6-persona UI/UX panel (7th seat joins on ranking asks) grounded in the project's design docs and installed design skills.
 user-invocable: true
 argument-hint: "<topic or decision> [--ui]"
 ---
@@ -50,6 +50,12 @@ For a large repo, keep the digest reads scoped to the debate topic. If the diges
 
 Run all 7 in parallel as subagents (model: opus). Never inline — parallel is mandatory to prevent personas biasing each other. **Each persona's brief includes the Step 1.5 project primer** so they argue against this codebase, not in the abstract. Each persona answers their 3 questions, then delivers their unique angle.
 
+**Sharpening contract (binds every persona, both panels).** A persona is only as smart as what it's forced to cite. Put this in each brief:
+- **Ground every claim in a specific fact** — a file/symbol from the primer, a named rule (`CORE_RULES.md`, the project's own standards), or a concrete failure scenario. An assertion with no anchor is DISCOUNTED by the Chairman (Step 3), so vibes cost the persona its vote.
+- **Judge against THIS project's bar, not generic taste** — name the standard, benchmark, or prior decision you're measuring against; "I don't like it" is not an argument, "it violates rule X / the primer says Y" is.
+- **Lead with your evidence lane (soft, not gagged)** — each seat argues primarily from its own evidence class so the panel can't homogenize: DevOps→failure/operational facts, Prioritizer→value-vs-effort and what-it-displaces, Eng Leader→team capacity/debt/ownership, User Advocate→user-outcome/JTBD, Senior Dev→standards/2-year durability, Junior Dev→newcomer-legibility. UI panel seats already carry natural lanes (color-contract, layout/hierarchy, a11y ratios, named-benchmark). You MAY flag a cross-cutting point outside your lane, but lead with yours. The Chairman (Step 3) flags any two seats citing the *same* evidence for the *same* claim — that's collapse, and the weaker of the two is down-weighted.
+- **Argue past the strawman** — deliver the one thing only your role sees; engage the strongest version of the opposing case, not the weakest.
+
 **THE SENIOR DEV** — guards the technical standard AND the design bar
 - Does this hold up under load, edge cases, and the next 2 years of changes?
 - Is this the simplest correct design, or are we adding accidental complexity?
@@ -80,17 +86,17 @@ Run all 7 in parallel as subagents (model: opus). Never inline — parallel is m
 - If we could only ship half of this, which half earns its place?
 - *Only they would say:* "Everything here is worth doing — that's not the question. Rank it against what you're NOT doing."
 
-**THE ENGINEERING LEADER** — team feasibility, debt, roadmap
+**THE ENGINEERING LEADER** — team capacity, debt, ownership (NOT opportunity cost — that's the Prioritizer's lane)
 - Can the team actually build and maintain this with who and what we have?
 - What technical debt does this create or pay down, and is the trade worth it?
-- What does saying yes to this cost us elsewhere on the roadmap?
-- *Only they would say:* "Capacity is the real constraint — here's what we'd have to drop or delay to make room for this."
+- Who owns this after it ships — is there a named maintainer, or does it rot the first time it breaks?
+- *Only they would say:* "Capacity and ownership are the real constraint — a thing no one on the team can maintain is a liability the day its author moves on."
 
-**THE PRODUCT DESIGNER** — the human under pressure, UX/interaction lens
-- What does the user see and do in the first 3 seconds of this surface, and does it match what they came to do?
-- Where does cognitive load spike — how many states, choices, and interruptions stand between intent and done?
-- Does the information hierarchy match the task's real priority, or does the layout advertise what was easiest to build?
-- *Only they would say:* "Nobody in this room has watched a real user fail at this — here's the moment they give up, and no metric or refactor fixes what the screen itself is doing wrong."
+**THE USER ADVOCATE** — the outcome / job-to-be-done lens (not pixels)
+- What job did the user hire this for, and does this decision move that outcome or just our internals?
+- What breaks in the user's real workflow if we ship this — and would they even notice the thing we're debating?
+- Are we solving the user's problem or our own (elegance, tidiness, resume-driven design)?
+- *Only they would say:* "None of your seven agree on the code, and the user doesn't care which of you wins — here's the outcome they came for, and whether any option on the table actually delivers it."
 
 For each perspective output:
 - Core position (2 sentences)
@@ -102,7 +108,7 @@ For each perspective output:
 After all 7 personas return, run ONE more subagent (model: opus): **THE CHAIRMAN** — oversight, not an 8th opinion. The Chairman gets every persona's full output and steers the debate before synthesis. The Chairman never introduces new arguments — only rules on the ones presented.
 
 The Chairman outputs exactly:
-1. **Evidence rulings** — for each persona: ADMITTED (argument backed by evidence: code read, data cited, causal logic) or DISCOUNTED (assertion, vibes, lens-flattering claim). One line of reason each.
+1. **Evidence rulings** — for each persona: ADMITTED (argument backed by evidence: code read, data cited, causal logic) or DISCOUNTED (assertion, vibes, lens-flattering claim). One line of reason each. **Collapse check:** if two seats reached the same claim citing the same evidence (not just the same conclusion via different lanes), name the pair and down-weight the weaker — that is persona collapse, the failure this panel exists to avoid.
 2. **Forced answers** — the 2 sharpest unanswered cross-examinations (e.g. "SE claims X; EngLeader's capacity point directly contradicts it — which survives?") with the Chairman's ruling on each.
 3. **Steering order** — 3 bullets max: what the synthesis (Steps 4–6) MUST address, and any persona whose voice must be down-weighted for dominating without evidence.
 
@@ -177,7 +183,7 @@ Only include if the decision has an irreversible, costly, or team-visible conseq
 
 Replaces Step 2's seven personas with these **six**. Run all 6 in parallel as subagents (model: opus), same rules — never inline. Each answers their 3 questions, then delivers the one thing only they would say. Then Chairman (Step 3) and Steps 4–8 run identically.
 
-**Also inject the Step 1.5 project primer** into every persona brief here, on top of the design grounding below — the UI panel argues against both the codebase and the design standards.
+**Also inject the Step 1.5 project primer** into every persona brief here, on top of the design grounding below — the UI panel argues against both the codebase and the design standards. **The Step 2 sharpening contract binds these personas too:** cite a specific token/rule/component or a concrete failure, judge against the named design standard (not generic taste), or the Chairman discounts it.
 
 **Grounding (required before dispatch):** read any project design docs found (`DESIGN.md`, `COLOR_CONTRACT.md`, `UIUX_CHECKLIST.md`, `MOCKUPS.md`, `learnings.md`, `tailwind.config.*`, token/theme CSS), plus installed knowledge — the `emil-design-eng` skill's rules (`~/.claude/skills/emil-design-eng/`), `~/.claude/docs/ANTISLOP.md` → `## GUI Slop`, `~/.claude/docs/UI_MOCKUPS.md`, and the `dataviz` skill's references when the surface includes charts/dashboards. Pass the extracted rules (palette contract, named rules, density/type scale, banned aesthetics, both-theme requirement, slop tells) into every persona's brief so they argue against these standards, not generic taste. If no project design docs exist, personas still ground in the installed knowledge above plus WCAG + the stated product context, and say so.
 
