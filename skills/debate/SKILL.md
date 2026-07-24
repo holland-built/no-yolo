@@ -1,6 +1,6 @@
 ---
 name: debate
-description: Use this skill when the user types /debate, says 'debate this', 'stress test this decision', or 'get the team on this'. Seven-persona product-team debate — Senior Dev + Junior Dev + The Alternative + DevOps + The Prioritizer + Eng Leader + Product Designer — Chairman oversight, contradiction map, synthesis, peer review. Flag `--ui` swaps in a 6-persona UI/UX panel (7th seat joins on ranking asks) grounded in the project's design docs and installed design skills.
+description: Use this skill when the user types /debate, says 'debate this', 'stress test this decision', or 'get the team on this'. Seven-persona product-team debate — Senior Dev + Junior Dev + The Alternative + DevOps + The Prioritizer + Eng Leader + Product Designer — Chairman oversight, contradiction map, synthesis, peer review. Both panels ground personas in an in-memory project primer (built fresh per run from the repo's own docs, never written to disk) so they argue against your real codebase, not generically. Flag `--ui` swaps in a 6-persona UI/UX panel (7th seat joins on ranking asks) grounded in the project's design docs and installed design skills.
 user-invocable: true
 argument-hint: "<topic or decision> [--ui]"
 ---
@@ -34,9 +34,21 @@ The argument can be:
 - A prioritization call: "build SSO or the reporting API next"
 - A document, mockup, or plan (if user pastes it in)
 
+### Step 1.5 — Project primer (grounding, in-memory)
+
+Personas must argue against THIS project, not generic taste. Before dispatch, the coordinator builds a project primer **in memory and passes it into every persona brief** — nothing is written to disk. No cache file, no staleness gate, no committed artifact: the regeneration cost is a rounding error next to seven Opus personas, and a persisted `.debate-primer.md` would drift, churn git, and violate this library's derive-don't-store convention (decided by `/debate` on 2026-07-24).
+
+Build it from the human-owned digests only — do NOT read the whole codebase:
+- `CLAUDE.md`, `README*`, `docs/` architecture files, `DESIGN.md` / design tokens, and top-level source-dir names for shape (not full contents).
+- Plus `~/.claude/docs/CORE_RULES.md` for the project's standards.
+
+Distill to a **single sectioned primer** (≤150 lines held in context): current architecture, stack, conventions, active constraints, project standards, and — as its own **Design section** — any tokens/design docs found. One primer serves both panels; split into a separate design primer only if a real `--ui` run visibly starves for design grounding (falsifiable trigger, not by default).
+
+For a large repo, keep the digest reads scoped to the debate topic. If the digests are trivial or absent (tiny/new repo), ground in `CORE_RULES.md` + the stated context and say so. The same in-memory primer is injected into every persona brief in Step 2 and Appendix A.
+
 ### Step 2 — Seven perspectives
 
-Run all 7 in parallel as subagents (model: opus). Never inline — parallel is mandatory to prevent personas biasing each other. Each persona answers their 3 questions, then delivers their unique angle.
+Run all 7 in parallel as subagents (model: opus). Never inline — parallel is mandatory to prevent personas biasing each other. **Each persona's brief includes the Step 1.5 project primer** so they argue against this codebase, not in the abstract. Each persona answers their 3 questions, then delivers their unique angle.
 
 **THE SENIOR DEV** — guards the technical standard AND the design bar
 - Does this hold up under load, edge cases, and the next 2 years of changes?
@@ -164,6 +176,8 @@ Only include if the decision has an irreversible, costly, or team-visible conseq
 ## Appendix A — UI/UX panel (`--ui` flag)
 
 Replaces Step 2's seven personas with these **six**. Run all 6 in parallel as subagents (model: opus), same rules — never inline. Each answers their 3 questions, then delivers the one thing only they would say. Then Chairman (Step 3) and Steps 4–8 run identically.
+
+**Also inject the Step 1.5 project primer** into every persona brief here, on top of the design grounding below — the UI panel argues against both the codebase and the design standards.
 
 **Grounding (required before dispatch):** read any project design docs found (`DESIGN.md`, `COLOR_CONTRACT.md`, `UIUX_CHECKLIST.md`, `MOCKUPS.md`, `learnings.md`, `tailwind.config.*`, token/theme CSS), plus installed knowledge — the `emil-design-eng` skill's rules (`~/.claude/skills/emil-design-eng/`), `~/.claude/docs/ANTISLOP.md` → `## GUI Slop`, `~/.claude/docs/UI_MOCKUPS.md`, and the `dataviz` skill's references when the surface includes charts/dashboards. Pass the extracted rules (palette contract, named rules, density/type scale, banned aesthetics, both-theme requirement, slop tells) into every persona's brief so they argue against these standards, not generic taste. If no project design docs exist, personas still ground in the installed knowledge above plus WCAG + the stated product context, and say so.
 

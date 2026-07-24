@@ -2,6 +2,13 @@
 
 Fresh start 2026-07-17
 
+## 2026-07-24 — model/effort presets + debate project-grounding (entry #28)
+
+- Model preset changes: `build`'s plan-authoring agent now runs on Fable at high effort (was Opus), `checkup` drops from Opus to Sonnet (it orchestrates other checks, doesn't reason deeply), and the `debugger` agent moves from Sonnet to Opus (root-cause work is the one build task that needs it).
+- Added `effort: low` to 12 display/fetch skills (`eli5`, `my-md`, `my-skills`, `whats-next`, `literal`, `lockstep`, `antislop`, `md-check`, `remember-that`, `last-30`, `update`, `release`) — speed win with no quality risk.
+- Added `effort: high` to `plan`, `diagnose`, and `xcheck` — the deep-reasoning skills where being wrong compounds.
+- `debate` now grounds both panels in a project primer built in memory from the repo's own docs (CLAUDE.md/README/docs) and discarded after the run — personas argue against your real codebase instead of generically. Deliberately not persisted to disk: a committed machine-written summary would drift, churn git, and break the library's derive-don't-store rule (decided by running `/debate` on itself).
+
 ## 2026-07-21 — skill trigger-collision cleanup + checkup read-only fix (entry #27)
 
 - Tightened 6 skill descriptions to kill routing collisions found in an /improve audit: `design` drops "mock this up" (was stealing quick-mockup's small-ask lane), `health` drops the over-broad bare "review this", `design-audit` drops "review the design", `debate` drops "should we build this" (read as a whats-next query), `update` "what's new" → "what's new in my setup" (was colliding with last-30 trend queries), and `improve` is now anchored to /improve with an explicit hand-off note (over-engineering-only → /trim-audit, diff health → /health).

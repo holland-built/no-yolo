@@ -2,6 +2,7 @@
 name: diagnose
 description: Use this skill when the user types /diagnose, says 'debug this', 'can't figure out why', 'something's broken', 'argue about this bug', or 'debate the bug'. Two modes: default = systematic 6-phase diagnosis (reproduce → minimize → hypothesize → instrument → fix → regression-test); --debate = 6 parallel Opus personas argue competing root-cause theories → contradiction map → diagnosis + next step. Diagnosis only in debate mode, no fix.
 user-invocable: true
+effort: high
 argument-hint: "[describe the bug or paste the error] [--debate]"
 allowed-tools:
   - Bash

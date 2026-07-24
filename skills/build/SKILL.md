@@ -57,7 +57,7 @@ Do NOT plan a fix whose cause you have not located with evidence. Grill-me and O
 Never plan from the raw description. Interview one question at a time with `AskUserQuestion` — 3–4 clickable options, recommended answer placed **in the middle** (not first, not last). Walk every branch. Checkpoint each answer to `brainstorms/<slug>-<date>.md` (Decisions / Open flags / Q&A log). Stop when all branches resolved or user says "done".
 
 ## 2 — Opus plan
-Spawn ONE `Agent` (model: opus) with the full plan transcript **AND the phase-0 diagnosis**. Tell Opus the located root cause is ground truth — fix at the SOURCE, not with a stack of leaf-level patches. The plan MUST contain:
+Spawn ONE `Agent` (model: fable, effort: high) with the full plan transcript **AND the phase-0 diagnosis**. Tell the planner the located root cause is ground truth — fix at the SOURCE, not with a stack of leaf-level patches. The plan MUST contain:
 - **Root cause** restated as `X breaks because Y = Z (file:line)` + the single source change that addresses it
 - **Success predicate** — the falsifiable, measurable condition that proves done (carried from phase 0). Every plan ends in a number or a boolean, never "should work"
 - **Target file list**, each with an "already exists — do NOT recreate" note

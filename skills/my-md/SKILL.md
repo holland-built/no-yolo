@@ -4,6 +4,7 @@ description: Use this skill when the user types /my-md, says 'list md files', or
 user-invocable: true
 argument-hint: ""
 model: haiku
+effort: low
 allowed-tools:
   - Bash
 ---
