@@ -12,6 +12,11 @@ after you (or `/update vendor <name>`) run the install command, but never on Git
 | improve | `shadcn/improve` | `npx skills@latest add shadcn/improve` | `skills/improve` | `/health`, `/improve` |
 | emil-design-eng (+6) | `emilkowalski/skills` | `npx skills@latest add emilkowalski/skills` (hashes pinned in `skills-lock.json`) | `.agents/skills/{emil-design-eng,apple-design,animation-vocabulary,find-animation-opportunities,improve-animations,review-animations,pick-ui-library}` | `/design`, `/design-audit`, `/debate --ui` |
 | archify | `tt-a1i/archify` | `npx skills@latest add tt-a1i/archify` (hash pinned in `skills-lock.json`) | `.agents/skills/archify` | diagrams — replaced the tracked draw.io skill 2026-07-17 |
+| impeccable | Orca app (com.stablyai.orca) | managed by Orca app, not npx | `~/.agents/skills/impeccable` | design-system authoring for net-new sites |
+| computer-use | Orca app (com.stablyai.orca) | managed by Orca app, not npx | `~/.agents/skills/computer-use` | Orca desktop control |
+| orca-cli | Orca app (com.stablyai.orca) | managed by Orca app, not npx | `~/.agents/skills/orca-cli` | Orca CLI wiring |
+| orchestration | Orca app (com.stablyai.orca) | managed by Orca app, not npx | `~/.agents/skills/orchestration` | Orca multi-agent coordination |
+| interface-design | `Dammyjay93/interface-design` | `npx skills@latest add Dammyjay93/interface-design` | `~/.agents/skills/interface-design` | product UI craft (`/interface-design:design-review`, `/interface-design:design-deslop`) — **no attribution in local files, add on next touch** |
 
 > **Manual-only skills in this pack:** `review-animations` and `pick-ui-library` both set
 > `disable-model-invocation: true`, so the Skill tool REFUSES to run them (verified by test:

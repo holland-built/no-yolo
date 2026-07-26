@@ -2,6 +2,11 @@
 
 Fresh start 2026-07-17
 
+## 2026-07-26 — filled in the missing third-party attribution rows (entry #33)
+
+- `docs/THIRD_PARTY_SKILLS.md` was missing 5 rows: `impeccable`, `computer-use`, `orca-cli`, `orchestration` (all four managed by the Orca app, not npx) and `interface-design` (`Dammyjay93/interface-design`, no attribution shipped in its local files — flagged for a follow-up patch). All 5 verified present on disk under `~/.agents/skills/`.
+- Live-tested the new `/design-audit` Motion lens (from entry #32) against a real Wayfinder surface (`QuestionChip.tsx`, `InterviewRailView.tsx`, `QuestionRow.tsx`) — confirmed it fires on real motion code and returns real file:line findings instead of padding. No production changes made; Wayfinder is a separate repo.
+
 ## 2026-07-26 — full emilkowalski pack installed and auto-wired, no manual skills (entry #32)
 
 - Installed the four skills from `emilkowalski/skills` that were being skipped: `apple-design` (Apple's fluid-motion principles for the web — springs, velocity, momentum, interruptible transitions), `find-animation-opportunities`, `improve-animations`, and `pick-ui-library`. Only 3 of the pack's 7 were previously installed; nothing had excluded the rest, they simply were never added.
