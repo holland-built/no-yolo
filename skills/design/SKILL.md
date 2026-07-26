@@ -88,6 +88,13 @@ Mirror the fresh-gen HARD GATE (Step 4): *nothing lands before you confirm.*
 ### 6. Which-source rule (never mismatched twins — HARD)
 The sourcing gate's library is the ONLY prefab source for this run. Existing lib -> EVERY pulled component comes from it, simple or complex; if it lacks the requested component, check that lib's own ecosystem/registry first, else compose from its primitives themed to the project — NEVER install Astryx (or any second library) beside it. No lib + React -> Astryx for everything (greenfield). Always theme to the project's tokens (step 2). State which outcome applied in your summary.
 
+**Non-prefab library questions.** For a task the sourcing gate does NOT cover — charts, state
+management, virtualization, drag-and-drop, class-name utilities, theme switching, animation
+runtime — READ `~/.claude/.agents/skills/pick-ui-library/SKILL.md` for a curated pick (it is
+`disable-model-invocation: true`, so read it, never invoke it). Its component-primitive rows
+(base-ui, cmdk, Sonner) are OVERRIDDEN by the sourcing gate above and must not be installed
+beside the project's detected library — the gate wins for anything that is a UI primitive.
+
 ### 7. Reuse gate + verify
 - **Reuse gate (HARD, mirrors Step 4.6):** before placing, grep the tree for an existing component with the same/similar name or role. A sibling already doing this job means reuse or extend it — do NOT drop in an Astryx twin next to it.
 - After placing: run `tsc` + lint + build (zero new errors), then `npx playwright test` smoke on the changed surface (load it, assert no console errors, toggle dark mode). Use the Playwright CLI — NOT the `ecc:playwright` MCP. Fix any error before finishing.
@@ -160,6 +167,14 @@ Write the seed to `.mockups/design-seed.md`: palette hex, type families, spacing
 4. If `MOTION_INTENSITY` > baseline (real animation, not just static layout): invoke the `emil-design-eng` skill for transition/easing/timing decisions on the interactivity category. Skip silently if not installed — `/design` never depends on it (`npx skills@latest add emilkowalski/skills` to add it).
 
 The Design Read line, the three dial values, and the design-system decision all feed the Step 2 briefs alongside the six-category direction.
+
+**Motion grounding (conditional).** If the surface involves motion — gestures, drags, swipes,
+sheets, drawers, scroll-driven effects, or non-trivial transitions — first READ
+`~/.claude/.agents/skills/apple-design/SKILL.md` and pass its rules into every mockup agent's
+brief: motion starts from the current on-screen value, inherits the user's velocity, projects
+momentum forward, stays grabbable and reversible at any instant; springs over fixed-duration
+easing; always honour `prefers-reduced-motion`. Skip this read entirely for static surfaces
+(tables, forms, settings) — it is reference weight those variants do not need.
 
 ## Step 2 — 10 Opus mockups
 ONE parallel Agent call, `model: "opus"`. Each writes `.mockups/design-<slug>/vN.html`: self-contained, inline `<style>`, **no external deps**, `file://` openable, `<!-- VARIANT: vN — paradigm -->` header. **Real data, not lorem ipsum.** Bake the Step 0 seed tokens throughout.
@@ -272,6 +287,7 @@ Before dispatching the build, run detection per `skills/design/PREFAB_SOURCING.m
 4.6. **Reuse + simplicity gate (HARD):** for every NEW component/hook/util the build introduced, grep the tree for an existing one with the same/similar name or role — a sibling already doing this means reuse it, don't add a twin. If the diff added 3+ new components or duplicated an existing pattern (a second card/modal/table variant instead of extending the shared one), run `/ponytail` on the new files before proceeding. Fix or explicitly triage with reason before continuing. The diff must not contain a bespoke implementation of any primitive the sourcing table mapped to PREFAB — a violation means swap in the mapped component before proceeding.
 5. `npx playwright test` smoke after build (load each changed surface, assert no console errors, toggle dark mode). Use CLI — NOT `ecc:playwright` MCP.
 6. **Visual-diff gate (looks-like-the-mockup, not just no-errors).** For each built surface, screenshot the rendered React page with the Playwright/Chrome CLI (same machinery Step 3 uses on `all.html` — NOT the `ecc:playwright` MCP) and place it beside the chosen mockup's PNG (`.mockups/design-<slug>/`). Compare: palette, type scale, spacing rhythm, radius, key layout. If they diverge, the tokens did not fully land — fix (usually a missing/incorrect token from 5.1, or a shadcn component default overriding a token) and re-shoot. Do NOT declare done on a visible mismatch. State the result in one line ("rendered matches mockup" / "fixed N drifts").
+6.5. **Motion opportunity pass (React/web surfaces only, optional output).** Once the visual-diff gate passes, invoke the `find-animation-opportunities` skill (Skill tool, `skill: "find-animation-opportunities"`) on the changed files. Read-only, and built on "you don't need animations" — it rejects most candidates by design, so a short list is the expected result. Present its high-conviction proposals as optional follow-ups; do NOT implement them in this run. Skip for non-React/non-web surfaces.
 7. Run `/eli5` on the completed-work summary before presenting.
 
 ---

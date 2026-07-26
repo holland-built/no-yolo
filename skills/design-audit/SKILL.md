@@ -28,16 +28,28 @@ cat package.json 2>/dev/null | python3 -c "import json,sys; d=json.load(sys.stdi
 State one line: `Project: [type] · stack: [X]`. Detect whether a brand DESIGN.md
 (Awesome DESIGN.md 9-section format) is in use.
 
-## Step 1 — 5 parallel lens agents
+## Step 1 — 5–7 parallel lens agents
 ONE parallel Agent call. Each returns `severity | rule | file:line | observed | expected`.
-1. **Taste** — anti-slop fingerprint (FALLBACKS if sub-skill absent). If the surface has real
-   animation/transitions, also invoke `review-animations` for a strict animation-specific
-   critique. Skip silently if not installed.
+1. **Taste** — anti-slop fingerprint (FALLBACKS if sub-skill absent).
 2. **Swiss** — grid / type scale / color count.
 3. **UIwiki** — 20 rules scored.
 4. **WCAG 2.1 AA** — contrast, focus-visible, keyboard, aria, reduced-motion.
 5. **CSS health** — hardcoded values, magic numbers, inconsistent tokens.
-If a brand DESIGN.md is in use, add a **6th lens**: compare the UI against that brand's
+
+**Conditional 6th lens — Motion.** Add ONLY when the surface has real animation, transition,
+gesture, drag, sheet, or scroll-driven code (grep for `transition`, `animate`, `@keyframes`,
+`motion.`, `spring`, `drag`, `swipe`). Ground this lens by READING two installed skills as
+reference — do NOT invoke them, `review-animations` is `disable-model-invocation: true` and
+the Skill tool will refuse it:
+- `~/.claude/.agents/skills/apple-design/SKILL.md` — fluid-motion principles: motion starts
+  from the current on-screen value, inherits the user's velocity, projects momentum, stays
+  interruptible; springs over duration-based easing.
+- `~/.claude/.agents/skills/review-animations/SKILL.md` — the craft bar. Its stated posture is
+  "default to flagging; approval is earned."
+Report findings in the same `severity | rule | file:line | observed | expected` shape as the
+other lenses. Also flag any motion that ignores `prefers-reduced-motion` as Critical.
+
+If a brand DESIGN.md is in use, add a **7th lens**: compare the UI against that brand's
 do's/don'ts and component states.
 
 ## Step 2 — Adversarial verify
@@ -132,6 +144,13 @@ Mark * winner in `all.html`. Show variant table with scores.
 **"Which variant? (confirm * vN / pick different vN / mix vA layout + vB colors / redo)"**
 - `redo` -> regenerate F3 with a different set.
 - **Do not write a single line of production code until you name a variant.**
+
+### F7.5 — Motion roadmap (only if the Motion lens produced findings)
+Invoke the `improve-animations` skill (Skill tool, `skill: "improve-animations"`) with the
+Motion lens findings and the target files. It is auto-invokable and read-only: it returns a
+prioritized motion audit plus self-contained implementation plans. Fold its plans into the F8
+plan rather than treating them as a separate track. Skip this step entirely when the Motion
+lens did not run or found nothing.
 
 ### F8 — Opus plan
 Spawn Opus agent to write `brainstorms/design-audit-<slug>-plan-<date>.md`. Plan must:

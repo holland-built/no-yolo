@@ -35,6 +35,10 @@ checkup|You want one health check of your whole ~/.claude setup
 emil-design-eng|Automatically, inside /design and /design-audit, when a mockup has real animation
 animation-vocabulary|You know the motion but not what to call it when prompting an AI or designer
 review-animations|Automatically, inside /design-audit's Taste lens, when a surface has real animation
+apple-design|Building or reviewing gesture-driven UI, springs, drag/swipe/sheet interactions, or reduced-motion
+find-animation-opportunities|Want to know what in a UI could animate but doesn't yet
+improve-animations|Want a roadmap of animation fixes, not a review of one diff
+pick-ui-library|Picking a library for charts, state, drag-drop, virtualization, or styling
 xcheck|Automatically inside /plan, /debate, /build, /diagnose --debate, /design-audit — or /xcheck to bounce any plan off Codex manually
 literal|You're making rapid changes and want zero push-back for a while
 match-all|One instance looks right and its siblings don't — make them all match it without hand-editing each

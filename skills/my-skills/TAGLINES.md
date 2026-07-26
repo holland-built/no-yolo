@@ -35,6 +35,10 @@ checkup|One wellness pass (read-only except safe regen) over your ~/.claude skil
 emil-design-eng|Emil Kowalski's UI-polish and animation-taste rules — feeds /design and /design-audit.
 animation-vocabulary|Turns a vague animation description into its exact term.
 review-animations|Strict critique of animation/motion code against a high craft bar.
+apple-design|Apple's fluid-motion principles for the web — springs, gestures, momentum, interruptible transitions, reduced-motion.
+find-animation-opportunities|Sweeps a UI for places that should animate and don't, rejecting most candidates on purpose.
+improve-animations|Read-only audit of a codebase's motion → prioritized implementation plans for other agents to build.
+pick-ui-library|Curated library picks for charts, state, drag-drop, virtualization, and styling.
 xcheck|Cross-model critique: Codex reviews your plan, Claude adjudicates, 2-round cap.
 literal|Turns off AI's push-back for a stretch — it just does exactly what you say, no proposals, no mockups, until you flip it back.
 match-all|Point at one perfected UI instance; conform every sibling to its design language, adapted not cloned.
