@@ -2,6 +2,11 @@
 
 Fresh start 2026-07-17
 
+## 2026-07-26 — diagnose sharpening parity + stale gitignore purge (entry #30)
+
+- `/diagnose --debate` now carries the same sharpening posture as `/debate`: an anchor-or-forfeit rule (every theory cites a `file:line` from the excerpt bundle or a repro path, or it's discounted and cannot win the diagnosis), lead-with-your-lane guidance so the six failure-class personas don't converge, and a required "what would kill my theory" line. D4 gained explicit ADMITTED/DISCOUNTED rulings plus a collapse check — six personas agreeing off one anchor counts as one theory, not six.
+- Removed the orphaned `skills/learned/` line from `.gitignore` — it referenced a skill that has not existed on disk since it was added (2026-06-19) and had zero references anywhere else. Caught by the SHIP.md step 3.4 stale-external sweep.
+
 ## 2026-07-24 — debate persona sharpening: User Advocate seat + evidence lanes (entry #29)
 
 - Swapped `debate`'s default-panel Product Designer seat for **The User Advocate** — argues the user's outcome/job-to-be-done instead of pixels, so it bites on code and product calls (the Product Designer's screen lens stays on the `--ui` panel where it belongs).

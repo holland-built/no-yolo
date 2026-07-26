@@ -51,6 +51,11 @@ Each agent receives: bug description + observed/expected + when-started + code e
 
 Each agent MUST return: **Theory** (file:line), **Evidence**, **Only I would catch**, **Confidence** N/10. Cap ~250 words.
 
+**Sharpening contract (same posture as `/debate`).** Put this in every persona brief:
+- **Anchor or forfeit** — every theory cites a `file:line` from the excerpt bundle or a concrete reproduction path. A theory with no anchor is DISCOUNTED at D4 and cannot win D5, however plausible it sounds.
+- **Lead with your lane** — argue from your own failure class (data-flow, timing, config, contract, swallowed error, lifecycle). You MAY flag a cross-cutting point, but lead with yours.
+- **Name what would kill your theory** — one line: the observation that would prove you wrong. A theory nothing could falsify is a guess.
+
 **THE DATA-FLOW TRACER** — follows a value origin to consumer. Catches: silent type coercion, null-vs-undefined, off-by-one.
 
 **THE CONCURRENCY/TIMING DETECTIVE** — hunts order violations, race conditions. Catches: stale closures, unhandled-promise ordering.
@@ -68,6 +73,8 @@ Each agent MUST return: **Theory** (file:line), **Evidence**, **Only I would cat
 | Theory A | Theory B | Claims that clash | Stronger evidence |
 
 Then: strongest persona, weakest, one question that resolves the biggest conflict, what ALL 6 agree on, what NONE addressed.
+
+**Rulings before D5:** mark each theory ADMITTED (anchored to `file:line` or a repro) or DISCOUNTED (unanchored assertion) — DISCOUNTED theories cannot win D5. **Collapse check:** if two personas landed the same theory citing the same evidence (not the same conclusion reached down different lanes), say so and count it once — six voices agreeing from one anchor is one theory, not six.
 
 ### Step D4.5 — Cross-model check (xcheck)
 
