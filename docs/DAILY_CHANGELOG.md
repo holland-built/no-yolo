@@ -2,6 +2,15 @@
 
 Fresh start 2026-07-17
 
+## 2026-07-26 — full emilkowalski pack installed and auto-wired, no manual skills (entry #32)
+
+- Installed the four skills from `emilkowalski/skills` that were being skipped: `apple-design` (Apple's fluid-motion principles for the web — springs, velocity, momentum, interruptible transitions), `find-animation-opportunities`, `improve-animations`, and `pick-ui-library`. Only 3 of the pack's 7 were previously installed; nothing had excluded the rest, they simply were never added.
+- **Fixed a silent bug:** `/design-audit`'s Taste lens instructed itself to invoke `review-animations`, but that skill sets `disable-model-invocation: true`. Verified by test — the Skill tool refuses it outright ("Skill review-animations cannot be used with Skill tool due to disable-model-invocation"), so that call had been failing quietly. Replaced with the read-the-file grounding pattern.
+- Wired every new skill into a pipeline so none of them need typing by hand: `/design-audit` gains a conditional **Motion lens** (6th, fires only when the surface has real animation/transition/gesture code) grounded by READING apple-design + review-animations, and a new **F7.5 Motion roadmap** step that invokes `improve-animations` when that lens finds anything. `/design` gains conditional apple-design grounding for motion surfaces, a post-verify `find-animation-opportunities` pass at step 6.5, and a pick-ui-library reference for non-prefab library questions (charts, state, virtualization) where its component-primitive rows stay overridden by the existing sourcing gate. `/debate --ui` grounds its panel in apple-design when the surface involves gesture or transition behaviour.
+- All seven emilkowalski skills moved under `## Helpers (called by other skills)` in the catalog, so they stay out of the `/my-skills` fast menu while still appearing labelled in `/my-skills deep` — verified 0 leaks into the fast menu, 4 present in deep.
+- Corrected a stale path in two places in `/debate`: emil-design-eng lives at `.agents/skills/`, not `skills/`, since the newer installer changed location.
+- The general rule this established: a skill marked `disable-model-invocation: true` can never be invoked by a pipeline, but its `SKILL.md` can be READ as grounding — recorded in `docs/THIRD_PARTY_SKILLS.md` so the next wiring attempt doesn't repeat the failed-invoke pattern.
+
 ## 2026-07-26 — abandoned the trim fork, now tracking DietrichGebert/ponytail (entry #31)
 
 - **Dropped the `holland-built/trim` fork.** It was a fork of `DietrichGebert/ponytail` whose only change was a rename (ponytail→trim across 6 skill dirs, frontmatter, the `// ponytail:` comment convention, the env var, and the debt file). It had drifted **96 commits behind upstream** while sitting 1 commit ahead, so every improvement since 2026-06-23 was being missed and each upstream pull would have meant redoing the rename. Uninstalled it and installed `DietrichGebert/ponytail` directly.

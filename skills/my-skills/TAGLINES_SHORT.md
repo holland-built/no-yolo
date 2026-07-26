@@ -30,3 +30,7 @@ tdd|Test-first red→green loop
 xcheck|Codex second opinion on plans
 literal|Obey exactly, no push-back
 match-all|Conform siblings to one golden
+apple-design|Apple-style fluid motion
+find-animation-opportunities|Finds missing animations
+improve-animations|Motion audit + plans
+pick-ui-library|Curated library picks

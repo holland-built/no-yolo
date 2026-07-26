@@ -35,6 +35,10 @@ checkup|Runs every existing check for you in one go and only touches the safe au
 emil-design-eng|Vaul/Sonner-author taste rules catch wrong easing, wrong shadows, wrong timing agents usually miss
 animation-vocabulary|The right word gets a better result from any AI than a vague description does
 review-animations|Approval is earned, not assumed — catches animation mistakes a generic review misses
+apple-design|Names the exact spring/gesture behavior instead of vague "make it feel nice"
+find-animation-opportunities|Rejects most candidates by design — what survives is worth building
+improve-animations|Read-only, so you get a ranked plan before anyone touches code
+pick-ui-library|Skips the hour of comparing libraries yourself — a short list, already narrowed
 xcheck|A different model family catches blind spots self-review can't — findings-only protocol stops rewrite ping-pong, convergence gate stops endless nitpicking
 literal|The challenge-by-default posture is great for direction, but during fast knob-turning you just want it done — this mutes it.
 match-all|Broadcasts the good one's language, not a copy — too-basic siblings get elevated, empty content gets hidden or a sensible fallback, never a pasted placeholder

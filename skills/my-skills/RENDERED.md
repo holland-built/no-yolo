@@ -78,6 +78,13 @@
 | --- | --- | --- | --- |
 | antislop | Check text/UI for AI-slop tells. Violations table + verdict. | Before shipping any user-facing text or README — or when output feels generic | AI writing has 25 known tell patterns. This catches them before they reach users |
 | tdd | Failing test first, then make it pass. Red→green discipline. | Bug fixes, new features, anywhere tests matter | The RED test is proof you actually fixed it. Without it you're asserting, not proving |
+| emil-design-eng | Emil Kowalski's UI-polish and animation-taste rules — feeds /design and /design-audit. | Automatically, inside /design and /design-audit, when a mockup has real animation | Vaul/Sonner-author taste rules catch wrong easing, wrong shadows, wrong timing agents usually miss |
+| animation-vocabulary | Turns a vague animation description into its exact term. | You know the motion but not what to call it when prompting an AI or designer | The right word gets a better result from any AI than a vague description does |
+| review-animations | Strict critique of animation/motion code against a high craft bar. | Automatically, inside /design-audit's Taste lens, when a surface has real animation | Approval is earned, not assumed — catches animation mistakes a generic review misses |
+| apple-design | Apple's fluid-motion principles for the web — springs, gestures, momentum, interruptible transitions, reduced-motion. | Building or reviewing gesture-driven UI, springs, drag/swipe/sheet interactions, or reduced-motion | Names the exact spring/gesture behavior instead of vague "make it feel nice" |
+| find-animation-opportunities | Sweeps a UI for places that should animate and don't, rejecting most candidates on purpose. | Want to know what in a UI could animate but doesn't yet | Rejects most candidates by design — what survives is worth building |
+| improve-animations | Read-only audit of a codebase's motion → prioritized implementation plans for other agents to build. | Want a roadmap of animation fixes, not a review of one diff | Read-only, so you get a ranked plan before anyone touches code |
+| pick-ui-library | Curated library picks for charts, state, drag-drop, virtualization, and styling. | Picking a library for charts, state, drag-drop, virtualization, or styling | Skips the hour of comparing libraries yourself — a short list, already narrowed |
 
 ## Flags & arguments
 

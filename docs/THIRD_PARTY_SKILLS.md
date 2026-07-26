@@ -10,8 +10,15 @@ after you (or `/update vendor <name>`) run the install command, but never on Git
 | taste-skill | `Leonxlnx/taste-skill` | `/update vendor taste-skill` (first run installs, later runs re-fetch latest) | `skills/design/vendor/taste-skill/` | `/design` Step 1 only (fresh-gen dials + routing) |
 | ponytail (+5 sub-skills) | `DietrichGebert/ponytail` | `npx skills@latest add DietrichGebert/ponytail` (hashes pinned in `skills-lock.json`) | `.agents/skills/ponytail*` | `/health`, `/ponytail*` |
 | improve | `shadcn/improve` | `npx skills@latest add shadcn/improve` | `skills/improve` | `/health`, `/improve` |
-| emil-design-eng (+2) | `emilkowalski/skills` | `npx skills@latest add emilkowalski/skills` (hashes pinned in `skills-lock.json`) | `skills/emil-design-eng`, `skills/animation-vocabulary`, `skills/review-animations` | `/design`, `/design-audit` |
+| emil-design-eng (+6) | `emilkowalski/skills` | `npx skills@latest add emilkowalski/skills` (hashes pinned in `skills-lock.json`) | `.agents/skills/{emil-design-eng,apple-design,animation-vocabulary,find-animation-opportunities,improve-animations,review-animations,pick-ui-library}` | `/design`, `/design-audit`, `/debate --ui` |
 | archify | `tt-a1i/archify` | `npx skills@latest add tt-a1i/archify` (hash pinned in `skills-lock.json`) | `.agents/skills/archify` | diagrams — replaced the tracked draw.io skill 2026-07-17 |
+
+> **Manual-only skills in this pack:** `review-animations` and `pick-ui-library` both set
+> `disable-model-invocation: true`, so the Skill tool REFUSES to run them (verified by test:
+> "Skill review-animations cannot be used with Skill tool due to disable-model-invocation").
+> Pipelines that need their knowledge must READ their `SKILL.md` as reference instead of
+> invoking them. `/design-audit` previously tried to invoke `review-animations` and that call
+> silently failed until 2026-07-26.
 
 > **History:** this was previously installed from `holland-built/trim`, a personal fork that renamed ponytail→trim. The fork drifted 96 commits behind upstream and was abandoned on 2026-07-26 in favour of tracking `DietrichGebert/ponytail` directly. Do not re-fork to rename — alias locally instead.
 

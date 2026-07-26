@@ -48,3 +48,10 @@ literal
 ## Helpers (called by other skills)
 antislop
 tdd
+emil-design-eng
+animation-vocabulary
+review-animations
+apple-design
+find-animation-opportunities
+improve-animations
+pick-ui-library
