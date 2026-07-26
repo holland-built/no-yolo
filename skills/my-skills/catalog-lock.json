@@ -107,10 +107,10 @@
       "structureSha": "aab100f36c425309563ffb1dda4a6f03a557c3ff37e74299a90641c8a7029176"
     },
     "health": {
-      "descSha": "bce44aaad60ac4167d68336dc016c6994dc6999b1e9e7bdef4a66dee8d65c20f",
+      "descSha": "6aa7f23d0faed1bcc59e563c960cdd2ca6602e8940c2fdac5a781a17d6f018c1",
       "rows": {
-        "skills/my-skills/STORIES.md": "bbdfb9619529d6b8c759b447f47697715ff53018734170b3a85fe680f316d9e3",
-        "skills/my-skills/STORIES.md#rel": "614a68e414e7b0094c04760a3ab0d3cf0e0a1cfb8277e7e5662a7ff2367a2d7b",
+        "skills/my-skills/STORIES.md": "feaa6a47c1a94cc39177ef1c148f86ec12e5fa46044e7e8729042650cbd2cd5e",
+        "skills/my-skills/STORIES.md#rel": "58bfe3cc3e3e2c789d3be17ae214cbef8d11b225526f950d5c5ccf3b6865c5c9",
         "skills/my-skills/TAGLINES.md": "8138574d5e80ab093195bc32c082660176a5436389700f2917ffa647a1ef349a",
         "skills/my-skills/TAGLINES_SHORT.md": "1126337017b3569a9865cc805a9365f7596e0a311b49de4f448521d50a4ec647",
         "skills/my-skills/WHEN_TO_USE.md": "97f0438c1da17ddce42c282592632235f5dbb5b3b400c6b4fec442afde2aeea8",

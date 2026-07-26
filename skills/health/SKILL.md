@@ -1,6 +1,6 @@
 ---
 name: health
-description: Use this skill when the user types /health, says 'check the diff', 'code health', 'run health pass', or 'review before merge'. One mode, always thorough — reviews the diff AND the whole codebase (fallow dead-code/dupes/health/security/audit + trim + improve), max effort, every time. Bakes in secret scan and antislop on any .md changes automatically. By default in every repo it pulls /last-30 trends and walks fixable findings one at a time; in ~/.claude it also audits your skills and MD files. Say 'quick review' to skip trends, or --auto to skip the walk and batch-apply everything fixable.
+description: Use this skill when the user types /health, says 'check the diff', 'code health', 'run health pass', or 'review before merge'. One mode, always thorough — reviews the diff AND the whole codebase (fallow dead-code/dupes/health/security/audit + ponytail + improve), max effort, every time. Bakes in secret scan and antislop on any .md changes automatically. By default in every repo it pulls /last-30 trends and walks fixable findings one at a time; in ~/.claude it also audits your skills and MD files. Say 'quick review' to skip trends, or --auto to skip the walk and batch-apply everything fixable.
 user-invocable: true
 argument-hint: "[path] [--auto] [--quick]"
 allowed-tools:
@@ -78,7 +78,7 @@ No branch divergence → diff against `HEAD~1`.
 
 **Pass A — Correctness & Reuse.** Logic errors, off-by-ones, null/undefined, wrong conditionals. Does an existing function/component already do this? Auth, input validation, secrets in diff. Exhaustive — read every changed call site and its cross-file callers, always.
 
-**Pass B — Over-Engineering.** Invoke `trim-review` via the Skill tool with the diff. Captures what to delete, reinvented stdlib, unneeded deps, speculative abstractions.
+**Pass B — Over-Engineering.** Invoke `ponytail-review` via the Skill tool with the diff. Captures what to delete, reinvented stdlib, unneeded deps, speculative abstractions.
 
 **Pass C — Karpathy Filters** (from `CODE_REVIEW.md`): Surgical (every changed line traces to the stated request — flag any that don't) and Simplicity (would a senior engineer call this overcomplicated?).
 
@@ -114,29 +114,29 @@ Always runs, straight through, no phase-by-phase prompts. Findings feed the same
 
 ```bash
 which fallow && fallow --version 2>/dev/null && echo "fallow:ok" || echo "fallow:missing"
-[ -e ~/.claude/skills/trim-audit/SKILL.md ] && echo "trim-audit:ok" || echo "trim-audit:missing"
-[ -e ~/.claude/skills/trim-debt/SKILL.md ] && echo "trim-debt:ok" || echo "trim-debt:missing"
+[ -e ~/.claude/.agents/skills/ponytail-audit/SKILL.md ] && echo "ponytail-audit:ok" || echo "ponytail-audit:missing"
+[ -e ~/.claude/.agents/skills/ponytail-debt/SKILL.md ] && echo "ponytail-debt:ok" || echo "ponytail-debt:missing"
 ls ~/.agents/skills/ 2>/dev/null | grep -iE "^improve$" && echo "improve:ok" || echo "improve:missing"
-[ -e ~/.claude/skills/trim-review/SKILL.md ] && echo "trim-review:ok" || echo "trim-review:missing"
+[ -e ~/.claude/.agents/skills/ponytail-review/SKILL.md ] && echo "ponytail-review:ok" || echo "ponytail-review:missing"
 ```
 
 | Tool | Status | Install if missing |
 |---|---|---|
 | Fallow | ✅ / ❌ | `npm install -g fallow@2.98.0` |
-| Trim (review/audit/debt) | ✅ / ❌ | `npx skills@latest add holland-built/trim` |
+| Ponytail (review/audit/debt) | ✅ / ❌ | `npx skills@latest add DietrichGebert/ponytail` |
 | Improve | ✅ / ❌ | `npx skills@latest add shadcn/improve` |
 
-Fallow missing → STOP, show the table, tell the user to install it first, exit. Trim or Improve missing → note it, skip that sub-phase silently, continue with the rest.
+Fallow missing → STOP, show the table, tell the user to install it first, exit. Ponytail or Improve missing → note it, skip that sub-phase silently, continue with the rest.
 
 Every finding set below is a markdown table — no prose, no bullets. Zero findings → one row: `| — | No findings | — |`.
 
-### H0 — Trim Review (diff-scoped)
+### H0 — Ponytail Review (diff-scoped)
 
 ```bash
 git diff --stat HEAD 2>/dev/null | head -5
 git status --short 2>/dev/null | head -5
 ```
-Uncommitted changes exist AND trim-review installed → invoke `trim-review` with the diff:
+Uncommitted changes exist AND ponytail-review installed → invoke `ponytail-review` with the diff:
 
 | File | Finding | Category | Priority |
 |---|---|---|---|
@@ -169,11 +169,11 @@ Run all five, always, even if earlier ones find nothing:
 
 Dead-code findings are fixable (via `fallow fix`) — Fixable: Yes. All other fallow findings (dupes/health/security/audit) are informational — Fixable: No.
 
-### H2 — Trim (LLM Anti-Over-Engineering)
+### H2 — Ponytail (LLM Anti-Over-Engineering)
 
-**H2a — Whole-codebase audit.** Not installed → note in roll-up, skip. Installed → invoke `trim-audit` with `$PATH_ARG`; same table shape as H0 with categories: **Delete** (dead/unused), **Shrink** (30 lines that could be 3), **YAGNI** (building ahead of need), **Complexity** (unnecessary indirection). All Fixable: Yes.
+**H2a — Whole-codebase audit.** Not installed → note in roll-up, skip. Installed → invoke `ponytail-audit` with `$PATH_ARG`; same table shape as H0 with categories: **Delete** (dead/unused), **Shrink** (30 lines that could be 3), **YAGNI** (building ahead of need), **Complexity** (unnecessary indirection). All Fixable: Yes.
 
-**H2b — Debt marker harvest.** Not installed → skip. Installed → invoke `trim-debt` with `$PATH_ARG`:
+**H2b — Debt marker harvest.** Not installed → skip. Installed → invoke `ponytail-debt` with `$PATH_ARG`:
 
 | File | Line | Debt Note | Age (if known) |
 |---|---|---|---|
@@ -210,7 +210,7 @@ Merge every finding from Phase 1, Phase 2, and the baked-in checks into **one** 
 path:line: <emoji> <severity>: <problem>. <fix>. [Fixable: Yes/No]
 ```
 
-Severity + emoji: 🔴 Critical, 🟠 Important, 🟡 Minor, 🔵 Scope (surgical violation), ⚪ Simplicity, 🟣 Complexity (trim), 🔑 Secret (always Fixable: No), 📝 Slop
+Severity + emoji: 🔴 Critical, 🟠 Important, 🟡 Minor, 🔵 Scope (surgical violation), ⚪ Simplicity, 🟣 Complexity (ponytail), 🔑 Secret (always Fixable: No), 📝 Slop
 
 No praise, no summary prose — findings only.
 
@@ -221,11 +221,11 @@ No praise, no summary prose — findings only.
   `[i/N] path:line — <emoji> <severity>: <problem>. Fix: <fix>.`
   `Apply? (y = apply / n = skip / e = edit-then-apply / a = apply this + all remaining fixable / q = stop, apply nothing further)`
 
-  `y` applies that finding immediately then advances; `n` skips and advances; `e` lets the user amend the fix before applying; `a` applies the current finding and every remaining fixable one without further prompts; `q` stops — findings already applied stay, the rest are left. Non-fixable rows (🔑 Secret, Improve, trim-debt, fallow dupes/health/security/audit) are NEVER prompted — display-only. After the walk, continue to the Apply Findings summary table showing applied vs skipped.
+  `y` applies that finding immediately then advances; `n` skips and advances; `e` lets the user amend the fix before applying; `a` applies the current finding and every remaining fixable one without further prompts; `q` stops — findings already applied stay, the rest are left. Non-fixable rows (🔑 Secret, Improve, ponytail-debt, fallow dupes/health/security/audit) are NEVER prompted — display-only. After the walk, continue to the Apply Findings summary table showing applied vs skipped.
 
 ## Apply Findings
 
-Apply every Fixable: Yes finding from the unified list — diff-review bugs, trim-review/trim-audit findings, and `fallow fix` for dead-code. Show:
+Apply every Fixable: Yes finding from the unified list — diff-review bugs, ponytail-review/ponytail-audit findings, and `fallow fix` for dead-code. Show:
 
 | File | Line | Finding | Applied |
 |---|---|---|---|
@@ -233,7 +233,7 @@ Apply every Fixable: Yes finding from the unified list — diff-review bugs, tri
 Never applied, regardless of approval or `--auto`:
 - 🔑 Secret findings — shown only
 - Improve findings — plan/issue only, by design
-- Trim-debt markers — informational ledger, not a code change
+- Ponytail-debt markers — informational ledger, not a code change
 - Fallow dupes/health/security/audit — informational, no auto-fix exists for these
 
 ## Final Roll-up
@@ -245,9 +245,9 @@ One master summary after everything completes:
 | P0 | Radar (last-30) | N | 0 | 0 | ✅ / skipped |
 | Diff | Pass A/B/C | N | N | N | ✅ |
 | Baked-in | Secrets / Antislop | N | 0 | 0 | clean / 🔑 N / 📝 N |
-| H0 | Trim review (diff) | N | N | N | ✅ / skipped |
+| H0 | Ponytail review (diff) | N | N | N | ✅ / skipped |
 | H1 | Fallow (5 checks) | N | N (dead-code only) | N | ✅ / ⚠️ missing |
-| H2 | Trim audit + debt | N | N | N | ✅ / ⚠️ missing |
+| H2 | Ponytail audit + debt | N | N | N | ✅ / ⚠️ missing |
 | H3 | Improve | N | 0 | 0 | ✅ / ⚠️ missing |
 | H4 | MD hygiene (md-check) | N | N | N | ✅ / skipped (not ~/.claude) |
 | H5 | Skill structure (skill-audit) | N | 0 | 0 | ✅ / skipped (not ~/.claude) |
@@ -259,7 +259,7 @@ One master summary after everything completes:
 - Antislop runs automatically on every `.md` in the diff, no opt-in needed.
 - Improve never implements — plan/issue only, hard rule, not a gate.
 - `--auto` skips only the single approval gate — every check above still runs in full; `--quick` (or "quick review") skips only the Phase 0 radar.
-- Missing trim/improve/fallow = not a failure — skip that sub-phase silently, show it in the roll-up, keep going.
+- Missing ponytail/improve/fallow = not a failure — skip that sub-phase silently, show it in the roll-up, keep going.
 - Never skip a Fallow command — run all five even if earlier ones find nothing.
 - One findings table, one gate. No per-phase prompts, no separate diff/health output blocks. The step-walk covers only Fixable findings; non-fixable findings are never prompted.
 - H4 (md-check) and H5 (skill-audit) run ONLY when the reviewed repo is ~/.claude — they're hardwired to global config paths. Elsewhere they're skipped and noted, so `/health` outside ~/.claude is unchanged.

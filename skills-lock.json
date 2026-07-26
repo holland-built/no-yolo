@@ -25,47 +25,47 @@
       "skillPath": "skills/improve/SKILL.md",
       "computedHash": "912dd5f74843d6ff7d92af2eb40cdfec522c86b7ef3453731efbb37735017602"
     },
+    "ponytail": {
+      "source": "DietrichGebert/ponytail",
+      "sourceType": "github",
+      "skillPath": "skills/ponytail/SKILL.md",
+      "computedHash": "210fa0831f649ce9f8a305f7b7c8cf2a0dd09ac4dd53067109941b96e7811d4e"
+    },
+    "ponytail-audit": {
+      "source": "DietrichGebert/ponytail",
+      "sourceType": "github",
+      "skillPath": "skills/ponytail-audit/SKILL.md",
+      "computedHash": "8b8d72e6ff70b65b6c9518d470fcf29dc696eea93d28f3efa10fdcc60cbd696d"
+    },
+    "ponytail-debt": {
+      "source": "DietrichGebert/ponytail",
+      "sourceType": "github",
+      "skillPath": "skills/ponytail-debt/SKILL.md",
+      "computedHash": "0099b82174e3a4261828b4ec04d2c068b1b294fdab14f76701c2acd1f7c99539"
+    },
+    "ponytail-gain": {
+      "source": "DietrichGebert/ponytail",
+      "sourceType": "github",
+      "skillPath": "skills/ponytail-gain/SKILL.md",
+      "computedHash": "c45ecba7906960eea904218b623abf097ebff84ecbacca6d68da1d0687435f75"
+    },
+    "ponytail-help": {
+      "source": "DietrichGebert/ponytail",
+      "sourceType": "github",
+      "skillPath": "skills/ponytail-help/SKILL.md",
+      "computedHash": "10e8382b1033c9a0fec0073de6d3de3846b4f5dca7d78b6df2d476a1f4cd43c6"
+    },
+    "ponytail-review": {
+      "source": "DietrichGebert/ponytail",
+      "sourceType": "github",
+      "skillPath": "skills/ponytail-review/SKILL.md",
+      "computedHash": "4646594fcd75455533f7ff1425f4f1c5ba0fa65f88241bf262b1c4fc275f049a"
+    },
     "review-animations": {
       "source": "emilkowalski/skills",
       "sourceType": "github",
       "skillPath": "skills/review-animations/SKILL.md",
       "computedHash": "ca04aaa0a815f05e0910ded8fedbfbdfe0acdec8f52dfbb88277890070d134d4"
-    },
-    "trim": {
-      "source": "holland-built/trim",
-      "sourceType": "github",
-      "skillPath": "skills/trim/SKILL.md",
-      "computedHash": "6b7136bcb5a626cf5e67e1c82abc2d44fa7452ab75885587a6d4b67b0bdd6bbd"
-    },
-    "trim-audit": {
-      "source": "holland-built/trim",
-      "sourceType": "github",
-      "skillPath": "skills/trim-audit/SKILL.md",
-      "computedHash": "cc52fe77cef72904e4882acbb556d64ec67bdbc78460f00bd87f6a1f2c169504"
-    },
-    "trim-debt": {
-      "source": "holland-built/trim",
-      "sourceType": "github",
-      "skillPath": "skills/trim-debt/SKILL.md",
-      "computedHash": "0c9ea21b88fef56ef751fd1578ab729c87387f0800b5cbedac7280d659799c77"
-    },
-    "trim-gain": {
-      "source": "holland-built/trim",
-      "sourceType": "github",
-      "skillPath": "skills/trim-gain/SKILL.md",
-      "computedHash": "8561634bc972b6e12f8f684e0c2f004d73892f6ee6e320e5286049b50a736e90"
-    },
-    "trim-help": {
-      "source": "holland-built/trim",
-      "sourceType": "github",
-      "skillPath": "skills/trim-help/SKILL.md",
-      "computedHash": "59438479ac55b0798683201b4e0f60d2051acbb6fd0669fe3aadf6630cfdfc6a"
-    },
-    "trim-review": {
-      "source": "holland-built/trim",
-      "sourceType": "github",
-      "skillPath": "skills/trim-review/SKILL.md",
-      "computedHash": "f747bbc2ed829f1fa27c42f87088291e9932c682e213e6bf739839b71299e0e2"
     }
   }
 }
