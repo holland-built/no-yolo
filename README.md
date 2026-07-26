@@ -125,7 +125,7 @@ A "skill" is a slash command, like `/health`. The count: 29 custom commands (+2 
 
 The table shows the runnable menu: it includes 2 borrowed skills (`improve`, `archify`) and hides 2 custom helpers (`antislop`, `tdd` — see below), so it isn't a 1:1 list of the 29 custom commands. It is a copy of [`skills/my-skills/RENDERED_FAST.md`](skills/my-skills/RENDERED_FAST.md) — inside Claude Code, run `/my-skills` (same table) or `/my-skills deep` (adds when/why per skill, from [`RENDERED.md`](skills/my-skills/RENDERED.md), including every skill's flags). Every skill's flags also live in their own page: [`docs/FLAGS.md`](docs/FLAGS.md) — machine-generated, always current.
 
-Borrowed sets install with one command each: `npx skills@latest add holland-built/trim` (six simplicity commands), `npx skills@latest add shadcn/improve`, `npx skills@latest add emilkowalski/skills` (UI-polish rules that feed `/design`), `npx skills@latest add tt-a1i/archify`.
+Borrowed sets install with one command each: `npx skills@latest add DietrichGebert/ponytail` (six simplicity commands), `npx skills@latest add shadcn/improve`, `npx skills@latest add emilkowalski/skills` (UI-polish rules that feed `/design`), `npx skills@latest add tt-a1i/archify`.
 
 Two commands are hidden from `/my-skills` but still real: `/antislop` (runs inside `/health` and `/release`) and `/tdd` (same loop `/build` step 4 runs).
 
@@ -170,13 +170,13 @@ Left to right: home dir · project folder · git branch · `●` = uncommitted c
 | Excluded | Reason |
 |---|---|
 | `settings.json` | Machine-specific (paths, MCP servers, possible API keys) — never commit; start from `settings.example.json` |
-| `plugins/` and plugin shortcuts (`trim*/`, `improve`, …) | Third-party; reinstall via the Add-ons table |
+| `plugins/` and plugin shortcuts (`ponytail*/`, `improve`, …) | Third-party; reinstall via the Add-ons table |
 | `skills/design/vendor/` | Third-party (taste-skill) — `/update vendor taste-skill` fetches it; see `docs/THIRD_PARTY_SKILLS.md` |
 | `.pending-tasks.md`, `learnings.md` | Local working files (`/whats-next` queue, `/prompt-scan` output) |
 | `cache/`, `sessions/`, `history.jsonl`, logs | Temporary runtime files |
 
 ## Uninstall
 
-Individual tools: `npx skills@latest remove holland-built/trim` · `npx skills@latest remove shadcn/improve` · `npm uninstall -g fallow` · `/plugin remove <name>` inside Claude Code.
+Individual tools: `npx skills@latest remove DietrichGebert/ponytail` · `npx skills@latest remove shadcn/improve` · `npm uninstall -g fallow` · `/plugin remove <name>` inside Claude Code.
 
 Remove the whole setup (backup at `~/.claude.bak` if you used the install command): `rm -rf ~/.claude`

@@ -8,13 +8,15 @@ after you (or `/update vendor <name>`) run the install command, but never on Git
 | Name | Upstream repo | Install command | Local path (gitignored) | Used by |
 |---|---|---|---|---|
 | taste-skill | `Leonxlnx/taste-skill` | `/update vendor taste-skill` (first run installs, later runs re-fetch latest) | `skills/design/vendor/taste-skill/` | `/design` Step 1 only (fresh-gen dials + routing) |
-| trim (+5 sub-skills) | `holland-built/trim` | `npx skills@latest add holland-built/trim` (hashes pinned in `skills-lock.json`) | `skills/trim*` | `/health`, `/trim*` |
+| ponytail (+5 sub-skills) | `DietrichGebert/ponytail` | `npx skills@latest add DietrichGebert/ponytail` (hashes pinned in `skills-lock.json`) | `.agents/skills/ponytail*` | `/health`, `/ponytail*` |
 | improve | `shadcn/improve` | `npx skills@latest add shadcn/improve` | `skills/improve` | `/health`, `/improve` |
 | emil-design-eng (+2) | `emilkowalski/skills` | `npx skills@latest add emilkowalski/skills` (hashes pinned in `skills-lock.json`) | `skills/emil-design-eng`, `skills/animation-vocabulary`, `skills/review-animations` | `/design`, `/design-audit` |
 | archify | `tt-a1i/archify` | `npx skills@latest add tt-a1i/archify` (hash pinned in `skills-lock.json`) | `.agents/skills/archify` | diagrams — replaced the tracked draw.io skill 2026-07-17 |
 
+> **History:** this was previously installed from `holland-built/trim`, a personal fork that renamed ponytail→trim. The fork drifted 96 commits behind upstream and was abandoned on 2026-07-26 in favour of tracking `DietrichGebert/ponytail` directly. Do not re-fork to rename — alias locally instead.
+
 taste-skill is **vendored** (a copy fetched locally, never on GitHub).
-trim / improve / emil-design-eng are **npx-installed** as symlinks (not vendored) — two of the
+ponytail / improve / emil-design-eng are **npx-installed** as symlinks (not vendored) — two of the
 three have their fetched content hashes recorded in `skills-lock.json` for drift detection;
 `shadcn/improve` has no lockfile entry (see Maintenance notes in the plan for why).
 

@@ -115,7 +115,7 @@ Only non-OK rows. Then: `X skills flagged by lock, Y drifted, lock re-sealed`.
 - **A row that was always wrong and never edited.** The lock proves *nothing moved*, not *everything is true* — only a full baseline sweep (Step 2 over every skill) establishes truth.
 - **A `rel:` row that goes stale without the headings moving** — the deliberate price of not flagging on every typo.
 - **`bolt:` rows** (`fallow`, `gh`, `draw`) — external tools, no SKILL.md to hash against. Three rows, rarely change; check by hand.
-- **`rel:` rows for untracked third-party skills** (improve, trim*) — no tracked SKILL.md to compare against.
+- **`rel:` rows for untracked third-party skills** (improve, ponytail*) — no tracked SKILL.md to compare against.
 - Never report "no drift" on a green lock. Report "nothing changed since last verified."
 
 ## Orphan Check Mode (`/md-check --orphans`)

@@ -6,11 +6,11 @@ my-skills|This menu.
 tdd|Failing test first, then make it pass. Red→green discipline.
 video-to-kb|Turn a YouTube video into a searchable KB note.
 improve|Read-only codebase audit across 9 categories → ranked findings → self-contained plans for an executor model.
-trim|Forces the laziest solution that works. Kills abstraction.
-trim-audit|Scan repo for over-engineered code — ranked simplify list.
-trim-debt|Harvest trim-tagged shortcuts into a debt ledger.
-trim-review|Review diff for what to delete, not what to add.
-trim-help|Quick reference for all trim commands.
+ponytail|Forces the laziest solution that works. Kills abstraction.
+ponytail-audit|Scan repo for over-engineered code — ranked simplify list.
+ponytail-debt|Harvest ponytail-tagged shortcuts into a debt ledger.
+ponytail-review|Review diff for what to delete, not what to add.
+ponytail-help|Quick reference for all ponytail commands.
 my-md|Lists every markdown file — global Claude docs plus current project's notes.
 design-audit|Audit UI across 5 lenses → ranked violations → optional 10-mockup fix pipeline.
 design|Fresh UI generation: 10 Opus mockups (8 paradigms + 2 wild) → AI picks → you confirm → build.
@@ -26,7 +26,7 @@ antislop|Check text/UI for AI-slop tells. Violations table + verdict.
 prompt-scan|Reads global Claude MD files + current model's release notes, writes a dated snapshot to learnings.md.
 better-prompt|Rewrites a rough prompt with a named target, scope boundary, success criterion, and correct skill route.
 remember-that|Save, extract, delete, move, audit facts across sessions.
-trim-gain|Shows trim's measured impact: less code, less cost, more speed.
+ponytail-gain|Shows ponytail's measured impact: less code, less cost, more speed.
 quick-mockup|Up to 5 style-matched, lightly-functional layout candidates on one page with an AI pick — reads your CSS tokens, native HTML so dropdowns work; much lighter than /design.
 skill-audit|Audits the whole skill library: bucket fit, missing pieces, unverified output, stale triggers.
 health|Diff + codebase health + /last-30 trends, with every fix walked past you one at a time.

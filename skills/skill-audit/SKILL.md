@@ -208,6 +208,6 @@ Print all proposed gotchas. Ask: "Apply these? (yes / skip <name> / adjust <name
 ## Anti-Patterns
 
 - **Don't auto-apply findings** — audit mode prints findings only; user decides what to fix
-- **Don't flag trim/* skills** — YAML block scalar format (`description: >`), plugin-managed
+- **Don't flag ponytail/* skills** — YAML block scalar format (`description: >`), plugin-managed
 - **Don't recommend scripts/ for pure reasoning skills** — only flag where deterministic logic genuinely exists
 - **Never auto-run `--research`** — opt-in. A bare audit stays offline and deterministic; only hit the network when the flag is present.

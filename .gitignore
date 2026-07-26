@@ -32,13 +32,8 @@ skills/orchestration
 skills/emil-design-eng
 skills/animation-vocabulary
 skills/review-animations
-# trim-* = new name (after reinstall from holland-built/trim)
-skills/trim
-skills/trim-audit
-skills/trim-debt
-skills/trim-gain
-skills/trim-help
-skills/trim-review
+# ponytail (DietrichGebert/ponytail) installs to .agents/skills/ + .claude/skills/,
+# both already ignored below — no skills/ entry needed.
 
 # interface-design = externally managed by npx skills@latest (symlink to ~/.agents/)
 skills/interface-design

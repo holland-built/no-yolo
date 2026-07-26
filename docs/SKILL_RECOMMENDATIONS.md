@@ -1,6 +1,6 @@
 # Skill Library — Improvement Recommendations
 
-Sourced from the personal knowledge base. **Additive, not corrective** — the KB validates the current skill library (run `/my-skills` for the live count); most existing skills (plan, tdd, diagnose, code-review, trim pack) were designed FROM this research. Nothing below is applied; pick what's worth doing.
+Sourced from the personal knowledge base. **Additive, not corrective** — the KB validates the current skill library (run `/my-skills` for the live count); most existing skills (plan, tdd, diagnose, code-review, ponytail pack) were designed FROM this research. Nothing below is applied; pick what's worth doing.
 
 Each row cites its KB source. Audited 2026-06-18.
 
@@ -23,7 +23,7 @@ Each row cites its KB source. Audited 2026-06-18.
 |---|---|---|
 | **Path-scope skills** (bind to globs) | Skills load only where relevant instead of every session. KB cites 30–40k tokens/session burned on skill bloat before the first question. Biggest single context win. | pattern-claude-code-harness |
 | **Sub-agent scout pattern** | At session start, spin 3 read-only Explore scouts (e.g. DB / UI / scope-the-change). Main agent reads 3 summaries instead of 3 full crawls. KB calls this "the single biggest difference" in daily sessions. | pattern-claude-code-harness, vid-fix-claude-code-harness |
-| **Static-then-LLM two-pass review** | Run `fallow` (deterministic, free, instant) BEFORE `trim` (LLM). Strips structural noise so the LLM pass spends tokens on judgment, not obvious dead code. code-health already sequences this — apply the principle elsewhere. | pattern-static-then-llm-review |
+| **Static-then-LLM two-pass review** | Run `fallow` (deterministic, free, instant) BEFORE `ponytail` (LLM). Strips structural noise so the LLM pass spends tokens on judgment, not obvious dead code. code-health already sequences this — apply the principle elsewhere. | pattern-static-then-llm-review |
 | **Catalog README for skills dir** | A discovery doc: what each skill kills, when to use it, cost/benefit. KB's highest-adoption pattern ("the catalog is the artifact"). The new RELATIONSHIPS.md is a start. | pattern-skills-over-frameworks |
 
 ---

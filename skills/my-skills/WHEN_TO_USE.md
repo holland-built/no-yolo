@@ -12,11 +12,11 @@ ingest-docs|You have source material Claude should know about
 video-to-kb|Good talk or tutorial worth keeping permanently
 whats-next|Session start — orient before picking what to do
 improve|Want a deep audit-plus-plan pass, not just a diff review
-trim|About to over-engineer something
-trim-audit|Major cleanup, debt paydown, or before a refactor
-trim-debt|Tracking shortcuts you deferred intentionally
-trim-help|Forgot a trim command
-trim-review|PR is too big — gut-check what's unnecessary
+ponytail|About to over-engineer something
+ponytail-audit|Major cleanup, debt paydown, or before a refactor
+ponytail-debt|Tracking shortcuts you deferred intentionally
+ponytail-help|Forgot a ponytail command
+ponytail-review|PR is too big — gut-check what's unnecessary
 antislop|Before shipping any user-facing text or README — or when output feels generic
 better-prompt|Before running a fuzzy prompt through any skill
 eli5|Before committing to something you don't fully understand — or after work finishes, to catch up in plain English
@@ -27,7 +27,7 @@ remember-that|End of a session with useful decisions or preferences worth keepin
 release|Ready to commit + push any repo to GitHub
 debate|Architecture calls, UI/UX choices, or "what should we build next" when you want real pushback
 update|Not sure if you should update
-trim-gain|When you want to see trim's ROI in numbers.
+ponytail-gain|When you want to see ponytail's ROI in numbers.
 skill-audit|Wondering if your skills are well-structured or missing something
 health|Before merging any non-trivial change, when a codebase needs a cleanup pass, or when you want fixes informed by what's currently trending
 lockstep|You want "don't code yet" to actually hold, not just get ignored a few messages later

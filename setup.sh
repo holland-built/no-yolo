@@ -225,8 +225,8 @@ if [[ "$MODE" == "core-only" ]]; then
   echo "    Skipped third-party installs (--core-only) — add them later: bash setup.sh"
   RESULTS+=("third-party: SKIPPED (--core-only)")
 else
-  echo "    Installing trim..."
-  if npx skills@latest add holland-built/trim; then RESULTS+=("trim: OK"); else echo "    ! trim install failed"; RESULTS+=("trim: FAILED"); fi
+  echo "    Installing ponytail..."
+  if npx skills@latest add DietrichGebert/ponytail; then RESULTS+=("ponytail: OK"); else echo "    ! ponytail install failed"; RESULTS+=("ponytail: FAILED"); fi
   echo "    Installing improve..."
   if npx skills@latest add shadcn/improve; then RESULTS+=("improve: OK"); else echo "    ! improve install failed"; RESULTS+=("improve: FAILED"); fi
   # upstream ships without user-invocable, which kills /improve — re-apply the

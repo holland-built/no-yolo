@@ -2,6 +2,15 @@
 
 Fresh start 2026-07-17
 
+## 2026-07-26 — abandoned the trim fork, now tracking DietrichGebert/ponytail (entry #31)
+
+- **Dropped the `holland-built/trim` fork.** It was a fork of `DietrichGebert/ponytail` whose only change was a rename (ponytail→trim across 6 skill dirs, frontmatter, the `// ponytail:` comment convention, the env var, and the debt file). It had drifted **96 commits behind upstream** while sitting 1 commit ahead, so every improvement since 2026-06-23 was being missed and each upstream pull would have meant redoing the rename. Uninstalled it and installed `DietrichGebert/ponytail` directly.
+- Renamed every reference across the library: `trim*` → `ponytail*` in `README.md`, `setup.sh`, `docs/SKILLS.md`, `docs/CORE_RULES.md`, `docs/SKILL_RECOMMENDATIONS.md`, `docs/THIRD_PARTY_SKILLS.md`, `skills-lock.json`, and the skill bodies that call it (`health` — the biggest, ~14 references including its H0/H2 phase names and dependency checks — plus `build`, `design`, `skill-audit`, `md-check`) and all five my-skills catalog files. English-verb uses of "trim" were deliberately left alone.
+- Removed the six dead `skills/trim*` lines from `.gitignore` rather than renaming them: the current installer puts ponytail in `.agents/skills/` and `.claude/skills/`, both already ignored, so a `skills/ponytail*` entry would itself have been the stale reference that SHIP.md step 3.4 exists to catch.
+- Attribution note added to `docs/THIRD_PARTY_SKILLS.md` recording that the fork existed and why it was abandoned — the fork's LICENSE did correctly retain Dietrich Gebert's copyright, but nothing in this repo recorded the provenance.
+- Behaviour change worth knowing: upstream's current description reads "Use on ANY coding task" — noticeably more ambient than the stale fork, which only fired on explicit phrases like "be lazy". Verified no `ponytail:`/`trim:` debt markers, `TRIM_DEFAULT_MODE` env var, or `TRIM-DEBT.md` ledger existed anywhere, so nothing needed migrating.
+- Audited every other third-party skill for the same mistake: **trim was the only one.** improve, emil-design-eng, animation-vocabulary, review-animations, archify, and taste-skill all point at their original authors' repos.
+
 ## 2026-07-26 — diagnose sharpening parity + stale gitignore purge (entry #30)
 
 - `/diagnose --debate` now carries the same sharpening posture as `/debate`: an anchor-or-forfeit rule (every theory cites a `file:line` from the excerpt bundle or a repro path, or it's discounted and cannot win the diagnosis), lead-with-your-lane guidance so the six failure-class personas don't converge, and a required "what would kill my theory" line. D4 gained explicit ADMITTED/DISCOUNTED rulings plus a collapse check — six personas agreeing off one anchor counts as one theory, not six.
