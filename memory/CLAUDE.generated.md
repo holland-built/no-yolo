@@ -1,5 +1,5 @@
 <!-- GENERATED FROM ~/.claude/memory/facts/ — DO NOT EDIT. Run /memory-compile. -->
-<!-- compiled 2026-07-24 -->
+<!-- compiled 2026-07-26 -->
 # Learned Preferences (compiled from curated memory)
 
 Compiled from the fact store. Each line links its source fact.
