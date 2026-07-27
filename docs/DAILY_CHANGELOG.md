@@ -2,6 +2,11 @@
 
 Fresh start 2026-07-17
 
+## 2026-07-26 — added /fixloop, resynced README skill table (entry #34)
+
+- New skill `/fixloop`: autonomous find-prove-fix-verify-ship loop — fixes at its own recommended settings and reports once at the end instead of narrating each finding. Severity-ordered (wrong-data-as-fact and blind alerting before cosmetics). Hard-stops only on destructive, unbounded-blast-radius, blocked-upstream, or product-changing work.
+- README's Skills inventory table had drifted from `skills/my-skills/RENDERED_FAST.md` (missing fixloop's row position) — resynced verbatim, custom-command count bumped 29 → 30.
+
 ## 2026-07-26 — filled in the missing third-party attribution rows (entry #33)
 
 - `docs/THIRD_PARTY_SKILLS.md` was missing 5 rows: `impeccable`, `computer-use`, `orca-cli`, `orchestration` (all four managed by the Orca app, not npx) and `interface-design` (`Dammyjay93/interface-design`, no attribution shipped in its local files — flagged for a follow-up patch). All 5 verified present on disk under `~/.agents/skills/`.

@@ -11,6 +11,7 @@ plan
 ## Review
 health
 xcheck
+fixloop
 
 ## Research
 last-30

@@ -106,6 +106,17 @@
       },
       "structureSha": "aab100f36c425309563ffb1dda4a6f03a557c3ff37e74299a90641c8a7029176"
     },
+    "fixloop": {
+      "descSha": "f44e9ee4fbc72e655e5059b31ff7847b4b5226321508d09068e9e6deb975773e",
+      "rows": {
+        "skills/my-skills/STORIES.md": "0b394e3684cde61c451e940f80e0164f317f299f86baf1caedd4dff0fcb50a7a",
+        "skills/my-skills/TAGLINES.md": "ff8812603478ef79d8f46b68fe95d7f0bb6d12d0eaec12b693edd15780063df6",
+        "skills/my-skills/TAGLINES_SHORT.md": "14137785ac636ae11b625a4ea83f34ec65a7842ffe2daa64982fc33fe2ae8e66",
+        "skills/my-skills/WHEN_TO_USE.md": "7940f2847286f7a34255f97700dc19b047d745c6ea3fe9cf8f481c3fbb21db26",
+        "skills/my-skills/WHY_TO_USE.md": "7d327a4a78832290fbc3a9481cd0a8ad46fabfadf402bafeaad7df6ecd1977ab"
+      },
+      "structureSha": "08936ea8479150ce28e60d266bd907a35fb80f5c384416c55c6536734fc9dc2b"
+    },
     "health": {
       "descSha": "6aa7f23d0faed1bcc59e563c960cdd2ca6602e8940c2fdac5a781a17d6f018c1",
       "rows": {

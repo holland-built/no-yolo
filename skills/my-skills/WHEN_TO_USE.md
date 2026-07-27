@@ -42,3 +42,4 @@ pick-ui-library|Picking a library for charts, state, drag-drop, virtualization, 
 xcheck|Automatically inside /plan, /debate, /build, /diagnose --debate, /design-audit — or /xcheck to bounce any plan off Codex manually
 literal|You're making rapid changes and want zero push-back for a while
 match-all|One instance looks right and its siblings don't — make them all match it without hand-editing each
+fixloop|You're tired of being told what's broken and want it fixed and shipped without a running commentary or a decision to make per finding
