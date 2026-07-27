@@ -15,6 +15,7 @@ Every argument and flag each skill accepts, straight from the skill files themse
 | design-audit | `[surface to audit]` |
 | diagnose | `[describe the bug or paste the error] [--debate]` |
 | eli5 | `[skill name, plan text, command, or file path]` |
+| fixloop | `[goal or surface] [--releases N] [--dry]` |
 | health | `[path] [--auto] [--quick]` |
 | ingest-docs | `[--force] [filename]` |
 | last-30 | `[topic / library / tool / pattern to research]` |

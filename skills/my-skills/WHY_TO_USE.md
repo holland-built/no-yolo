@@ -42,3 +42,4 @@ pick-ui-library|Skips the hour of comparing libraries yourself — a short list,
 xcheck|A different model family catches blind spots self-review can't — findings-only protocol stops rewrite ping-pong, convergence gate stops endless nitpicking
 literal|The challenge-by-default posture is great for direction, but during fast knob-turning you just want it done — this mutes it.
 match-all|Broadcasts the good one's language, not a copy — too-basic siblings get elevated, empty content gets hidden or a sensible fallback, never a pasted placeholder
+fixloop|One decision instead of dozens — you set the goal once and it hunts by severity, proves each defect against live data, ships each fix, and hands you a single table at the end instead of a running commentary
