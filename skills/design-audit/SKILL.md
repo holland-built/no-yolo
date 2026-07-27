@@ -1,6 +1,6 @@
 ---
 name: design-audit
-description: Use this skill when the user types /design-audit, says 'audit this UI', 'find design problems', or 'what's wrong with this UI'. Audits the current UI across 5 lenses -> adversarial verification of every Critical -> ranked violations table + P0/P1/P2 plan -> eli5 summary. Then asks if you want to fix: yes triggers 10-mockup fix pipeline (same as /design) scoped to audit findings, you pick a variant, then builds and verifies.
+description: Use this skill when the user types /design-audit, says 'audit this UI', 'find design problems', or 'what's wrong with this UI'. Audits the current UI across 5 lenses -> adversarial verification of every Critical -> ranked violations table + P0/P1/P2 plan -> eli5 summary. Then asks if you want to fix: yes triggers 8-mockup fix pipeline (same as /design) scoped to audit findings, you pick a variant, then builds and verifies.
 user-invocable: true
 argument-hint: "[surface to audit]"
 allowed-tools:
@@ -18,7 +18,7 @@ allowed-tools:
 Target: $ARGUMENTS
 
 Audits your existing UI and optionally fixes it. Audit phase is always read-only. Fix phase
-generates 10 mockups, you pick one, then builds against your confirmed choice.
+generates 8 mockups, you pick one, then builds against your confirmed choice.
 
 ## Step 0 — Detect project
 ```bash
@@ -72,7 +72,7 @@ Then run `/eli5` on the summary.
 ### Fix gate
 After the eli5 summary, ask exactly:
 
-**"Fix Critical + High? Generates 10 mockups, you pick one, then builds. (y/n)"**
+**"Fix Critical + High? Generates 8 mockups, you pick one, then builds. (y/n)"**
 - **n** -> done. Hand the P0/P1 plan to `/design` if you want a clean-sheet redesign instead.
 - **y** -> proceed to Fix Flow below.
 
@@ -90,7 +90,7 @@ The seed tells agents which audit findings are token-level (fixable by swap) vs 
 ### F2 — Taste direction
 Same as `/design` Step 1. Invoke redesign-skill for direction. Use FALLBACKS if absent.
 
-### F3 — 10 mockups
+### F3 — 8 mockups
 ONE parallel Agent call, `model: "opus"`. Same spec as `/design` Step 2 with one addition:
 
 Each agent brief carries the full P0 findings list from Step 3:
@@ -106,7 +106,7 @@ findings — so the fix mockups both resolve the audit findings AND match the re
 re-derive the scrape logic here; it is the same mechanism defined in `/design` Step 0. If the
 scrape fails, proceed with findings only.
 
-**v1–v8**: distinct paradigms (same paradigm list as `/design`).
+**v1–v6**: distinct paradigms (same paradigm list as `/design`).
 **v9–v10**: WILD — alien layout paradigm, still must address P0 findings. Codex authors these
 two per `/design` Step 2's wild-slot block (background, stdout-only, Claude writes the files,
 Opus fallback) — with the P0 findings list added to its prompt alongside the tokens.
@@ -118,7 +118,7 @@ Every variant includes: light + dark sections, states strip (hover/focus/empty/e
 Same as `/design` Step 3 validator. Minimum 6 survivors.
 
 ### F5 — Combined view + Chrome auto-open
-Same as `/design` Step 3 combined view. 5 rows x 2 columns (light | dark).
+Same as `/design` Step 3 combined view. 4 rows x 2 columns (light | dark).
 ```bash
 "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" \
   --headless --disable-gpu --window-size=1400,900 \
@@ -128,12 +128,12 @@ open ".mockups/design-<slug>/all.html"
 ```
 
 ### F6 — AI recommendation
-Spawn ONE scoring agent. Scores all 10 on Taste + Swiss + UIwiki (same rubric as `/design`).
+Spawn ONE scoring agent. Scores all 8 on Taste + Swiss + UIwiki (same rubric as `/design`).
 Also run `/design`'s Codex second-judge call (the shared `codex-run.sh` runner) on
 `.mockups/design-<slug>/all.png` (same command, same rules: advisory only, skip silently
 without codex) and add its Codex column to the table.
 If the two picks split, run `/design`'s Synthesis round (crossover v11/v12 — synthesis briefs
-must also carry the P0 findings list); F7 then offers all 12.
+must also carry the P0 findings list); F7 then offers all 10.
 **Recommendation reason must be grounded in audit findings:**
 > "v6 — directly resolves the P0 contrast failures and type hierarchy issues flagged in the
 > audit, and has the strongest Swiss grid discipline of the survivors."

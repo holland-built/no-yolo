@@ -4,7 +4,7 @@ build|Starting any non-trivial feature from scratch
 plan|Fuzzy feature or system idea, before running /build
 my-md|Lost track of what notes exist
 my-skills|Forgot what skills exist
-design-audit|Any UI that feels off — audit first, then optionally fix with 10 mockups in the same command
+design-audit|Any UI that feels off — audit first, then optionally fix with 8 mockups in the same command
 tdd|Bug fixes, new features, anywhere tests matter
 design|Starting a new design or full redesign — want truly fresh, not an incremental patch
 quick-mockup|Just need to see a layout before deciding, no brand polish needed yet

@@ -1,5 +1,41 @@
 # Changelog
 
+## 2026-07-27 — /design + /build variant cut 10 → 8, propagated
+
+| File | Line(s) | Change |
+|---|---|---|
+| `skills/design/SKILL.md` | 179, 182, 184, 186, 206, 212, 223, 231, 251 | Step 2 cut to 6 Opus paradigm variants + 2 Codex wild (v9/v10 filenames kept so the verified Codex delimiter/split machinery is untouched). Judge/scorer see 8; combined view 5x2 → 4x2; synthesis total 12 → 10. Heading corrected from "8 Opus mockups" — only 6 are Opus. |
+| `skills/build/SKILL.md` | 18, 93-97, 99, 121 | Same cut in Step 3.5 Step A. Also fixed a stale rule at :18 claiming "All planning → Opus agent" when :60 dispatches Fable. |
+| `skills/design-audit/SKILL.md` | 3, 21, 75, 93, 109, 121, 131, 136 | Propagated: description (harness-injected), F3 heading, v1–v8 → v1–v6, combined view 5x2 → 4x2, scorer 10 → 8, F7 total 12 → 10. |
+| `skills/my-skills/{STORIES,TAGLINES,WHY_TO_USE,WHEN_TO_USE}.md` | 8 rows | Counts corrected; dropped "Opus" from two rows — the set is mixed authorship (6 Opus + 2 Codex), so the word was wrong independent of the number. |
+| `skills/my-skills/RENDERED.md` | regenerated | Rebuilt by `regen.py` from corrected sources; never hand-edited. |
+| `skills/my-skills/catalog_lock.json` | relocked | Blessed `design` + `design-audit` only, after re-verifying `rel:design` against `design/SKILL.md`. |
+
+**Why:** cutting `/design` from 10 variants to 8 saves 2 Opus agents per UI run, but the first pass
+changed only `design` and `build`. It left 15 stale references across 6 files — including
+`design-audit`'s harness-injected `description`, which claimed a "10-mockup fix pipeline (same as
+/design)" after `/design` became 8. `verify.sh` caught it as a stale catalog lock.
+
+**Before → after:** Opus agents per UI run 8 → 6. `verify.sh` 13/14 → **14/14 PASS**.
+
+## 2026-07-27 — skill-audit verifier blind spot
+
+| File | Line(s) | Change |
+|---|---|---|
+| `skills/skill-audit/scripts/resolve-invocations.sh` | new, 1-320 | Preflight emitting candidate script/skill invocations per SKILL.md with source line, kind, resolved path. Depth-3 cycle-safe indirection; `(cwd-assumed)` tag only when the file exists on disk; UNRESOLVED never silently dropped. Emits candidates, never verdicts. 363 raw rows → 97 after dedupe/noise filtering. |
+| `skills/skill-audit/SKILL.md` | 83-100 | Phase 2: single `scripts/` column → three (own dir / invokes external / deterministic need met?) with rubric `yes`/`no`/`n-a (pure reasoning)`. Provenance separated from adequacy. |
+| `skills/skill-audit/SKILL.md` | 101-120 | Phase 3: HARD RULE to run the preflight first; verifier redefined as any objective check of the promised outcome (inline/pre/post all count, two-part test); script presence alone never scores "has verifier"; unresolved → `UNKNOWN — MANUAL REVIEW`. Added `Evidence (file:line)` column. |
+| `brainstorms/skill-audit-2026-07-27.md` | 44-49, 51-131, 140-158 | Phases 2-3 re-run under corrected method; Top Fixes and counts recomputed; correction note added. Phases 1 and 4 byte-identical. |
+
+**Why:** the audit scanned only each skill's own `SKILL.md`, so verifiers living in external scripts
+were invisible. It produced 4 false "no verifier" findings (`remember-that`, `checkup`, `debate`,
+`plan`) and a wrong #1 recommendation. `remember-that` invokes `memory_compile.py`, which lints and
+`sys.exit(2)`s on error — a blocking verifier the audit could not see.
+
+**Before → after:** verifier gaps 5 (4 false, 1 real) → 6 (all newly verified, 0 UNKNOWN).
+Component gaps: 2 of the original `scripts/` recommendations withdrawn as blind-spot artifacts.
+
+
 Fresh start 2026-07-17
 
 ## 2026-07-26 — added /fixloop, resynced README skill table (entry #34)

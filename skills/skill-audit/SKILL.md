@@ -82,9 +82,11 @@ Output table:
 
 ### Phase 2 — Component Audit
 
-For each skill, flag what's missing and whether it matters:
+For each skill, flag what's missing and whether it matters. Provenance and adequacy are separate questions — an incidentally invoked utility does not satisfy a deterministic need, so split the old `scripts/` column into three:
 
-- **scripts/**: Is there a deterministic part (same input → same output every time) that could be a script?
+- **own scripts/ dir**: Does the skill have its own `scripts/` directory? (✓ / —)
+- **invokes external script**: Does the skill's SKILL.md call out to a script living outside its own folder (shared helper, another skill's `scripts/`)? (✓ / —)
+- **deterministic need met?**: Is there a deterministic part (same input → same output every time) — and if so, is it actually covered by one of the above? Allowed values: `yes` / `no` / `n-a (pure reasoning)`.
 - **assets/**: Is there a template or reference file the skill improvises from scratch each run?
 - **config.json**: Does the skill ask the user to re-enter the same value on every run?
 - **arguments field**: Does the skill accept inputs but has no `argument-hint` or `arguments` frontmatter?
@@ -93,21 +95,27 @@ Only flag where the gap is real — don't recommend scripts/ for skills that are
 
 Output table:
 ```
-| Skill | scripts/ | assets/ | config.json | arguments | Recommendation |
+| Skill | own scripts/ dir | invokes external script | deterministic need met? | assets/ | config.json | arguments | Recommendation |
 ```
 
 ### Phase 3 — Verifier Audit
 
-Find skills that PRODUCE output but never CHECK it. A good verifier has an objective output: **Pass/Fail** or a **grade out of 10**.
+**HARD RULE**: before scoring any skill, run `bash ~/.claude/skills/skill-audit/scripts/resolve-invocations.sh` and consume its candidate map. You may NOT score a skill "no verifier" without checking the scripts and skills it invokes — a verifier frequently lives outside the skill's own folder.
+
+Find skills that PRODUCE output but never CHECK it. A verifier is any objective check of the skill's promised outcome — inline, pre-output, and post-output checks ALL count. The test is two-part: does it yield **Pass/Fail** or a **numeric grade**, AND can the skill proceed when it fails? Position in the pipeline is irrelevant — `tdd`'s inline red/green check and `release`'s pre-publish leak guard both qualify as verifiers.
+
+Two scoring rules:
+- **Script presence alone never scores "has verifier"** — read the resolved script and confirm it actually checks the promised outcome. A quota tracker (e.g. `groq_quota.py`) or an installer (e.g. `setup.sh`) is not a verifier; neither one checks anything.
+- **An unresolved-but-plausible candidate scores `UNKNOWN — MANUAL REVIEW`**, never "no verifier".
 
 For each skill that produces output (writers, generators, drafters, builders):
-- Does it have a verification step?
+- Does it have a verification step (inline, pre-output, or post-output)?
 - If not: what would a Pass/Fail or grade check look like?
 - Is there an existing skill that could be borrowed as the checker?
 
 Output table, ranked by impact — top 3 tweaks that would raise output quality most:
 ```
-| Skill | Produces Output | Has Verifier? | Suggested Check | Borrow From |
+| Skill | Produces Output | Has Verifier? | Evidence (file:line) | Suggested Check | Borrow From |
 ```
 
 ### Phase 4 — Trigger Condition Audit
