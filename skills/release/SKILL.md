@@ -124,7 +124,7 @@ If `BEHIND = 0`: continue.
 
 Execute each `## Steps` action in order for the target env. Then:
 - Stage per SHIP.md (`git add -A` by default, or the file's stated scope).
-- Commit — message from `$ARGUMENTS` or auto-generated; footer `Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>`.
+- Commit — message from `$ARGUMENTS` or auto-generated; footer = the `Co-Authored-By:` line the harness specifies for the running model. Do NOT pin a version here — a hardcoded model name silently misattributes every commit after the next release (this line said `Claude Opus 4.8` while Opus 5 was running).
 - Push: `git -C "$REPO_ROOT" push origin <target-branch>`.
 - If `## Release` defined and the user's intent includes publishing (not just pushing), run it; otherwise report it as skipped/optional.
 
