@@ -176,14 +176,14 @@ momentum forward, stays grabbable and reversible at any instant; springs over fi
 easing; always honour `prefers-reduced-motion`. Skip this read entirely for static surfaces
 (tables, forms, settings) — it is reference weight those variants do not need.
 
-## Step 2 — 10 Opus mockups
+## Step 2 — 8 mockups (6 Opus + 2 Codex wild)
 ONE parallel Agent call, `model: "opus"`. Each writes `.mockups/design-<slug>/vN.html`: self-contained, inline `<style>`, **no external deps**, `file://` openable, `<!-- VARIANT: vN — paradigm -->` header. **Real data, not lorem ipsum.** Bake the Step 0 seed tokens throughout.
 
-**v1–v8**: each anchored to a DISTINCT paradigm — pick 8 from: Terminal/CLI · Bloomberg data grid · editorial/magazine · bento grid · command palette · split-pane reference · single-column full-bleed · floating action panel · timeline · kanban.
+**v1–v6**: each anchored to a DISTINCT paradigm — pick 6 from: Terminal/CLI · Bloomberg data grid · editorial/magazine · bento grid · command palette · split-pane reference · single-column full-bleed · floating action panel · timeline · kanban.
 
-**v9–v10**: WILD. A completely alien layout paradigm — impossible to mistake for a variation of v1–v8. Examples: physical-object skeuomorph, radial/circular nav, newspaper broadsheet, game HUD, brutalist raw grid with zero decoration. Label each with `WILD` in the header comment.
+**v9–v10**: WILD. A completely alien layout paradigm — impossible to mistake for a variation of v1–v6. Examples: physical-object skeuomorph, radial/circular nav, newspaper broadsheet, game HUD, brutalist raw grid with zero decoration. Label each with `WILD` in the header comment.
 
-**Codex authors v9–v10 (cross-model generation; skip if `command -v codex` fails → Opus authors them as before).** All-Claude batches share one model's taste DNA — the WILD slots go to a different family. Codex stays read-only and returns HTML on stdout; **Claude writes the files** (write authority never delegates). Launch in the BACKGROUND *before* the Opus fan-out so it costs zero wall-clock, and give the Opus call only v1–v8:
+**Codex authors v9–v10 (cross-model generation; skip if `command -v codex` fails → Opus authors them as before).** All-Claude batches share one model's taste DNA — the WILD slots go to a different family. Codex stays read-only and returns HTML on stdout; **Claude writes the files** (write authority never delegates). Launch in the BACKGROUND *before* the Opus fan-out so it costs zero wall-clock, and give the Opus call only v1–v6:
 
 ```bash
 bash ~/.claude/skills/xcheck/scripts/codex-run.sh -m gpt-5.6-sol -s read-only "Output two WILD UI mockup variants as complete self-contained HTML documents, delimited by lines ===V9=== and ===V10===. Each: completely alien layout paradigm (not card grids/dashboards), inline <style> only, no external deps, light + dark sections with a data-theme toggle button, a labeled states strip (hover/focus/empty/error/loading), 2-3 <!-- ANNOTATION: --> comments, header comment '<!-- VARIANT: vN — paradigm (WILD, codex) -->'. Use these tokens verbatim: <paste seed tokens>. Real data, no lorem ipsum. Banned: <paste slop reject list>. Output ONLY the delimited HTML." > .mockups/design-<slug>/codex-wild.out 2>&1 &
@@ -203,13 +203,13 @@ Each brief also carries the **Astryx awareness line**: if this is a React + npm 
 ## Step 3 — Validator + combined view + AI pick
 
 ### Validator pass
-Spawn a judge agent running Taste + Swiss + UIwiki lenses on all 10. Reject any variant that hits the **slop reject list** and regenerate it (max 2 rounds, specific brief per reject):
+Spawn a judge agent running Taste + Swiss + UIwiki lenses on all 8. Reject any variant that hits the **slop reject list** and regenerate it (max 2 rounds, specific brief per reject):
 > card grids · accordion-only · sidebar-nav + icon rows · gradient CTAs (blue->purple / teal->green) · rounded corners >8px everywhere · glassmorphism · sans-only type hierarchy · hero + centered-CTA layout · shadcn/MUI/Tailwind-UI starter DNA · badge/pill stat rows · progress bars everywhere · skeleton loaders · "Powered by" badges · hover scale transforms.
 
 If BOLD MODE: also reject any variant that reads as a minor refresh of the current app. Minimum 6 survivors required before proceeding.
 
 ### Combined view
-Build `.mockups/design-<slug>/all.html` — layout: **5 rows x 2 columns**. Each row = one variant pair: left column = light theme, right column = dark theme. States strip and annotation callouts visible in both columns. Sticky jump nav with v1–v10 anchors. Per-variant theme toggle preserved.
+Build `.mockups/design-<slug>/all.html` — layout: **4 rows x 2 columns**. Each row = one variant pair: left column = light theme, right column = dark theme. States strip and annotation callouts visible in both columns. Sticky jump nav with v1–v6 + v9–v10 anchors. Per-variant theme toggle preserved.
 
 ```bash
 "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" \
@@ -220,7 +220,7 @@ Build `.mockups/design-<slug>/all.html` — layout: **5 rows x 2 columns**. Each
 Show the screenshot inline.
 
 ### AI recommendation
-Spawn ONE scoring agent. It reads all 10 variant HTML files and scores each on:
+Spawn ONE scoring agent. It reads all 8 variant HTML files and scores each on:
 - Taste (anti-slop, typography, motion discipline) — 0–10
 - Swiss (grid, type scale, color count, negative space) — 0–10
 - UIwiki (20 rules, scored 1 each) — 0–20
@@ -228,7 +228,7 @@ Spawn ONE scoring agent. It reads all 10 variant HTML files and scores each on:
 **Codex second judge (parallel with the scoring agent; skip silently if `command -v codex` fails):** a different model family grading visuals Claude both generated and judged — the self-grading bias breaker:
 
 ```bash
-bash ~/.claude/skills/xcheck/scripts/codex-run.sh -m gpt-5.6-sol -s read-only -i ".mockups/design-<slug>/all.png" "This image shows UI mockup variants, labeled v1-v10 (light|dark pairs). For each: verdict slop|clean + one-line reason (slop = generic AI look: card grids, gradient CTAs, hero+centered-CTA, glassmorphism, shadcn starter DNA). Then name your single top pick + one sentence why. No preamble."
+bash ~/.claude/skills/xcheck/scripts/codex-run.sh -m gpt-5.6-sol -s read-only -i ".mockups/design-<slug>/all.png" "This image shows UI mockup variants, labeled v1-v6 and v9-v10 (light|dark pairs). For each: verdict slop|clean + one-line reason (slop = generic AI look: card grids, gradient CTAs, hero+centered-CTA, glassmorphism, shadcn starter DNA). Then name your single top pick + one sentence why. No preamble."
 ```
 
 Codex is advisory — never kills a variant alone; the validator pass remains the gate. **Cross-grading rule:** nobody grades their own homework — Claude's validator/scorer gates the Codex-authored v9–v10; the Codex judge's verdict counts only for Claude-authored variants (its opinion of its own v9/v10 is noted but carries no weight). Returns the winner variant number + a single sentence why. Update `all.html` to mark the winner with * in its section header. Show this table (Codex column from the second judge; both models agreeing on the winner = high-confidence, a split = show both picks and reasons — the disagreement is the signal):
@@ -248,7 +248,7 @@ Compare the scoring agent's winner with the Codex judge's top pick:
      ```bash
      bash ~/.claude/skills/xcheck/scripts/codex-run.sh -m gpt-5.6-sol -s read-only "Read <codex-pick path> (your earlier pick) and <claude-pick path>. Name the 2-3 strongest concrete elements in <claude-pick>, then output ONE complete self-contained HTML document after a line ===V12===: keep <codex-pick>'s layout paradigm whole and graft exactly those elements in. Same rules as before: inline style only, no external deps, light+dark toggle, states strip, annotations. Do NOT average the two layouts." > .mockups/design-<slug>/codex-synth.out 2>&1
      ```
-  3. Validate both (same checks as the wild slots; a failed synthesis slot is dropped, not regenerated — synthesis is a bonus, never a blocker), append to `all.html` marked `SYNTH`, re-screenshot, and include both in the Step 4 gate — the user picks from 12.
+  3. Validate both (same checks as the wild slots; a failed synthesis slot is dropped, not regenerated — synthesis is a bonus, never a blocker), append to `all.html` marked `SYNTH`, re-screenshot, and include both in the Step 4 gate — the user picks from 10.
 
 ### Chrome auto-open
 ```bash

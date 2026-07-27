@@ -12,8 +12,8 @@ ponytail-debt|Harvest ponytail-tagged shortcuts into a debt ledger.
 ponytail-review|Review diff for what to delete, not what to add.
 ponytail-help|Quick reference for all ponytail commands.
 my-md|Lists every markdown file — global Claude docs plus current project's notes.
-design-audit|Audit UI across 5 lenses → ranked violations → optional 10-mockup fix pipeline.
-design|Fresh UI generation: 10 Opus mockups (8 paradigms + 2 wild) → AI picks → you confirm → build.
+design-audit|Audit UI across 5 lenses → ranked violations → optional 8-mockup fix pipeline.
+design|Fresh UI generation: 8 mockups (6 paradigms + 2 wild) → AI picks → you confirm → build.
 ingest-docs|Converts PDFs/decks/docs into dense context files Claude reads at runtime.
 whats-next|Shows unfinished work or next actions as a plain-English table with a "type this" column. Never static.
 eli5|Explains any skill, plan, or finished work in plain English — short, no jargon; a small chart when there's a list, one plain sentence when there isn't.

@@ -15,7 +15,7 @@ allowed-tools:
 
 Feature: $ARGUMENTS
 
-**Agent rule:** Never write code inline. All planning → Opus agent. All implementation → Sonnet agent(s). Coordinator reads + dispatches only.
+**Agent rule:** Never write code inline. All planning → Fable agent. All implementation → Sonnet agent(s). Coordinator reads + dispatches only.
 
 ## Routing — pick the right tool BEFORE running the pipeline
 - **Spatial/layout bug** (overlap, clip, truncation) → Phase 0A (Playwright DOM measurement). Trivial fix path if cause already measured.
@@ -86,17 +86,17 @@ Skip entirely for backend-only changes.
 [ -f design-system/MASTER.md ] && echo "MASTER_FOUND" || echo "NO_MASTER"
 ```
 
-- **If `design-system/MASTER.md` exists** (hand-authored, or a DESIGN.md spec fed through `/design --apply-spec`): read it — its palette, typography, spacing scale, and layout rules are hard constraints for all 10 variants. Print: `Using design system from design-system/MASTER.md`.
+- **If `design-system/MASTER.md` exists** (hand-authored, or a DESIGN.md spec fed through `/design --apply-spec`): read it — its palette, typography, spacing scale, and layout rules are hard constraints for all 8 variants. Print: `Using design system from design-system/MASTER.md`.
 - **If no MASTER.md**: extract tokens from the project's CSS (`:root` variables, font-family declarations, color palette, spacing scale).
 
 Either way, every variant MUST use these tokens verbatim — no made-up hex codes or font names.
-### Step A — Generate 10 variants
-Build **exactly 10 variants** as individual files `.mockups/<slug>/<slug>-v1.html` … `v10.html` (fan out in ONE parallel call):
-- **v1–v7**: conservative to polished, all using real design tokens, each a DISTINCT layout paradigm — not the same card grid with different spacing.
-- **v8–v10**: WILDLY different — completely different layout paradigm, spatial arrangement, or visual language (command-line terminal, full-bleed hero with bold type, data-dense Bloomberg grid, floating action panel, bento-grid, magazine editorial). Must look like a different product team designed them — NOT a card-grid or accordion variation.
+### Step A — Generate 8 variants
+Build **exactly 8 variants** as individual files `.mockups/<slug>/<slug>-v1.html` … `v6.html` plus `v9.html`/`v10.html` (fan out in ONE parallel call):
+- **v1–v6**: conservative to polished, all using real design tokens, each a DISTINCT layout paradigm — not the same card grid with different spacing.
+- **v9–v10**: WILDLY different — completely different layout paradigm, spatial arrangement, or visual language (command-line terminal, full-bleed hero with bold type, data-dense Bloomberg grid, floating action panel, bento-grid, magazine editorial). Must look like a different product team designed them — NOT a card-grid or accordion variation.
 - **Codex authors v9–v10** — run `/design` Step 2's Codex wild-slot block (same command, adapted paths: output to `.mockups/<slug>/codex-wild.out`, files `<slug>-v9.html`/`<slug>-v10.html`): background launch before the fan-out, Codex returns delimited HTML on stdout read-only, Claude reads/validates/Writes the files, any failure → that slot regenerates via the normal agent. Skip silently without codex.
 ### Step B — Slop judge pass (HARD gate — minimum 6 survivors required)
-Spawn ONE adversarial judge agent with all 10 HTML files. It rejects any variant matching ANY pattern in the canonical lists (read fresh at run time — never inlined here): `~/.claude/docs/ANTISLOP.md` → `## GUI Slop`, plus `~/.claude/docs/UI_MOCKUPS.md` kill rules. It also deduplicates functionally identical layouts, returning survivors with a one-line reason each.
+Spawn ONE adversarial judge agent with all 8 HTML files. It rejects any variant matching ANY pattern in the canonical lists (read fresh at run time — never inlined here): `~/.claude/docs/ANTISLOP.md` → `## GUI Slop`, plus `~/.claude/docs/UI_MOCKUPS.md` kill rules. It also deduplicates functionally identical layouts, returning survivors with a one-line reason each.
 
 If **fewer than 6 survive**, respawn the rejected ones naming the specific slop pattern matched: "Go structurally different — change the layout paradigm entirely, not just the color."
 
@@ -118,7 +118,7 @@ bash ~/.claude/skills/xcheck/scripts/codex-run.sh -m gpt-5.6-sol -s read-only -i
 
 Codex is advisory — it never kills a variant alone; Claude's judge remains the gate, including for Codex's own v9–v10 (no self-grading weight). Output a variant table `| Variant | Description | Survived judge? | Codex | Pick |` — one row per variant, ★ on the recommend.
 
-Both models picking the same variant = high-confidence recommend; a split = show both reasons — that disagreement is signal for the user — AND triggers `/design` Step 3's Synthesis round (crossover v11/v12, adapted paths): run it, append both to the combined view, gate on all 12.
+Both models picking the same variant = high-confidence recommend; a split = show both reasons — that disagreement is signal for the user — AND triggers `/design` Step 3's Synthesis round (crossover v11/v12, adapted paths): run it, append both to the combined view, gate on all 10.
 
 Stop and ask: **"Which mockup variant? (or redirect)"**
 Do NOT proceed until user names a variant. Lock the chosen variant — Sonnet builds to match it exactly.
