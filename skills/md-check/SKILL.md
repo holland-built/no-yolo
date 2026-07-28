@@ -173,8 +173,10 @@ Run the On-demand audit AND Drift Check. Collect: OVERSIZE files, merge candidat
 ### Step 2 — Fix plan
 One row per finding:
 ```
-| # | Target | Problem | Fix | Kind |
+| # | Target | Problem | Fix | Kind | Depends? |
 ```
+`Depends?` is filled by Step 3.5: `clean` or `DEPENDENT — <file:line>`. `DEPENDENT` rows are shown but never applied.
+
 Kind vocab:
 - **DEDUPE** — delete the duplicate line(s); keep the canonical copy (name which file:line stays)
 - **MERGE** — fold the smaller file's unique content into the larger, delete the smaller (only when overlap >40%)
@@ -183,6 +185,24 @@ Kind vocab:
 
 ### Step 3 — Approve-all gate
 Skip if `$ARGUMENTS` contains `--auto`. Print the fix table, then: `Reply "go" to apply all, or list the # to skip.` Wait for the reply. This mutation gate is the only pause.
+
+### Step 3.5 — Dependency check (HARD, before any apply)
+
+Runs on every **DEDUPE** and **MERGE** fix. TRIM and DRIFT-FIX skip it.
+
+A deleted line is safe only if nothing downstream still reads it. `verify.sh` passes either way — structure checks cannot see a missing definition.
+
+Per line about to be deleted, extract its distinctive tokens: defined terms, verdict/status words (`Found`, `PASS`, `DEGRADED`), flag names (`--auto`), variable or column names, section titles, and any phrase a later step could refer back to. Then:
+```bash
+grep -n "<token>" <the same file>
+grep -rn "<token>" ~/.claude --exclude-dir=.git --exclude-dir=plugins --exclude-dir=projects --exclude-dir=backups
+```
+
+**A hit anywhere outside the line being cut = the line is load-bearing.** Mark that fix `DEPENDENT`, DO NOT APPLY it, and report it naming the referencing `file:line`.
+
+Also `DEPENDENT`: any deletion that removes the *only* definition of a term used elsewhere, even when the wording differs — a step saying "record the excerpt" depends on a rule defining when to record, whether or not it repeats the words.
+
+**When in doubt, keep the line.** A duplicate line costs tokens; a missing definition breaks the skill silently.
 
 ### Step 4 — Apply
 Apply each approved fix with Edit/Write.
@@ -195,6 +215,9 @@ Re-run the audit. Report before/after:
 | Files >200 lines | | |
 | Duplicate rules | | |
 | Drifted descriptions | | |
+| Fixes blocked as load-bearing | | |
 ```
+**Coherence re-read (HARD):** read each modified file end to end and confirm no surviving step references a value, term, section, or gate the edit removed. Any orphaned reference → restore the cut line and say so in the report.
+
 Then a table of what changed (file, action). End `✅ Fixed N findings across M files`.
 > Edits to `CLAUDE.md` or other loaded MDs need a session restart to take effect (no hot-reload). Note this if any were touched.
