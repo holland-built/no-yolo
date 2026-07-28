@@ -66,7 +66,7 @@ Groq caps uploads at 25MB — split long videos into segments and transcribe eac
 Log the seconds used:
 
 ```bash
-python3 ~/.claude/skills/video-to-kb/scripts/groq_quota.py --log <duration_seconds>
+python3 "${CLAUDE_SKILL_DIR}/scripts/groq_quota.py" --log <duration_seconds>
 ```
 
 Captions path: no logging, no quota consumed.

@@ -65,13 +65,13 @@ transcript_source: captions | whisper (groq) | whisper (openai)
 4. Log Groq audio seconds used:
 
 ```bash
-python3 "${CLAUDE_SKILL_DIR}/scripts/groq_quota.py" --log <duration_seconds>
+python3 ~/.claude/skills/watch/scripts/groq_quota.py --log <duration_seconds>
 ```
 
 5. Print quota report:
 
 ```bash
-python3 "${CLAUDE_SKILL_DIR}/scripts/groq_quota.py"
+python3 ~/.claude/skills/watch/scripts/groq_quota.py
 ```
 
 6. Tell user: "Raw saved to `raw/videos/<slug>.md`. Say 'process it' when ready."
@@ -142,7 +142,7 @@ FAIL on any check → fix before declaring done.
 After every Phase 1 completion, always run and display:
 
 ```bash
-python3 "${CLAUDE_SKILL_DIR}/scripts/groq_quota.py"
+python3 ~/.claude/skills/watch/scripts/groq_quota.py
 ```
 
 Output looks like:
