@@ -5,6 +5,7 @@ plan|Pre-build decision interview
 health|Diff, health + trend review
 last-30|Trending last 30 days
 video-to-kb|YouTube video to KB note
+watch|Ask a video questions
 ingest-docs|Docs to context files
 diagnose|Root-cause bug analysis
 debate|7-persona decision debate

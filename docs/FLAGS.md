@@ -32,4 +32,5 @@ Every argument and flag each skill accepts, straight from the skill files themse
 | tdd | `[describe the feature or function to implement]` |
 | update | `[preview\|full\|rules\|rollback\|restore <name>\|vendor <name>\|marketplace <name>]` |
 | video-to-kb | `[YouTube URL or video path]` |
+| watch | `<video-url-or-path> [question]` |
 | xcheck | `[artifact to cross-check — plan text, file path, or 'last plan']` |

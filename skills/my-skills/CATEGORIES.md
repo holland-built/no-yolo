@@ -15,6 +15,7 @@ fixloop
 
 ## Research
 last-30
+watch
 video-to-kb
 ingest-docs
 

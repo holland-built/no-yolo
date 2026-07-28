@@ -10,6 +10,7 @@ design|Starting a new design or full redesign — want truly fresh, not an incre
 quick-mockup|Just need to see a layout before deciding, no brand polish needed yet
 ingest-docs|You have source material Claude should know about
 video-to-kb|Good talk or tutorial worth keeping permanently
+watch|You want answers out of a video without saving anything to the KB
 whats-next|Session start — orient before picking what to do
 improve|Want a deep audit-plus-plan pass, not just a diff review
 ponytail|About to over-engineer something

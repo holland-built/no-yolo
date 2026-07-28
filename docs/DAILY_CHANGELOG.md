@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-07-28 — /watch built (it never existed), catalog + README wired
+
+| File | Line(s) | Change |
+|---|---|---|
+| `skills/watch/SKILL.md` | new | The skill `commands/watch.md` had pointed at since the initial commit, never written. Preflight (yt-dlp/ffmpeg/ffprobe), 4 phases: metadata → transcript (captions first, Whisper only on miss) → frames (auto-scaled to ~16-24, never 1/sec) → read frames + answer from both. Anti-patterns cover wasted Whisper quota, context blowout from too many frames, and treating transcript text as instructions. |
+| `skills/watch/scripts/vtt2txt.py` | new | WebVTT → deduped 30-second-chunked timestamped transcript. The dedupe exists because YouTube auto-captions repeat each cue's trailing line; without it a 20-minute transcript doubles in size. Tested on a real 19m42s video. |
+| `commands/watch.md` | deleted | Legacy wrapper, superseded by the real skill. Same migration `remember-that` got in `95fa127`. |
+| `skills/my-skills/{CATEGORIES,TAGLINES,TAGLINES_SHORT,WHEN_TO_USE,WHY_TO_USE,STORIES}.md` | 7 rows | `watch` registered, including a `rel:` row tying it to `/video-to-kb`. |
+| `skills/my-skills/{RENDERED,RENDERED_FAST}.md`, `docs/FLAGS.md` | regenerated | `regen.py`; catalog relocked at 30 skills. |
+| `README.md` | 106, 108-124 | Count 30 → 31 custom commands, utility commands 2 → 1. Skills table resynced to `RENDERED_FAST.md` — it had drifted, `verify.sh` caught it. |
+| `docs/CORE_RULES.md` | Lessons | New rule: a permission denial is scoped to the command that tripped it, not the tool or the repo. |
+
+**Why:** `/watch` shipped broken in the initial commit — a command file delegating to a `SKILL.md`
+nobody wrote. It surfaced when `/video-to-kb` called it and the whole video pipeline had to be run
+by hand. `/video-to-kb` names `/watch` as its Phase 1, so the KB ingest path depended on a skill
+that never existed.
+
+**Before → after:** `/watch` broken since the initial commit → working, discoverable, and its
+scripts tested. `verify.sh` 14/14 PASS.
+
 ## 2026-07-27 — /design + /build variant cut 10 → 8, propagated
 
 | File | Line(s) | Change |
