@@ -81,10 +81,6 @@ For each approved row:
 - UPDATE/REPLACE: merge or overwrite; append to `action_log:`
 - COMBINE: merge two context files into one, delete the redundant one, update .manifest
 
-Content rules:
-- Dense, fact-first. No fluff, no boilerplate from source.
-- Frontmatter required on every context file.
-
 ### Step 5b — Per-file verify
 
 For each context/ file written or touched this run, check and emit PASS/FAIL:

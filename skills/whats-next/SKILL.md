@@ -14,7 +14,7 @@ allowed-tools:
 
 # whats-next
 
-**Rule: act on session tasks first. When queue is empty, think creatively about the project — never offer a static menu.**
+**Rule: act on session tasks first. When queue is empty, think creatively about the project.**
 
 ---
 
@@ -86,7 +86,4 @@ Format — eli5 Mode B: a small chart, since this is a list of options (plain, s
 ```
 
 Rules:
-- Short cells, fragments not sentences; every cell plain English, technical terms translated inline or cut.
-- No jargon, no "why" padding beyond the one short payoff phrase.
-- Do NOT offer generic options like "audit codebase" without tying them to specific files or patterns you actually observed.
 - The Step 2 "report done + remaining tasks" output uses the same small chart: one row per remaining task.

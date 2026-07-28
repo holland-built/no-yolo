@@ -10,13 +10,7 @@ For any bug fix or new feature:
 
 ### Goal-Driven Restatement (Rule 4)
 
-Restate every vague instruction as a verifiable goal before acting:
-
-| Instruction | Goal-driven restatement |
-|---|---|
-| "Fix the bug" | Write a test that reproduces it, then make it pass |
-| "Add validation" | Write tests for invalid inputs, then make them pass |
-| "Refactor X" | Ensure tests pass before and after |
+Restate every vague instruction as a verifiable goal before acting → `~/.claude/docs/CORE_RULES.md` rule 4.
 
 For multi-step work, append a per-step verification to each step: `[Step] → verify: [check]`.
 

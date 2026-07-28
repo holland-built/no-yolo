@@ -44,9 +44,8 @@ Repeat until the exit condition:
 2. **PROVE IT.** Reproduce against live data. A green test suite is not
    evidence. State the defect internally as observed-value vs true-value before
    touching code; if you cannot state it that way you have not found it yet.
-3. **FIX at the source, surgically.** Take your own recommended option without
-   asking. When two options are close, choose the smaller blast radius and note
-   the alternative in the commit body.
+3. **FIX at the source, surgically.** When two options are close, choose the
+   smaller blast radius and note the alternative in the commit body.
 4. **VERIFY live.** Same reproduction, now showing the correct observed value.
    Add a regression test that fails on the pre-fix code.
 5. **GATE.** Run the project's full gate set (tests, vet/typecheck, build, and
@@ -61,7 +60,7 @@ Repeat until the exit condition:
   is preferred. No progress narration between loop iterations.
 - Anything deliberately NOT fixed goes in the repo changelog as a named
   follow-up with its reason. The changelog is the log, not the chat.
-- Tool calls are still visible; that is fine. Prose is what stops.
+- Prose is what stops.
 
 ## Hard stops — pause and ask ONLY for these
 
@@ -73,18 +72,8 @@ Repeat until the exit condition:
 
 ## Rules that never relax
 
-- Never present an invented, scaled, or placeholder value as real. Render
-  "unavailable" instead.
-- Never label a page size, a sample, or a capped list as a total.
-- A number and its label must answer the same question.
 - If a feature cannot be verified against live data, build the verifiable
   version of the same intent instead. Unverifiable features are where bugs hide.
-- Surgical scope: every changed line traces to the defect being fixed.
-- Never abandon an integration the product is built to demonstrate just because
-  a second path is easier. If a demo-critical integration fails, prove WHICH
-  call fails and why, use it everywhere it still works, and fall back only for
-  the specific calls that are genuinely broken — then say so explicitly rather
-  than silently migrating away from it.
 
 ## Exit condition
 

@@ -19,10 +19,10 @@ Every Opus plan must contain:
 |---|---|
 | **Root cause / goal** | `X breaks because Y = Z (file:line)` — grounded in evidence, never in user's words |
 | **Done looks like** | Something you can actually check — a number, a test result, a screenshot. Not "it should work." |
-| **Target file list** | Each file with "already exists — do NOT recreate" note |
+| **Target file list** | Every file the change will touch |
 | **What this change could break** | Explicit "do NOT touch" list — the files and functions that must stay untouched |
 | **What this could break** | Name existing tests or behaviors that might be affected before writing a line of code |
-| **Ordered steps** | Start with the smallest step that can be verified on its own, each independently verifiable, ~300-word cap per agent |
+| **Ordered steps** | Start with the smallest step that can be verified on its own, each independently verifiable |
 
 ## Self-Check Pass
 

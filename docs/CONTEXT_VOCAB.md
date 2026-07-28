@@ -26,17 +26,3 @@ Add project-specific vocabulary here when working on a project. Delete after the
 | materialization cascade | The sequence of events when a topology node transitions from pending → active → verified |
 | floating island header | The location-group card header pattern in TopologyTree.tsx using `relative pt-3 px-2` |
 -->
-
----
-
-## Usage pattern
-
-To reference a concept from this file in a prompt:
-
-```
-[using context from CONTEXT_VOCAB.md] 
-Fix the handoff block in brainstorms/my-feature-plan-2026-06-22.md — 
-status should be "approved" not "pending".
-```
-
-The bracketed reference tells Claude to treat the term as already defined, cutting the explanation.

@@ -14,8 +14,6 @@ allowed-tools:
 
 # release
 
-One verb to publish any repo to GitHub. The repo-specific recipe lives in `<repo-root>/SHIP.md`; this skill detects the repo, reads its `SHIP.md`, and runs it for the target environment. Same command everywhere — `~/.claude`, Wayfinder, MCP, any git repo.
-
 ## Step 0 — Locate repo + playbook
 
 ```bash
@@ -75,7 +73,7 @@ If a merge conflict occurred during teardown, it already stopped and left that f
 
 If `SHIP.md` does NOT exist at the repo root AND no worktree teardown just released the work:
 - **STOP. Do not commit, do not push, do not stage.** Announce: *"No SHIP.md in this repo — I won't push blind. Let's build the playbook first."*
-- This is lockstep posture: nothing ships until the playbook is authored AND you approve it. (Adopt the posture — do not toggle the lockstep hook, which would block writing the file.)
+- (Adopt the lockstep posture — do not toggle the lockstep hook, which would block writing the file.)
 - Interview one question at a time (use AskUserQuestion). Collect:
   1. GitHub remote (confirm `git remote -v`)
   2. Environments and their branches — e.g. dev→`dev`, staging→`staging`, prod→`prod`/`main`. Which is the default?
@@ -83,7 +81,7 @@ If `SHIP.md` does NOT exist at the repo root AND no worktree teardown just relea
   4. Hard guards — path patterns that must NEVER be committed here (secrets, personal dirs)
   5. Post-push — GitHub release/tag? none?
 - Draft `SHIP.md` from the answers using the template at the bottom. Show it. On explicit approval, Write it to `<repo-root>/SHIP.md`.
-- Then continue to Step 2. Never invent a playbook and push in the same breath.
+- Then continue to Step 2.
 
 ## Step 2 — Parse the playbook
 
@@ -115,8 +113,7 @@ BEHIND=$(git -C "$REPO_ROOT" rev-list HEAD.."origin/<target-branch>" --count 2>/
 If `BEHIND > 0`: **STOP.** GitHub has commits this machine doesn't — pushing now risks a
 rejected push or overwriting work. Tell user: "GitHub has N commit(s) you don't have locally.
 Run `/update` to see what changed, then pull/rebase before I push." Do not merge or rebase
-here — that's `/update`'s job, not `/release`'s. This is a narrower check than full `/update`
-(just "is it safe to push"), not a substitute for it.
+here — that's `/update`'s job, not `/release`'s.
 
 If `BEHIND = 0`: continue.
 
@@ -124,7 +121,7 @@ If `BEHIND = 0`: continue.
 
 Execute each `## Steps` action in order for the target env. Then:
 - Stage per SHIP.md (`git add -A` by default, or the file's stated scope).
-- Commit — message from `$ARGUMENTS` or auto-generated; footer = the `Co-Authored-By:` line the harness specifies for the running model. Do NOT pin a version here — a hardcoded model name silently misattributes every commit after the next release (this line said `Claude Opus 4.8` while Opus 5 was running).
+- Commit — message from `$ARGUMENTS` or auto-generated; footer = the `Co-Authored-By:` line the harness specifies for the running model. Do NOT pin a version here — a hardcoded model name silently misattributes every commit after the next release.
 - Push: `git -C "$REPO_ROOT" push origin <target-branch>`.
 - If `## Release` defined and the user's intent includes publishing (not just pushing), run it; otherwise report it as skipped/optional.
 

@@ -80,7 +80,7 @@ Match **first token** in this order:
 
 ## EXTRACT (no-args default)
 
-1. **Scan recent conversation context** — identify facts worth saving: decisions made, preferences stated, patterns discovered, architecture choices, constraints established. Ignore ephemeral task detail.
+1. **Scan recent conversation context** — identify facts worth saving: decisions made, preferences stated, patterns discovered, architecture choices, constraints established.
 
 2. **Propose each candidate** one at a time:
    - Infer tier: inside a project repo (`HAS_GIT=true`) → `project`; else `global`
@@ -156,6 +156,5 @@ Show output. Done.
 ## Rules (always apply)
 
 - Never edit `CLAUDE.generated.md` directly — it is rebuilt by compile.
-- Never skip the confirm step on any write, move, or delete.
 - Auto-memory files (`~/.claude-work/projects/*/memory/`) are read-only — show in table only. To promote to formal store, use ADD.
 - If compile aborts on `needs-review`, surface the conflict and STOP.

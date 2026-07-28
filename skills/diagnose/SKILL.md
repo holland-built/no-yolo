@@ -23,8 +23,6 @@ allowed-tools:
 
 Bug: $ARGUMENTS
 
-Diagnosis only. No code is written or changed.
-
 ### Step D1 — Parse + Context
 
 If $ARGUMENTS (minus `--debate`) is empty: ask "What's the bug or unexpected behavior?" before continuing.
@@ -45,15 +43,13 @@ Build a `relevant-code excerpt` bundle — shared ground truth for all personas.
 
 ### Step D3 — 6 Parallel Opus Personas
 
-Spawn all 6 in ONE parallel call (`model: opus`). Never sequential — prevents theory-anchoring.
+Spawn all 6 in ONE parallel call (`model: opus`).
 
 Each agent receives: bug description + observed/expected + when-started + code excerpt bundle + their persona brief.
 
 Each agent MUST return: **Theory** (file:line), **Evidence**, **Only I would catch**, **Confidence** N/10. Cap ~250 words.
 
 **Sharpening contract (same posture as `/debate`).** Put this in every persona brief:
-- **Anchor or forfeit** — every theory cites a `file:line` from the excerpt bundle or a concrete reproduction path. A theory with no anchor is DISCOUNTED at D4 and cannot win D5, however plausible it sounds.
-- **Lead with your lane** — argue from your own failure class (data-flow, timing, config, contract, swallowed error, lifecycle). You MAY flag a cross-cutting point, but lead with yours.
 - **Name what would kill your theory** — one line: the observation that would prove you wrong. A theory nothing could falsify is a guess.
 
 **THE DATA-FLOW TRACER** — follows a value origin to consumer. Catches: silent type coercion, null-vs-undefined, off-by-one.
@@ -108,7 +104,7 @@ Before anything else, find the fastest way to observe the bug reliably. Rank the
 5. **Log scrape** — grep for the error in existing logs
 6. **Manual UI steps** — last resort; describe the exact click path that triggers it
 
-**Do not proceed to Phase 2 until the feedback loop is running.** A loop you can run in <10s is worth more than 30 minutes of reading code.
+**Do not proceed to Phase 2 until the feedback loop is running.**
 
 State: "Feedback loop: `<command>` → reproduces the bug with output: `<output>`"
 
@@ -129,7 +125,7 @@ Generate 3–5 distinct hypotheses. For each:
 - What evidence already confirms or rules it out?
 - What one observation would eliminate it?
 
-Do not pick a favorite yet. List all live hypotheses.
+List all live hypotheses.
 
 ## Phase 4 — Instrument
 
@@ -145,11 +141,10 @@ Run the feedback loop. Eliminate hypotheses. Repeat until one survives.
 
 ## Phase 5 — Fix
 
-Fix only the confirmed root cause. No collateral cleanup.
+Fix only the confirmed root cause.
 
 - State the root cause in one sentence before writing any code
 - Change the minimum lines that address it
-- If the fix feels large, question whether phase 3 was complete
 
 ## Phase 6 — Regression Test
 
@@ -161,4 +156,4 @@ Lock the bug out permanently:
 
 ---
 
-**Rule:** If you get stuck at any phase, go back to Phase 1 and improve the feedback loop. A better loop almost always unblocks you.
+**Rule:** If you get stuck at any phase, go back to Phase 1 and improve the feedback loop.
