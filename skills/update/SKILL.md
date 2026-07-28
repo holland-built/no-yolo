@@ -141,6 +141,8 @@ What do you want to do?
 ```
 (The last two only appear if Steps 4.6/4.7 found something STALE.)
 
+Then stop. Do not auto-pull.
+
 ### Step 6 — if argument is `preview`
 For each changed .md file: state what file and section changed, quote before/after for changed lines ("was: / now:" format), highlight deleted lines (user may want to keep them). Do NOT show raw git diff output — translate everything.
 

@@ -23,6 +23,8 @@ allowed-tools:
 
 Bug: $ARGUMENTS
 
+**Diagnosis only. No code is written or changed in this mode.**
+
 ### Step D1 — Parse + Context
 
 If $ARGUMENTS (minus `--debate`) is empty: ask "What's the bug or unexpected behavior?" before continuing.

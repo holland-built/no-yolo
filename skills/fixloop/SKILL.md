@@ -72,6 +72,13 @@ Repeat until the exit condition:
 
 ## Rules that never relax
 
+- Never present an invented, scaled, or placeholder value as real. Render
+  "unavailable" instead.
+- Never label a page size, a sample, or a capped list as a total.
+- A number and its label must answer the same question.
+- Surgical scope: every changed line traces to the defect being fixed.
+- Never abandon an integration the product is built to demonstrate just because
+  a second path is easier.
 - If a feature cannot be verified against live data, build the verifiable
   version of the same intent instead. Unverifiable features are where bugs hide.
 

@@ -215,3 +215,5 @@ Print all proposed gotchas. Ask: "Apply these? (yes / skip <name> / adjust <name
 
 - **Don't flag ponytail/* skills** — YAML block scalar format (`description: >`), plugin-managed
 - **Don't recommend scripts/ for pure reasoning skills** — only flag where deterministic logic genuinely exists
+- **Don't auto-apply findings** — audit mode prints findings only; the user decides what gets built
+- **Never auto-run `--research`** — opt-in only. A bare audit stays offline and deterministic

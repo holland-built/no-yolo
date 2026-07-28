@@ -74,7 +74,7 @@ No branch divergence → diff against `HEAD~1`.
 
 ### Three Passes (run in parallel)
 
-**Pass A — Correctness & Reuse.** Logic errors, off-by-ones, null/undefined, wrong conditionals. Does an existing function/component already do this? Auth, input validation, secrets in diff.
+**Pass A — Correctness & Reuse.** Logic errors, off-by-ones, null/undefined, wrong conditionals. Does an existing function/component already do this? Auth, input validation, secrets in diff. Exhaustive — read every changed call site and its cross-file callers, always.
 
 **Pass B — Over-Engineering.** Invoke `ponytail-review` via the Skill tool with the diff. Captures what to delete, reinvented stdlib, unneeded deps, speculative abstractions.
 

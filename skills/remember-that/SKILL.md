@@ -80,7 +80,7 @@ Match **first token** in this order:
 
 ## EXTRACT (no-args default)
 
-1. **Scan recent conversation context** — identify facts worth saving: decisions made, preferences stated, patterns discovered, architecture choices, constraints established.
+1. **Scan recent conversation context** — identify facts worth saving: decisions made, preferences stated, patterns discovered, architecture choices, constraints established. Ignore ephemeral task detail.
 
 2. **Propose each candidate** one at a time:
    - Infer tier: inside a project repo (`HAS_GIT=true`) → `project`; else `global`
