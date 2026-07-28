@@ -150,10 +150,13 @@ else
   record PASS "tracked-content scan"
 fi
 
-# 9. skill coherence — every SKILL.md branches only on terms it also defines.
+# 9. skill coherence — every SKILL.md branches only on terms it also defines,
+#    and refers only to mechanisms it also names.
 #    Catches the de-dup failure mode structure checks are blind to: a pass cut
 #    the lines defining `Found` out of skills/antislop/SKILL.md and left the
-#    filter "rows where Found = yes" consuming it; 14/14 stayed green.
+#    filter "rows where Found = yes" consuming it; 14/14 stayed green. The same
+#    pass cut "the approval gate" out from under skills/release/SKILL.md —
+#    prose, no token, which is what [phrase] mode now covers.
 #    WARN-ONLY ON PURPOSE (matches the note in hooks/check-coherence.py): this
 #    is a brand-new heuristic, and a false positive must not block a release.
 #    It always records PASS — the exit code is deliberately ignored. Promote to
@@ -161,7 +164,7 @@ fi
 if coh=$(python3 hooks/check-coherence.py 2>&1); then
   record PASS "skill coherence"
 else
-  record PASS "skill coherence (WARN: $(printf '%s' "$coh" | grep -c 'consumed-but-undefined term ') finding(s) — run python3 hooks/check-coherence.py)"
+  record PASS "skill coherence (WARN: $(printf '%s' "$coh" | grep -cE '\[(token|phrase)\] ') finding(s) — run python3 hooks/check-coherence.py)"
 fi
 
 printf '\n%-6s  %s\n' RESULT CHECK

@@ -119,7 +119,11 @@ If `BEHIND = 0`: continue.
 
 ## Step 4 — Run the playbook
 
-Execute each `## Steps` action in order for the target env. Then:
+Execute each `## Steps` action in order for the target env.
+
+**Approval gate (HARD):** before staging anything, show what will ship — the target `env → branch`, the file list, and any `## Steps` action that mutates the repo. Then stop and ask exactly: **"Ship this? (go / redirect)"** Wait for the reply. Nothing is staged, committed, or pushed before it.
+
+Then:
 - Stage per SHIP.md (`git add -A` by default, or the file's stated scope).
 - Commit — message from `$ARGUMENTS` or auto-generated; footer = the `Co-Authored-By:` line the harness specifies for the running model. Do NOT pin a version here — a hardcoded model name silently misattributes every commit after the next release.
 - Push: `git -C "$REPO_ROOT" push origin <target-branch>`.
