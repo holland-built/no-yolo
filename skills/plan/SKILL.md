@@ -14,7 +14,7 @@ allowed-tools:
 
 Planning topic: $ARGUMENTS
 
-Interview me relentlessly about every aspect of this plan until we reach a shared understanding. Walk down each branch of the design tree, resolving dependencies between decisions one by one. For each question, provide your recommended answer. Ask questions **one at a time**.
+Interview me about every aspect of this plan until we reach a shared understanding. Walk down each branch of the design tree, resolving dependencies between decisions one by one. For each question, provide your recommended answer. Ask questions **one at a time**.
 
 If a question can be answered by exploring the codebase, explore it instead of asking.
 
@@ -40,13 +40,11 @@ After every answer, append it to `brainstorms/<topic-slug>-<YYYY-MM-DD>.md` (cre
 ---
 ```
 
-This guards against the model misremembering early answers as the context window fills.
-
 ---
 
 ## When to stop
 
-Ask exactly as many questions as needed — no fixed count. 2 may be enough for a simple task; 15 may be needed for a complex system. Stop when the decision tree has no open branches.
+Ask exactly as many questions as needed — no fixed count. Stop when the decision tree has no open branches.
 
 When you believe every significant branch is resolved, **seek explicit agreement before proceeding.**
 
@@ -76,13 +74,8 @@ Are we aligned? (yes / keep going / fix X)
 
 - User says **yes** → write final summary to brainstorm file + gate
 - User says **keep going** or corrects something → continue grilling, re-surface summary when ready
-- Never self-declare complete — always wait for explicit "yes"
 
 **Gate:** Agreement confirmed. That single "yes" is the only approval needed — do NOT ask a second confirmation question (e.g. "build directly or route through /build?"). First run the locked summary through the `xcheck` skill (Skill tool, `skill: "xcheck"`) — Codex critiques, accepted findings amend **Decisions locked** (show the one-line dissent block if any; no-ops silently if Codex is unavailable). Then run the (possibly amended) summary through the `better-prompt` skill (Skill tool, `skill: "better-prompt"`) to sharpen it and get its recommended skill route, then dispatch that recommended skill with the sharpened prompt — `/build` for a feature/system, `/design` for a UI-only ask, or whichever skill better-prompt names. Do NOT write any code from this output alone.
-
----
-
-**Rule:** The fix for misalignment is friction applied to *you*, not the model. Friction here = questions you answer before a line of code is written. Front-loading this jumps first-iteration success from ~70% to ~90%.
 
 ---
 
@@ -93,5 +86,3 @@ Before the first question, **do not parrot the user's problem statement back.** 
 2. Form your own diagnosis — what does the evidence say the actual problem is?
 3. State your independent read *before* asking Q1: "Here's what I see in the code: [X]. My working theory is [Y]. Now let me probe the gaps..."
 4. If your read differs from the user's description, name the conflict explicitly and ask about it first.
-
-User problem descriptions are starting hypotheses, not specifications. The interview sharpens the real diagnosis — it doesn't rubber-stamp the initial complaint.

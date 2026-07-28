@@ -38,11 +38,6 @@ If empty → stop: `Paste the text/output to check after /antislop.`
 
 For every tell in Writing Tells + GUI Slop:
 
-Scan the target for the pattern. Mark **Found** if any of these:
-- An exact forbidden word/phrase appears
-- The sentence structure matches the pattern description
-- For GUI slop: the described visual pattern is present in markup/CSS/description
-
 Record the shortest excerpt (≤15 words) that demonstrates the violation.
 
 ---
@@ -71,5 +66,4 @@ SLOP-DETECTED — N violations.
 **Rules:**
 - Diagnosis only — never rewrite the target
 - Only show rows with actual violations — no "not found" rows
-- Excerpt must quote the actual text, not describe it
 - Fix column: one-line instruction, not a rewrite

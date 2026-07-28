@@ -11,21 +11,16 @@ Use model `opus` for planning agents, `sonnet` for coding agents.
 - Non-trivial task (multi-file, new feature, architecture decision)
 - Any time you'd otherwise plan inline
 
-## Before Dispatch (Rule: think before coding)
+## Before Dispatch
 
-In every dispatch prompt:
-- State assumptions explicitly — don't let the agent infer them silently.
-- If the request has multiple valid interpretations, surface them and pick one out loud; never resolve ambiguity silently inside the agent.
-- Push back in the plan if a simpler approach exists than the one requested.
-- Name any confusion before delegating, not after the agent returns.
+State assumptions and surface ambiguity in the dispatch prompt itself, never silently inside the agent → `~/.claude/docs/CORE_RULES.md` rule 6.
 
-## Scope per Dispatch (Rule: only touch what you were asked to)
+## Scope per Dispatch
 
-Every dispatch prompt must bound how much other code the change could break:
+Every dispatch prompt must bound how much other code the change could break → `~/.claude/docs/CORE_RULES.md` rule 3.
 - Name the exact files the agent may touch; forbid edits outside them.
 - Tell it to match existing style even where it would do otherwise.
 - It may flag unrelated dead code but must not delete it; it must clean up only orphans (imports/vars) its own change made unused.
-- Every changed line must trace to the request.
 
 ## When to delegate
 

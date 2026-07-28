@@ -41,7 +41,7 @@ Output: after the normal phase tables, add a "## Radar Gaps" table; "Top Fixes" 
 
 ## AUDIT MODE (default / --audit)
 
-Run all 4 phases in sequence. Skip symlinks and skills where `description: >` (YAML block scalar — plugin format).
+Run all 4 phases in sequence. Skip symlinks.
 
 ```bash
 find ~/.claude/skills -name "SKILL.md" | sort
@@ -90,8 +90,6 @@ For each skill, flag what's missing and whether it matters. Provenance and adequ
 - **assets/**: Is there a template or reference file the skill improvises from scratch each run?
 - **config.json**: Does the skill ask the user to re-enter the same value on every run?
 - **arguments field**: Does the skill accept inputs but has no `argument-hint` or `arguments` frontmatter?
-
-Only flag where the gap is real — don't recommend scripts/ for skills that are pure LLM reasoning.
 
 Output table:
 ```
@@ -215,7 +213,5 @@ Print all proposed gotchas. Ask: "Apply these? (yes / skip <name> / adjust <name
 
 ## Anti-Patterns
 
-- **Don't auto-apply findings** — audit mode prints findings only; user decides what to fix
 - **Don't flag ponytail/* skills** — YAML block scalar format (`description: >`), plugin-managed
 - **Don't recommend scripts/ for pure reasoning skills** — only flag where deterministic logic genuinely exists
-- **Never auto-run `--research`** — opt-in. A bare audit stays offline and deterministic; only hit the network when the flag is present.

@@ -36,8 +36,6 @@ PATH_ARG="${PATH_ARG:-.}"
 - **STEP on by default in every repo.** OFF only via `--auto` (batch/CI). Drives the Phase 3 walk.
 - **Skill/MD audit (H4/H5) runs only when `CLAUDE_REPO=1`** — md-check and skill-audit are hardwired to ~/.claude paths.
 
-Effort is always max — exhaustive cross-file analysis on every pass. There is no lower setting.
-
 ## Baked-in Checks (always run, no user prompt)
 
 ### Secret Scan (auto)
@@ -76,7 +74,7 @@ No branch divergence → diff against `HEAD~1`.
 
 ### Three Passes (run in parallel)
 
-**Pass A — Correctness & Reuse.** Logic errors, off-by-ones, null/undefined, wrong conditionals. Does an existing function/component already do this? Auth, input validation, secrets in diff. Exhaustive — read every changed call site and its cross-file callers, always.
+**Pass A — Correctness & Reuse.** Logic errors, off-by-ones, null/undefined, wrong conditionals. Does an existing function/component already do this? Auth, input validation, secrets in diff.
 
 **Pass B — Over-Engineering.** Invoke `ponytail-review` via the Skill tool with the diff. Captures what to delete, reinvented stdlib, unneeded deps, speculative abstractions.
 
@@ -212,8 +210,6 @@ path:line: <emoji> <severity>: <problem>. <fix>. [Fixable: Yes/No]
 
 Severity + emoji: 🔴 Critical, 🟠 Important, 🟡 Minor, 🔵 Scope (surgical violation), ⚪ Simplicity, 🟣 Complexity (ponytail), 🔑 Secret (always Fixable: No), 📝 Slop
 
-No praise, no summary prose — findings only.
-
 **Approval gate:**
 - `--auto` present → skip this prompt, proceed straight to Apply Findings for every Fixable: Yes row
 - **Otherwise (STEP on — the default)** → walk each **Fixable: Yes** finding in severity order, one prompt each:
@@ -252,14 +248,3 @@ One master summary after everything completes:
 | H4 | MD hygiene (md-check) | N | N | N | ✅ / skipped (not ~/.claude) |
 | H5 | Skill structure (skill-audit) | N | 0 | 0 | ✅ / skipped (not ~/.claude) |
 | **Total** | | **N** | **N** | **N** | |
-
-## Rules
-
-- Secret findings are always shown, never auto-applied — no exceptions.
-- Antislop runs automatically on every `.md` in the diff, no opt-in needed.
-- Improve never implements — plan/issue only, hard rule, not a gate.
-- `--auto` skips only the single approval gate — every check above still runs in full; `--quick` (or "quick review") skips only the Phase 0 radar.
-- Missing ponytail/improve/fallow = not a failure — skip that sub-phase silently, show it in the roll-up, keep going.
-- Never skip a Fallow command — run all five even if earlier ones find nothing.
-- One findings table, one gate. No per-phase prompts, no separate diff/health output blocks. The step-walk covers only Fixable findings; non-fixable findings are never prompted.
-- H4 (md-check) and H5 (skill-audit) run ONLY when the reviewed repo is ~/.claude — they're hardwired to global config paths. Elsewhere they're skipped and noted, so `/health` outside ~/.claude is unchanged.

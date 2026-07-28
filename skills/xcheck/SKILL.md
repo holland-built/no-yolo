@@ -12,8 +12,6 @@ allowed-tools:
 
 # xcheck — cross-model critique loop
 
-Claude authors. Codex critiques. Claude adjudicates. Never the other way around.
-
 ## Preflight (silent)
 
 ```bash

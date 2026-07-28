@@ -9,8 +9,6 @@ argument-hint: "[preview|full|rules|rollback|restore <name>|vendor <name>|market
 
 # update
 
-Check if your Claude Code setup is out of date, preview what would change, and update safely.
-
 ## Modes
 
 | Command | What it does |
@@ -45,7 +43,7 @@ DIRTY=$(git status --porcelain)
 - **AHEAD > 0** — local commits GitHub doesn't have. List them (`git log origin/main..HEAD --oneline`, same prefix translation as Step 3). Tell user: "You have N local commit(s) not on GitHub yet. Run `/release` to publish them." Never push from here — `/release` is the sole publish command.
 - **DIRTY non-empty** — uncommitted files that neither BEHIND nor AHEAD can see (the most common gap: a whole work session sitting in `git status`). List the files from `$DIRTY` grouped Modified / New. Tell user: "You also have M uncommitted change(s) — not yet part of any commit."
 
-If BEHIND = 0 AND AHEAD = 0 AND DIRTY empty: output "Your machine and GitHub are identical — everything reconciled." Skip Steps 3-4 but still run Steps 4.5-4.7 — they check different things (plugins, vendored content, marketplaces) and must never be skipped just because the core repo is in sync.
+If BEHIND = 0 AND AHEAD = 0 AND DIRTY empty: output "Your machine and GitHub are identical — everything reconciled." Skip Steps 3-4 but still run Steps 4.5-4.7 — they check different things (plugins, vendored content, marketplaces).
 
 If BEHIND > 0: continue to Step 3.
 
@@ -141,7 +139,7 @@ What do you want to do?
   /update vendor <name>       — re-vendor a stale third-party skill
   /update marketplace <name>  — git pull a stale orphaned marketplace
 ```
-(The last two only appear if Steps 4.6/4.7 found something STALE.) Then stop. Do not auto-pull.
+(The last two only appear if Steps 4.6/4.7 found something STALE.)
 
 ### Step 6 — if argument is `preview`
 For each changed .md file: state what file and section changed, quote before/after for changed lines ("was: / now:" format), highlight deleted lines (user may want to keep them). Do NOT show raw git diff output — translate everything.

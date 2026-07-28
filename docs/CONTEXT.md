@@ -2,8 +2,6 @@
 
 ## Token Budget Awareness
 
-Claude's context window is its working memory: when it fills up, earlier messages get dropped. Managing tokens keeps your session sharp.
-
 Global skills + hooks use ~30–40k tokens (chunks of text) before you type your first message. Be intentional about what loads.
 
 Prefer **per-project** skill installs over global. Global skills bloat every session's prompt.

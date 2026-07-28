@@ -23,7 +23,7 @@ Read each file in order. If a file is missing, note "(file absent)" for that sec
 | Step | File | What to extract |
 |------|------|-----------------|
 | 1 | `~/.claude/CLAUDE.md` | All `# <skill>` trigger blocks + pointer table |
-| 2 | `~/.claude/docs/CORE_RULES.md` | All numbered core rules verbatim (10 as of 2026-07) |
+| 2 | `~/.claude/docs/CORE_RULES.md` | All numbered core rules verbatim |
 | 3 | `~/.claude/memory/CLAUDE.generated.md` | All compiled working preferences + patterns |
 | 4 | `~/.claude/docs/HOOKS.md` | Active hook names + behaviors |
 | 5 | `~/.claude/docs/SKILLS.md` | Daily-driver skill table |
@@ -72,8 +72,6 @@ File: `~/.claude/learnings.md`
 ```markdown
 # Learnings — Claude Code prompt context
 
-> **How this file works:** §1–5 are a LIVING snapshot — /prompt-scan OVERWRITES them each run. §4 is derived from each skill's own SKILL.md `description`. §6 is an append-only dated log — each scan PREPENDS one entry. /better-prompt reads §1–6.
-
 ---
 
 ## Current conventions — living snapshot (last refreshed: YYYY-MM-DD — model: <model-id>)
@@ -88,9 +86,6 @@ File: `~/.claude/learnings.md`
 <from CORE_RULES.md — Opus plans / Sonnet codes, no inline planning, subagent execution>
 
 ### 4. Skill triggers
-> Derived from each skill's own SKILL.md `description` — the source of truth the harness injects.
-> `docs/SKILL_TRIGGERS.md` no longer carries per-skill blocks (they duplicated these descriptions).
-> Regenerate on each scan; do not hand-edit.
 
 | Skill | Trigger | When to use |
 |-------|---------|-------------|

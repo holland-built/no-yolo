@@ -1,5 +1,68 @@
 # Changelog
 
+## 2026-07-28 — de-duplication pass across 17 skills + the MD rule chain
+
+Prompted by Boris Cherny's YC Startup School 2026 talk (ingested to the KB the same day):
+Anthropic deleted ~80% of Claude Code's system prompt for Opus 5 because most of it
+corrected behavior current models get right unprompted. Audited all 31 skills and the
+whole rule chain against that claim.
+
+**Finding: the claim mostly does not apply here, and the audit said so.** 4,412 lines of
+skills yielded only ~330 cuttable (7.5%), because these skills are runbooks — exact shell
+commands, file paths, step ordering, gates. A newer model cannot guess that `regen.py` runs
+before `catalog_lock.py --relock`. What it *did* find was repetition: the same instruction
+restated 4, 5, 6 times inside one file.
+
+| File | Lines | Cut |
+|---|---|---|
+| `skills/health/SKILL.md` | 265 → 250 | `## Rules` section — all 8 bullets restated inline earlier |
+| `skills/fixloop/SKILL.md` | 105 → 94 | 3 "never relax" bullets repeating the goal + ladder; war story |
+| `skills/diagnose/SKILL.md` | 164 → 159 | 2 sharpening bullets repeating D4 and the persona lanes; 4 pep lines |
+| `skills/plan/SKILL.md` | 97 → 88 | "70%→90%" motivation block, checkpoint rationale, self-declare rule |
+| `skills/md-check/SKILL.md` | 202 → 200 | Exclusion list, restart note, impeccable origin story (kept 1 of 2) |
+| `skills/release/SKILL.md` | 163 → 160 | Header prose; lockstep gate stated 3× (kept the hook-toggle trap) |
+| `skills/last-30/SKILL.md` | 117 → 111 | Recency rule already enforced by `tbs: "qdr:m"` + 3 more places |
+| `skills/prompt-scan/SKILL.md` | 146 → 141 | "How this file works" blockquote; stale "(10 as of 2026-07)" |
+| `skills/antislop/SKILL.md` | 75 → 69 | Generic "scan for the pattern, mark found" criteria |
+| `skills/skill-audit/SKILL.md` | 221 → 217 | 2 anti-patterns already gated by explicit ask prompts |
+| `skills/update/SKILL.md` | 250 → 248 | Header prose restating frontmatter; "do not auto-pull" |
+| `skills/whats-next/SKILL.md` | 92 → 89 | Closing format rules — verbatim eli5, which the file already calls |
+| `skills/ingest-docs/SKILL.md` | 109 → 105 | "Content rules" block re-checked by Step 5b |
+| `skills/watch/SKILL.md` | 111 → 108 | 3 anti-patterns restating the phases above them |
+| `skills/remember-that/SKILL.md` | 161 → 160 | "Never skip confirm" — enforced inline at all 3 write paths |
+| `skills/checkup/SKILL.md` | 67 → 65 | Graceful-degrade rules already required by Step 9 |
+| `skills/xcheck/SKILL.md` | 68 → 66 | "Claude authors, Codex critiques" — stated operationally below |
+| `CLAUDE.md` | 62 → 60 | "Review this file weekly" — aimed at the human, not actionable in a turn |
+| `docs/CONTEXT.md` | 34 → 32 | Paragraph explaining context windows to the model |
+| `docs/CODE_REVIEW.md` | 26 → 21 | Re-derived CORE_RULES 2 and 3 → pointer |
+| `docs/TESTING.md` | 49 → 43 | Goal-driven table duplicating CORE_RULES rule 4 → pointer |
+| `docs/SUBAGENTS.md` | 88 → 83 | Two blocks duplicating CORE_RULES 6 and 3 → pointers |
+| `docs/CONTEXT_VOCAB.md` | 42 → 28 | "Usage pattern" section teaching the model how to be prompted |
+| `docs/PLANNING.md` | 43 | "do NOT recreate" note (in 3 files); ~300-word subagent cap |
+| `skills/my-skills/catalog-lock.json` | relocked | `health`'s description changed |
+
+**Held back deliberately.** `CORE_RULES` rules 2, 3, 7, 9, 10 were flagged as delete
+candidates by the audit but are judgment calls, not duplicates — rule 3 (surgical scope) is
+the exact shape Cherny named as expired, and also the most-cited rule here. Those need a
+real ablation (turn off, work a week, see what breaks), not a desk review.
+
+**Agents overruled me four times, correctly:**
+- Refused to delete `docs/SKILL_TRIGGERS.md` — it feeds `catalog_lock.py:50` and
+  `verify.sh:66`. Deleting it would have broken the verifier. This was the cut I was most
+  confident about.
+- `diagnose`'s "Cap ~250 words" is the only length bound on persona output — a constraint,
+  not a restatement.
+- `watch`'s "don't re-download" is stated nowhere else.
+- `last-30`'s untrusted-input rule is a real gate, not tone.
+
+**Not applied:** deleting `tdd` and `literal`, and trims to `design`, `quick-mockup`,
+`design-audit`, `debate`, `better-prompt`, `video-to-kb`, `build` (~277 lines). All are the
+same class of duplicate; stopped short by choice rather than cut deeper inside the two most
+complex skills on my own judgment.
+
+**Before → after:** 24 files, −151 lines. `verify.sh` 14/14 PASS. Zero shell commands, file
+paths, regexes, gates, or persona definitions removed.
+
 ## 2026-07-28 — /watch built (it never existed), catalog + README wired
 
 | File | Line(s) | Change |

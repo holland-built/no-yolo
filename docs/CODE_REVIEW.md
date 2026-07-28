@@ -4,11 +4,7 @@
 
 > Karpathy = Andrej Karpathy, ex-Tesla/OpenAI — his rules for surgical, simple code changes.
 
-### Surgical Check (Rule 3)
-Flag any changed lines that don't trace directly to the stated request. Scope creep in a diff is a bug, not a bonus.
-
-### Simplicity Filter (Rule 2)
-Apply this test: "Would a senior engineer say this is overcomplicated?" If yes, flag it. Don't soften it — overcomplicated code is a defect.
+Review every diff against `~/.claude/docs/CORE_RULES.md` rule 3 (surgical changes) and rule 2 (simplicity first) — flag violations of either as defects, not nits.
 
 ## When Running /health
 

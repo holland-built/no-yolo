@@ -22,8 +22,6 @@ A thin wrapper. A read-only pass over the skill library, one safe auto-fix, then
 
 - HARD RULE — Repo guard: confirm inside the no-yolo repo via `git rev-parse --show-toplevel` + `git remote -v` (published ~/.claude origin). If not, no-op with ONE line "Not in the ~/.claude repo — /checkup only runs here." and stop.
 - HARD RULE — Dirty worktree: run `git status --porcelain` up front, capture the pre-existing dirty set, report it in the summary. The ONLY files /checkup may write are regen artifacts (RENDERED*.md, docs/FLAGS.md) and, in the blessed case, the catalog + catalog-lock.json. Never stage/commit/bury unrelated user edits.
-- HARD RULE — Missing dep / no network: any check needing a tool or network degrades gracefully — SKIP with a noted reason in the summary, never crash.
-- HARD RULE — Partial-failure isolation: run each check in its own step; one check's error is captured and reported and does NOT abort the rest.
 - HARD RULE — Idempotence: re-running makes no new changes; only writes are deterministic (regen) or refused-if-drift (relock).
 
 ## Step 1 — Plumbing gates
