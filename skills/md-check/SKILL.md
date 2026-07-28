@@ -186,7 +186,7 @@ Skip if `$ARGUMENTS` contains `--auto`. Print the fix table, then: `Reply "go" t
 
 ### Step 4 — Apply
 Apply each approved fix with Edit/Write.
-**Personal-file guard (HARD — never edit):** `memory/` `brainstorms/` `plans/` `proposals/` `projects/` `sessions/` `settings.json` `settings.local.json`. Skip + note any fix that would touch these.
+**Personal-file guard (HARD — never edit):** `memory/` `brainstorms/` `plans/` `proposals/` `projects/` `sessions/` `settings.json` `settings.local.json`. Skip + note any fix that would touch these. **Never delete a file you did not read this run.**
 
 ### Step 5 — Verify + report
 Re-run the audit. Report before/after:

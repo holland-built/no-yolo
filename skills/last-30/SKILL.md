@@ -68,7 +68,7 @@ Signal: view count when present.
 ### X / TWITTER
 - Firecrawl: `firecrawl_search` — `query: "<topic>"`, `includeDomains: ["twitter.com", "x.com"]`, `tbs: "qdr:m"`, `limit: 5`.
 - Fallback: `WebSearch "<topic> since:<start-date> min_faves:50 -filter:retweets"`.
-Keep: posts from engineers, authors, maintainers — not news aggregators.
+Keep: posts within the window, from engineers, authors, maintainers — not news aggregators.
 Signal: likes/reposts.
 
 Collect all hits into a working list, then proceed to Step 3.

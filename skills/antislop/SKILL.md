@@ -36,9 +36,12 @@ If empty → stop: `Paste the text/output to check after /antislop.`
 
 ## Step 3 — Check each tell
 
-For every tell in Writing Tells + GUI Slop:
+For every tell in Writing Tells + GUI Slop, mark **Found** if any of these hold:
+- An exact forbidden word/phrase appears
+- The sentence structure matches the pattern description
+- For GUI slop: the described visual pattern is present in markup/CSS/description
 
-Record the shortest excerpt (≤15 words) that demonstrates the violation.
+Record the shortest excerpt (≤15 words) that demonstrates the violation. Quote the actual text — never describe it.
 
 ---
 

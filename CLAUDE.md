@@ -52,6 +52,7 @@ If you are about to add anything else — STOP. Find or create the right MD file
 ## Maintenance Rules (Boris Cherny)
 
 - Keep concise. Project specifics belong in project CLAUDE.md.
+- If a rule above stops working, nuke it and rewrite. Do not preserve broken guidance.
 
 ---
 

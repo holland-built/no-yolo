@@ -81,7 +81,7 @@ If `SHIP.md` does NOT exist at the repo root AND no worktree teardown just relea
   4. Hard guards — path patterns that must NEVER be committed here (secrets, personal dirs)
   5. Post-push — GitHub release/tag? none?
 - Draft `SHIP.md` from the answers using the template at the bottom. Show it. On explicit approval, Write it to `<repo-root>/SHIP.md`.
-- Then continue to Step 2.
+- Then continue to Step 2. **Nothing ships until the playbook is authored AND you approve it** — never invent a playbook and push in the same breath.
 
 ## Step 2 — Parse the playbook
 
