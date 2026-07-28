@@ -150,6 +150,20 @@ else
   record PASS "tracked-content scan"
 fi
 
+# 9. skill coherence — every SKILL.md branches only on terms it also defines.
+#    Catches the de-dup failure mode structure checks are blind to: a pass cut
+#    the lines defining `Found` out of skills/antislop/SKILL.md and left the
+#    filter "rows where Found = yes" consuming it; 14/14 stayed green.
+#    WARN-ONLY ON PURPOSE (matches the note in hooks/check-coherence.py): this
+#    is a brand-new heuristic, and a false positive must not block a release.
+#    It always records PASS — the exit code is deliberately ignored. Promote to
+#    FAIL once it has run clean across a few releases.
+if coh=$(python3 hooks/check-coherence.py 2>&1); then
+  record PASS "skill coherence"
+else
+  record PASS "skill coherence (WARN: $(printf '%s' "$coh" | grep -c 'consumed-but-undefined term ') finding(s) — run python3 hooks/check-coherence.py)"
+fi
+
 printf '\n%-6s  %s\n' RESULT CHECK
 for r in "${results[@]}"; do printf '%-6s  %s\n' "${r%%|*}" "${r#*|}"; done
 exit "$fail"
