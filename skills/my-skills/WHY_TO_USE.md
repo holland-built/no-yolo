@@ -10,6 +10,7 @@ design|8 mockups at once (6 distinct paradigms + 2 wild) + slop validator kills 
 quick-mockup|Five style-matched functional variants on one page, served over http:// and auto-opened — satisfies "never show ASCII mockups" without the full /design pipeline
 ingest-docs|Dedupes against what's already there and tracks changes in a manifest — re-runs only touch what's new
 video-to-kb|Talks are perishable. One command turns them into permanent, searchable KB nodes
+watch|Slide decks and screen recordings put their real content on screen, not in the audio — frames catch what a transcript alone misses
 whats-next|Prevents starting something new while something is already half-done
 improve|Vets every subagent finding itself before reporting; plans are written for a weaker model with zero session context
 ponytail|The instinct to abstract too early is universal. This actively resists it

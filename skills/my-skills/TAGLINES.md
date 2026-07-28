@@ -5,6 +5,7 @@ plan|One-question-at-a-time interview that forces hard decisions before any code
 my-skills|This menu.
 tdd|Failing test first, then make it pass. Red→green discipline.
 video-to-kb|Turn a YouTube video into a searchable KB note.
+watch|Watch any video and answer questions about it — frames plus transcript, nothing written to the KB.
 improve|Read-only codebase audit across 9 categories → ranked findings → self-contained plans for an executor model.
 ponytail|Forces the laziest solution that works. Kills abstraction.
 ponytail-audit|Scan repo for over-engineered code — ranked simplify list.

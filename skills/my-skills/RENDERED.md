@@ -27,6 +27,7 @@
 | Skill | What it does | When to use | Why vs manual |
 | --- | --- | --- | --- |
 | last-30 | Trending now (last 30 days) from GitHub, HN, Reddit, YouTube, X. | Starting research on a topic and want signal from the past month, not all-time rankings | GitHub stars and HN posts from 3 years ago are noise. Last 30 days is actual traction |
+| watch | Watch any video and answer questions about it — frames plus transcript, nothing written to the KB. | You want answers out of a video without saving anything to the KB | Slide decks and screen recordings put their real content on screen, not in the audio — frames catch what a transcript alone misses |
 | video-to-kb | Turn a YouTube video into a searchable KB note. | Good talk or tutorial worth keeping permanently | Talks are perishable. One command turns them into permanent, searchable KB nodes |
 | ingest-docs | Converts PDFs/decks/docs into dense context files Claude reads at runtime. | You have source material Claude should know about | Dedupes against what's already there and tracks changes in a manifest — re-runs only touch what's new |
 
@@ -117,4 +118,5 @@
 | tdd | `[describe the feature or function to implement]` |
 | update | `[preview\|full\|rules\|rollback\|restore <name>\|vendor <name>\|marketplace <name>]` |
 | video-to-kb | `[YouTube URL or video path]` |
+| watch | `<video-url-or-path> [question]` |
 | xcheck | `[artifact to cross-check — plan text, file path, or 'last plan']` |
