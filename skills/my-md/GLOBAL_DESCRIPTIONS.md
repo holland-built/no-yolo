@@ -1,5 +1,6 @@
 CLAUDE.md|Loaded at the start of every session. Has the skill triggers, core rules, and your learned preferences. If Claude is behaving wrong, this is the first place to look.
-CORE_RULES.md|The 10 rules that govern how Claude works — plan first, simplicity, surgical changes, and 7 more. The ground rules everything else builds on.
+CORE_RULES.md.off|The rules that govern how Claude works — plan first, simplicity, surgical changes, and the rest. Currently NOT loaded: the `.off` suffix parks them for the delete-and-rebuild experiment. See EXPERIMENT_CORE_RULES.md.
+EXPERIMENT_CORE_RULES.md|Why the core rules are switched off right now, how to finish the experiment, and the two steps to turn them back on.
 CODE_REVIEW.md|How /code-review reviews a diff — the 3-pass logic it uses, what it hunts for, what it ignores. Open this when you want to understand or tune how reviews work.
 CONTEXT.md|What to do when a session gets long and Claude starts losing track. Has the strategies for keeping context clean without starting over.
 PLANNING.md|The rules Claude follows before touching code — how to think through a task, what to settle before writing a line. Open this if Claude is jumping to solutions too fast.
