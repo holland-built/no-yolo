@@ -82,7 +82,6 @@ Everything here is optional. Install one only when you want the command that use
 | [Groq Whisper key](https://console.groq.com/) | Turns speech in a video into text | `/video-to-kb` | Free API key, then `export GROQ_API_KEY=...` in `~/.zshrc` |
 | [Chrome](https://www.google.com/chrome/) | Renders design previews | `/design`, `/build` | Usually already there. Mac: `brew install --cask google-chrome` · Linux: download the `.deb` from the link |
 | [Playwright MCP](https://github.com/microsoft/playwright-mcp) | Lets Claude drive a browser | `/build` | Add the `playwright` MCP server to `settings.json` (see below) |
-| [shadcn MCP](https://ui.shadcn.com/docs/mcp) | Fetches ready-made screen components | `/design` | `npx shadcn@latest mcp init --client claude` |
 | Firecrawl MCP | Searches and reads web pages | optional | See `docs/MCP_SERVICES.md` |
 | [interface-design MCP](https://github.com/Dammyjay93/interface-design) | Remembers past design decisions | `/design` (optional) | Add to `settings.json` under `mcpServers` |
 | [design-refine MCP](https://github.com/0xdesign/design-plugin) | Compares design versions side by side | `/design` (optional) | Add to `settings.json` under `mcpServers` |
@@ -144,7 +143,7 @@ The borrowed sets install one command each:
 
 - `npx skills@latest add DietrichGebert/ponytail` — six commands that push for the simplest solution
 - `npx skills@latest add shadcn/improve` — `/improve`, the deep audit
-- `npx skills@latest add emilkowalski/skills` — screen-polish rules that `/design` reads
+- `npx skills@latest add emilkowalski/skills` — screen-polish rules that `/design` and `/design-audit` read. Six skills: `emil-design-eng`, `apple-design`, `pick-ui-library`, `animation-vocabulary`, `find-animation-opportunities`, `improve-animations`
 - `npx skills@latest add tt-a1i/archify` — the diagram maker
 
 Two commands are hidden from `/my-skills` but still real: `/antislop`, which runs inside `/health` and `/release`, and `/tdd`, which is the same loop that step 4 of `/build` runs.

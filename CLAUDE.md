@@ -18,7 +18,9 @@ Project-specific rules belong in that project's `CLAUDE.md`
 
 ## Core Rules
 
-@docs/CORE_RULES.md
+Deliberately unloaded 2026-07-29 — see `~/.claude/docs/EXPERIMENT_CORE_RULES.md`
+for what was done, why, and the exact steps to restore. The rules themselves are
+kept at `docs/CORE_RULES.md.off`.
 
 @docs/SKILL_TRIGGERS.md
 

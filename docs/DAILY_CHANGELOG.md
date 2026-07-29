@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-07-29 — core rules switched off on purpose, design skills now load everywhere
+
+A `/doctor` health pass found the core rules file had been renamed away while
+`CLAUDE.md` still imported it — so the rules silently loaded as nothing. That is
+the loss without the test. Made the deletion deliberate instead, following the
+delete-every-six-months advice from Cherny's YC talk.
+
+| Change | Detail |
+|---|---|
+| Core rules unloaded | `docs/CORE_RULES.md` → `docs/CORE_RULES.md.off`, import removed from `CLAUDE.md` |
+| Restore path recorded | new `docs/EXPERIMENT_CORE_RULES.md` — what, why, and two steps to undo |
+| Design skills fixed | 11 skills (ponytail set, archify, apple-design, pick-ui-library, animation pair) only loaded when editing `~/.claude`, yet `/design` and `/health` call them everywhere — symlinked into `skills/` so they load in every project |
+| Duplicate folder parked | `.claude/skills` held a second set of links to the same skills |
+| shadcn MCP dropped | Nothing called it in 60 days and no skill uses its tools; the README row claiming `/design` needs it was wrong. Removed the row and the server |
+
+The rules themselves ship with the repo as `docs/CORE_RULES.md.off`. If you want
+them active in your own setup, `EXPERIMENT_CORE_RULES.md` has the two steps.
+
 ## 2026-07-29 — plain English mode replaces caveman as the default
 
 The owner said the same thing repeatedly: the output was unreadable and they had
