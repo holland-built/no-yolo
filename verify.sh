@@ -141,7 +141,14 @@ fi
 #    --no-verify commit or a pre-setup commit would otherwise publish a leak).
 #    Patterns mirror INFRA_PATTERNS in hooks/pre-commit — if one changes, mirror
 #    the other. Excludes are ONLY files that legitimately document the patterns.
-INFRA_SCAN='192\.168\.[0-9]{1,3}\.[0-9]{1,3}|(^|[^0-9])10\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}|172\.(1[6-9]|2[0-9]|3[01])\.[0-9]{1,3}\.[0-9]{1,3}|100\.(6[4-9]|[7-9][0-9]|1[0-1][0-9]|12[0-7])\.[0-9]{1,3}\.[0-9]{1,3}|[a-z0-9-]+\.(internal|corp|lan|home)\b|[a-z0-9-]+\.[a-z0-9-]+\.local\b'
+# NO \b IN THIS PATTERN. git grep on macOS does not honour \b — it silently
+# matches nothing, so the hostname rules were DEAD on the very machine that does
+# the committing: a leaked <host>.home or <host>.internal sailed through the
+# scan and only a Linux run would ever have caught it. Meanwhile GNU grep on
+# Linux honoured \b and matched a plain pathlib home() call, reporting private
+# data in a file that had none. Failing open on one platform and crying wolf on the other, from
+# one metacharacter. Explicit character classes behave the same everywhere.
+INFRA_SCAN='192\.168\.[0-9]{1,3}\.[0-9]{1,3}|(^|[^0-9])10\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}|172\.(1[6-9]|2[0-9]|3[01])\.[0-9]{1,3}\.[0-9]{1,3}|100\.(6[4-9]|[7-9][0-9]|1[0-1][0-9]|12[0-7])\.[0-9]{1,3}\.[0-9]{1,3}|(^|[^A-Za-z0-9._-])[a-z0-9-]+\.(internal|corp|lan|home)($|[^A-Za-z0-9-])|(^|[^A-Za-z0-9._-])[a-z0-9-]+\.[a-z0-9-]+\.local($|[^A-Za-z0-9-])'
 SCAN_EXCLUDE=(':!hooks/pre-commit' ':!verify.sh' ':!skills/health/SKILL.md' ':!.no-yolo-deny.example.txt')
 # git grep exits 0 when it FINDS matches — inverted vs the other checks on purpose
 if git grep -nIE "$INFRA_SCAN" -- . "${SCAN_EXCLUDE[@]}" >/tmp/verify-scan.log 2>&1; then

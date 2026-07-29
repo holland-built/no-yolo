@@ -62,7 +62,7 @@ Two smaller installs:
 |---|---|---|
 | [Claude Code](https://claude.ai/code) | `claude --version` | [docs.anthropic.com](https://docs.anthropic.com/en/docs/claude-code) |
 | **git** | `git --version` | Already on a Mac; Linux: `sudo apt install git` |
-| **Node.js** | `node --version` | [nodejs.org](https://nodejs.org/) |
+| **Node.js 20+** | `node --version` | Mac: [nodejs.org](https://nodejs.org/) · Ubuntu: `curl -fsSL https://deb.nodesource.com/setup_22.x \| sudo -E bash - && sudo apt install -y nodejs` (apt's own nodejs is v18 — too old, four add-ons fail) |
 | **python3** | `python3 --version` | Already on a Mac; needed for `--md-only`, the plugin list, and the catalog scripts |
 
 `~` means your home folder — on a Mac `/Users/<username>`, on Linux `/home/<username>`.

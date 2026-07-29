@@ -32,8 +32,19 @@ skills/orchestration
 skills/emil-design-eng
 skills/animation-vocabulary
 skills/review-animations
-# ponytail (DietrichGebert/ponytail) installs to .agents/skills/ + .claude/skills/,
-# both already ignored below — no skills/ entry needed.
+# Skills installed into .agents/skills/ and symlinked into skills/ so they load
+# in every project, not only when editing ~/.claude. The symlinks are local
+# install state, not repo content.
+skills/apple-design
+skills/find-animation-opportunities
+skills/improve-animations
+skills/pick-ui-library
+skills/ponytail
+skills/ponytail-audit
+skills/ponytail-debt
+skills/ponytail-gain
+skills/ponytail-help
+skills/ponytail-review
 
 # interface-design = externally managed by npx skills@latest (symlink to ~/.agents/)
 skills/interface-design

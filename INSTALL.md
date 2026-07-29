@@ -25,7 +25,7 @@ Type each command below and press Return. You are only checking that it prints a
 |---|---|---|
 | `claude --version` | Claude Code itself | `2.0.1 (Claude Code)` |
 | `git --version` | downloads the files | `git version 2.39.5` |
-| `node --version` | runs the extra tools | `v22.14.0` |
+| `node --version` | runs the extra tools | `v22.14.0` — **must be 20 or newer** |
 | `npm --version` | installs those tools (comes with Node) | `10.9.2` |
 | `python3 --version` | only needed for the rules-only install in Step 4 | `Python 3.12.7` |
 
@@ -35,7 +35,7 @@ If one prints `command not found`, install it before going on:
 |---|---|---|
 | Claude Code | [docs.anthropic.com](https://docs.anthropic.com/en/docs/claude-code) | Yes. This whole thing is for it. |
 | git | Mac: already there. Linux: `sudo apt install git` | Yes. The installer stops without it. |
-| Node and npm | [nodejs.org](https://nodejs.org/) (one download gives you both) | Yes, for the normal install. |
+| Node and npm | Mac: [nodejs.org](https://nodejs.org/) (one download gives you both). Ubuntu/Debian: `curl -fsSL https://deb.nodesource.com/setup_22.x \| sudo -E bash - && sudo apt install -y nodejs` | Yes, for the normal install. **Version 20 or newer.** Ubuntu's own `sudo apt install nodejs` gives version 18, which is too old — four tools fail on it. |
 | python3 | Mac: already there. Linux: `sudo apt install python3` | Only for the rules-only install. |
 
 ## Step 2 — Move any old setup out of the way
@@ -120,7 +120,8 @@ project runs on itself.
 | `claude (Claude Code) not found on PATH` | Install Claude Code. The script keeps going, but you need it to use any of this |
 | `codex    not installed` | Nothing to fix. It is optional. Commands that would use it skip that part. Add it later inside Claude Code with `/plugin install codex@openai-codex` |
 | `! gh missing` | Optional. The `/health` and `/release` commands want it. Mac: `brew install gh` · Linux: `sudo apt install gh`. Then `gh auth login` |
-| A summary line reads `FAILED` | Open `README.md`, find that name in the **Add-ons** table, and run the command in its Install column by hand. Then run Step 5 again |
+| Several summary lines read `FAILED`, with an error mentioning `styleText` | Your Node is too old. Check with `node --version`; it must be 20 or newer. Install a newer one (Step 1 table) and run Step 5 again |
+| A single summary line reads `FAILED` | Open `README.md`, find that name in the **Add-ons** table, and run the command in its Install column by hand. Then run Step 5 again |
 | `/my-skills` shows nothing | Quit Claude Code and open it again. It only reads `~/.claude` at startup |
 | A `verify.sh` row reads `FAIL` | Read the message on that row. This is a deeper check than the installer does, so it usually needs someone who codes |
 | You want it all gone | `rm -rf ~/.claude` then, if you had one before, `mv ~/.claude.bak ~/.claude` |
