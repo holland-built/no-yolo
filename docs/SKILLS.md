@@ -3,7 +3,8 @@
 ## Installed sources
 
 - **Core rules** — `~/.claude/docs/CORE_RULES.md` (loaded every session via CLAUDE.md)
-- **Caveman** — terse-output mode (`/caveman lite|full|ultra`)
+- **Plain English mode** — on by default, hook-enforced (`hooks/eli5-activate.js`)
+- **Caveman** — optional terse-output plugin (`/caveman lite|full|ultra`); conflicts with plain English mode, pick one
 - Custom skills under `~/.claude/skills/` — run `/my-skills` to list them
 
 ## Skill Taxonomy (Anthropic's 4 buckets)
@@ -54,7 +55,7 @@ Token-budget guidance (global-skill bloat, prefer per-project installs) lives in
 
 | Skill | When |
 |---|---|
-| `caveman:caveman` | Cut tokens ~75% on long sessions |
+| `caveman:caveman` | Cut tokens ~75% on long sessions (optional plugin; turn off plain English mode first) |
 | `plan` | Pre-build planning interview — extracts decisions before any code |
 | `diagnose` | 6-phase bug diagnosis — minimize/hypothesize/instrument/fix |
 | `tdd` | Vertical-slice TDD — one test → impl → green → repeat; forbids all-tests-first |
