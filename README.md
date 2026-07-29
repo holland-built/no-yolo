@@ -78,9 +78,9 @@ Everything here is optional. Install one only when you want the command that use
 | [Codex plugin](https://github.com/openai/codex-plugin-cc) | Gets a second opinion from OpenAI's Codex | `/xcheck` and others (see note) | `/plugin marketplace add openai/codex-plugin-cc` then `/plugin install codex@openai-codex` |
 | [archify](https://github.com/tt-a1i/archify) | Turns a description into a diagram | diagrams | installed by `setup.sh` |
 | [fallow](https://www.npmjs.com/package/fallow) | Finds code nothing uses any more | `/health` | installed by `setup.sh` (`npm install -g fallow@2.98.0`) |
-| [gh (GitHub CLI)](https://cli.github.com/) | GitHub from the terminal | `/health`, `/release` | `brew install gh && gh auth login` |
+| [gh (GitHub CLI)](https://cli.github.com/) | GitHub from the terminal | `/health`, `/release` | Mac: `brew install gh` · Linux: `sudo apt install gh` — then `gh auth login` |
 | [Groq Whisper key](https://console.groq.com/) | Turns speech in a video into text | `/video-to-kb` | Free API key, then `export GROQ_API_KEY=...` in `~/.zshrc` |
-| [Chrome](https://www.google.com/chrome/) | Renders design previews | `/design`, `/build` | Usually already there; `brew install --cask google-chrome` |
+| [Chrome](https://www.google.com/chrome/) | Renders design previews | `/design`, `/build` | Usually already there. Mac: `brew install --cask google-chrome` · Linux: download the `.deb` from the link |
 | [Playwright MCP](https://github.com/microsoft/playwright-mcp) | Lets Claude drive a browser | `/build` | Add the `playwright` MCP server to `settings.json` (see below) |
 | [shadcn MCP](https://ui.shadcn.com/docs/mcp) | Fetches ready-made screen components | `/design` | `npx shadcn@latest mcp init --client claude` |
 | Firecrawl MCP | Searches and reads web pages | optional | See `docs/MCP_SERVICES.md` |

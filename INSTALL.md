@@ -10,11 +10,12 @@ command, say in plain words what happened. If a step fails, stop there and use t
 ## First, open a terminal
 
 The terminal is a window where you type commands instead of clicking. On a Mac, press
-`Cmd` + `Space`, type `Terminal`, press Return. A window opens with a blinking cursor.
+`Cmd` + `Space`, type `Terminal`, press Return. On Ubuntu or most Linux desktops, press
+`Ctrl` + `Alt` + `T`. A window opens with a blinking cursor.
 
 Every command below goes there: paste one line, press Return, wait for it to finish.
 
-You will see `~` a lot. It means your home folder — on a Mac, `/Users/<yourname>`. So `~/.claude` is the folder Claude Code reads every time it starts, and this setup *is* that folder.
+You will see `~` a lot. It means your home folder — on a Mac, `/Users/<yourname>`; on Linux, `/home/<yourname>`. So `~/.claude` is the folder Claude Code reads every time it starts, and this setup *is* that folder.
 
 ## Step 1 — Check what you already have
 
@@ -118,7 +119,7 @@ project runs on itself.
 | `python3 missing` on the rules-only install | Install python3, or use the normal install instead |
 | `claude (Claude Code) not found on PATH` | Install Claude Code. The script keeps going, but you need it to use any of this |
 | `codex    not installed` | Nothing to fix. It is optional. Commands that would use it skip that part. Add it later inside Claude Code with `/plugin install codex@openai-codex` |
-| `! gh missing` | Optional. The `/health` and `/release` commands want it: `brew install gh && gh auth login` |
+| `! gh missing` | Optional. The `/health` and `/release` commands want it. Mac: `brew install gh` · Linux: `sudo apt install gh`. Then `gh auth login` |
 | A summary line reads `FAILED` | Open `README.md`, find that name in the **Add-ons** table, and run the command in its Install column by hand. Then run Step 5 again |
 | `/my-skills` shows nothing | Quit Claude Code and open it again. It only reads `~/.claude` at startup |
 | A `verify.sh` row reads `FAIL` | Read the message on that row. This is a deeper check than the installer does, so it usually needs someone who codes |

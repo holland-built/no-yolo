@@ -133,7 +133,7 @@ if command -v shellcheck >/dev/null 2>&1; then
     record FAIL "shellcheck findings (see /tmp/verify-shellcheck.log)"
   fi
 else
-  record WARN "shellcheck not installed — skipped (CI has it; install locally: brew install shellcheck)"
+  record WARN "shellcheck not installed — skipped (CI has it; install locally: brew install shellcheck, or sudo apt install shellcheck)"
 fi
 
 # 8. tracked-content scan — CI backstop for the local pre-commit hook
