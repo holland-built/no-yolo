@@ -1,5 +1,50 @@
 # Changelog
 
+## 2026-07-29 — plain English mode replaces caveman as the default
+
+The owner said the same thing repeatedly: the output was unreadable and they had
+to ask for it again in plain words each time. Root cause found — two output
+modes were fighting, and the wrong one was winning.
+
+| Mode | Rule | Effect |
+|---|---|---|
+| Caveman | "technical terms exact" | kept the jargon |
+| eli5 | "no jargon anywhere" | cut the jargon |
+
+Caveman won every time because it was a hook, injected each turn. eli5 was a
+line in `memory/CLAUDE.generated.md` — a preference, which is a suggestion. So
+the output came out short but still unreadable, which is the worst of both.
+
+Caveman was built to cut tokens, not to be understood. Different goal, sitting
+on top of the one that was wanted.
+
+| Change | File |
+|---|---|
+| New always-on plain-language hook | `hooks/eli5-activate.js` |
+| Caveman switched off | `~/.config/caveman/config.json` → `defaultMode: "off"` |
+| Caveman unwired for new installs | `settings.example.json` |
+| Docs updated | `CLAUDE.md`, `docs/HOOKS.md`, `docs/SKILLS.md`, `GLOBAL_DESCRIPTIONS.md` |
+| Marker file ignored | `.gitignore` → `.eli5-active` |
+
+**Caveman decision, recorded so it isn't re-litigated.** The plugin is still
+installed on this machine and still listed in the README's optional add-ons
+table. It is off, not removed. Listing it is accurate — it is a real plugin
+someone can choose — but it must never be on by default beside plain English
+mode, because the two contradict. Options offered were: leave it listed, delete
+it entirely, or keep it locally but drop it from the docs. Decision: leave for
+now, remove later if unused.
+
+**Also today:** README (183 → 233 lines) and INSTALL (75 → 133) rewritten for
+people who have never coded. Four factual errors fixed in INSTALL, including a
+claim that Python was required for everything when only one option needs it.
+`/build` now also triggers on "do it all" and "plan if needed and do it".
+
+**Process note.** Two claims of "done" today were wrong, both caught by the
+owner asking a plain question rather than by any check. The doc rewrite covered
+two files while five others still described caveman as current behaviour, and
+adding the new hook without removing the old one would have shipped both modes
+enabled to every new install.
+
 ## 2026-07-28 — de-duplication pass across 17 skills + the MD rule chain
 
 Prompted by Boris Cherny's YC Startup School 2026 talk (ingested to the KB the same day):
