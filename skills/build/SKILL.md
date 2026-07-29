@@ -1,6 +1,6 @@
 ---
 name: build
-description: Use this skill when the user types /build, says 'build', or 'build this feature end to end'. Full feature pipeline: evidence → plan → Opus plan → approval gate → UI mockup gate → TDD → build → regression gate → prove.
+description: Use this skill when the user types /build, says 'build', 'build this feature end to end', 'do it all', 'plan if needed and do it', 'take all your suggestions and build', or otherwise asks for the whole job done in one go. Full feature pipeline: evidence → plan → Opus plan → approval gate → UI mockup gate → TDD → build → regression gate → prove.
 user-invocable: true
 argument-hint: "[describe the feature to build]"
 allowed-tools:

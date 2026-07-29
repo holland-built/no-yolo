@@ -95,6 +95,14 @@
             "statusMessage": "Cleaning finished worktrees..."
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$HOME/.claude/hooks/node-shim.sh\" \"$HOME/.claude/hooks/eli5-activate.js\" SessionStart"
+          }
+        ]
       }
     ],
     "SessionEnd": [
@@ -145,6 +153,14 @@
             "command": "bash \"$HOME/.claude/hooks/node-shim.sh\" \"$HOME/.claude/hooks/literal-mode-tracker.js\"",
             "timeout": 5,
             "statusMessage": "Tracking literal mode..."
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$HOME/.claude/hooks/node-shim.sh\" \"$HOME/.claude/hooks/eli5-activate.js\" UserPromptSubmit"
           }
         ]
       }

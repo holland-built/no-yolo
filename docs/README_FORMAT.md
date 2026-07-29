@@ -14,7 +14,7 @@ This file defines the required structure of `README.md`. The `/release` skill re
 ## Keeping your fork in sync
 ## Add a new skill
 ## Update memory preferences
-## Caveman mode — shorter replies
+## Plain English mode
 ## The status bar (the line at the bottom of Claude Code)
 ## The CLAUDE.md instruction chain
 ## What's excluded
