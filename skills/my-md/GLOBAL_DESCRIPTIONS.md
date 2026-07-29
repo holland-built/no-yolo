@@ -21,7 +21,7 @@ README_FORMAT.md|Spec file listing the 16 required README section headings. /rel
 SKILL_TRIGGERS.md|The routing rule that says a matched trigger fires the Skill tool first, plus the skill-discovery fallback. CLAUDE.md imports it. Per-skill triggers live in each SKILL.md description, not here — the 27 blocks that used to live here cost ~2.4k tokens a session duplicating what the harness already injects.
 THIRD_PARTY_SKILLS.md|Registry of vendored (non-plugin) third-party skill content, pinned to an upstream commit per row. /update reads this to flag drift — read-only, never auto-pulls.
 .pending-tasks.md|Session task queue. /whats-next reads this first and runs the next unchecked item. Add tasks here to queue work across sessions.
-HOOKS_INTERNALS.md|Developer reference for the 4 caveman hook JS modules — what each does, when it fires, exports, and security notes.
+HOOKS_INTERNALS.md|Developer reference for the caveman hook JS modules (optional plugin) — what each does, when it fires, exports, and security notes.
 MCP_SERVICES.md|Optional MCP-backed services (Firecrawl web-data provider) — install steps, the try-MCP-then-fallback pattern skills use, and where endpoint values live (never in tracked files).
 SHIP.md|Release playbook for this repo — environments, pre-push steps, hard guards, optional GitHub release recipe. /release reads and runs it; never push without it.
 FLAGS.md|Generated reference of every skill's arguments and flags — built by regen.py from skill frontmatter, never hand-edited.

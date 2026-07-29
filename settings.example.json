@@ -70,16 +70,6 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"$HOME/.claude/hooks/node-shim.sh\" \"$HOME/.claude/hooks/caveman-activate.js\"",
-            "timeout": 5,
-            "statusMessage": "Loading caveman mode..."
-          }
-        ]
-      },
-      {
-        "hooks": [
-          {
-            "type": "command",
             "command": "bash \"$HOME/.claude/hooks/node-shim.sh\" \"$HOME/.claude/hooks/prompt-scan-nudge.js\"",
             "timeout": 5,
             "statusMessage": "Checking prompt-scan freshness..."
@@ -136,16 +126,6 @@
       }
     ],
     "UserPromptSubmit": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash \"$HOME/.claude/hooks/node-shim.sh\" \"$HOME/.claude/hooks/caveman-mode-tracker.js\"",
-            "timeout": 5,
-            "statusMessage": "Tracking caveman mode..."
-          }
-        ]
-      },
       {
         "hooks": [
           {

@@ -56,6 +56,6 @@ If you are about to add anything else — STOP. Find or create the right MD file
 
 ---
 
-## Caveman Mode
+## Output Mode
 
-Caveman terse mode (scripts, toggle, state) → `~/.claude/docs/HOOKS.md`.
+Plain English mode (default, hook-enforced) and the optional Caveman terse mode → `~/.claude/docs/HOOKS.md`.
