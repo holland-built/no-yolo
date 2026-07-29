@@ -69,6 +69,34 @@ else
     exit 1
   fi
 fi
+# Node MAJOR version gate. Four add-ons install through the `skills` CLI, which
+# imports styleText from node:util — added in Node 20. On Ubuntu 24.04
+# `apt install nodejs` still gives v18, so a reader following the guide gets four
+# lines reading "install failed" plus a stack trace about a missing export, with
+# nothing anywhere connecting that to their Node version. Verified on a clean
+# 24.04 box: v18 fails all four, v22 installs all four. Say it once, up front,
+# in the words that lead to the fix.
+if ! pre_missing node; then
+  NODE_MAJOR="$(node --version 2>/dev/null | sed 's/^v//; s/[.].*//')"
+  case "$NODE_MAJOR" in
+    ""|*[!0-9]*) : ;;   # unreadable version — let the installs speak for themselves
+    *)
+      if [ "$NODE_MAJOR" -lt 20 ]; then
+        echo ""
+        echo "    ! node $(node --version) is too old — need 20 or newer (22 recommended)."
+        echo "      Four add-ons fail with a confusing 'styleText' error on this version."
+        if [ "$(uname -s)" = "Darwin" ]; then
+          echo "      Fix: brew install node@22"
+        else
+          echo "      Fix: curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash - && sudo apt install -y nodejs"
+          echo "           (Ubuntu's own 'apt install nodejs' is v18 and will not work)"
+        fi
+        exit 1
+      fi
+      ;;
+  esac
+fi
+
 if pre_missing claude; then
   echo "    ! claude (Claude Code) not found on PATH — install: https://docs.anthropic.com/en/docs/claude-code"
 fi
