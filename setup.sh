@@ -216,7 +216,12 @@ fi
 if command -v gh >/dev/null 2>&1; then
   echo "    gh already installed"
 else
-  echo "    ! gh missing — install: brew install gh && gh auth login"
+  if [ "$(uname -s)" = "Darwin" ]; then
+    echo "    ! gh missing — install: brew install gh && gh auth login"
+  else
+    echo "    ! gh missing — install: sudo apt install gh && gh auth login"
+    echo "      (if apt has no 'gh': https://github.com/cli/cli/blob/trunk/docs/install_linux.md)"
+  fi
 fi
 
 echo ""
