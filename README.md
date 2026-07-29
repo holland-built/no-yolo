@@ -2,24 +2,23 @@
 
 ## What this is
 
-**A ready-made brain for Claude Code.** Non-slop output, a repo that checks itself, research that stays current, and the cheapest model that can do each job — the things vanilla Claude can't do. Clone it and this is what changes:
+Every time Claude Code starts, it reads a folder in your home directory called `.claude`. That folder is where its rules and its shortcut commands live. This repo **is** that folder, saved so you can copy it onto your machine.
 
-- **Its main job is output that doesn't look AI-made** — every design and doc runs through slop-detection that rejects generic patterns before you see them.
-- **It designs like it has taste** — ten competing versions, the generic ones killed, two AIs scoring survivors — and it never trusts its own taste alone.
-- **It maintains itself** — built-in checks catch stale docs, broken references, and drift every time it publishes; the toolkit audits its own skills for rot.
-- **It doesn't rot** — self-tests run in CI, docs are drift-locked to the code, and one command reconciles your machine with the published copy.
-- **It stays current** — it pulls the last 30 days from GitHub, Reddit, and Hacker News into reviews and decisions instead of trusting old training data.
-- **It improves itself on schedule** — audits find its own weaknesses, debates decide the fixes, and every fix ships the same day — the changelog proves it.
-- **Anti-slop is enforced, not aspirational** — a written ban list, mechanical judges, and a review pass that flags AI-sounding text before it ships.
-- **Works for any project type** — web, backend, CLI — the design tools only engage on UI work.
-- **Optional stays optional** — third-party add-ons and the second AI can be skipped at install (`--core-only`), and any step that needs a missing tool skips itself instead of erroring; the core never breaks without them.
-- **It spends less and picks the right brain** — simple skills run on cheap fast models, mechanical work on the mid-tier, and the expensive model only plans and judges; terse output and background helpers that return compressed reports keep long sessions from burning tokens.
+Once you do, Claude Code starts working like this:
 
-Fork it and it's yours.
+- Replies come back in plain words, not jargon.
+- Writing and designs get checked so they don't come out looking AI-made.
+- Nothing gets built until you have seen a plan and said yes.
+- Small jobs go to a cheap AI, hard thinking to the expensive one, so you pay less.
+- Research uses the last 30 days, not whatever the AI picked up in training.
+- Every time you publish, the files are checked for mistakes and stale text.
+- Any kind of project works. The design tools stay quiet unless there is a screen to design.
 
-Claude Code reads `~/.claude/` every time it starts, and this repo *is* that folder, saved in git.
+Copy it to your own GitHub account (that's called a **fork**) and it's yours. Change any file, add your own commands. `/update` can still pull in later improvements without wiping what you wrote.
 
 ## Install on a new machine
+
+Paste this into a terminal. It saves your existing setup first, then downloads this one.
 
 ```bash
 mv ~/.claude ~/.claude.bak 2>/dev/null || true   # backs up any existing ~/.claude
@@ -27,83 +26,96 @@ git clone https://github.com/holland-built/no-yolo.git ~/.claude
 bash ~/.claude/setup.sh
 ```
 
-Then open Claude Code anywhere and run `/my-skills`. A table of commands means setup is complete. For a deeper health check, run `bash ~/.claude/verify.sh` — all PASS means the clone is healthy (it's the same script CI runs).
+Then open Claude Code anywhere and type `/my-skills`. If you get a table of commands back, it worked.
 
-**New to this?** After cloning, open Claude Code and say: `walk me through installing this — read ~/.claude/INSTALL.md` — it checks your machine and explains every step.
+For a fuller check, run `bash ~/.claude/verify.sh`. Every row should say PASS. It is the same script the automated checks run.
 
-**You're done. Everything below this line is reference — read it when you need it, not before.**
+**Never done anything like this before?** Open Claude Code and say: `walk me through installing this — read ~/.claude/INSTALL.md`. It looks at your computer and explains each step.
 
-| Word | Plain meaning |
+**That is the whole install. Everything below is reference — read it when you need it, not before.**
+
+Four words you will see:
+
+| Word | What it means |
 |---|---|
-| skill | a slash command like `/health` — task instructions Claude follows |
-| plugin | an add-on bundle of skills |
-| MCP server | a connection that gives Claude an extra tool, like a browser |
-| hook | a small script that runs automatically at set moments |
+| skill | a shortcut command you type, like `/health` |
+| plugin | a bundle of extra skills someone else made |
+| MCP server | a connection that gives Claude an extra tool, like a web browser |
+| hook | a small script that runs by itself at set moments |
 
-`setup.sh` is safe to re-run; it skips finished steps and prints what it's doing — with one caveat: the borrowed-skill installs (`npx skills@latest add …`) re-run every time and may update those skills to their latest upstream versions. `bash ~/.claude/setup.sh --md-only` installs rules only (no tools; requires python3) — it backs up `CLAUDE.md` and a later full run restores it, so upgrading is safe.
+`setup.sh` is safe to run again. It skips the steps it already finished and prints what it is doing. One thing to know: the borrowed-skill installs (`npx skills@latest add …`) run every time, and may pull newer versions of those skills.
 
-**No Codex? No problem.** The cross-check steps detect it's missing and skip themselves — nothing errors. Want zero third-party installs? `bash ~/.claude/setup.sh --core-only` sets up only this repo's own skills; re-run plain `setup.sh` later to add the rest.
+Two smaller installs:
 
-**Read next:** `CLAUDE.md` (the pointer map) → `docs/CORE_RULES.md` (the 10 working rules) → `/my-skills` (every command). Everything else is routed from those three.
+| Command | What you get |
+|---|---|
+| `bash ~/.claude/setup.sh --md-only` | The rules only, no tools. Needs python3. It saves your `CLAUDE.md` first, and a later full run puts it back, so this is safe to try. |
+| `bash ~/.claude/setup.sh --core-only` | Only this repo's own commands, nothing written by other people. Run plain `setup.sh` later to add the rest. |
+
+**No Codex on your machine?** Fine. The steps that would use it notice it is missing and skip themselves. Nothing errors.
+
+**Read next:** `CLAUDE.md` (the map) → `docs/CORE_RULES.md` (the 10 working rules) → `/my-skills` (every command). Everything else is reached from those three.
 
 ## Prerequisites
 
-| Tool | Check | Install |
+| Tool | Check you have it | Get it |
 |---|---|---|
 | [Claude Code](https://claude.ai/code) | `claude --version` | [docs.anthropic.com](https://docs.anthropic.com/en/docs/claude-code) |
-| **git** | `git --version` | Pre-installed on Mac; Linux: `sudo apt install git` |
+| **git** | `git --version` | Already on a Mac; Linux: `sudo apt install git` |
 | **Node.js** | `node --version` | [nodejs.org](https://nodejs.org/) |
-| **python3** | `python3 --version` | Pre-installed on Mac; needed for `--md-only`, plugin listing, and catalog scripts |
+| **python3** | `python3 --version` | Already on a Mac; needed for `--md-only`, the plugin list, and the catalog scripts |
 
-`~` means your home directory — Mac: `/Users/<username>`, Linux: `/home/<username>`.
+`~` means your home folder — on a Mac `/Users/<username>`, on Linux `/home/<username>`.
 
 ### Add-ons
 
-Everything optional lives here. Install one only when you want the skill it serves.
+Everything here is optional. Install one only when you want the command that uses it.
 
-| Add-on | What it does | Needed for | Install |
+| Add-on | What it does | Used by | Install |
 |---|---|---|---|
-| [Caveman plugin](https://github.com/JuliusBrussee/caveman) | Shorter replies, saves tokens | optional | `/plugin marketplace add JuliusBrussee/caveman` |
-| [impeccable plugin](https://github.com/pbakaus/impeccable) | Frontend polish on existing UI | `/design` handoff | `/plugin marketplace add pbakaus/impeccable` |
-| [Codex plugin](https://github.com/openai/codex-plugin-cc) | Run OpenAI Codex reviews/tasks from Claude Code | Shared optional dependency: `/xcheck`, `/health`, `/build`, `/design`, `/design-audit` directly — plus `/plan`, `/debate`, `/diagnose --debate` via their `/xcheck` step. All skip silently if absent | `/plugin marketplace add openai/codex-plugin-cc` then `/plugin install codex@openai-codex`; needs a ChatGPT login (free tier OK) or OpenAI API key — `/xcheck` pins `gpt-5.6-sol`, which may need a paid plan; it falls back to your Codex default model if unavailable |
-| [archify](https://github.com/tt-a1i/archify) | Architecture/flow diagrams as zero-dep HTML+SVG | diagrams | installed by `setup.sh` |
-| [fallow](https://www.npmjs.com/package/fallow) | Dead-code scan | `/health` | installed by `setup.sh` (`npm install -g fallow@2.98.0`) |
+| [Caveman plugin](https://github.com/JuliusBrussee/caveman) | Short replies, fewer tokens | optional | `/plugin marketplace add JuliusBrussee/caveman` |
+| [impeccable plugin](https://github.com/pbakaus/impeccable) | Polishes an existing screen | `/design` hands off to it | `/plugin marketplace add pbakaus/impeccable` |
+| [Codex plugin](https://github.com/openai/codex-plugin-cc) | Gets a second opinion from OpenAI's Codex | `/xcheck` and others (see note) | `/plugin marketplace add openai/codex-plugin-cc` then `/plugin install codex@openai-codex` |
+| [archify](https://github.com/tt-a1i/archify) | Turns a description into a diagram | diagrams | installed by `setup.sh` |
+| [fallow](https://www.npmjs.com/package/fallow) | Finds code nothing uses any more | `/health` | installed by `setup.sh` (`npm install -g fallow@2.98.0`) |
 | [gh (GitHub CLI)](https://cli.github.com/) | GitHub from the terminal | `/health`, `/release` | `brew install gh && gh auth login` |
-| [Groq Whisper key](https://console.groq.com/) | Video transcription | `/video-to-kb` | Free API key, then `export GROQ_API_KEY=...` in `~/.zshrc` |
-| [Chrome](https://www.google.com/chrome/) | Headless browser for mockup previews | `/design`, `/build` | Usually present; `brew install --cask google-chrome` |
-| [Playwright MCP](https://github.com/microsoft/playwright-mcp) | Browser automation | `/build` | Add the `playwright` MCP server to `settings.json` (see below) |
-| [shadcn MCP](https://ui.shadcn.com/docs/mcp) | Component registry access | `/design` | `npx shadcn@latest mcp init --client claude` |
-| Firecrawl MCP | Web search/scrape data | optional web-data | See `docs/MCP_SERVICES.md` |
-| [interface-design MCP](https://github.com/Dammyjay93/interface-design) | Design memory for the design pipeline | `/design` (optional) | Add to `settings.json` `mcpServers` |
-| [design-refine MCP](https://github.com/0xdesign/design-plugin) | Variant compare for the design pipeline | `/design` (optional) | Add to `settings.json` `mcpServers` |
+| [Groq Whisper key](https://console.groq.com/) | Turns speech in a video into text | `/video-to-kb` | Free API key, then `export GROQ_API_KEY=...` in `~/.zshrc` |
+| [Chrome](https://www.google.com/chrome/) | Renders design previews | `/design`, `/build` | Usually already there; `brew install --cask google-chrome` |
+| [Playwright MCP](https://github.com/microsoft/playwright-mcp) | Lets Claude drive a browser | `/build` | Add the `playwright` MCP server to `settings.json` (see below) |
+| [shadcn MCP](https://ui.shadcn.com/docs/mcp) | Fetches ready-made screen components | `/design` | `npx shadcn@latest mcp init --client claude` |
+| Firecrawl MCP | Searches and reads web pages | optional | See `docs/MCP_SERVICES.md` |
+| [interface-design MCP](https://github.com/Dammyjay93/interface-design) | Remembers past design decisions | `/design` (optional) | Add to `settings.json` under `mcpServers` |
+| [design-refine MCP](https://github.com/0xdesign/design-plugin) | Compares design versions side by side | `/design` (optional) | Add to `settings.json` under `mcpServers` |
 
-Install commands above show Mac (`brew`); on Linux use your package manager (e.g. `sudo apt install gh`) or the vendor's install page.
+The install commands show Mac (`brew`). On Linux use your package manager (`sudo apt install gh`) or the vendor's page.
 
-> **MCP servers** give Claude extra tools via a config block in `settings.json` — see the [Claude MCP docs](https://docs.anthropic.com/en/docs/claude-code/mcp).
+> **More on the Codex add-on.** `/xcheck`, `/health`, `/build`, `/design` and `/design-audit` use it directly. `/plan`, `/debate` and `/diagnose --debate` use it through their `/xcheck` step. Every one of them skips it quietly if it isn't installed. It needs a ChatGPT login (the free tier works) or an OpenAI API key. `/xcheck` asks for the `gpt-5.6-sol` model, which may need a paid plan; without it, Codex falls back to your default model.
+
+> **MCP servers** give Claude an extra tool. You add one as a block of settings in `settings.json` — see the [Claude MCP docs](https://docs.anthropic.com/en/docs/claude-code/mcp).
 >
-> ⚠️ **Security note:** the example settings ship a *narrowed* default allow list. `Bash(curl:*)`, `Bash(env:*)`, `Bash(export:*)`, `Bash(chmod:*)`, and `Bash(cat:*)` are deliberately NOT auto-allowed, since together they form a prompt-free read-and-exfiltrate chain (read a secret, then ship it out) once any secret lands in your environment. `skipAutoPermissionPrompt` is `false` by default, so the first time a session wants one of those you get a permission prompt — intended, for a repo named no-yolo. `permissions.deny: ["Read(.env)"]` also blocks reading `.env` files by default.
+> ⚠️ **Security note.** Claude asks your permission before running most commands. The settings shipped here deliberately do **not** pre-approve five of them: `Bash(curl:*)`, `Bash(env:*)`, `Bash(export:*)`, `Bash(chmod:*)` and `Bash(cat:*)`. Used together, those five are enough to read a password or key off your machine and send it out to someone else, without ever showing you a prompt. Leaving them un-approved means the first time a session wants one, you get asked. `skipAutoPermissionPrompt` is `false` for the same reason — this repo is called no-yolo. Reading `.env` files, which is where passwords and keys usually sit, is blocked as well by `permissions.deny: ["Read(.env)"]`.
 >
-> **Opting back in.** On a trusted personal machine, add any of the five entries back to your (gitignored) `settings.json`'s `permissions.allow`, and optionally set `skipAutoPermissionPrompt: true`. Prefer the sanctioned path over re-adding wildcards: the `fewer-permission-prompts` skill scans your own transcripts and writes a scoped allowlist from your actual usage. Only remove the `Read(.env)` deny entry if you understand the exposure.
+> **Turning them back on.** On a computer only you use, you can add any of those five back to `permissions.allow` in your own `settings.json` (that file never leaves your machine), and set `skipAutoPermissionPrompt: true`. There is a safer route first: the `fewer-permission-prompts` skill reads what you actually run and writes a narrow approved list from that, instead of approving everything. Only remove the `Read(.env)` block if you understand what it exposes.
 
 ## Set up a new project
 
-Nothing required — skills create their own folders (e.g. `brainstorms/`). The one thing you may add is MCP servers in `settings.json`'s `"mcpServers"` block, e.g. `"playwright": { "command": "npx", "args": ["-y", "@playwright/mcp@latest"] }`. Add one only when a skill asks for it.
+Nothing to do. Skills make their own folders when they need them, like `brainstorms/`. The one thing you might add is an MCP server in `settings.json` under `"mcpServers"`, for example `"playwright": { "command": "npx", "args": ["-y", "@playwright/mcp@latest"] }`. Add one only when a skill asks for it.
 
 ## Directory layout
 
-| Path | Purpose |
+| Path | What it holds |
 |---|---|
-| `CLAUDE.md` | Main rules file — pointers only; loads memory, routes to topic files |
-| `docs/CORE_RULES.md` | The 10 core working rules |
-| `docs/*.md` | Topic rule files `CLAUDE.md` points at (PLANNING, TESTING, SUBAGENTS, MEMORY, NO_YOLO, …) — every file's one-line description lives in [`skills/my-md/GLOBAL_DESCRIPTIONS.md`](skills/my-md/GLOBAL_DESCRIPTIONS.md) |
-| `memory/` | Saved preferences — `facts/` is source of truth, `CLAUDE.generated.md` is compiled |
-| `skills/` | Your skills plus symlinks to borrowed ones |
-| `hooks/` | Automation scripts: caveman mode, worktree guard, lockstep, status line |
-| `settings.example.json` | Starter settings, no secrets — `setup.sh` copies to `settings.json` |
+| `CLAUDE.md` | The main rules file. It holds no rules itself — it points at the others. |
+| `docs/CORE_RULES.md` | The 10 rules Claude works by |
+| `docs/*.md` | One file per topic (planning, testing, memory, and so on), each pointed at by `CLAUDE.md`. A one-line summary of every file is in [`skills/my-md/GLOBAL_DESCRIPTIONS.md`](skills/my-md/GLOBAL_DESCRIPTIONS.md) |
+| `memory/` | Things you asked it to remember. `facts/` is the real copy; `CLAUDE.generated.md` is built from it. |
+| `skills/` | Your commands, plus links to the borrowed ones |
+| `hooks/` | Small scripts that run by themselves: plain English mode, the bottom status bar, the edit blocker |
+| `settings.example.json` | Starter settings with no passwords in them. `setup.sh` copies this to `settings.json`. |
 
 ## Skills inventory
 
-A "skill" is a slash command, like `/health`. The count: 31 custom commands (+1 utility command: `/memory-compile` in `commands/`), plus 11 borrowed from plugins.
+A skill is a shortcut command you type, like `/health`. There are 31 custom commands, plus 1 utility command (`/memory-compile`, which lives in `commands/`), plus 11 borrowed from other people's plugins.
 
 | Skill | What it does | Skill | What it does |
 | --- | --- | --- | --- |
@@ -124,60 +136,98 @@ A "skill" is a slash command, like `/health`. The count: 31 custom commands (+1 
 | lockstep | Hard block on edits | checkup | Full skill-library health pass |
 | literal | Obey exactly, no push-back | — | — |
 
-The table shows the runnable menu: it includes 2 borrowed skills (`improve`, `archify`) and hides 2 custom helpers (`antislop`, `tdd` — see below), so it isn't a 1:1 list of the 30 custom commands. It is a copy of [`skills/my-skills/RENDERED_FAST.md`](skills/my-skills/RENDERED_FAST.md) — inside Claude Code, run `/my-skills` (same table) or `/my-skills deep` (adds when/why per skill, from [`RENDERED.md`](skills/my-skills/RENDERED.md), including every skill's flags). Every skill's flags also live in their own page: [`docs/FLAGS.md`](docs/FLAGS.md) — machine-generated, always current.
+That table is the menu of what you can run, so it is not a straight list of the custom commands. It adds 2 borrowed ones (`improve`, `archify`) and leaves out 2 that only run inside other commands.
 
-Borrowed sets install with one command each: `npx skills@latest add DietrichGebert/ponytail` (six simplicity commands), `npx skills@latest add shadcn/improve`, `npx skills@latest add emilkowalski/skills` (UI-polish rules that feed `/design`), `npx skills@latest add tt-a1i/archify`.
+The table is a copy of [`skills/my-skills/RENDERED_FAST.md`](skills/my-skills/RENDERED_FAST.md). Inside Claude Code, `/my-skills` shows the same thing, and `/my-skills deep` adds when and why to use each one, from [`RENDERED.md`](skills/my-skills/RENDERED.md). Every command's options are also listed on their own page, [`docs/FLAGS.md`](docs/FLAGS.md), which is generated so it can't go stale.
 
-Two commands are hidden from `/my-skills` but still real: `/antislop` (runs inside `/health` and `/release`) and `/tdd` (same loop `/build` step 4 runs).
+The borrowed sets install one command each:
+
+- `npx skills@latest add DietrichGebert/ponytail` — six commands that push for the simplest solution
+- `npx skills@latest add shadcn/improve` — `/improve`, the deep audit
+- `npx skills@latest add emilkowalski/skills` — screen-polish rules that `/design` reads
+- `npx skills@latest add tt-a1i/archify` — the diagram maker
+
+Two commands are hidden from `/my-skills` but still real: `/antislop`, which runs inside `/health` and `/release`, and `/tdd`, which is the same loop that step 4 of `/build` runs.
 
 ## Model guidance
 
-**Haiku** — tests, small edits (cheapest). **Sonnet** — most coding and reviews (default). **Opus** — planning and hard analysis (most capable). The rule: Opus plans, Sonnet builds (or the current best planner — substitutions are sanctioned, see `docs/CORE_RULES.md` rule 5). Never code without a plan first.
+Claude comes in three sizes and they cost different amounts. This setup picks one per job, so you don't pay top price for small work.
+
+| Model | Used for | Cost |
+|---|---|---|
+| Haiku | tests and small edits | cheapest |
+| Sonnet | most coding and reviews | middle, and the default |
+| Opus | planning and hard analysis | most expensive |
+
+The rule: Opus writes the plan, Sonnet does the building. Swapping in a newer, better planner is allowed — see rule 5 in `docs/CORE_RULES.md`. Never start coding without a plan.
 
 ## Keeping your setup up to date
 
-Run `/update` in any folder — no git knowledge needed. It fetches from GitHub without changing anything, shows a plain-English summary, and you choose: `preview`, `full` (pull everything + re-run setup), `rules`, `rollback`, or `restore <name>`. Customized clones are safe: `full` stashes, applies, restores, and shows conflicts explicitly. Changes take effect on next launch.
+Type `/update` in any folder. You don't need to know git. It checks GitHub without changing anything, tells you in plain words what is different, then you pick one:
+
+| You type | What happens |
+|---|---|
+| `preview` | shows the changes, changes nothing |
+| `full` | pulls everything and re-runs setup |
+| `rules` | pulls only the rule files |
+| `rollback` | undoes the last update |
+| `restore <name>` | brings back one file |
+
+If you have edited files yourself, `full` is still safe. It puts your edits aside, applies the update, puts your edits back, and tells you about anything that clashed. The changes take effect next time you start Claude Code.
 
 ## Keeping your fork in sync
 
-`/update full` handles both direct clones and GitHub forks. For forks it adds an `upstream` remote and rebases your commits on top, so your customizations survive. After a successful rebase, force-push: `git push --force origin main` (it reminds you).
+A fork is your own copy of this repo on your GitHub account. `/update full` works whether you cloned this directly or forked it. For a fork it also links your copy back to the original and replays your own changes on top, so nothing you wrote is lost. After that, send your copy back up with `git push --force origin main`. It reminds you.
 
 ## Add a new skill
 
-Make `skills/<name>/SKILL.md` with `user-invocable: true` and its triggers in that same `description`. Then update the catalog files in `skills/my-skills/`, run `regen.py`, and re-seal with `catalog_lock.py --relock`. Full checklist: `docs/NO_YOLO.md`.
+Make a file at `skills/<name>/SKILL.md` with `user-invocable: true` in it, and put the phrases that should trigger it in that same `description`. Then update the list files in `skills/my-skills/`, run `regen.py`, and re-seal with `catalog_lock.py --relock`. Full checklist: `docs/NO_YOLO.md`.
 
 ## Update memory preferences
 
-**Easy way:** just say "Remember that I use pnpm, not npm" (or "Forget what you saved about X") — Claude saves it and it carries forward across sessions.
+**Easy way:** just say "Remember that I use pnpm, not npm", or "Forget what you saved about X". It is saved, and it carries over into your next session.
 
-**Committed way** (syncs across machines): add a file under `memory/facts/`, run `/memory-compile`, then commit — only the compiled `memory/CLAUDE.generated.md` syncs. `memory/facts/` itself is deliberately private: it is both gitignored and blocked by the pre-commit scanner, so raw facts never leave the machine; the compiled summary is what travels. Never hand-edit `CLAUDE.generated.md`; it is overwritten on compile.
+**The way that travels to another computer:** add a file under `memory/facts/`, run `/memory-compile`, then commit. Only the built-up summary, `memory/CLAUDE.generated.md`, gets uploaded. The `memory/facts/` folder is private on purpose. Git ignores it, and a check before every commit blocks it, so the raw notes never leave your machine. Never hand-edit `CLAUDE.generated.md`; it is overwritten every time you compile.
 
-## Caveman mode — shorter replies
+## Plain English mode
 
-Requires the optional Caveman plugin (Add-ons table). Very short replies, filler dropped — saves tokens on long sessions. On: `/caveman lite|full|ultra`. Off: `stop caveman`. Stays on across messages; the status bar shows when it's active.
+On by default. Every reply uses plain words and short charts instead of jargon and long paragraphs. Code, commands, file contents and security warnings are still written out exactly, because those have to be precise.
+
+To turn it off, set `ELI5_MODE=off`, or say "stop eli5" to drop it for the rest of a session. The script behind it is `hooks/eli5-activate.js`.
 
 ## The status bar (the line at the bottom of Claude Code)
 
-Example: `~  no-yolo  main  ●  42% ctx  2.1h/5h  18h/7d  [CAVEMAN:full]`
+Example: `Opus 5 · 42%ctx · 5h 18% 3h · wk 40% 5d · no-yolo* · ⬢ prod`
 
-Left to right: home dir · project folder · git branch · `●` = uncommitted changes · context fullness (above 60%, run `/compact`) · 5-hour usage · 7-day usage · caveman level (only when active). Driven by `hooks/statusline.sh`.
+| Piece | What it means |
+|---|---|
+| `Opus 5` | which model you are talking to |
+| `42%ctx` | how full Claude's memory of this conversation is. Over 60%, type `/compact`. |
+| `5h 18% 3h` | you have used 18% of your 5-hour allowance; it resets in 3 hours |
+| `wk 40% 5d` | 40% of your 7-day allowance used; it resets in 5 days |
+| `no-yolo*` | the folder you are in. The `*` means you have changes not yet saved to git. |
+| `⬢ prod` | which environment the branch you're on counts as |
+
+It is drawn by `hooks/statusline.sh`. If you install the optional caveman or literal modes, a badge for each appears at the front.
 
 ## The CLAUDE.md instruction chain
 
-`CLAUDE.md` holds *only* pointers: `@docs/CORE_RULES.md`, `@memory/CLAUDE.generated.md`, and topic routing (Planning → `PLANNING.md`, etc.). Never put real content in `CLAUDE.md` — put it in the right topic file and point to it.
+`CLAUDE.md` holds pointers and nothing else: `@docs/CORE_RULES.md`, `@memory/CLAUDE.generated.md`, and one line per topic (Planning → `PLANNING.md`, and so on). Never put an actual rule in `CLAUDE.md`. Put it in the right topic file and point at it.
 
 ## What's excluded
 
-| Excluded | Reason |
+These are kept out of git on purpose.
+
+| Left out | Why |
 |---|---|
-| `settings.json` | Machine-specific (paths, MCP servers, possible API keys) — never commit; start from `settings.example.json` |
-| `plugins/` and plugin shortcuts (`ponytail*/`, `improve`, …) | Third-party; reinstall via the Add-ons table |
-| `skills/design/vendor/` | Third-party (taste-skill) — `/update vendor taste-skill` fetches it; see `docs/THIRD_PARTY_SKILLS.md` |
-| `.pending-tasks.md`, `learnings.md` | Local working files (`/whats-next` queue, `/prompt-scan` output) |
-| `cache/`, `sessions/`, `history.jsonl`, logs | Temporary runtime files |
+| `settings.json` | It is specific to your computer — paths, connections, possibly API keys. Never commit it. Start from `settings.example.json`. |
+| `plugins/` and plugin shortcuts (`ponytail*/`, `improve`, …) | Other people's code. Reinstall from the Add-ons table. |
+| `skills/design/vendor/` | Other people's code. `/update vendor taste-skill` fetches it. See `docs/THIRD_PARTY_SKILLS.md`. |
+| `.pending-tasks.md`, `learnings.md` | Working files on your machine: the `/whats-next` list and the `/prompt-scan` output |
+| `cache/`, `sessions/`, `history.jsonl`, logs | Temporary files |
 
 ## Uninstall
 
-Individual tools: `npx skills@latest remove DietrichGebert/ponytail` · `npx skills@latest remove shadcn/improve` · `npm uninstall -g fallow` · `/plugin remove <name>` inside Claude Code.
+Remove one tool at a time: `npx skills@latest remove DietrichGebert/ponytail` · `npx skills@latest remove shadcn/improve` · `npm uninstall -g fallow` · `/plugin remove <name>` inside Claude Code.
 
-Remove the whole setup (backup at `~/.claude.bak` if you used the install command): `rm -rf ~/.claude`
+Remove all of it: `rm -rf ~/.claude`. If you used the install command above, your old setup is still sitting at `~/.claude.bak`.

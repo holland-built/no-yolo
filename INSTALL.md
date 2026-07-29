@@ -1,75 +1,130 @@
-# INSTALL.md — agent-guided install walkthrough
+# How to install this
 
-You (Claude) are reading this because a beginner just cloned this repo and asked you to walk
-them through installing it. Follow these steps in order. Talk plainly — translate any jargon
-in one short clause the first time you use it. Do not skip a failed step silently; explain it
-and give the manual fallback.
+This adds a set of extra commands, working rules, and a saved memory of your preferences to
+Claude Code. Installing it means copying one folder onto your computer and running one script.
 
-## 1. Greet
+**If you are Claude reading this to someone:** run the steps in order, one at a time. After each
+command, say in plain words what happened. If a step fails, stop there and use the
+"If something goes wrong" table at the bottom. Never skip past an error quietly.
 
-One or two sentences: this repo gives Claude Code extra commands, working rules, and memory.
-You're going to check their machine, run the installer, and confirm it worked.
+## First, open a terminal
 
-## 2. Check the machine
+The terminal is a window where you type commands instead of clicking. On a Mac, press
+`Cmd` + `Space`, type `Terminal`, press Return. A window opens with a blinking cursor.
 
-Run each check below. For any that's missing, explain in one plain sentence why it's needed,
-then give the install line for their OS (Mac vs Linux — ask if unsure, or detect via `uname`).
+Every command below goes there: paste one line, press Return, wait for it to finish.
 
-| Check | Command | Why (one sentence) |
+You will see `~` a lot. It means your home folder — on a Mac, `/Users/<yourname>`. So `~/.claude` is the folder Claude Code reads every time it starts, and this setup *is* that folder.
+
+## Step 1 — Check what you already have
+
+Type each command below and press Return. You are only checking that it prints a version number.
+
+| Type this | What it does for you | A good answer looks like |
 |---|---|---|
-| git | `git --version` | Downloads and updates this repo's files. |
-| Node.js | `node --version` | Runs the tools (skills) this setup installs. |
-| npm | `npm --version` | Installs those tools (comes with Node.js). |
-| python3 | `python3 --version` | Runs the setup script's rule-checking steps. |
+| `claude --version` | Claude Code itself | `2.0.1 (Claude Code)` |
+| `git --version` | downloads the files | `git version 2.39.5` |
+| `node --version` | runs the extra tools | `v22.14.0` |
+| `npm --version` | installs those tools (comes with Node) | `10.9.2` |
+| `python3 --version` | only needed for the rules-only install in Step 4 | `Python 3.12.7` |
 
-Install pointers if missing:
-- **git** — Mac: pre-installed; Linux: `sudo apt install git`
-- **Node.js / npm** — [nodejs.org](https://nodejs.org/) (installs both together)
-- **python3** — Mac: pre-installed; Linux: `sudo apt install python3`
+If one prints `command not found`, install it before going on:
 
-If git or python3 is missing, stop and help them install it before continuing — the installer
-needs both. Node/npm are needed for the full install but not for a rules-only install.
+| Missing | How to get it | Do you have to? |
+|---|---|---|
+| Claude Code | [docs.anthropic.com](https://docs.anthropic.com/en/docs/claude-code) | Yes. This whole thing is for it. |
+| git | Mac: already there. Linux: `sudo apt install git` | Yes. The installer stops without it. |
+| Node and npm | [nodejs.org](https://nodejs.org/) (one download gives you both) | Yes, for the normal install. |
+| python3 | Mac: already there. Linux: `sudo apt install python3` | Only for the rules-only install. |
 
-## 3. Run the installer
+## Step 2 — Move any old setup out of the way
 
-Run: `bash ~/.claude/setup.sh`
+```bash
+mv ~/.claude ~/.claude.bak 2>/dev/null || true
+```
 
-The script prints a **Preflight** block first (tool check, same as step 2 — just confirm it
-matches what you already found), then numbered steps, then an **Install summary** at the end.
+This prints nothing at all, which is the correct result. If you already had a `~/.claude` folder,
+it is now sitting safely at `~/.claude.bak`. Nothing was deleted. If you had no such folder,
+nothing happened.
 
-Narrate the summary in plain English, step by step:
-- Each line reading `OK` — say what that tool now does for them, one clause.
-- Any line reading `FAILED` — do NOT skip past it. Name the exact step, explain what it means
-  in plain words, and give the manual fallback. Manual fallbacks live in **README.md → Add-ons
-  table** — look up the row matching that tool and quote its "Install" column. Don't guess or
-  invent a fallback; point at that table.
+## Step 3 — Download the files
 
-## 3.5. Codex is optional
+```bash
+git clone https://github.com/holland-built/no-yolo.git ~/.claude
+```
 
-The Preflight block also checks for `codex`. If it reads "not installed", tell the user in one
-plain sentence: Codex is optional, the cross-check steps in skills detect it's missing and skip
-themselves, and they can add it later via `/plugin install codex@openai-codex`. If the user asked
-for a minimal install, run `bash ~/.claude/setup.sh --core-only` instead of the plain command in
-step 3, and explain that it skips every third-party install (setup.sh's step 4 list) — they can add
-those later by re-running plain `setup.sh`.
+You will see counting lines and then `Resolving deltas: 100%`. That means the files arrived.
 
-## 4. Explain permission prompts
+## Step 4 — Pick which install you want
 
-If Claude Code shows a permission prompt during setup (asking to run a command or touch a
-file), explain in one sentence what it's about to do and why, in plain words, before it
-proceeds. This repo is deliberately cautious about permissions — that's expected, not a bug.
+Most people want the first one. Pick one line and copy it, you will run it in Step 5.
 
-## 5. Confirm it worked
+| You want | Run this | What you get |
+|---|---|---|
+| Everything (normal) | `bash ~/.claude/setup.sh` | All rules, all commands, plus four borrowed tool sets from other people |
+| Nothing from strangers | `bash ~/.claude/setup.sh --core-only` | Same, but skips the borrowed tool sets and the `fallow` tool. Run the plain command later to add them |
+| Rules only, no tools | `bash ~/.claude/setup.sh --md-only` | Just the working rules. No commands installed. Needs python3 |
 
-Have the user do two things, then interpret the results for them:
+Any of these is safe to run again later. `--md-only` backs up your rules file first, and running
+the plain version afterwards puts it back.
 
-1. Run `/my-skills` — a table of commands appearing means the install worked.
-2. Run `bash ~/.claude/verify.sh` — a health check. Explain: **all rows reading PASS means
-   the clone is healthy.** If any row reads `FAIL`, read that row's message aloud in plain
-   words and say this needs a developer's help (it's a deeper check than setup.sh covers).
+## Step 5 — Run it
 
-## 6. Wrap up
+Paste the line you picked and press Return. It takes a couple of minutes and prints as it goes:
 
-Point them at **README.md → "Read next"** for what to read to understand the rules, rather
-than re-explaining those rules yourself here — that section is the source of truth and this
-file would drift from it otherwise.
+1. **Preflight** — a `found` or `missing` line for each tool it needs.
+2. **Numbered steps 1 to 6** — settings file, scripts, tools, borrowed commands, plugins, and a
+   list of two optional settings you can add later.
+3. **Install summary** — one line per tool, each reading `OK`, `SKIPPED`, or `FAILED`.
+4. **Done.**
+
+Read the summary. `OK` means it installed. `FAILED` means it did not, and the table at the bottom
+of this page tells you what to do. Any `FAILED` also makes the script exit with an error, which
+is expected, not a crash.
+
+Two messages are safe to ignore for now: a note about adding MCP servers to `settings.json`, and
+two optional settings (`GROQ_API_KEY` and `OBSIDIAN_VAULT`) that only matter if you later use the
+video commands.
+
+**About permission prompts.** If Claude Code is running these for you, it may stop and ask
+permission to run a command or touch a file. That is on purpose. This setup is deliberately
+careful about permissions. Read what it wants to do, then allow it.
+
+## Step 6 — Check that it worked
+
+Open Claude Code in any folder and run:
+
+```
+/my-skills
+```
+
+A table of commands means the install worked.
+
+For a deeper check, back in the terminal:
+
+```bash
+bash ~/.claude/verify.sh
+```
+
+Every row reading `PASS` means the copy on your machine is healthy. This is the same check the
+project runs on itself.
+
+## If something goes wrong
+
+| What you see | What to do |
+|---|---|
+| `git missing — required` and the script stops | Install git (Step 1 table), then run Step 5 again |
+| `node and/or npm missing` and the script stops | Install Node from [nodejs.org](https://nodejs.org/), then run Step 5 again |
+| `python3 missing` on the rules-only install | Install python3, or use the normal install instead |
+| `claude (Claude Code) not found on PATH` | Install Claude Code. The script keeps going, but you need it to use any of this |
+| `codex    not installed` | Nothing to fix. It is optional. Commands that would use it skip that part. Add it later inside Claude Code with `/plugin install codex@openai-codex` |
+| `! gh missing` | Optional. The `/health` and `/release` commands want it: `brew install gh && gh auth login` |
+| A summary line reads `FAILED` | Open `README.md`, find that name in the **Add-ons** table, and run the command in its Install column by hand. Then run Step 5 again |
+| `/my-skills` shows nothing | Quit Claude Code and open it again. It only reads `~/.claude` at startup |
+| A `verify.sh` row reads `FAIL` | Read the message on that row. This is a deeper check than the installer does, so it usually needs someone who codes |
+| You want it all gone | `rm -rf ~/.claude` then, if you had one before, `mv ~/.claude.bak ~/.claude` |
+
+## What to read next
+
+`README.md` has a section called **"Read next"** with the right order to read things in. Start
+there rather than opening files at random.
