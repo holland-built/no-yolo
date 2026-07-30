@@ -1,0 +1,20 @@
+# NEGATIVE-CONTROL FIXTURE for the infra-leak scan. Read by verify.sh check 8a.
+#
+# Every line below MUST NOT match. A pattern that matches everything is as useless
+# as one that matches nothing, and reads as "working" just the same — this is the
+# half of the control that catches an over-broad pattern.
+#
+# The addresses are the documentation ranges (RFC5737 TEST-NET, and well-known
+# public resolvers). The rest are the specific false positives this pattern has
+# actually produced or nearly produced: version numbers that look like octets, and
+# a plain Path.home() call that an earlier `\b`-based rule matched as an internal
+# hostname on Linux.
+#
+# Pinned by sha256 for the same reason as the probe file — see its header.
+#
+# Lines starting with # are ignored by the reader.
+documentation 203.0.113.10 and 198.51.100.4 are TEST-NET ranges
+public 8.8.8.8 and 1.1.1.1
+version 10.2 of the spec, section 172.3, port 100.64
+a path like Path.home() and a call to os.homedir()
+example.com and my.example.org

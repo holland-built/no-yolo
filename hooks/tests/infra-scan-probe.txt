@@ -1,0 +1,27 @@
+# POSITIVE-CONTROL FIXTURE for the infra-leak scan. Read by verify.sh checks 8a/8b.
+#
+# Every line below is a SYNTHETIC value that the scan MUST catch. None of it is
+# real: the addresses are RFC1918 / RFC6598 range examples and the hostnames are
+# invented. Nothing here came off a real network.
+#
+# THIS FILE IS EXCLUDED FROM THE SCANS IT TESTS, by name, in both places
+# (verify.sh SCAN_EXCLUDE and hooks/pre-commit PROBE_PATHS) — it has to be, since
+# its whole purpose is to contain the values they block.
+#
+# Because it is excluded, it is the one file in this repo where a real leak could
+# hide. So its contents are PINNED: verify.sh checks this file's sha256 against
+# hooks/tests/infra-scan-probe.sha256 before using it, and refuses to run the
+# control if it has changed. Editing it deliberately means updating that hash,
+# which is the same discipline the catalog lock already uses. Editing it to
+# smuggle a value past the scan fails the build instead.
+#
+# Lines starting with # are ignored by the reader.
+rfc1918-a 192.168.1.50
+rfc1918-b 10.1.1.77
+rfc1918-c 172.20.0.5
+cgnat 100.64.12.9
+host db-prod.internal
+host wiki.corp
+host nas.lan
+host printer.home
+mdns foo.bar.local

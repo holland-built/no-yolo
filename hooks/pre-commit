@@ -42,8 +42,23 @@ for pattern in "${BLOCKED_FILES[@]}"; do
   fi
 done
 
+# The two probe fixtures are excluded from the infra scan below, by name, because
+# their whole purpose is to hold the values it blocks: they are the controls
+# that prove this pattern can still match (verify.sh checks 8a/8b). Without this
+# exclusion the hook refuses every commit that touches them — it did, which is how
+# they came to be separate files instead of inline test data.
+#
+# They are the ONE place in this repo a real leak could hide, so verify.sh pins both
+# by sha256 and fails if either changes without the hash being updated. Keep this
+# list and verify.sh's SCAN_EXCLUDE in step.
 # added lines only, minus lines that are themselves regex patterns
 ADDED=$(git diff --cached | grep -E "^\+" | grep -vE "^\+\+\+" | grep -v "\[a-zA-Z" | grep -v "\[a-z0-9")
+
+# The same, with the probe fixtures' hunks removed, for the infra scan only. Done
+# per-file via --cached -- :!path so a probe line cannot be attributed to another
+# file's diff.
+ADDED_NOPROBE=$(git diff --cached -- . ":!hooks/tests/infra-scan-probe.txt" ":!hooks/tests/infra-scan-clean.txt" \
+  | grep -E "^\+" | grep -vE "^\+\+\+" | grep -v "\[a-zA-Z" | grep -v "\[a-z0-9")
 
 # 2 — Block personal / credential content
 MATCHES=$(echo "$ADDED" | grep -E "$PATTERNS")
@@ -56,7 +71,7 @@ if [ -n "$MATCHES" ]; then
 fi
 
 # 3 — Block private-network / internal-infra values (use placeholders in docs)
-INFRA=$(echo "$ADDED" | grep -EI "$INFRA_PATTERNS")
+INFRA=$(echo "$ADDED_NOPROBE" | grep -EI "$INFRA_PATTERNS")
 if [ -n "$INFRA" ]; then
   echo "❌ BLOCKED: private network / internal infra value in diff:"
   echo "$INFRA"

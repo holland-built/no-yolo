@@ -149,12 +149,147 @@ fi
 # data in a file that had none. Failing open on one platform and crying wolf on the other, from
 # one metacharacter. Explicit character classes behave the same everywhere.
 INFRA_SCAN='192\.168\.[0-9]{1,3}\.[0-9]{1,3}|(^|[^0-9])10\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}|172\.(1[6-9]|2[0-9]|3[01])\.[0-9]{1,3}\.[0-9]{1,3}|100\.(6[4-9]|[7-9][0-9]|1[0-1][0-9]|12[0-7])\.[0-9]{1,3}\.[0-9]{1,3}|(^|[^A-Za-z0-9._-])[a-z0-9-]+\.(internal|corp|lan|home)($|[^A-Za-z0-9-])|(^|[^A-Za-z0-9._-])[a-z0-9-]+\.[a-z0-9-]+\.local($|[^A-Za-z0-9-])'
-SCAN_EXCLUDE=(':!hooks/pre-commit' ':!verify.sh' ':!skills/health/SKILL.md' ':!.no-yolo-deny.example.txt')
+SCAN_EXCLUDE=(':!hooks/pre-commit' ':!verify.sh' ':!skills/health/SKILL.md' ':!.no-yolo-deny.example.txt' ':!hooks/tests/infra-scan-probe.txt' ':!hooks/tests/infra-scan-clean.txt')
+# 8a. POSITIVE CONTROL — prove the pattern can still MATCH, before trusting a
+#     clean result from it.
+#
+#     Check 8 below passes when it finds nothing. So does a pattern that has been
+#     broken: delete a metacharacter, or run it on a platform whose regex engine
+#     reads it differently, and the scan reports "no findings" forever. That is
+#     exactly what happened once already — the \b in the hostname rules matched
+#     NOTHING under git grep on macOS, so the scan went green on the very machine
+#     doing the committing. It was found by hand, not by this file, because nothing
+#     here could tell "clean" from "blind".
+#
+#     The planted values live in hooks/tests/infra-scan-probe.txt rather than
+#     inline, because inline values get blocked by the very hook this tests (they
+#     did — hooks/pre-checkin refused the first version of this commit, correctly).
+#     Those fixture files are excluded from the scans by name and PINNED by sha256,
+#     so the one place a real leak could hide is a file that cannot change without
+#     failing the build. See their headers.
+PROBE_LEAK="hooks/tests/infra-scan-probe.txt"
+PROBE_CLEAN="hooks/tests/infra-scan-clean.txt"
+PROBE_SUMS="hooks/tests/infra-scan-probe.sha256"
+
+probe_ready=1
+for f in "$PROBE_LEAK" "$PROBE_CLEAN" "$PROBE_SUMS"; do
+  [ -f "$f" ] || { echo "missing scan-probe fixture: $f"; probe_ready=0; }
+done
+
+# shasum on macOS, sha256sum on Linux — neither is present on both.
+sha256_of() {
+  if command -v shasum >/dev/null 2>&1; then shasum -a 256 "$1" | awk '{print $1}'
+  else sha256sum "$1" | awk '{print $1}'; fi
+}
+
+if [ "$probe_ready" = 0 ]; then
+  record FAIL "infra scan positive control — fixtures missing, so the scan is unfalsifiable"
+else
+  # The fixtures are excluded from the scan, so they are pinned. A changed fixture
+  # is either a deliberate edit (update the hash) or an attempt to hide a value
+  # inside the one file the scan does not read.
+  sums_ok=1
+  for f in "$PROBE_LEAK" "$PROBE_CLEAN"; do
+    want=$(awk -v f="$f" '$2==f {print $1}' "$PROBE_SUMS")
+    got=$(sha256_of "$f")
+    if [ -z "$want" ]; then echo "no pinned hash for $f in $PROBE_SUMS"; sums_ok=0
+    elif [ "$want" != "$got" ]; then
+      echo "scan-probe fixture CHANGED: $f"
+      echo "  pinned $want"
+      echo "  actual $got"
+      echo "  These files are excluded from the leak scan, so their contents are pinned."
+      echo "  If the edit is deliberate, update $PROBE_SUMS."
+      sums_ok=0
+    fi
+  done
+  if [ "$sums_ok" = 0 ]; then
+    record FAIL "infra scan probe fixtures changed — pinned hash mismatch (see above)"
+  else
+    scan_probe=$(mktemp -d)
+    scan_missed=""
+    scan_i=0
+    while IFS= read -r probe_line; do
+      case "$probe_line" in ''|'#'*) continue ;; esac
+      scan_i=$((scan_i + 1))
+      printf '%s\n' "$probe_line" > "$scan_probe/leak-$scan_i.txt"
+      # git -C so the pathspec is INSIDE the directory git grep runs in: a path
+      # outside the repo is rejected, and `--no-index -- -` does not read stdin at
+      # all (it always exits 1, reporting every planted value as missed). A control
+      # that cannot tell "the scan is blind" from "my probe is broken" is not a
+      # control — the first version of this was exactly that.
+      if ! git -C "$scan_probe" grep --no-index -qIE "$INFRA_SCAN" -- "leak-$scan_i.txt" 2>/dev/null; then
+        scan_missed="${scan_missed}
+    MISSED: $probe_line"
+      fi
+    done < "$PROBE_LEAK"
+
+    scan_false=""
+    scan_j=0
+    while IFS= read -r probe_line; do
+      case "$probe_line" in ''|'#'*) continue ;; esac
+      scan_j=$((scan_j + 1))
+      printf '%s\n' "$probe_line" > "$scan_probe/clean-$scan_j.txt"
+      if git -C "$scan_probe" grep --no-index -qIE "$INFRA_SCAN" -- "clean-$scan_j.txt" 2>/dev/null; then
+        scan_false="${scan_false}
+    FALSE POSITIVE: $probe_line"
+      fi
+    done < "$PROBE_CLEAN"
+    rm -rf "$scan_probe"
+
+    if [ "$scan_i" -eq 0 ] || [ "$scan_j" -eq 0 ]; then
+      record FAIL "infra scan positive control — fixtures held no usable lines ($scan_i leak, $scan_j clean)"
+    elif [ -n "$scan_missed" ]; then
+      printf 'infra scan is BLIND to values it must catch (on %s):%s\n' "$(uname -s)" "$scan_missed"
+      record FAIL "infra scan positive control — the pattern matches nothing it should"
+    elif [ -n "$scan_false" ]; then
+      printf 'infra scan flags values it must not (on %s):%s\n' "$(uname -s)" "$scan_false"
+      record FAIL "infra scan negative control — the pattern cries wolf"
+    else
+      record PASS "infra scan positive control ($scan_i planted caught, $scan_j clean ignored)"
+    fi
+  fi
+fi
+
 # git grep exits 0 when it FINDS matches — inverted vs the other checks on purpose
 if git grep -nIE "$INFRA_SCAN" -- . "${SCAN_EXCLUDE[@]}" >/tmp/verify-scan.log 2>&1; then
   record FAIL "tracked-content scan — private/infra value in a tracked file (see /tmp/verify-scan.log)"
 else
   record PASS "tracked-content scan"
+fi
+
+# 8b. The pre-commit hook's own pattern gets the same control.
+#     verify.sh's comment says "Patterns mirror INFRA_PATTERNS in hooks/pre-commit
+#     — if one changes, mirror the other", and they HAVE diverged: this file's \b
+#     was replaced with explicit character classes and pre-commit's was not. That
+#     divergence is fine ONLY as long as pre-commit's pattern still works in the
+#     engine pre-commit actually uses (grep -EI — BSD grep on macOS, GNU on Linux,
+#     which do honour \b where git grep does not). Asserted, not assumed, on
+#     whichever platform this runs.
+if [ -f hooks/pre-commit ] && [ -f "$PROBE_LEAK" ]; then
+  pc_pattern=$(sed -n 's/^INFRA_PATTERNS="\(.*\)"$/\1/p' hooks/pre-commit)
+  if [ -z "$pc_pattern" ]; then
+    record FAIL "pre-commit INFRA_PATTERNS not found — the commit-blocking scan may have been renamed"
+  else
+    pc_missed=""
+    pc_n=0
+    while IFS= read -r probe_line; do
+      case "$probe_line" in ''|'#'*) continue ;; esac
+      pc_n=$((pc_n + 1))
+      # The exact invocation pre-commit uses on its added lines.
+      if ! printf '%s\n' "$probe_line" | grep -qEI "$pc_pattern" 2>/dev/null; then
+        pc_missed="${pc_missed}
+    MISSED: $probe_line"
+      fi
+    done < "$PROBE_LEAK"
+    if [ "$pc_n" -eq 0 ]; then
+      record FAIL "pre-commit scan positive control — no usable probe lines"
+    elif [ -n "$pc_missed" ]; then
+      printf 'pre-commit infra scan is BLIND (on %s, grep -EI):%s\n' "$(uname -s)" "$pc_missed"
+      record FAIL "pre-commit scan positive control — the commit-blocking pattern misses values it must catch"
+    else
+      record PASS "pre-commit scan positive control ($pc_n planted caught by grep -EI)"
+    fi
+  fi
 fi
 
 # 9. skill coherence — every SKILL.md branches only on terms it also defines,
