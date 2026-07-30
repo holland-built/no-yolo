@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-07-30 — /video-to-kb runs start to finish without stopping to ask
+
+Ingesting a video took two commands and two questions: it saved the transcript,
+stopped, waited for "process it", then asked for framing guidance before writing
+anything. Both gates protected against a mistake that costs nothing to undo — the
+raw transcript is already on disk, so rewriting the wiki pages is free and needs
+no re-download. The gates only bought a pause.
+
+| Change | Detail |
+|---|---|
+| No gate between phases | Phase 1 continues straight into Phase 2; one invocation now produces the wiki pages |
+| Framing question dropped | Taken from the invocation if given, otherwise the agent decides — "process it" still re-runs Phase 2 alone against a saved transcript |
+| Anti-patterns rewritten | The two rules enforcing the old gates were inverted, and the re-run-is-cheap reasoning recorded alongside them |
+| Catalog rows resynced | `STORIES.md` described a "hard manual gate" that no longer exists |
+
 ## 2026-07-29 — core rules switched off on purpose, design skills now load everywhere
 
 A `/doctor` health pass found the core rules file had been renamed away while

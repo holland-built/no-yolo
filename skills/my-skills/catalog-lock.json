@@ -315,10 +315,10 @@
       "structureSha": "1b3e4b9ef8002b8a74c082af5d7af558bad34c81e198de2210e9b425a99e6baf"
     },
     "video-to-kb": {
-      "descSha": "34fb30fcb337af4c959d4aeb9c6fe0584db683a9ec60c93512c152d1e6bcf59e",
+      "descSha": "11eafafa7cb6f1f1609ddffecf4c170e4d6e9a660805cc31f639b5bb341dc006",
       "rows": {
-        "skills/my-skills/STORIES.md": "4a216334215fe0354687f1e5699589ed6586529071ccd220954d9ee12d2c945a",
-        "skills/my-skills/STORIES.md#rel": "65e4c1810f39a7981269af68f521412d2a07dd24a7f220fd8194d1b0d1abddcd",
+        "skills/my-skills/STORIES.md": "3a2dde54a6d41227c10999f54a47af5fd074c6edebd8a42eb6f97d933fea618f",
+        "skills/my-skills/STORIES.md#rel": "a34bb41c024557ca992e7a7a6086c602c7c0b7329b574ff91d8a85c6385ed8d3",
         "skills/my-skills/TAGLINES.md": "be55fde3455cac5d0d94895befabc4c15de7221fa1fb4af6dadb9d3272e0a4ad",
         "skills/my-skills/TAGLINES_SHORT.md": "72751864c1a4cbd75bd6500c9d539e56b0f4623e48f8abda105756f8588658e0",
         "skills/my-skills/WHEN_TO_USE.md": "60519a88bdc62b4e179ff77c46b1b7e7d97e4deee22bf3f009b8417284378b48",
