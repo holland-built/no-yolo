@@ -27,7 +27,6 @@ skills/impeccable
 # Orca-managed external skills (symlinks to ~/.agents/skills/)
 skills/computer-use
 skills/orca-cli
-skills/orchestration
 # emilkowalski/skills — animation/design-eng taste rules (npx skills@latest add emilkowalski/skills)
 skills/emil-design-eng
 skills/animation-vocabulary
@@ -74,6 +73,8 @@ advisor-plans/
 tasks/
 proposals/
 brainstorms/
+.pending-audit-*.md
+.audit-*-detail/
 
 # archives / trash
 _archive_*/

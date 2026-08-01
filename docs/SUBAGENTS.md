@@ -13,11 +13,11 @@ Use model `opus` for planning agents, `sonnet` for coding agents.
 
 ## Before Dispatch
 
-State assumptions and surface ambiguity in the dispatch prompt itself, never silently inside the agent → `~/.claude/docs/CORE_RULES.md` rule 6.
+State assumptions and surface ambiguity in the dispatch prompt itself, never silently inside the agent.
 
 ## Scope per Dispatch
 
-Every dispatch prompt must bound how much other code the change could break → `~/.claude/docs/CORE_RULES.md` rule 3.
+Every dispatch prompt must bound how much other code the change could break.
 - Name the exact files the agent may touch; forbid edits outside them.
 - Tell it to match existing style even where it would do otherwise.
 - It may flag unrelated dead code but must not delete it; it must clean up only orphans (imports/vars) its own change made unused.

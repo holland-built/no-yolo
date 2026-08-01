@@ -20,7 +20,7 @@ python3 -c "import firecrawl" 2>/dev/null || pip3 install firecrawl-py --break-s
 
 If either fails: STOP. Tell user which package failed and how to install it.
 
-Firecrawl self-hosted endpoint: `http://<your-firecrawl-host>:<port>` (no API key needed).
+Firecrawl self-hosted endpoint: read from the `FIRECRAWL_API_URL` env var (set in settings.json `env`; no API key needed). If it is unset, skip URL inputs and process local files only — tell the user the env var is missing.
 
 ## Init structure (first run)
 
@@ -48,8 +48,10 @@ For each input:
 
 If input is a URL:
 ```python
+import os
 from firecrawl import FirecrawlApp
-app = FirecrawlApp(api_url="http://<your-firecrawl-host>:<port>")
+api_url = os.environ.get("FIRECRAWL_API_URL")  # set in settings.json env; self-hosted, no API key
+app = FirecrawlApp(api_url=api_url)
 result = app.scrape_url(url, formats=["markdown"])
 # result.markdown → write to /tmp/ingest-<slug>.md
 ```

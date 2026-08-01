@@ -47,7 +47,7 @@ lockstep
 checkup
 literal
 
-## Helpers (called by other skills)
+## Helpers (called by other skills, or standalone companions to one)
 antislop
 tdd
 emil-design-eng

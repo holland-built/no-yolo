@@ -4,7 +4,10 @@
 
 > Karpathy = Andrej Karpathy, ex-Tesla/OpenAI — his rules for surgical, simple code changes.
 
-Review every diff against `~/.claude/docs/CORE_RULES.md` rule 3 (surgical changes) and rule 2 (simplicity first) — flag violations of either as defects, not nits.
+Two filters on every diff — flag violations as defects, not nits:
+
+- **Surgical.** Every changed line traces to what was asked. Fixing A must not touch B — no cleanup, no refactors, no "while I'm here" edits.
+- **Simple.** If 200 lines could be 50, say so. No enterprise patterns on a simple request.
 
 ## When Running /health
 

@@ -25,16 +25,16 @@
       "structureSha": "885c0894228d0f51c634000de76fbded58af23754a0981911ba6fdb1e3700eb0"
     },
     "build": {
-      "descSha": "5be7826f1455e3cc95c4c0d1789f41cee744fa5083177d55de68668fc56b98f6",
+      "descSha": "00fa24c9f654d7e63c63d46ad4b9dc5f8398293cce9b1399fa06f2d280a2f003",
       "rows": {
         "skills/my-skills/STORIES.md": "89735f45fabb6173103a0c59932f57fdea636cdd4acd464e29f21622ecb19cb0",
-        "skills/my-skills/STORIES.md#rel": "3f184ded49b7cdb51d958b73fc959b7ceb718f0d5ac853061471312c1771a279",
+        "skills/my-skills/STORIES.md#rel": "f22781639e28985d592f25de2d824b72a5f5e58c573d6615707b6f3a670e0398",
         "skills/my-skills/TAGLINES.md": "f9af834f134f6e8b554a98cbce1efad5696fd938ab2a66cbfa1e4f73c8310a29",
         "skills/my-skills/TAGLINES_SHORT.md": "9daf97db6345cd8646a4118ff15885f8bfff4dfdc85da77756f0f687ec3dab76",
         "skills/my-skills/WHEN_TO_USE.md": "48a44e6dd8706aa30b735063d47593b347fb01c319225109b688b5ac86335173",
         "skills/my-skills/WHY_TO_USE.md": "055026e98b0bed0af4522c0f47c4c3b5096a15e50388ab322c9f46642338a3e7"
       },
-      "structureSha": "42825bd0d4de88058c8edabc2ded32ce0ef1d405fccfb5f5cc47ea8d65553db5"
+      "structureSha": "9030228f92db96a1a87868720f45274900d6b8e7a93d43f92ca99745e7f52667"
     },
     "checkup": {
       "descSha": "a3f19eda7913423c47f1fe32ff4087513dfd805dc04aca36ff22f1ad1a3d4aba",

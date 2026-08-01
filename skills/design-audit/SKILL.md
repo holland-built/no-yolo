@@ -99,8 +99,9 @@ Each agent brief carries the full P0 findings list from Step 3:
 > evolution of the current design that fixes the problems found, not a reinvention."
 
 **Reference URL (optional):** if the user's fix request includes an `http(s)://` reference URL,
-scrape it with the same `firecrawl-py` path as `/design` Step 0 (self-hosted
-`http://<your-firecrawl-host>:<port>`, no API key, `formats=["html"]`; run the install guard first) and
+scrape it with the same `firecrawl-py` path as `/design` Step 0 — same env-var path
+(`FIRECRAWL_API_URL`, self-hosted, no API key, `formats=["html"]`; run the install guard first;
+unset env var -> skip the scrape) and
 inject its extracted palette/type/spacing tokens into every agent brief ALONGSIDE the P0
 findings — so the fix mockups both resolve the audit findings AND match the reference. Do not
 re-derive the scrape logic here; it is the same mechanism defined in `/design` Step 0. If the

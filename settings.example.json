@@ -123,6 +123,63 @@
             "timeout": 5
           }
         ]
+      },
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$HOME/.claude/hooks/node-shim.sh\" \"$HOME/.claude/hooks/config-protection.js\"",
+            "timeout": 5
+          },
+          {
+            "type": "command",
+            "command": "bash \"$HOME/.claude/hooks/node-shim.sh\" \"$HOME/.claude/hooks/generated-file-guard.js\"",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$HOME/.claude/hooks/node-shim.sh\" \"$HOME/.claude/hooks/relock-guard.js\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$HOME/.claude/hooks/node-shim.sh\" \"$HOME/.claude/hooks/mockup-autoopen.js\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$HOME/.claude/hooks/node-shim.sh\" \"$HOME/.claude/hooks/slop-guard.js\"",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$HOME/.claude/hooks/node-shim.sh\" \"$HOME/.claude/hooks/format-typecheck.js\"",
+            "timeout": 90
+          }
+        ]
       }
     ],
     "UserPromptSubmit": [
