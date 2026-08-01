@@ -19,7 +19,7 @@ Shape:
 
 ---
 
-## 2026-08-02 — /antislop had been finding nothing for a day (`pending`)
+## 2026-08-02 — /antislop had been finding nothing for a day (`95e9512`)
 
 - It read bullets under `## Writing Tells (25)`. Yesterday's trim renamed that heading to `(15)`,
   so `/health`, `/checkup`, `/md-check`, `/better-prompt` and `/release` all silently found zero
