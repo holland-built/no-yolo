@@ -19,7 +19,7 @@ Shape:
 
 ---
 
-## 2026-08-02 — every audit looked in one directory (`pending`)
+## 2026-08-02 — every audit looked in one directory (`f490f92`)
 
 - `/skill-audit` globbed `~/.claude/skills/*/` and never touched `plugins/marketplaces/`: 49 skill
   files audited, **401 ignored**, while every report said the library was healthy. New Dimension 0
