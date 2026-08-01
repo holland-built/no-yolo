@@ -160,8 +160,8 @@ Spawn Opus agent to write `brainstorms/design-audit-<slug>-plan-<date>.md`. Plan
 - List every target file as "already exists — do NOT recreate: <path>"
 - Order changes so structural fixes (layout) precede token fixes (color/type)
 
-### F9 — Sonnet build
-Dispatch Sonnet subagents per plan. Disjoint file clusters, no file overlap between agents.
+### F9 — Build (Opus agents)
+Dispatch Opus subagents per plan. Disjoint file clusters, no file overlap between agents.
 If any agent used `isolation: worktree`, merge its branch into the working branch now.
 
 ### F9.5 — Worktree cleanup (mandatory if any F9 agent used worktree isolation)

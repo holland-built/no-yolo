@@ -109,7 +109,7 @@ args = '''$ARGUMENTS'''
 slug = re.sub(r'[^a-z0-9]+', '-', args.lower().strip())[:40].strip('-')
 print(slug or 'layout')
 ")
-OUTDIR=".mockups/quick"
+OUTDIR=".mockups/quick-$SLUG"
 mkdir -p "$OUTDIR"
 PORT=8743
 ```
@@ -184,8 +184,8 @@ sleep 0.8
 ```bash
 "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" \
   --headless --disable-gpu --window-size=1400,900 \
-  --screenshot=".mockups/quick/$SLUG-all.png" \
-  "file://$PWD/.mockups/quick/$SLUG-all.html"
+  --screenshot=".mockups/quick-$SLUG/$SLUG-all.png" \
+  "file://$PWD/.mockups/quick-$SLUG/$SLUG-all.html"
 ```
 
 If that Chrome binary is absent, skip the screenshot and just `open` the combined page in Step 6 —
@@ -201,7 +201,7 @@ pick — no slop-judge, no adversarial judge agent, no scoring rubric.
 ## Step 6 — Open in browser
 
 ```bash
-open "http://localhost:$PORT/.mockups/quick/$SLUG-all.html"
+open "http://localhost:$PORT/.mockups/quick-$SLUG/$SLUG-all.html"
 ```
 
 (Individual variant files also exist on disk/served if the user wants to open one directly —
@@ -214,8 +214,8 @@ no need to open each in its own tab.)
 After opening, output **exactly this** (adapt paths/port/count):
 
 ```
-Combined: .mockups/quick/<slug>-all.html
-URL:      http://localhost:8743/.mockups/quick/<slug>-all.html
+Combined: .mockups/quick-$SLUG/<slug>-all.html
+URL:      http://localhost:8743/.mockups/quick-$SLUG/<slug>-all.html
 Pick:     v<N> ★ — <one-line why>
 
 Open it yourself and resize/interact — screenshots here are just a preview, not the deliverable.

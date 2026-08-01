@@ -64,4 +64,4 @@ Output follows the eli5 plain-short style: ONE plain sentence for a single item;
 
 ## Step 10 — Staged gate (never a blanket OK)
 
-User first SELECTS which findings to act on; run `/plan` on those; the resulting plan gets its OWN approval before any edit; then build via subagents (Task → Sonnet); then `/release` (keeps its own public-push gate). /checkup never pushes blind.
+User first SELECTS which findings to act on; run `/plan` on those; the resulting plan gets its OWN approval before any edit; then build via subagents (Task → Opus); then `/release` (keeps its own public-push gate). /checkup never pushes blind.

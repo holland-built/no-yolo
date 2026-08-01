@@ -33,7 +33,18 @@ Two hard rules, every time a mockup is created or changed:
    - It links/iframes every `*.html` under `.mockups/**` (grouped by folder, with a sticky jump-nav TOC + an "open standalone ↗" per mockup).
    - This is the canonical "show me all the designs" entry point. When the user asks "where are the mockups," send them here.
 
-Mockups live under `.mockups/<group>/<name>.html` in the current project root.
+## Where mockups go — ONE shape, no exceptions
+
+```
+.mockups/<skill>-<slug>/<name>.html
+```
+
+`.mockups/design-checkout/`, `.mockups/build-nav/`, `.mockups/quick-login/`, `.mockups/match-all-cards/`.
+
+- **The leading dot is load-bearing.** `.mockups/` is what every project's ignore rule matches. `/build` once said `mockups/` without it on one line and `.mockups/` on another; the un-dotted path was not covered by the ignore rule, so those files were committable. Audited and fixed 2026-08-01 — if you add a skill that writes mockups, this is the line that stops it happening again.
+- **The `<skill>-` prefix is load-bearing too.** `/build` used a bare `<slug>`, so building a feature called `quick` would have landed inside `/quick-mockup`'s folder. Prefix everything.
+- **Every project needs `.mockups/` in its own ignore list.** This repo's covers this repo only. Check any project you have run `/design` or `/build` in.
+- **Delete intermediate files before finishing** — `codex-wild.out`, `codex-synth.out`, marker files dropped into an app's public dir to verify which server is serving. They are debris, not artifacts, and nothing else cleans them up.
 
 ## Why
 
@@ -55,7 +66,7 @@ Use the manual flow (5–8) when no skill applies. When a skill is invoked, use 
 
 ## Manual flow
 
-1. Create a single HTML file at `.mockups/mockup-<feature-name>.html` in the current project root.
+1. Create a single HTML file at `.mockups/manual-<feature-name>/index.html` in the current project root.
 2. Include 5–8 distinct variations side-by-side, each labeled (Option A, B, C…).
 3. Vary one or more of: layout, color, density, motion, copy, hierarchy.
 4. Show real content, not lorem ipsum.
@@ -64,8 +75,8 @@ Use the manual flow (5–8) when no skill applies. When a skill is invoked, use 
 
 ## File Location Convention
 
-- **Source = served location.** No duplicates. Single file at `.mockups/mockup-<feature-name>.html` in the current project root.
-- If the project has a dev server, it may serve mockups at `http://localhost:<port>/mockup-<feature-name>.html` — check the project's `CLAUDE.md` or `ARCHITECTURE.md` for the port.
+- **Source = served location.** No duplicates. Single file at `.mockups/manual-<feature-name>/index.html` in the current project root.
+- If the project has a dev server, it may serve mockups at `http://localhost:<port>/.mockups/manual-<feature-name>/index.html` — check the project's `CLAUDE.md` or `ARCHITECTURE.md` for the port.
 - Use kebab-case for the slug.
 
 ## Required Output Format
@@ -75,8 +86,8 @@ Every time a mockup is created or updated, output **exactly this table** so the 
 ```
 | File | Path |
 |---|---|
-| Source | .mockups/mockup-<slug>.html |
-| URL | http://localhost:<port>/mockup-<slug>.html (if dev server serves it) |
+| Source | .mockups/manual-<slug>/index.html |
+| URL | http://localhost:<port>/.mockups/manual-<slug>/index.html (if dev server serves it) |
 ```
 
 Substitute the actual port from the project's `CLAUDE.md` or `ARCHITECTURE.md`. Keep the table format.
@@ -114,4 +125,4 @@ Pick 5–8 from this list, depending on what's being designed:
 - `/build` — full feature pipeline with 10-variant mockup gate (phase 3.5)
 - `/design-audit` — read-only audit: 5 lenses → violations table + top-10 improvements
 - `/quick-mockup` — fast disposable layout mockups: up to 5 style-matched, lightly-functional candidates on one combined page with an AI pick, reads the project's CSS tokens
-- `/design` — fresh design pipeline: 10 Opus mockups (8 paradigms + 2 wild) → slop validator → confirm → Opus plan → Sonnet build
+- `/design` — fresh design pipeline: 10 Opus mockups (8 paradigms + 2 wild) → slop validator → confirm → Fable plan → Opus build

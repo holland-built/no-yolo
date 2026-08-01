@@ -1,12 +1,14 @@
 # Subagent Orchestration
 
-## Model Split (Opus plans, Sonnet codes)
+## Model Split (Fable plans, Opus codes)
 
-Always split by phase — Opus (the bigger, slower Claude model) plans better; Sonnet (the faster one) is fast/cheap for execution.
+Always split by phase — a planning model writes the plan, separate agents build it. Never the same breath.
 
-Use model `opus` for planning agents, `sonnet` for coding agents.
+As of 2026-07-31 that split is Fable planning, Opus implementing. It used to read "Opus plans, Sonnet codes" — the cheaper coding tier was dropped because the savings were not worth the rework.
 
-**Invocation triggers (auto-fire Opus planner):**
+Use model `fable` for planning agents, `opus` for every agent that writes code.
+
+**Invocation triggers (auto-fire the planner):**
 - User says "plan X" or "opusplan X"
 - Non-trivial task (multi-file, new feature, architecture decision)
 - Any time you'd otherwise plan inline
@@ -27,7 +29,7 @@ Every dispatch prompt must bound how much other code the change could break.
 - **Independent searches** across 2+ areas of the codebase → parallel `Explore` agents (max 3).
 - **Tasks that bloat main context** with tool output → delegate (subagent returns a summary, not raw output).
 - **Multi-perspective design decisions** → 2–3 `Plan` agents in parallel (model: "opus").
-- **Implementation of approved plans** → Sonnet subagents.
+- **Implementation of approved plans** → Opus subagents.
 
 ## When NOT to delegate
 
@@ -74,10 +76,10 @@ Agents that work well together. Dispatch the matching team in parallel. Build �
 
 | Team | Build | Review / Verify | Use for | Model |
 |---|---|---|---|---|
-| **Frontend** | `react-specialist`, `typescript-pro` | `typescript-pro`, `accessibility-tester` | UI components, pages, mockup→dev | Sonnet |
-| **Backend** | `backend-developer`, `typescript-pro` | `backend-developer`, `typescript-pro` | API routes, ORM, database | Sonnet |
+| **Frontend** | `react-specialist`, `typescript-pro` | `typescript-pro`, `accessibility-tester` | UI components, pages, mockup→dev | Opus |
+| **Backend** | `backend-developer`, `typescript-pro` | `backend-developer`, `typescript-pro` | API routes, ORM, database | Opus |
 | **Quality** | — | `code-reviewer`, `architect-reviewer`, `security-auditor` | pre-merge review, auth/secrets, system design | Opus |
-| **Debug** | `debugger`, `performance-engineer` | `qa-expert` | bugs, regressions, perf bottlenecks | Sonnet |
+| **Debug** | `debugger`, `performance-engineer` | `qa-expert` | bugs, regressions, perf bottlenecks | Opus |
 | **Test** | `test-automator` | `qa-expert` | new test suites, coverage, CI gates | Haiku |
 
 Rules: read target file + imports before dispatching a file-editing agent (cap output ~300 words). For 2+ independent tasks, run in parallel — never serialize independent work.

@@ -75,6 +75,7 @@ proposals/
 brainstorms/
 .pending-audit-*.md
 .audit-*-detail/
+.mockups/
 
 # archives / trash
 _archive_*/
