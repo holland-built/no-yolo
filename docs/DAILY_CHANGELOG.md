@@ -19,6 +19,16 @@ Shape:
 
 ---
 
+## 2026-08-02 — every audit looked in one directory (`pending`)
+
+- `/skill-audit` globbed `~/.claude/skills/*/` and never touched `plugins/marketplaces/`: 49 skill
+  files audited, **401 ignored**, while every report said the library was healthy. New Dimension 0
+  weighs each marketplace and flags any the user's own files never invoke — 262MB installed, three
+  invoked.
+- `/release` warned that third-party content *existed*, never that it was current, and the check
+  that would have caught drift was broken until yesterday. Now warns per release, still never
+  auto-pulls: `taste-skill` drives what `/design` builds.
+
 ## 2026-08-02 — the changelog stopped copying out the commit history (`580be39`)
 
 - 43 July entries moved to `docs/changelog/2026-07.md`; this file restarts short.
