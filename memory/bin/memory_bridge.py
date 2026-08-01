@@ -10,6 +10,12 @@ Conflict guard (anti-drift): if a candidate conflicts with an existing ACTIVE fa
 
 Idempotent: a fact already derived from an instinct id (and unchanged) is skipped.
 Default dry-run; pass --apply to write. Threshold via --min-confidence (default 0.8).
+
+CURRENTLY INACTIVE. The ECC instinct-cli it reads from is not installed, and that is a
+decision rather than an oversight — auto-capture was evaluated and rejected on 2026-07-31
+because it would flood a hand-curated fact store. Everything below runs only if someone
+installs ECC. Pass --require to make the missing dependency a hard failure (exit 1)
+instead of a reported no-op.
 """
 import sys, os, re, glob, subprocess, pathlib, datetime
 
@@ -67,9 +73,24 @@ def conflicts(cand_name, cand_type, existing):
 
 # ---- get instincts ----
 if not CLI.exists():
-    # ECC marketplace uninstalled — auto-capture promotion is optional, not a
-    # pipeline failure. Curated facts still compile; reinstall ecc to resume.
-    print(f"promote skipped — instinct-cli not installed ({CLI})"); sys.exit(0)
+    # This step is INACTIVE, and not by accident. It promotes facts out of ECC's
+    # continuous-learning-v2 auto-capture, which was evaluated on 2026-07-31 and
+    # deliberately NOT adopted: passive capture would flood a fact store that is
+    # curated by hand on purpose. So this is not "a dependency happens to be
+    # missing today" — it is a decision, and it will stay this way until someone
+    # reverses it.
+    #
+    # It still exits 0 so /memory-compile's real work (lint + regenerate) runs.
+    # That is exactly the shape that hid this for weeks — a step reporting success
+    # while doing nothing — so the message below must be impossible to skim past,
+    # and --require exists for any caller that wants a hard failure instead.
+    print("STEP INACTIVE — nothing was promoted, and nothing will be.")
+    print(f"  reason : ECC continuous-learning-v2 is not installed ({CLI})")
+    print("  status : deliberate. Auto-capture was rejected 2026-07-31 in favour of")
+    print("           hand-curated facts. See docs/DAILY_CHANGELOG.md for that decision.")
+    print("  to run : install the ECC marketplace, or delete this step from")
+    print("           commands/memory-compile.md if the decision is now permanent.")
+    sys.exit(1 if "--require" in sys.argv else 0)
 res = subprocess.run([sys.executable, str(CLI), "export", "--scope", "global",
                       "--min-confidence", str(MIN_CONF)],
                      capture_output=True, text=True)

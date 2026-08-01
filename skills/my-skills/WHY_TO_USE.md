@@ -1,5 +1,5 @@
 diagnose|Solo: forces systematic evidence-gathering. --debate: six theories surface the one you missed
-archify|Self-contained HTML with inline SVG, dark/light toggle, in-browser PNG/SVG export — no diagram app, no layout-engine install
+archify|Self-contained HTML with inline SVG, dark/light toggle, in-browser PNG/JPEG/WebP/SVG export — no diagram app, no install. A validation gate blocks delivery on overlapping boxes, off-canvas nodes and masked labels, so a broken diagram cannot be handed over as done
 build|Nothing ships without a plan, tests, and proof. No more "works on my machine" done claims
 plan|First-try success goes from ~70% to ~90% when the hard calls are made up front, not mid-build
 my-md|One command instead of hunting across two directory trees

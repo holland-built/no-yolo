@@ -54,7 +54,7 @@ Two smaller installs:
 
 **No Codex on your machine?** Fine. The steps that would use it notice it is missing and skip themselves. Nothing errors.
 
-**Read next:** `CLAUDE.md` (the map) → `docs/CORE_RULES.md` (the 10 working rules) → `/my-skills` (every command). Everything else is reached from those three.
+**Read next:** `CLAUDE.md` (the map) → `memory/CLAUDE.generated.md` (the working preferences that load every session) → `/my-skills` (every command). Everything else is reached from those three.
 
 ## Prerequisites
 
@@ -105,7 +105,7 @@ Nothing to do. Skills make their own folders when they need them, like `brainsto
 | Path | What it holds |
 |---|---|
 | `CLAUDE.md` | The main rules file. It holds no rules itself — it points at the others. |
-| `docs/CORE_RULES.md` | The 10 rules Claude works by |
+| `docs/CORE_RULES.md.off` | The core rules, switched off on purpose since 2026-07-29. Nothing loads them; `docs/EXPERIMENT_CORE_RULES.md` says why and how to bring them back |
 | `docs/*.md` | One file per topic (planning, testing, memory, and so on), each pointed at by `CLAUDE.md`. A one-line summary of every file is in [`skills/my-md/GLOBAL_DESCRIPTIONS.md`](skills/my-md/GLOBAL_DESCRIPTIONS.md) |
 | `memory/` | Things you asked it to remember. `facts/` is the real copy; `CLAUDE.generated.md` is built from it. |
 | `skills/` | Your commands, plus links to the borrowed ones |
@@ -158,7 +158,7 @@ Claude comes in three sizes and they cost different amounts. This setup picks on
 | Sonnet | most coding and reviews | middle, and the default |
 | Opus | planning and hard analysis | most expensive |
 
-The rule: Opus writes the plan, Sonnet does the building. Swapping in a newer, better planner is allowed — see rule 5 in `docs/CORE_RULES.md`. Never start coding without a plan.
+The rule: a planning model writes the plan, then separate agents do the building — never the same breath. Today that is Fable planning and Opus building; swapping in a newer, better planner is expected. Never start coding without a plan.
 
 ## Keeping your setup up to date
 
@@ -211,7 +211,7 @@ It is drawn by `hooks/statusline.sh`. If you install the optional caveman or lit
 
 ## The CLAUDE.md instruction chain
 
-`CLAUDE.md` holds pointers and nothing else: `@docs/CORE_RULES.md`, `@memory/CLAUDE.generated.md`, and one line per topic (Planning → `PLANNING.md`, and so on). Never put an actual rule in `CLAUDE.md`. Put it in the right topic file and point at it.
+`CLAUDE.md` holds pointers and nothing else: `@memory/CLAUDE.generated.md`, `@docs/SKILL_TRIGGERS.md`, and one line per topic (Planning → `PLANNING.md`, and so on). Never put an actual rule in `CLAUDE.md`. Put it in the right topic file and point at it. (The core-rules import sat here too until 2026-07-29 — it is switched off for an experiment; see `docs/EXPERIMENT_CORE_RULES.md`.)
 
 ## What's excluded
 

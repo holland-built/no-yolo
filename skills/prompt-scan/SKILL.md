@@ -23,13 +23,14 @@ Read each file in order. If a file is missing, note "(file absent)" for that sec
 | Step | File | What to extract |
 |------|------|-----------------|
 | 1 | `~/.claude/CLAUDE.md` | All `# <skill>` trigger blocks + pointer table |
-| 2 | `~/.claude/docs/CORE_RULES.md` | All numbered core rules verbatim |
-| 3 | `~/.claude/memory/CLAUDE.generated.md` | All compiled working preferences + patterns |
-| 4 | `~/.claude/docs/HOOKS.md` | Active hook names + behaviors |
-| 5 | `~/.claude/docs/SKILLS.md` | Daily-driver skill table |
-| 6 | `~/.claude/docs/NO_YOLO.md` | Authoring standards (eli5, token economy, new-skill checklist) |
-| 7 | `~/.claude/docs/UI_MOCKUPS.md` | Slop fingerprint list (lines with banned patterns) |
-| 8 | `~/.claude/docs/ANTISLOP.md` | Extra slop rules (skip if absent) |
+| 2 | `~/.claude/docs/CODE_REVIEW.md` | Scope rules — the surgical + simple filters, review discipline |
+| 3 | `~/.claude/docs/SUBAGENTS.md` | Planning rules — model split, dispatch scope, when to delegate |
+| 4 | `~/.claude/memory/CLAUDE.generated.md` | All compiled working preferences + patterns |
+| 5 | `~/.claude/docs/HOOKS.md` | Active hook names + behaviors |
+| 6 | `~/.claude/docs/SKILLS.md` | Daily-driver skill table |
+| 7 | `~/.claude/docs/NO_YOLO.md` | Authoring standards (eli5, token economy, new-skill checklist) |
+| 8 | `~/.claude/docs/ANTISLOP.md` | **Canonical slop list** — the writing tells, then the GUI tells (default patterns + each sub-section). Read the file's own header line for the current counts; do not assume a number |
+| 9 | `~/.claude/docs/UI_MOCKUPS.md` | Only the mockup-specific kill rules that sit *on top of* ANTISLOP.md — this file does not mirror the canonical list |
 
 ---
 
@@ -80,10 +81,10 @@ File: `~/.claude/learnings.md`
 <bullets from CLAUDE.generated.md and CLAUDE.md — format prefs, caveman mode, table vs prose, single-paste rule>
 
 ### 2. Scope rules
-<from CORE_RULES.md — surgical changes, no unrelated edits, no cleanup, no speculation>
+<from CODE_REVIEW.md — every changed line traces to the ask, no unrelated edits, no cleanup, no speculative refactors; simplicity filter>
 
 ### 3. Planning rules
-<from CORE_RULES.md — Opus plans / Sonnet codes, no inline planning, subagent execution>
+<from SUBAGENTS.md — Opus plans / Sonnet codes, never plan inline, subagent execution, bound the blast radius in every dispatch prompt>
 
 ### 4. Skill triggers
 
@@ -95,7 +96,7 @@ File: `~/.claude/learnings.md`
 <map each to Skill | trigger phrases from its description | condensed when-to-use>
 
 ### 5. Slop patterns
-<banned patterns from UI_MOCKUPS.md slop fingerprint + ANTISLOP.md if present — one bullet per pattern>
+<from ANTISLOP.md, the canonical list — one bullet per writing tell, then one bullet per GUI sub-section naming the tells inside it (default patterns, template & framing, marketing-page, component, media). Take the counts from ANTISLOP.md's own header, never from this template. Then UI_MOCKUPS.md's mockup-specific kill rules as a short trailing group.>
 
 ---
 

@@ -7,7 +7,7 @@
 >
 > **This file is GENERATED — never hand-edit the component list below.** Regen with
 > `./skills/design/regen-astryx-catalog.sh` (pull-from-source-at-build-time, same principle as
-> CORE_RULES rule 9). On any new Astryx release, rerun the script and commit the diff — the
+> the latest-stable gate in `skills/build/SKILL.md`). On any new Astryx release, rerun the script and commit the diff — the
 > version stamp below makes staleness visible.
 >
 > **Never import a name that isn't in this file.** Before any import, confirm the exact export +

@@ -2,7 +2,7 @@
 # Regenerates skills/design/ASTRYX_CATALOG.md from the REAL @astryxdesign/core package.
 # One command: ./skills/design/regen-astryx-catalog.sh   (run from ~/.claude or anywhere)
 # Never hand-edit the generated section below the marker in ASTRYX_CATALOG.md — rerun this
-# script instead. Pull-from-source-at-build-time, same principle as CORE_RULES rule 9.
+# script instead. Pull-from-source-at-build-time, same principle as the latest-stable gate in `skills/build/SKILL.md`: pull from source at build time, never from memory.
 set -euo pipefail
 OUT="$(cd "$(dirname "$0")" && pwd)/ASTRYX_CATALOG.md"
 TMP="$(mktemp -d)"; trap 'rm -rf "$TMP"' EXIT
@@ -73,7 +73,7 @@ node transform.cjs
 >
 > **This file is GENERATED — never hand-edit the component list below.** Regen with
 > \`./skills/design/regen-astryx-catalog.sh\` (pull-from-source-at-build-time, same principle as
-> CORE_RULES rule 9). On any new Astryx release, rerun the script and commit the diff — the
+> the latest-stable gate in `skills/build/SKILL.md`). On any new Astryx release, rerun the script and commit the diff — the
 > version stamp below makes staleness visible.
 >
 > **Never import a name that isn't in this file.** Before any import, confirm the exact export +

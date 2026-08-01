@@ -35,7 +35,7 @@ Mark the task `- [x]` in `~/.claude/.pending-tasks.md` (Edit the file first so i
 Read the task description and execute it:
 
 - If task names a skill (e.g. `/build`, `/plan`) → invoke that skill with the task's arguments
-- If task is a build task (e.g. "build X", "implement Y") → spawn Opus planner then Sonnet agents per CORE_RULES rule 5
+- If task is a build task (e.g. "build X", "implement Y") → never code inline: spawn a Fable planning agent, then Opus agents for the implementation
 - If task is mechanical (trim file, rename, move) → do it inline with Read+Edit
 
 After completing: report done, then re-read `~/.claude/.pending-tasks.md` and show remaining unchecked tasks (if any).

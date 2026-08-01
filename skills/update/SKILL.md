@@ -87,8 +87,12 @@ python3 "$HOME/.claude/hooks/list-plugins.py"
 Table: **Plugin | Installed version | Scope**. Flag version `unknown` or `?` as ⚠️ "may be stale — reinstall to pin a version". Then output verbatim:
 > To check for plugin updates, run `/plugin list` inside Claude Code, then `/plugin update <name>` for any that are outdated. Plugins can't be updated from outside the session.
 
-### Step 4.6 — vendored third-party skill drift (read-only)
-Read `docs/THIRD_PARTY_SKILLS.md` for names + local paths (none of this content is in git — see that file). For each row:
+### Step 4.6 — third-party skill drift (read-only)
+Read `docs/THIRD_PARTY_SKILLS.md` for names, install commands, and local paths (none of this content is in git — see that file).
+
+**There are TWO install kinds and they need different checks.** Getting this wrong is not theoretical: this step used to test `SOURCE.md` for every row, so the four npx-installed skills — which never have one — reported `NOT INSTALLED` forever and their real drift was invisible. `archify` sat two weeks and 13 files behind while this check stayed quiet. Route by the row's **Install command** column:
+
+**(a) Vendored** (install command is `/update vendor <name>`) — has a `SOURCE.md`:
 ```bash
 if [ ! -f "<local-path>/SOURCE.md" ]; then
   echo "<name>: NOT INSTALLED"
@@ -97,10 +101,37 @@ else
   HEAD=$(gh api repos/<upstream-repo>/commits/main --jq '.sha' 2>/dev/null)
 fi
 ```
-Table: **Name | Status** — `not installed — run /update vendor <name> to install` if `SOURCE.md` is missing, `up to date` if `PINNED = HEAD`, else `⚠️ STALE — N commits behind` (N via `gh api repos/<repo>/compare/<pinned>...main --jq '.ahead_by'`). If `gh` missing/unauthed or the table has no rows: skip this step silently.
+Status: `not installed — run /update vendor <name> to install` if `SOURCE.md` is missing, `up to date` if `PINNED = HEAD`, else `⚠️ STALE — N commits behind` (N via `gh api repos/<repo>/compare/<pinned>...main --jq '.ahead_by'`).
 
-Never auto-update inside this check — output:
+**(b) npx-installed** (install command is `npx skills@latest add <repo>`) — no `SOURCE.md` ever, so never test for one. Compare the installed `SKILL.md` against upstream's:
+```bash
+LOCAL="<local-path>/SKILL.md"                       # e.g. .agents/skills/archify/SKILL.md
+TMP=$(mktemp)
+# Repo layouts differ: ponytail/emilkowalski nest under skills/, archify does not. Try both.
+curl -fsS "https://raw.githubusercontent.com/<repo>/main/skills/<name>/SKILL.md" -o "$TMP" 2>/dev/null \
+  || curl -fsS "https://raw.githubusercontent.com/<repo>/main/<name>/SKILL.md" -o "$TMP" 2>/dev/null
+if [ ! -f "$LOCAL" ]; then echo "<name>: NOT INSTALLED"
+elif [ ! -s "$TMP" ]; then echo "<name>: CANNOT CHECK — no upstream SKILL.md at either path"
+elif diff -q "$TMP" "$LOCAL" >/dev/null 2>&1; then echo "<name>: up to date"
+else echo "<name>: STALE"; fi
+rm -f "$TMP"
+```
+**Compare files, never shell variables.** `UP=$(curl …)` then piping it to `diff` strips the trailing newline and makes *every* skill report STALE — a freshly installed one included. That false positive was hit while writing this step; curl straight to a temp file instead.
+
+**Locally patched skills need the body compared, not the whole file.** Any row in `docs/THIRD_PARTY_SKILLS.md`'s "Local patches applied on top of upstream" table is *supposed* to differ from upstream, so a whole-file diff reports it STALE forever and a real upstream change hides in the noise. Every patch recorded there so far is frontmatter-only, so for those rows diff the body — everything after the closing `---` — and report `patched (frontmatter)` when only the frontmatter differs:
+```bash
+body() { awk 'BEGIN{n=0} /^---$/{n++; if(n<=2) next} n>=2' "$1"; }
+if diff -q <(body "$TMP") <(body "$LOCAL") >/dev/null 2>&1; then echo "<name>: up to date (patched frontmatter)"
+else echo "<name>: STALE — body differs from upstream"; fi
+```
+If a future patch touches the body, this rule stops holding — say so in the report rather than quietly widening it.
+Status: `up to date`, `⚠️ STALE — reinstall to pick up upstream changes`, `NOT INSTALLED`, or `⚠️ CANNOT CHECK`. **A row that cannot be checked is never reported as up to date** — that is how the last one hid.
+
+Table: **Name | Kind | Status**. If `gh`/`curl` are unavailable or the table has no rows, say the check was skipped — do not print an all-clear you did not earn.
+
+Never auto-update inside this check — output the fix that matches the kind:
 > Vendored skill "<name>" is behind upstream. Run `/update vendor <name>` to re-vendor it.
+> npx-installed skill "<name>" is behind upstream. Run its own install command from `docs/THIRD_PARTY_SKILLS.md` (`npx skills@latest add <repo>`) — the `skills` CLI re-pins `skills-lock.json` itself. Then check `docs/THIRD_PARTY_SKILLS.md`'s "Local patches" table: a reinstall silently reverts every patch listed there.
 
 ### Step 4.7 — orphaned marketplaces (read-only)
 Marketplaces git-cloned into `plugins/marketplaces/<name>/` with **no** `<plugin>@<name>` key in `installed_plugins.json` are invisible to Step 4.5, so a skill can drift with zero warning (e.g. `impeccable`, cloned straight from `pbakaus/impeccable`).
@@ -217,6 +248,8 @@ Show which commits touched that skill and let the user pick which version to res
 
 ### Step 11 — if argument is `vendor <name>`
 Look up `<name>` in `docs/THIRD_PARTY_SKILLS.md`. If no row matches: "No vendored third-party skill named '<name>' — see `/update` to see what's tracked." Stop.
+
+**REFUSE if the row is npx-installed** (its Install command contains `npx skills@latest`). The recipe below fetches `skills/<x>/SKILL.md` into `<vendor-path>/<x>.md` — for an npx skill, whose local path is a whole package directory of code, schemas and examples, that writes a stray markdown file and leaves the real install untouched while reporting success. Say instead: "'<name>' is npx-installed, not vendored — run `<its own install command>` from `docs/THIRD_PARTY_SKILLS.md`. The `skills` CLI re-pins `skills-lock.json` itself." Stop.
 
 `<vendor-path>` is gitignored — never touches git, never committed; the command works identically for a first install or a refresh.
 

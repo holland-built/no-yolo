@@ -45,7 +45,6 @@ instead of the real upstream rules until you run the install command.
 
 | Skill | Patch | Why | Re-apply after reinstall |
 |---|---|---|---|
-| archify | repointed 4 dangling `examples/…` references in `SKILL.md` (3 files never shipped; `web-app.html` should be `web-app.architecture.json`) | An agent following the instructions tried to Read files that do not exist. The pinned 2026-07-17 copy is stale — upstream has since rewritten SKILL.md (278 → 103 lines) and added 13 more examples, but the reinstall was not run. | Run `npx skills@latest add tt-a1i/archify`, which supersedes this patch entirely, then re-pin the hash in `skills-lock.json` |
 | improve | added `user-invocable: true` to its frontmatter | Upstream ships without it, so typing `/improve` never fired. `/health`'s H3 was unaffected: invoking a skill via the Skill tool ignores that field. | `setup.sh` now re-applies it automatically after install; manual fallback: re-add the line to `~/.agents/skills/improve/SKILL.md` |
 
 Check this table after any `npx skills@latest add ...`. The patches live outside git on

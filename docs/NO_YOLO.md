@@ -23,7 +23,7 @@ When working here, you are authoring public skills — write for a stranger, not
 | Safe to push | Never push |
 |---|---|
 | `skills/` | `memory/` |
-| Root `*.md` files (CLAUDE.md, CORE_RULES.md, etc.) | `brainstorms/` |
+| Root `*.md` files (CLAUDE.md, README.md, SHIP.md, etc.) | `brainstorms/` |
 | `hooks/` (scripts only — no credential files) | `plans/` / `proposals/` |
 | `setup.sh` | `settings.json` / `settings.local.json` |
 | `settings.example.json` | `plugins/` (third-party, own repos) |

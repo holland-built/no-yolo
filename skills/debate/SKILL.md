@@ -40,18 +40,18 @@ Personas must argue against THIS project, not generic taste. Before dispatch, th
 
 Build it from the human-owned digests only — do NOT read the whole codebase:
 - `CLAUDE.md`, `README*`, `docs/` architecture files, `DESIGN.md` / design tokens, and top-level source-dir names for shape (not full contents).
-- Plus `~/.claude/docs/CORE_RULES.md` for the project's standards.
+- Plus this setup's live standards: `~/.claude/CLAUDE.md` and its always-loaded compiled preferences `~/.claude/memory/CLAUDE.generated.md`, then whichever `~/.claude/docs/` files the topic touches (`CODE_REVIEW.md`, `TESTING.md`, `SUBAGENTS.md`, `PLANNING.md`, `ANTISLOP.md`, `UI_MOCKUPS.md`).
 
 Distill to a **single sectioned primer** (≤150 lines held in context): current architecture, stack, conventions, active constraints, project standards, and — as its own **Design section** — any tokens/design docs found. One primer serves both panels; split into a separate design primer only if a real `--ui` run visibly starves for design grounding (falsifiable trigger, not by default).
 
-For a large repo, keep the digest reads scoped to the debate topic. If the digests are trivial or absent (tiny/new repo), ground in `CORE_RULES.md` + the stated context and say so. The same in-memory primer is injected into every persona brief in Step 2 and Appendix A.
+For a large repo, keep the digest reads scoped to the debate topic. If the digests are trivial or absent (tiny/new repo), ground in the global standards above (`CLAUDE.md` + `memory/CLAUDE.generated.md`) plus the stated context, and say so. The same in-memory primer is injected into every persona brief in Step 2 and Appendix A.
 
 ### Step 2 — Seven perspectives
 
 Run all 7 in parallel as subagents (model: opus). Never inline — parallel is mandatory to prevent personas biasing each other. **Each persona's brief includes the Step 1.5 project primer** so they argue against this codebase, not in the abstract. Each persona answers their 3 questions, then delivers their unique angle.
 
 **Sharpening contract (binds every persona, both panels).** A persona is only as smart as what it's forced to cite. Put this in each brief:
-- **Ground every claim in a specific fact** — a file/symbol from the primer, a named rule (`CORE_RULES.md`, the project's own standards), or a concrete failure scenario. An assertion with no anchor is DISCOUNTED by the Chairman (Step 3), so vibes cost the persona its vote.
+- **Ground every claim in a specific fact** — a file/symbol from the primer, a named rule quoted from the primer's standards section (`CLAUDE.md`, `memory/CLAUDE.generated.md`, a `docs/` standard, or the project's own), or a concrete failure scenario. An assertion with no anchor is DISCOUNTED by the Chairman (Step 3), so vibes cost the persona its vote.
 - **Judge against THIS project's bar, not generic taste** — name the standard, benchmark, or prior decision you're measuring against; "I don't like it" is not an argument, "it violates rule X / the primer says Y" is.
 - **Lead with your evidence lane (soft, not gagged)** — each seat argues primarily from its own evidence class so the panel can't homogenize: DevOps→failure/operational facts, Prioritizer→value-vs-effort and what-it-displaces, Eng Leader→team capacity/debt/ownership, User Advocate→user-outcome/JTBD, Senior Dev→standards/2-year durability, Junior Dev→newcomer-legibility. UI panel seats already carry natural lanes (color-contract, layout/hierarchy, a11y ratios, named-benchmark). You MAY flag a cross-cutting point outside your lane, but lead with yours. The Chairman (Step 3) flags any two seats citing the *same* evidence for the *same* claim — that's collapse, and the weaker of the two is down-weighted.
 - **Argue past the strawman** — deliver the one thing only your role sees; engage the strongest version of the opposing case, not the weakest.

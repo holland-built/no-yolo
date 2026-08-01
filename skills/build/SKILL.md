@@ -34,7 +34,7 @@ Project-agnostic: before phase 0, detect the project's commands and record them 
 - **Hotpatch** (if containerized) — e.g. `docker cp <file> <container>:/app/<file> && docker restart <container>`; otherwise changes go live via dev server.
 - **Primary source files** — single-file SPA (`index.html`) vs component tree (`src/**`) — and **golden-master tests to NOT touch** (e.g. `sizingGoldenMaster.test.ts`; write new behavior tests separately).
 - **Critical path** — the project's money path / core user flow that must never break (e.g. checkout → payment → confirmation). Note how to exercise it.
-- **Latest-stable gate** (greenfield / new core dep) — when scaffolding a NEW project or adding a core dependency (runtime, framework, language, core lib), do NOT pin the version from memory — it lags. Query the registry and pin the current stable, per **CORE_RULES.md Rule 9** (`npm view <pkg> version`, `pip index versions <pkg>`, etc.; stable tag only, compat beat if the newest major isn't supported yet). Applies to greenfield with no existing surface too.
+- **Latest-stable gate** (greenfield / new core dep) — when scaffolding a NEW project or adding a core dependency (runtime, framework, language, core lib), do NOT pin the version from memory — it lags. Query the registry at build time and pin the current **stable** dist-tag, never a prerelease (`alpha`/`beta`/`rc`/`@next`): npm `npm view <pkg> version`; Node `node -v` or the project's `.nvmrc`/`engines`; Python `pip index versions <pkg>`; Rust `cargo add <pkg>`; Go `go list -m -versions <module>`. **Compat beat** — if the newest major just dropped and a core dep can't support it yet, pin the highest version everything supports and state why: newest-that-works, not newest-that-exists. Applies to greenfield with no existing surface too.
 - **Prefab component library (prefab-first — detect FIRST):** detect per `~/.claude/skills/design/PREFAB_SOURCING.md` (Astryx deps → Astryx; components.json/@radix-ui/* → shadcn; @mui/*, @chakra-ui/*, …; none + React+lockfile → Astryx greenfield via `npx astryx init`; non-React/CDN-babel → none). Record `PREFAB` and state it in the stack line. Every interactive element in UI work is sourced from PREFAB by default — hand-building a primitive it provides is a flagged exception (sourcing gate, phase 3.5 Step D). Never install a second component library beside an existing one. Astryx path only: confirm exports with `node node_modules/@astryxdesign/core/docs.mjs <Name>`; never import a name not in `~/.claude/skills/design/ASTRYX_CATALOG.md`. Never block the build on any library.
 If a CLAUDE.md or project skill names these, use those values verbatim. State the detected stack in one line before proceeding.
 
@@ -66,12 +66,12 @@ Spawn ONE `Agent` (model: fable, effort: high) with the full plan transcript **A
 - **Ordered steps**, smallest-reversible-first (each independently verifiable), ~300-word cap per downstream subagent
 - flag: `ui_change: true/false`
 
-Then a **self-check pass** (same Opus agent, second turn): "What in this plan is assumed rather than grounded in a file:line? What's the strongest reason this fix is wrong or incomplete? What did it miss?" Fold the answers back in or note why dismissed.
+Then a **self-check pass** (same planning agent, second turn): "What in this plan is assumed rather than grounded in a file:line? What's the strongest reason this fix is wrong or incomplete? What did it miss?" Fold the answers back in or note why dismissed.
 
 Reject and re-plan if: the cause isn't grounded in evidence, there's no measurable success predicate, the blast radius is unbounded, or any claim cites an API/file that wasn't verified to exist. Save to `brainstorms/<slug>-plan-<date>.md`.
 
 ## 2.5 — Cross-model check (xcheck)
-Run the `xcheck` skill (Skill tool, `skill: "xcheck"`) on the saved Opus plan. ACCEPTED blocking/major findings are folded into the plan file (re-invoke the Opus agent only if a fold-in changes ordering or blast radius); minors noted or dropped. Carry the dissent block into the approval gate so the user sees what Codex flagged and why it was rejected. No-ops silently if Codex is unavailable.
+Run the `xcheck` skill (Skill tool, `skill: "xcheck"`) on the saved plan. ACCEPTED blocking/major findings are folded into the plan file (re-invoke the planning agent only if a fold-in changes ordering or blast radius); minors noted or dropped. Carry the dissent block into the approval gate so the user sees what Codex flagged and why it was rejected. No-ops silently if Codex is unavailable.
 
 ## 3 — Approval gate (HARD)
 Show the plan. Then stop and ask exactly: **"Approve this plan or redirect?"**
