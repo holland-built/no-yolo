@@ -72,7 +72,7 @@ git diff $(git merge-base HEAD origin/main 2>/dev/null || git merge-base HEAD ma
 ```
 No branch divergence → diff against `HEAD~1`.
 
-### Three Passes (run in parallel)
+### Passes (run in parallel)
 
 **Pass A — Correctness & Reuse.** Logic errors, off-by-ones, null/undefined, wrong conditionals. Does an existing function/component already do this? Auth, input validation, secrets in diff. Exhaustive — read every changed call site and its cross-file callers, always.
 
@@ -88,7 +88,21 @@ bash ~/.claude/skills/xcheck/scripts/codex-run.sh -m gpt-5.6-sol -s read-only "R
 
 Adjudicate each finding against the actual code (read the cited file:line): confirmed → unified list with its severity mapped (blocking→🔴, major→🟠, minor→🟡), source-tagged `[codex]`; refuted → one-line dissent note in the roll-up. Delete the temp file after. This pass takes 1–3 min — launch it before Passes A–C so it runs while you review.
 
-Findings from all four passes feed the unified list in Phase 3 — do not print them separately.
+**Pass E — Spec.** The other passes ask "is this code good"; this one asks "is this the thing that was asked for". Find the originating issue/PRD — branch name, commit trailers, PR body, `gh issue view <n>`, or the request in this conversation. Then read the diff against it and answer three questions:
+
+- **Missing** — a stated requirement the diff doesn't implement → 🟠
+- **Scope creep** — changed lines no requirement asked for → 🔵 (this is the Surgical filter with a source, not a hunch)
+- **Wrong implementation** — requirement met, but not the way it was specified → 🟠
+
+No originating issue exists and the user didn't state requirements → note `Spec axis: no source of intent` in the roll-up and skip it. Never invent the requirements to review against.
+
+### Smell Baseline (Passes A–C)
+
+Where the repo documents no standard of its own, judge against Fowler's smells: long function, large class, long parameter list, duplicated code, divergent change, shotgun surgery, feature envy, data clumps, primitive obsession, message chains, middle man, speculative generality.
+
+**The repo's own convention overrides this list — always.** If the codebase consistently does it another way (its CLAUDE.md, its linter config, or just the surrounding files), the repo wins and there is no finding. Cite the repo standard you deferred to. This baseline is the fallback for silence, not a house style to impose.
+
+Findings from all five passes feed the unified list in Phase 3 — do not print them separately.
 
 ### Security Review Checklist (static — no tools, no cost)
 
@@ -239,7 +253,7 @@ One master summary after everything completes:
 | Phase | Source | Findings | Fixable | Applied | Status |
 |---|---|---|---|---|---|
 | P0 | Radar (last-30) | N | 0 | 0 | ✅ / skipped |
-| Diff | Pass A/B/C | N | N | N | ✅ |
+| Diff | Pass A–E (incl. Spec) | N | N | N | ✅ |
 | Baked-in | Secrets / Antislop | N | 0 | 0 | clean / 🔑 N / 📝 N |
 | H0 | Ponytail review (diff) | N | N | N | ✅ / skipped |
 | H1 | Fallow (5 checks) | N | N (dead-code only) | N | ✅ / ⚠️ missing |

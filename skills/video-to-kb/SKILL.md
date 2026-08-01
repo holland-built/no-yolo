@@ -115,6 +115,11 @@ topics: [topic-slug, topic-slug]
 > Notable quote (timestamp MM:SS)
 ```
 
+That template is missing one required section — add a `## Evidence` heading (`##` level, same as its siblings) between `## Key Claims` and `## Connections`:
+
+- Fill it from the raw file's `## Frames Summary`, carrying the specifics through **verbatim**: issue/PR numbers, version strings, config and code diffs, counts and view/like numbers, exact command and tool names, timestamps. Copy them as they appear — a summary of the evidence is not the evidence.
+- Raw Frames Summary empty? Write the heading anyway with `Evidence: none captured` under it. A heading you omitted and a heading nobody filled in look identical later; only one of them is honest.
+
 4. Update or create `wiki/topics/ai/<topic-slug>.md` — revise overview, add key ideas, note contradictions
 5. ~~Update `index.md` sources table~~ — Sources and Topics are now live Dataview queries; no manual index edit needed. New files appear automatically.
 6. Append to `log.md`:
@@ -134,8 +139,11 @@ Before declaring Phase 2 done, assert and emit PASS/FAIL:
 - Required frontmatter present on `wiki/sources/<slug>.md`: `title`, `type`, `source_type`, `date_ingested`, `raw_path`, `url`, `topics`
 - Every `[[wikilink]]` written (source page + topic page) resolves to an existing vault page — unresolved links are flagged, not silently written
 - `log.md` entry appended for this run
+- `## Evidence` heading present on `wiki/sources/<slug>.md`, and non-empty whenever the raw file's `## Frames Summary` is non-empty. Empty Frames Summary → the page must say `Evidence: none captured`, not omit the heading
 
 FAIL on any check → fix before declaring done.
+
+This Evidence rule exists because the 2026-07-31 audit found the wiki pages kept every claim and dropped the on-screen proof behind it — Wayfinder's handoff sub-agent, the `#1346`–`#1352` issue numbers, the literal `CLAUDE.md` diff — leaving notes that read as complete but couldn't be checked or used later. Don't tidy it away.
 
 ## Groq Quota Reporting
 

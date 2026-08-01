@@ -1,5 +1,52 @@
 # Changelog
 
+## 2026-08-01 — /lockstep can finally stop a delete
+
+`/lockstep` exists because a written "don't code yet" gets ignored a few messages later. Its own
+Notes section admitted the hook only saw `Edit`/`Write`/`NotebookEdit`, so destructive shell
+commands were covered by a written rule — the exact thing the skill exists to distrust. Now
+hook-enforced: 12 patterns (`rm -rf`, `git reset --hard`, force-push, `git clean -f`,
+`filter-repo`, `branch -D`, `dd`, `mkfs`, `DROP TABLE`, `TRUNCATE`, …), judged per command
+segment so `npm test && rm -rf dist` is caught on the second half. 123 tests, up from 2.
+
+Three decisions inside it worth keeping:
+
+- **`/lockstep off` is itself an `rm -f` of the flag file.** A naive guard denies its own release
+  and locks you in the mode permanently. That one command is exempt; `rm -rf /tmp/x && rm -f
+  ...lockstep-active` still dies on the first segment.
+- **Quoted strings still count.** `sh -c "rm -rf /"` deletes just as hard, so quotes are not
+  stripped. `echo "rm -rf x"` is a false positive, accepted — quote-stripping is how this class
+  of guard grows a bypass.
+- **It fails CLOSED on a malformed payload**, alone among the guards here, which all fail open.
+  A stop order that goes quiet when the payload shape changes is not a stop order.
+
+**Five skills gained the merge-parts the audit named** (step 22, top five). `/health` reviews the
+diff against the originating issue — it only ever checked quality, never intent, so a change that
+was clean but wrong sailed through. `/tdd` now confirms test seams with you first and rejects two
+worthless tests: one whose assertion recomputes the expected value, and one never actually run red
+for the intended reason. `/design-audit` gained a live-render lens. `/plan` persists decisions that
+outlive the session as ADRs. `/lockstep` got the rule above.
+
+**`/video-to-kb` stopped dropping its evidence** (step 17). Wiki pages kept the claims and lost the
+raw file's Frames Summary — issue numbers, config diffs, view counts. Real mechanisms went missing
+from the notes. An `## Evidence` section is now required, carried verbatim, and written as
+`Evidence: none captured` when there is none, because a missing heading and an unfilled one look
+identical.
+
+**Two config cleanups, outside this repo.** The Claude desktop app stopped loading Home Assistant,
+Proxmox, ssh and the Wi-Fi controller in every session — those live in `~/AI/HomeSystems` now and
+the desktop app was never how they were used. And four credentials were deleted from
+`settings.json`: two Bluesky values misnamed against what the only consumer looks for, so they
+never worked, and two keys serving a folder that was retired. All four were handed to every hook
+and MCP server that ran.
+
+**Dropped from the plan, deliberately.** Step 19 (adopt seven third-party code reviewers) — taking
+them wholesale would discard the prompt-injection guard added to all 17 agents yesterday; the three
+mechanisms actually worth having fold into the existing agents instead. Step 21 (seven skills) —
+two need tooling that is not installed, one injects mid-turn text, the same reason an earlier hook
+idea was deferred. Five "homelab skills" were also skipped: they were file names read from a
+stranger's repo listing and presented as a recommendation without a single one being opened.
+
 ## 2026-08-01 (end of day) — creating a mockup folder now protects it in the same breath
 
 Yesterday's fix said "put `.mockups/` in every project's ignore list". That is a thing to

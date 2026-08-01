@@ -42,6 +42,23 @@ After every answer, append it to `brainstorms/<topic-slug>-<YYYY-MM-DD>.md` (cre
 
 ---
 
+## Persist the decisions that outlive the session
+
+The brainstorm file is a session artifact — nobody reads it in six months. Two things escape it and get written into the repo, **the moment the decision locks, not at the end of the interview**:
+
+**ADRs.** A decision earns one only if all three are true:
+1. It's hard or expensive to reverse later (schema shape, storage engine, auth model, public API contract, dependency you'd have to rip out).
+2. A reasonable person could have chosen differently — there were real alternatives, not one obvious path.
+3. The code alone won't say why; a future reader would ask "why is it like this?" and find no answer.
+
+All three → write `docs/adr/NNNN-<slug>.md`: **Context** (the forces, one paragraph), **Decision** (what we're doing, present tense), **Alternatives rejected** (each with the reason it lost), **Consequences** (what this now makes easy, and what it makes hard). Fewer than three → it's a normal decision, brainstorm file only. Don't inflate the count; an ADR per choice is as useless as none.
+
+**Glossary.** Every project noun this interview names or sharpens goes into the repo's `CONTEXT.md` glossary inline, one line each. Read the existing entries before adding: if the repo already has a word for the thing, use the repo's word rather than minting a synonym.
+
+Both are real files in the diff — say so when you summarize, so /build doesn't rewrite them from scratch.
+
+---
+
 ## When to stop
 
 Ask exactly as many questions as needed — no fixed count. Stop when the decision tree has no open branches.
