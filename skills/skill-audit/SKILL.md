@@ -1,6 +1,6 @@
 ---
 name: skill-audit
-description: Use this skill when the user types /skill-audit, says 'audit my skills', 'check my skill library', 'find skill gaps', or 'run skill audit'. Audits ~/.claude/skills/ across 4 dimensions (bucket fit, component gaps, missing verifiers, trigger conditions), builds new verifiers, or surfaces gotcha gaps.
+description: Use this skill when the user types /skill-audit, says 'audit my skills', 'check my skill library', 'find skill gaps', or 'run skill audit'. Audits the WHOLE library — ~/.claude/skills/ AND the plugin marketplaces, which it ignored for months — across 5 dimensions (plugin weight, bucket fit, component gaps, missing verifiers, trigger conditions), builds new verifiers, or surfaces gotcha gaps.
 user-invocable: true
 argument-hint: "[--audit] [--build-verifier <skill-name>] [--gotchas] [--research]"
 allowed-tools:
@@ -13,6 +13,30 @@ allowed-tools:
 # skill-audit
 
 Audits `~/.claude/skills/` using Anthropic's internal 5-prompt framework. Three modes.
+
+**Dimension 0 — plugin weight (run this FIRST, every mode).** `~/.claude/skills/` is not the whole
+library. Plugin marketplaces under `~/.claude/plugins/marketplaces/*/` carry their own skills, and
+this audit scanned only the first directory for months: 49 skill files audited, 401 ignored, while
+every report said "the library is healthy". A 2026-07-31 context measurement counted plugin skills
+inside a "76 skills, 9.9k tokens, fine" headline without separating them, so the conclusion was
+drawn over a bucket nobody had opened.
+
+```bash
+for d in ~/.claude/plugins/marketplaces/*/; do
+  n=$(basename "$d")
+  printf "%-34s %4s skills  %6s  invoked by %s of your files\n" "$n" \
+    "$(find "$d" -name SKILL.md 2>/dev/null | wc -l | tr -d ' ')" \
+    "$(du -sh "$d" 2>/dev/null | cut -f1)" \
+    "$(grep -rl -- "$n" ~/.claude/skills/*/SKILL.md ~/.claude/docs/*.md ~/.claude/CLAUDE.md 2>/dev/null | wc -l | tr -d ' ')"
+done
+```
+Report every marketplace invoked by **0** of the user's files as a finding, with its size and skill
+count. **Grep for the exact plugin name** — matching a fragment like `design` or `claude` hits every
+file in the repo and produces a confident, wrong table.
+
+Never propose deleting one on this evidence alone: "no file of mine references it" is not "the user
+never runs it". Present the numbers and let them decide.
+
 
 ## Mode Detection
 
