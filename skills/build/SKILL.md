@@ -80,7 +80,13 @@ Do NOT write code until the user says yes/go/approved. If they redirect, loop ba
 ## 3.5 — UI mockup gate (ONLY if ui_change: true)
 Skip entirely for backend-only changes.
 
-**Before building:** check for a persisted design system first, then fall back to CSS tokens:
+**Before building:** create the mockup folder with the shared script — never a plain `mkdir -p`. It also adds `.mockups/` to this project's `.gitignore` if missing, which is the step everyone forgets:
+
+```bash
+bash ~/.claude/skills/design/scripts/mockup-dir.sh "build-<slug>"
+```
+
+Then check for a persisted design system first, falling back to CSS tokens:
 
 ```bash
 [ -f design-system/MASTER.md ] && echo "MASTER_FOUND" || echo "NO_MASTER"

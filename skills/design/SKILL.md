@@ -137,7 +137,9 @@ Reached only from **Mode select** when the user supplies an existing HTML mockup
 ## Step 0 — Brand seed
 ```bash
 SLUG=$(python3 -c "import json; print(json.load(open('package.json')).get('name','').replace('/','-').replace('@',''))" 2>/dev/null || basename "$PWD")
-mkdir -p .mockups
+# Creates the folder AND adds .mockups/ to this project's .gitignore if missing.
+# Never plain `mkdir -p` — that is how mockups got committed to two repos before anyone noticed.
+bash ~/.claude/skills/design/scripts/mockup-dir.sh "design-$SLUG"
 head -20 CLAUDE.md 2>/dev/null
 cat package.json 2>/dev/null | python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('name','?'), d.get('description',''))" 2>/dev/null
 ```

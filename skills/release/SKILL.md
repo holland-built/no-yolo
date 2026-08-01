@@ -121,6 +121,12 @@ If `BEHIND = 0`: continue.
 
 Execute each `## Steps` action in order for the target env.
 
+**Prune stale mockups — run this in EVERY repo, whether or not its `SHIP.md` lists it:**
+```bash
+bash ~/.claude/skills/design/scripts/mockup-dir.sh --prune
+```
+Removes `.mockups/` folders untouched for 30+ days; hard floor of 7 days regardless of argument; no-ops silently where there is no `.mockups/`. These are gitignored, so nothing else ever deletes them and they pile up unseen. Report what went in one line. **Never block a release on it** — a failed prune is a tidiness problem, not a shipping problem.
+
 **Approval gate (HARD):** before staging anything, show what will ship — the target `env → branch`, the file list, and any `## Steps` action that mutates the repo. Then stop and ask exactly: **"Ship this? (go / redirect)"** Wait for the reply. Nothing is staged, committed, or pushed before it.
 
 Then:

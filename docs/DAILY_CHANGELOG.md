@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-08-01 (end of day) — creating a mockup folder now protects it in the same breath
+
+Yesterday's fix said "put `.mockups/` in every project's ignore list". That is a thing to
+remember, and remembering is what already failed twice. New `skills/design/scripts/mockup-dir.sh`
+makes the two actions one: it creates the folder AND appends `.mockups/` to that project's
+`.gitignore` if missing. `/design` and `/build` call it instead of `mkdir -p`. You cannot now do
+the first and forget the second.
+
+- **Same script prunes.** `--prune [days]` deletes mockup folders untouched for 30+ days, with a
+  hard 7-day floor whatever number is passed — a low number typed by accident should not eat work
+  from this morning. Wired into `/release` and `SHIP.md`, so it runs every release in every repo,
+  and never blocks a release when it fails.
+- **First real run:** 13 stale folders gone from one repo. Because mockups are gitignored,
+  nothing had ever deleted them — 21MB sat in one project, 8.5MB in another.
+- **Bloxsmith history rewritten** (asked for explicitly; 0 forks, 0 stars, nothing in production,
+  full bundle backed up first). 199 mockup objects removed from history across 786 commits, all
+  commits preserved with new IDs, repo down from 47MB to 26MB. Note for anyone repeating this:
+  `git filter-repo` deletes the remote as a safety measure — it has to be re-added before pushing.
+- Wayfinder needed nothing. It has 250 mockup files on disk and has never committed one.
+
 ## 2026-08-01 (later still) — one line in /build made mockups committable
 
 `/build` said `.mockups/<slug>/` on line 94 and `mockups/<slug>/` — no dot — on line 128. The

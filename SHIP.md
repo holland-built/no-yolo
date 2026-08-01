@@ -24,6 +24,12 @@ Stage scope: `git add skills/ docs/ hooks/ .github/ agents/ commands/ skills-loc
 
 After staging, confirm nothing tracked was left behind: `git status --porcelain | grep -v '^[AMD]'` should list only Guard paths and gitignored files. Anything else means the scope above is missing a path.
 
+10. **Prune stale mockups (every release, all repos):**
+   ```bash
+   bash ~/.claude/skills/design/scripts/mockup-dir.sh --prune
+   ```
+   Deletes `.mockups/` folders untouched for 30+ days, and removes `.mockups/` entirely once empty. Refuses to touch anything under 7 days old whatever number you pass. Mockups are disposable by design — they are ignored by git, so nothing prunes them and they accumulate silently: 21MB in one repo, 8.5MB in another before anyone looked. Report one line of what it removed; never block the release on it.
+
 ## Guards
 - memory/
 - brainstorms/
