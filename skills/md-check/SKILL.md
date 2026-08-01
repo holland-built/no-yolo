@@ -50,7 +50,7 @@ Normalize each bullet/numbered line (lowercase, strip markdown punctuation). Fin
 **File inventory** — Status vocab: `OK` / `OVERSIZE` (>200 lines) / `DUP-RULE` / `OVERLAP`:
 | File | Lines | Status | Note |
 |------|-------|--------|------|
-| CODE_REVIEW.md | 25 | DUP-RULE | → CORE_RULES.md:3 |
+| SOME_DOC.md | 25 | DUP-RULE | → OTHER_DOC.md:3 |   <!-- shape only; use real filenames from the scan -->
 
 **Merge candidates:**
 | File A | File B | Overlap % | Shared headers |

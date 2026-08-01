@@ -1,5 +1,5 @@
 diagnose|Root-cause analysis: solo 6-phase or --debate for 6 Opus personas.
-archify|Architecture/flow/sequence/dataflow/state diagrams as zero-dep HTML+SVG. Accepts Mermaid.
+archify|Architecture/flow/sequence/dataflow/state diagrams as zero-dep HTML+SVG, validated before delivery. Accepts Mermaid.
 build|Full feature pipeline: plan → UI → code → tests → proof.
 plan|One-question-at-a-time interview that forces hard decisions before any code.
 my-skills|This menu.

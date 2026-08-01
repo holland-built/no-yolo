@@ -64,7 +64,7 @@ Match **first token** in this order:
    - Refines existing → update that file: append to body, bump `updated:`.
    - Contradicts active → write new fact with `status: needs-review` + `conflicts-with: <id>`. Stop and ask user to resolve.
 
-3b. **Canon-duplication guard** (global `user`/`feedback` facts): before writing, read `~/.claude/docs/CORE_RULES.md` and `~/.claude/CLAUDE.md` and judge whether the fact's rule is already stated there. If it is, **do NOT save** — canon is authoritative and both load every session, so a fact restating it is pure always-loaded waste. Tell the user: `Already covered by <CORE_RULES rule N | CLAUDE.md HARD RULE> — not saving a duplicate. Edit canon instead if you want to change it.` Only save when the fact adds something canon does not already say.
+3b. **Canon-duplication guard** (global `user`/`feedback` facts): before writing, read the two files that actually load in **every** session — `~/.claude/CLAUDE.md` and its compiled import `~/.claude/memory/CLAUDE.generated.md` — and judge whether the fact's rule is already stated in either. If it is, **do NOT save**: it already loads every session, so a fact restating it is pure always-loaded waste. Tell the user: `Already covered by <CLAUDE.md HARD RULE | CLAUDE.generated.md — "<fact name>"> — not saving a duplicate. Edit that source instead if you want to change it.` (A `CLAUDE.generated.md` line's source is its linked fact file in `memory/facts/`, not the compiled file — never edit the compiled file.) Only save when the fact adds something those two do not already say.
 
 4. **Classify** `type`: `user` | `feedback` | `pattern` | `reference`
 

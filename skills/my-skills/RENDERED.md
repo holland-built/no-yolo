@@ -50,7 +50,7 @@
 
 | Skill | What it does | When to use | Why vs manual |
 | --- | --- | --- | --- |
-| archify | Architecture/flow/sequence/dataflow/state diagrams as zero-dep HTML+SVG. Accepts Mermaid. | Any architecture, workflow, sequence, dataflow, or state diagram — or converting a Mermaid sketch | Self-contained HTML with inline SVG, dark/light toggle, in-browser PNG/SVG export — no diagram app, no layout-engine install |
+| archify | Architecture/flow/sequence/dataflow/state diagrams as zero-dep HTML+SVG, validated before delivery. Accepts Mermaid. | Any architecture, workflow, sequence, dataflow, or state diagram — or converting a Mermaid sketch | Self-contained HTML with inline SVG, dark/light toggle, in-browser PNG/JPEG/WebP/SVG export — no diagram app, no install. A validation gate blocks delivery on overlapping boxes, off-canvas nodes and masked labels, so a broken diagram cannot be handed over as done |
 
 ## Memory
 

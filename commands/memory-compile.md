@@ -8,8 +8,16 @@ Run the curated-memory pipeline and report results concisely (bulleted):
    ```bash
    python3 ~/.claude/memory/bin/memory_bridge.py --apply
    ```
-   Report any `NEEDS-REVIEW (conflict)` items prominently — these are auto-promoted
-   facts that contradict an existing belief and must be confirmed or dropped by the user.
+   **This step is currently INACTIVE and prints `STEP INACTIVE`.** It reads from ECC's
+   continuous-learning-v2 auto-capture, which was evaluated and deliberately not adopted
+   on 2026-07-31 — passive capture would flood a fact store kept by hand on purpose. When
+   you see that line, say so in the summary in one line: *"promote step inactive by
+   decision — nothing promoted."* Do NOT report it as a completed step, and do NOT treat
+   it as a failure to fix.
+
+   If it ever DOES run, report any `NEEDS-REVIEW (conflict)` items prominently — those are
+   auto-promoted facts that contradict an existing belief and must be confirmed or dropped
+   by the user.
 
 2. **Compile** (lints, then regenerates `CLAUDE.generated.md` + adopted project `MEMORY.md`):
    ```bash
