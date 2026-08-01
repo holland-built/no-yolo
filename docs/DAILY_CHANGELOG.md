@@ -1,5 +1,34 @@
 # Changelog
 
+## 2026-08-01 (later still) — one line in /build made mockups committable
+
+`/build` said `.mockups/<slug>/` on line 94 and `mockups/<slug>/` — no dot — on line 128. The
+dot is what every ignore rule matches, so the second path was committable. Nothing had landed
+there yet; it was a loaded gun, not a wound. Found by auditing all 47 skills after noticing the
+question "why are we pushing mockups?", which turned out to be wrong about the symptom and right
+about the risk.
+
+**One shape now, everywhere: `.mockups/<skill>-<slug>/`.** There were five, and they disagreed:
+`design-<slug>`, `quick`, `match-all/<slug>`, a bare `<slug>` (build), and a flat
+`mockup-<name>.html` in `UI_MOCKUPS.md` itself — the doc contradicting the rule on its own page.
+`/build`'s bare `<slug>` also meant a feature called "quick" would have written into
+`/quick-mockup`'s folder.
+
+- `.mockups/` added to this repo's ignore list, and tested by planting a file and confirming git
+  refuses it. **Every other project needs the same line** — this one only covers this one.
+- Codex stdout (`codex-wild.out`, `codex-synth.out`) and `/design`'s server-identity marker file
+  now get deleted. The marker was the worse of the two: it lands in the app's real source tree,
+  not `.mockups/`, so nothing ignored it and nothing removed it.
+- The naming rule is written in `UI_MOCKUPS.md` with the reason each part exists, so the next
+  skill that writes a mockup does not re-invent a sixth shape.
+
+**The audit also found nine places still saying Sonnet writes the code.** That changed to Opus on
+2026-07-31 and only `/build` was updated. `/design`, `/design-audit`, `/match-all` and `/checkup`
+were still dispatching the cheaper tier; `SUBAGENTS.md`, `PLANNING.md` and `SKILLS.md` still
+described the old split, including a table assigning Sonnet to frontend, backend and debug work.
+All corrected. `SUBAGENTS.md` now records what the split used to be and why it changed, so the
+next reader does not "fix" it back.
+
 ## 2026-08-01 (later) — /last-30 was guessing the numbers it printed
 
 The skill's own rule said read signal counts from the page, never from a search snippet.

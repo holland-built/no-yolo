@@ -84,7 +84,7 @@ File: `~/.claude/learnings.md`
 <from CODE_REVIEW.md — every changed line traces to the ask, no unrelated edits, no cleanup, no speculative refactors; simplicity filter>
 
 ### 3. Planning rules
-<from SUBAGENTS.md — Opus plans / Sonnet codes, never plan inline, subagent execution, bound the blast radius in every dispatch prompt>
+<from SUBAGENTS.md — Fable plans / Opus codes, never plan inline, subagent execution, bound the blast radius in every dispatch prompt>
 
 ### 4. Skill triggers
 
@@ -116,7 +116,7 @@ File: `~/.claude/learnings.md`
 <bullets: how to prompt Opus-family sessions>
 
 ### sonnet
-<bullets: how to prompt Sonnet-family sessions>
+<bullets: how to prompt the current coding-model family>
 
 ### haiku
 <bullets: how to prompt Haiku-family sessions>

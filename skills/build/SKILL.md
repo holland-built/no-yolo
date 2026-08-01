@@ -91,10 +91,10 @@ Skip entirely for backend-only changes.
 
 Either way, every variant MUST use these tokens verbatim — no made-up hex codes or font names.
 ### Step A — Generate 8 variants
-Build **exactly 8 variants** as individual files `.mockups/<slug>/<slug>-v1.html` … `v6.html` plus `v9.html`/`v10.html` (fan out in ONE parallel call):
+Build **exactly 8 variants** as individual files `.mockups/build-<slug>/<slug>-v1.html` … `v6.html` plus `v9.html`/`v10.html` (fan out in ONE parallel call):
 - **v1–v6**: conservative to polished, all using real design tokens, each a DISTINCT layout paradigm — not the same card grid with different spacing.
 - **v9–v10**: WILDLY different — completely different layout paradigm, spatial arrangement, or visual language (command-line terminal, full-bleed hero with bold type, data-dense Bloomberg grid, floating action panel, bento-grid, magazine editorial). Must look like a different product team designed them — NOT a card-grid or accordion variation.
-- **Codex authors v9–v10** — run `/design` Step 2's Codex wild-slot block (same command, adapted paths: output to `.mockups/<slug>/codex-wild.out`, files `<slug>-v9.html`/`<slug>-v10.html`): background launch before the fan-out, Codex returns delimited HTML on stdout read-only, Claude reads/validates/Writes the files, any failure → that slot regenerates via the normal agent. Skip silently without codex.
+- **Codex authors v9–v10** — run `/design` Step 2's Codex wild-slot block (same command, adapted paths: output to `.mockups/build-<slug>/codex-wild.out`, files `<slug>-v9.html`/`<slug>-v10.html`): background launch before the fan-out, Codex returns delimited HTML on stdout read-only, Claude reads/validates/Writes the files, any failure → that slot regenerates via the normal agent. Skip silently without codex.
 ### Step B — Slop judge pass (HARD gate — minimum 6 survivors required)
 Spawn ONE adversarial judge agent with all 8 HTML files. It rejects any variant matching ANY pattern in the canonical lists (read fresh at run time — never inlined here): `~/.claude/docs/ANTISLOP.md` → `## GUI Slop`, plus `~/.claude/docs/UI_MOCKUPS.md` kill rules. It also deduplicates functionally identical layouts, returning survivors with a one-line reason each.
 
@@ -102,18 +102,18 @@ If **fewer than 6 survive**, respawn the rejected ones naming the specific slop 
 
 Only survivors proceed to the combined view.
 ### Step C — Combined view + screenshot
-Build ONE combined page `.mockups/<slug>/<slug>-all.html` — survivors only, stacked vertically. Each section: variant label + one-line description + iframe. Mark recommended with ★.
+Build ONE combined page `.mockups/build-<slug>/<slug>-all.html` — survivors only, stacked vertically. Each section: variant label + one-line description + iframe. Mark recommended with ★.
 
 **MANDATORY — do both:**
-- `open ".mockups/<slug>/<slug>-all.html"`
-- `"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless --disable-gpu --window-size=1400,900 --screenshot=.mockups/<slug>/<slug>-all.png "file://$PWD/.mockups/<slug>/<slug>-all.html"`
+- `open ".mockups/build-<slug>/<slug>-all.html"`
+- `"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless --disable-gpu --window-size=1400,900 --screenshot=.mockups/build-<slug>/<slug>-all.png "file://$PWD/.mockups/build-<slug>/<slug>-all.html"`
 
 Show screenshot inline.
 
 **Codex second judge (skip silently if `command -v codex` fails):** one call with the rendered combined screenshot — a different model family grading visuals Claude generated AND judged:
 
 ```bash
-bash ~/.claude/skills/xcheck/scripts/codex-run.sh -m gpt-5.6-sol -s read-only -i ".mockups/<slug>/<slug>-all.png" "This image shows UI mockup variants, labeled. For each: verdict slop|clean + one-line reason (slop = generic AI-generated look: card grids, gradient CTAs, hero+centered-CTA, shadcn starter DNA). Then name your single top pick + one sentence why. No preamble."
+bash ~/.claude/skills/xcheck/scripts/codex-run.sh -m gpt-5.6-sol -s read-only -i ".mockups/build-<slug>/<slug>-all.png" "This image shows UI mockup variants, labeled. For each: verdict slop|clean + one-line reason (slop = generic AI-generated look: card grids, gradient CTAs, hero+centered-CTA, shadcn starter DNA). Then name your single top pick + one sentence why. No preamble."
 ```
 
 Codex is advisory — it never kills a variant alone; Claude's judge remains the gate, including for Codex's own v9–v10 (no self-grading weight). Output a variant table `| Variant | Description | Survived judge? | Codex | Pick |` — one row per variant, ★ on the recommend.
@@ -125,7 +125,7 @@ Do NOT proceed until user names a variant. Lock the chosen variant — the build
 ### Step D — Component sourcing gate (HARD)
 Emit the sourcing table (`skills/design/PREFAB_SOURCING.md` format) for the approved variant — every interactive element gets a row. Hand-build rows need a closed-list reason; a hand-build row on a primitive the detected library already provides is a gate failure. Do NOT proceed to phase 4 without the table shown.
 
-Mockup files stay in `mockups/<slug>/` until after phase 6; delete only after prove passes.
+Mockup files stay in `.mockups/build-<slug>/` until after phase 6; delete only after prove passes.
 
 ## 4 — TDD
 Per behavior: write ONE failing test → run the detected test command (scoped to the relevant file when supported) → confirm RED → minimum code to pass → confirm GREEN → repeat. No batching all tests first. Do NOT target any golden-master test noted during stack detection — write new behavior tests in a separate test file alongside the module.

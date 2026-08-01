@@ -61,7 +61,7 @@ Token-budget guidance (global-skill bloat, prefer per-project installs) lives in
 | `tdd` | Vertical-slice TDD — one test → impl → green → repeat; forbids all-tests-first |
 | `build` | Full feature pipeline: evidence → plan → Opus plan → approval gate → mockup gate → TDD → build → regression → prove |
 | `review` | Diff review AND full codebase health pass (fallow + ponytail + improve) — one ranked findings list, one approve-all gate |
-| `design` | Fresh design generation: 10 Opus mockups (8 paradigms + 2 wild) → slop validator → you confirm → Opus plan → Sonnet build |
+| `design` | Fresh design generation: 10 Opus mockups (8 paradigms + 2 wild) → slop validator → you confirm → Fable plan → Opus build |
 | `quick-mockup` | Fast disposable layout mockups — up to 5 style-matched candidates on one page with an AI pick; reads the project's CSS tokens; much lighter than /design |
 | `design-audit` | Read-only design audit: 5 parallel lenses (Taste/Swiss/UIwiki/a11y/code-health) → violations table + top-10 |
 

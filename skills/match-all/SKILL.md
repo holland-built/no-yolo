@@ -28,7 +28,7 @@ One perfected instance goes in; every sibling instance of that component comes o
 - No production file is written until the uncheck-gate is confirmed (Step 4).
 - Never copy a placeholder or dummy string from the golden, and never leave an empty box.
 - Done means every changed surface is screenshotted and visually matches the golden. A clean `tsc`/lint run is NOT done on its own.
-- Disposable previews live under `.mockups/match-all/<slug>/` and are cleaned up in every path (applied, skipped, or cancelled).
+- Disposable previews live under `.mockups/match-all-<slug>/` and are cleaned up in every path (applied, skipped, or cancelled).
 
 ## Step 1 — Identify the golden + discover siblings
 
@@ -52,7 +52,7 @@ One perfected instance goes in; every sibling instance of that component comes o
 ## Step 2 — Extract the golden's language
 
 - **2a.** Render the golden in isolation and getComputedStyle-harvest it (reference mockup-match Law 4, `skills/design/SKILL.md:107`, repointed from a mockup FILE to the rendered app component): read computed spacing, sizing, color, radius, type, shadow, and the structural pattern.
-- **2b.** Write an approved-tokens.md-style doc to `.mockups/match-all/<slug>/language.md` (reference /design's approved-tokens.md format, `SKILL.md:260`).
+- **2b.** Write an approved-tokens.md-style doc to `.mockups/match-all-<slug>/language.md` (reference /design's approved-tokens.md format, `SKILL.md:260`).
 - **2c.** Split explicitly:
   - **LANGUAGE (broadcast):** palette, type scale, spacing rhythm, radius, shadow, structural pattern.
   - **CONTENT (per-sibling, never broadcast):** text, labels, counts, images, item data.
@@ -73,14 +73,14 @@ For each confirmed sibling, apply the language — adapting, never cloning.
 
 ## Step 4 — Uncheck-gate + before/after preview (HARD)
 
-- **4a.** Render BEFORE and AFTER for every candidate to disposable artifacts under `.mockups/match-all/<slug>/` (never a production path). Screenshot both with the Chrome CLI (invocation in Step 5). Build one `all.html` (before | after per sibling), same pattern as /design's all.html. Show it inline and `open` it.
+- **4a.** Render BEFORE and AFTER for every candidate to disposable artifacts under `.mockups/match-all-<slug>/` (never a production path). Screenshot both with the Chrome CLI (invocation in Step 5). Build one `all.html` (before | after per sibling), same pattern as /design's all.html. Show it inline and `open` it.
 - **4b.** Show the Step 1e candidate list and ask ONCE: "Apply to these? Uncheck any to skip. (all / skip #,# / cancel)".
 - **4c.** No production file is touched before this confirm. On cancel, discard everything.
-- **4d. Cleanup (HARD):** remove `.mockups/match-all/<slug>/` in every path — applied, skipped, or cancelled (reference /design's COMPONENT-PULL cleanup law, `SKILL.md:81`). If it can't be removed, STOP and report.
+- **4d. Cleanup (HARD):** remove `.mockups/match-all-<slug>/` in every path — applied, skipped, or cancelled (reference /design's COMPONENT-PULL cleanup law, `SKILL.md:81`). If it can't be removed, STOP and report.
 
 ## Step 5 — Apply + verify
 
-- **5a.** Dispatch Sonnet subagents to edit confirmed siblings, split into disjoint file clusters with no overlap. Each agent gets `language.md` plus its sibling's Step-3 decisions. The coordinator reads each target file plus its direct imports first, and marks "already exists — do NOT recreate."
+- **5a.** Dispatch Opus subagents to edit confirmed siblings, split into disjoint file clusters with no overlap. Each agent gets `language.md` plus its sibling's Step-3 decisions. The coordinator reads each target file plus its direct imports first, and marks "already exists — do NOT recreate."
 - **5b.** Reuse gate: siblings that map to a PREFAB component get the language applied via tokens/props, not a hand-rolled twin.
 - **5c.** Run `tsc` + lint + build — zero new errors — before the visual gate.
 - **5d. Visual-diff gate** (reference /design Step 5.6, `SKILL.md:274`): screenshot each changed surface with the Chrome CLI, place it beside the golden's PNG, compare palette, type scale, spacing rhythm, radius, and structure. Do not declare done on a visible mismatch — fix and re-shoot; loop until it matches.
