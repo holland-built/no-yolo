@@ -19,7 +19,7 @@ Shape:
 
 ---
 
-## 2026-08-02 — the changelog stopped copying out the commit history (`pending`)
+## 2026-08-02 — the changelog stopped copying out the commit history (`580be39`)
 
 - 43 July entries moved to `docs/changelog/2026-07.md`; this file restarts short.
 - `/build` and `SHIP.md` now cap entries at 2–4 lines with a commit hash, so the long form cannot
