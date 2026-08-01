@@ -1,5 +1,8 @@
 # no-yolo
 
+[![last commit](https://img.shields.io/github/last-commit/holland-built/no-yolo?style=flat-square&label=last%20commit)](https://github.com/holland-built/no-yolo/commits/main)
+[![checks](https://img.shields.io/github/actions/workflow/status/holland-built/no-yolo/ci.yml?branch=main&style=flat-square&label=checks)](https://github.com/holland-built/no-yolo/actions)
+
 ## What this is
 
 Every time Claude Code starts, it reads a folder in your home directory called `.claude`. That folder is where its rules and its shortcut commands live. This repo **is** that folder, saved so you can copy it onto your machine.

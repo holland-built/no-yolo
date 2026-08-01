@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-08-01 — two badges at the top of the README
+
+Both pull live from GitHub and neither is a popularity number: `last commit` answers whether
+the project is alive, and `checks` shows whether `verify.sh` passed on a clean machine after
+the last push. Verified rendering as `today` and `passing` before shipping.
+
+Three more were considered and rejected as untrue: a stars badge would read 0, and a licence
+badge would be a lie because there is no `LICENSE` file. A pasted set of 18 shieldcn badges
+was also declined — every URL in it pointed at a different repo, two claimed Docker and
+Playwright that this repo does not use, and a wall of stat badges is the exact pattern
+`docs/ANTISLOP.md` was rewritten yesterday to hard-reject.
+
+Decided but NOT yet built (see `brainstorms/badges-2026-08-01.md`): MIT licence under the name
+`holland-built`, three further badges (licence, commits, release), and a fresh release tag so
+the release badge is not stale on arrival.
+
 ## 2026-07-31 (later) — the update checker was blind to two thirds of what it checks
 
 Chasing why `archify` sat two weeks stale found the reason: `/update`'s third-party drift
