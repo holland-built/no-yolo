@@ -1,5 +1,36 @@
 # Changelog
 
+## 2026-08-01 (later) — /last-30 was guessing the numbers it printed
+
+The skill's own rule said read signal counts from the page, never from a search snippet.
+Only Reddit actually passed `scrapeOptions`, so GitHub stars, YouTube views and X likes came
+back guessed from a preview blurb while the rule sat two paragraphs above saying not to. Every
+source now fetches the page. That costs roughly 3x the credits and time per search, which is
+the price of a number you can print.
+
+- **YouTube stopped forcing "tutorial" into every query.** It was hardcoded, and it quietly
+  narrowed the whole source: tutorials get made *after* a thing settles, so launches, talks and
+  teardowns — the actual last-30-days signal — never appeared.
+- **A news pass, and an honest note about what it does.** The first version of this entry
+  claimed `sources: [{type:"news"}]` gives a distinct news index where launches surface first.
+  Tested before shipping: it does not. Results return under the same `web` key either way, and a
+  bare topic returns the product's own landing and sign-in pages. What actually works is the
+  wording — `"<topic> launch OR release OR funding OR acquisition OR outage"` returns dated
+  coverage with real specifics. The skill now says so, with the test date, so nobody re-derives it.
+- **`highlights: true` on every source** — the query-relevant extract rather than the site's
+  generic description.
+- **The Firecrawl fallback stopped being silent.** Self-hosted means "unreachable" usually means
+  the VPN is off, not that the service is down. It now runs `tailscale status` and asks once —
+  connect and re-run for full pages, or say continue for plain web search. A run that silently
+  degrades still produces an answer, just a thinner one, with nothing on screen saying so.
+- **Noted the constraint** that `includeDomains` and `excludeDomains` are mutually exclusive, so
+  nobody burns a round trying to say "only X.com, but not these aggregators".
+
+**The leak scan caught this commit's author.** The Tailscale note originally named the real home
+subnet, in a file that ships to GitHub. `verify.sh` failed the tracked-content scan on the next
+run and would not go green until it was rewritten in general terms. The guard worked on a real
+mistake, today, rather than on a planted fixture.
+
 ## 2026-08-01 — two badges at the top of the README
 
 Both pull live from GitHub and neither is a popularity number: `last commit` answers whether
