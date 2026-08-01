@@ -14,7 +14,7 @@ UI_MOCKUPS.md|Rules for creating UI mockup variations before building any UI cha
 HOOKS.md|Documents the hook scripts in ~/.claude/hooks/ — scripts that fire automatically at harness events (session start/stop, before a tool runs). Open this to understand or add automated behaviors.
 MEMORY.md|Memory system reference — 4 types, fact file format, everyday workflow (auto-save / /remember-that / /memory-compile), what NOT to save, git rules. Merged from MEMORY_USAGE.md.
 NO_YOLO.md|Skill authoring rules for when working in ~/.claude as the no-yolo repo — write for strangers, eli5 output standard, no-slop rules, what files are safe to publish.
-ANTISLOP.md|25 AI writing tells (filler openers, em-dash spam, forbidden words) + GUI slop patterns. Canonical extraction target for /prompt-scan and /antislop.
+ANTISLOP.md|15 AI writing tells (fake precision, overclaimed completion, agree-then-fold) + 42 GUI slop patterns incl. media tells. Canonical extraction target for /prompt-scan and /antislop.
 CONTEXT_VOCAB.md|Shared vocabulary — name a concept here once, reference it in prompts to cut token cost. Has ~/.claude system terms; add project-specific terms while working, delete after.
 learnings.md|Compiled prompt conventions written by /prompt-scan. Feeds /better-prompt. Appends dated sections on each run — never overwrites prior entries.
 DAILY_CHANGELOG.md|Running log of every change shipped — /release appends a dated entry here before pushing. Open to see what changed and when.

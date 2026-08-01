@@ -1,5 +1,78 @@
 # Changelog
 
+## 2026-07-31 — six things claimed to work that didn't, and six new hooks that do
+
+An audit against two public skill libraries found a run of quiet lies: commands that
+announced they were on while wiring nothing, docs pointing at a file switched off two
+days earlier, and a design validator reading a frozen copy of a rulebook instead of the
+rulebook. None of them errored. That is what made them expensive — every one reported
+success. The fixes below are that list, plus the hooks that stop the same class of
+failure from being possible rather than merely discouraged.
+
+- **`/literal` actually switches on.** The hook that owns its state was registered in the
+  example config only, never the live one. Typing `/literal` printed "on" and turned
+  nothing on — no flag, no reminder, no status badge, for as long as the command has
+  existed. One missing block; the rest of the wiring was already there.
+- **`/design` reads `docs/ANTISLOP.md` instead of a frozen copy of it.** Its reject list
+  was 14 items pasted inline and never re-synced, so every rule added to the canonical
+  file since has been invisible to the tool that enforces it. `/design-audit` inherited
+  the same break one hop removed.
+- **The slop rulebook is 57 rules instead of 68, and the survivors earn it.** Fourteen
+  writing tells scored zero in a live test and went. Seven "forbidden words" are dead
+  memes; `implement` was never slop at all. Banning the dark-mode toggle and hollow icons
+  had aged into banning good 2026 UI. What replaced them is what was missing: fake
+  precision (invented numbers presented as measured), overclaimed completion,
+  agree-then-fold, and AI-purple as a checkable hue range rather than unscoreable prose.
+  Media tells for AI images, video, logos and decks are new — that whole category had
+  zero coverage.
+- **Three conflicts resolved, one of which was a live bug.** `/design` banned skeleton
+  loaders while the vendor taste files the same run reads recommend them, so a mockup
+  could be built to its own guidance and killed by its own validator. Bullet abuse now
+  carves out chat replies, which house style mandates. Glassmorphism and serif got
+  guardrails instead of a coin flip.
+- **The `/tdd` claim is gone from three files.** README, learnings and the skill menu all
+  said `/build` runs `/tdd`. It never has — `/build` inlines its own copy, and the two
+  drifted: the inline one dropped the refactor step, the stop-on-unexpected-red, and the
+  done criteria.
+- **`/build` says what happens when its reviewers disagree.** Three gates ran in parallel
+  with nothing written down for the case where one objects. Now: a finding closes by a
+  code fix or your waiver, never by the model deciding its own reviewer was wrong; two
+  gates disagreeing means flagged, stricter wins; and a gate that could not run counts as
+  a flag, not a pass. Phase 2's heading also stopped calling a Fable agent an Opus one.
+- **Firecrawl steps run.** `/design`, `/design-audit` and `/ingest-docs` all carried a
+  literal `<your-firecrawl-host>:<port>` placeholder, so the step failed as written. They
+  now read `FIRECRAWL_API_URL`, which keeps the address in the gitignored config where
+  the repo's own policy says it belongs.
+- **`CONTEXT.md` carries measured numbers.** It claimed skills cost 30–40k tokens a
+  session. Measured: 9.9k across 76 of them, about 130 each. The real weight is 60.4k of
+  connected-service definitions — six times everything else combined, and attached to the
+  account rather than this folder. The advice to prefer per-project installs was written
+  to solve a problem that turned out not to exist.
+- **`CODE_REVIEW.md`, `SUBAGENTS.md`, `TESTING.md` and `SKILLS.md` stopped citing a file
+  that is switched off.** The core-rules experiment moved `CORE_RULES.md` aside on
+  2026-07-29; four docs kept pointing at it. Their rules are now written out in place.
+- **The broken `orchestration` skill is out.** It documented `run --spec` and `run-stop`;
+  the Orca CLI retired both, verified live. Nothing invoked it. Only the symlink went —
+  Orca's own copy is untouched.
+- **archify's four dangling example links point at a file that exists.** An agent
+  following its instructions was reading files that never shipped.
+
+**Six new hooks.** A written rule can be forgotten; these cannot.
+
+| Hook | Fires | What it stops |
+|---|---|---|
+| `config-protection` | before an edit | Turning a lint rule off to make a check pass. First-time config creation still allowed |
+| `generated-file-guard` | before an edit | Hand-editing compiled output that the next generator run silently discards |
+| `relock-guard` | before a shell command | Blessing the catalog while a `SKILL.md` is untracked — this exact bug shipped once, checks green |
+| `slop-guard` | reply finishes | Nothing. It warns, and a clean run proves only that the listed phrases were absent |
+| `format-typecheck` | reply finishes | Unformatted, untyped code sitting until CI finds it |
+| `mockup-autoopen` | after a write | Being told to open the mockup instead of it opening |
+
+Each has an escape hatch named in its own error message, each fails open, and every one
+has a positive control in its tests — a guard that can silently stop matching is worse
+than no guard, which this repo learned the hard way when a leak scan went blind on the
+machine doing the committing.
+
 ## 2026-07-30 — /video-to-kb runs start to finish without stopping to ask
 
 Ingesting a video took two commands and two questions: it saved the transcript,

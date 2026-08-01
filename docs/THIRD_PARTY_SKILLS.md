@@ -15,7 +15,6 @@ after you (or `/update vendor <name>`) run the install command, but never on Git
 | impeccable | Orca app (com.stablyai.orca) | managed by Orca app, not npx | `~/.agents/skills/impeccable` | design-system authoring for net-new sites |
 | computer-use | Orca app (com.stablyai.orca) | managed by Orca app, not npx | `~/.agents/skills/computer-use` | Orca desktop control |
 | orca-cli | Orca app (com.stablyai.orca) | managed by Orca app, not npx | `~/.agents/skills/orca-cli` | Orca CLI wiring |
-| orchestration | Orca app (com.stablyai.orca) | managed by Orca app, not npx | `~/.agents/skills/orchestration` | Orca multi-agent coordination |
 | interface-design | `Dammyjay93/interface-design` | `npx skills@latest add Dammyjay93/interface-design` | `~/.agents/skills/interface-design` | product UI craft (`/interface-design:design-review`, `/interface-design:design-deslop`) — **no attribution in local files, add on next touch** |
 
 > **Manual-only skills in this pack:** `review-animations` and `pick-ui-library` both set
@@ -24,6 +23,12 @@ after you (or `/update vendor <name>`) run the install command, but never on Git
 > Pipelines that need their knowledge must READ their `SKILL.md` as reference instead of
 > invoking them. `/design-audit` previously tried to invoke `review-animations` and that call
 > silently failed until 2026-07-26.
+
+> **Removed 2026-07-31 — `orchestration` (Orca).** Its SKILL.md documented `run --spec` and
+> `run-stop`; the Orca CLI retired both, so following the skill failed at step one (verified live).
+> Nothing in this repo invoked it. Only the symlink `skills/orchestration` was deleted — Orca's own
+> `~/.agents/skills/orchestration` is untouched, so `ln -s ../../.agents/skills/orchestration
+> skills/orchestration` restores it if Orca ever re-syncs the file to the current CLI.
 
 > **History:** this was previously installed from `holland-built/trim`, a personal fork that renamed ponytail→trim. The fork drifted 96 commits behind upstream and was abandoned on 2026-07-26 in favour of tracking `DietrichGebert/ponytail` directly. Do not re-fork to rename — alias locally instead.
 
@@ -40,6 +45,7 @@ instead of the real upstream rules until you run the install command.
 
 | Skill | Patch | Why | Re-apply after reinstall |
 |---|---|---|---|
+| archify | repointed 4 dangling `examples/…` references in `SKILL.md` (3 files never shipped; `web-app.html` should be `web-app.architecture.json`) | An agent following the instructions tried to Read files that do not exist. The pinned 2026-07-17 copy is stale — upstream has since rewritten SKILL.md (278 → 103 lines) and added 13 more examples, but the reinstall was not run. | Run `npx skills@latest add tt-a1i/archify`, which supersedes this patch entirely, then re-pin the hash in `skills-lock.json` |
 | improve | added `user-invocable: true` to its frontmatter | Upstream ships without it, so typing `/improve` never fired. `/health`'s H3 was unaffected: invoking a skill via the Skill tool ignores that field. | `setup.sh` now re-applies it automatically after install; manual fallback: re-add the line to `~/.agents/skills/improve/SKILL.md` |
 
 Check this table after any `npx skills@latest add ...`. The patches live outside git on

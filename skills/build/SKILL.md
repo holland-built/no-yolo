@@ -1,6 +1,6 @@
 ---
 name: build
-description: Use this skill when the user types /build, says 'build', 'build this feature end to end', 'do it all', 'plan if needed and do it', 'take all your suggestions and build', or otherwise asks for the whole job done in one go. Full feature pipeline: evidence → plan → Opus plan → approval gate → UI mockup gate → TDD → build → regression gate → prove.
+description: Use this skill when the user types /build, says 'build', 'build this feature end to end', 'do it all', 'plan if needed and do it', 'take all your suggestions and build', or otherwise asks for the whole job done in one go. Full feature pipeline: evidence → grill-me → Fable plan → approval gate → UI mockup gate → TDD → Opus build → regression gate → prove.
 user-invocable: true
 argument-hint: "[describe the feature to build]"
 allowed-tools:
@@ -15,7 +15,7 @@ allowed-tools:
 
 Feature: $ARGUMENTS
 
-**Agent rule:** Never write code inline. All planning → Fable agent. All implementation → Sonnet agent(s). Coordinator reads + dispatches only.
+**Agent rule:** Never write code inline. All planning → Fable agent. All implementation → Opus agent(s). Coordinator reads + dispatches only.
 
 ## Routing — pick the right tool BEFORE running the pipeline
 - **Spatial/layout bug** (overlap, clip, truncation) → Phase 0A (Playwright DOM measurement). Trivial fix path if cause already measured.
@@ -56,12 +56,12 @@ Do NOT plan a fix whose cause you have not located with evidence. Grill-me and O
 ## 1 — Grill-me (BEFORE any planning)
 Never plan from the raw description. Interview one question at a time with `AskUserQuestion` — 3–4 clickable options, recommended answer placed **in the middle** (not first, not last). Walk every branch. Checkpoint each answer to `brainstorms/<slug>-<date>.md` (Decisions / Open flags / Q&A log). Stop when all branches resolved or user says "done".
 
-## 2 — Opus plan
+## 2 — Plan (Fable agent)
 Spawn ONE `Agent` (model: fable, effort: high) with the full plan transcript **AND the phase-0 diagnosis**. Tell the planner the located root cause is ground truth — fix at the SOURCE, not with a stack of leaf-level patches. The plan MUST contain:
 - **Root cause** restated as `X breaks because Y = Z (file:line)` + the single source change that addresses it
 - **Success predicate** — the falsifiable, measurable condition that proves done (carried from phase 0). Every plan ends in a number or a boolean, never "should work"
 - **Target file list**, each with an "already exists — do NOT recreate" note
-- **Blast radius** — an explicit "do NOT touch" list: adjacent files/functions/behaviors that must stay byte-identical, so Sonnet can't drift
+- **Blast radius** — an explicit "do NOT touch" list: adjacent files/functions/behaviors that must stay byte-identical, so the build agent can't drift
 - **Regression pre-mortem** — which existing tests/behaviors this could plausibly break, named BEFORE coding, so phase 5.5 is targeted not hopeful
 - **Ordered steps**, smallest-reversible-first (each independently verifiable), ~300-word cap per downstream subagent
 - flag: `ui_change: true/false`
@@ -121,7 +121,7 @@ Codex is advisory — it never kills a variant alone; Claude's judge remains the
 Both models picking the same variant = high-confidence recommend; a split = show both reasons — that disagreement is signal for the user — AND triggers `/design` Step 3's Synthesis round (crossover v11/v12, adapted paths): run it, append both to the combined view, gate on all 10.
 
 Stop and ask: **"Which mockup variant? (or redirect)"**
-Do NOT proceed until user names a variant. Lock the chosen variant — Sonnet builds to match it exactly.
+Do NOT proceed until user names a variant. Lock the chosen variant — the build agents match it exactly.
 ### Step D — Component sourcing gate (HARD)
 Emit the sourcing table (`skills/design/PREFAB_SOURCING.md` format) for the approved variant — every interactive element gets a row. Hand-build rows need a closed-list reason; a hand-build row on a primitive the detected library already provides is a gate failure. Do NOT proceed to phase 4 without the table shown.
 
@@ -138,7 +138,7 @@ bash ~/.claude/skills/xcheck/scripts/codex-run.sh -m gpt-5.6-sol -s read-only "R
 
 Claude reviews each returned test: drop any that misread the spec, adapt the rest to project test conventions, run them. Failures = real findings → fix in phase 5 before proceeding. Passing tests that cover a genuine gap → keep in the suite; redundant ones → discard. Delete the temp file.
 
-## 5 — Sonnet build
+## 5 — Build (Opus agents)
 **Cap: max 5 agents at once.** If plan has >5 independent steps, batch into rounds of 5; wait for each round before the next (sequential deps respect ordering).
 
 **Before dispatching ANY agent** — write a per-agent spec covering:
@@ -154,7 +154,7 @@ After all agents complete: if any used `isolation: worktree`, merge each branch 
 After build passes, run the full test suite (detected test command). If ANY test fails → enter fix loop. Repeat until green:
 
 1. Spawn `Agent` (model: opus) with: failing test output + full diff so far. It produces a fix plan targeting only the broken behavior. Save to `brainstorms/<slug>-fix-<N>-<date>.md`.
-2. Spawn `Agent` (model: sonnet) per fix step (fan out independent steps). Every dispatch MUST read target file before editing + include "already exists — do NOT recreate" note.
+2. Spawn `Agent` (model: opus) per fix step (fan out independent steps). Every dispatch MUST read target file before editing + include "already exists — do NOT recreate" note.
 3. Hotpatch if needed; re-run the full test suite.
 4. Still failing → increment N, loop back to step 1. Cap at 3 iterations.
 5. Still red after 3 → **Codex rescue (once, before bothering the user):** if the `codex:codex-rescue` agent is available, spawn it with the failing test output + full diff + the located root cause — fresh eyes from a different model family, exactly the stuck-loop case it exists for. If it lands a fix, re-run the full suite; green → proceed. Codex unavailable, or still red after rescue → stop and surface to user: "3 fix attempts + Codex rescue failed. Paste output to continue."
@@ -177,6 +177,13 @@ Run the ALWAYS gates on every run; add CONDITIONAL gates only when the diff touc
 - **Code health** — IF the diff adds ≥3 new functions/components OR the feature is a major refactor → run `/health` on the changed paths. Fallow catches dead exports and duplication; ponytail catches YAGNI before it ships.
 - **Prefab-first compliance** — IF `ui_change: true` → scan the diff for bespoke implementations of primitives the sourcing table mapped to PREFAB (hand-written button/dropdown/modal/switch markup + CSS). Found → back to phase 5, swap in the mapped component.
 
+**Disagreement rule (any flag blocks ship).** The gates fan out in parallel and they WILL disagree — with each other, and with you. Resolve it this way, never by argument:
+
+- A gate's finding is closed **only** by fixing the code, or by the USER waiving it. You may not close your own gate's finding by deciding it is wrong. "Triage with reason" above means *write the reason and act on it*, not *talk past it*.
+- Two gates disagreeing about the same code = **flagged**. The stricter verdict wins; do not average them, do not pick the one you agree with.
+- Disagree with a finding? Say so in one line, then still surface it: `GATE FLAG — <gate>: <finding>. My read: <why I think it's wrong>. Ship anyway? (y/n)` — and wait. Silence is not a yes.
+- **A gate that could not run is a flag, not a pass.** Agent errored, tool missing, timed out → report it as unresolved. Never record a gate you did not actually run as clean.
+
 Do NOT proceed to phase 6 with an unresolved gate.
 
 ## 6 — Prove (mandatory before done — NUMERIC, not visual)
@@ -193,7 +200,7 @@ Then append to `docs/DAILY_CHANGELOG.md` under `## <date> — <feature>` a table
 Task is NOT done until: success predicate met + stress test/repro survived + **regression test committed and green** + **critical path smoke-tested** + changelog appended + full suite green.
 
 ## 7 — Summary
-First run `/eli5` (Mode B) on the run's results and present that table FIRST. Then a technical table `| Phase | What happened | Files changed | Tests |` — one row per phase run (Evidence, Grill-me, Opus plan, UI mockups, TDD, Sonnet build, Fix loop, Quality gates, Prove), citing the brainstorm/mockup/test files each produced and pass status.
+First run `/eli5` (Mode B) on the run's results and present that table FIRST. Then a technical table `| Phase | What happened | Files changed | Tests |` — one row per phase run (Evidence, Grill-me, Opus plan, UI mockups, TDD, Build, Fix loop, Quality gates, Prove), citing the brainstorm/mockup/test files each produced and pass status.
 
 ## Memory Checkpoint
 Ask exactly once: **"Anything from this /build run worth saving to memory? Reply with the fact or `skip`."**

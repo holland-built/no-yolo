@@ -148,12 +148,15 @@ cat package.json 2>/dev/null | python3 -c "import json,sys; d=json.load(sys.stdi
      python3 -c "import firecrawl" 2>/dev/null || pip3 install firecrawl-py --break-system-packages
      ```
      ```python
+     import os
      from firecrawl import FirecrawlApp
-     app = FirecrawlApp(api_url="http://<your-firecrawl-host>:<port>")  # self-hosted, no API key
+     api_url = os.environ.get("FIRECRAWL_API_URL")  # set in settings.json env; self-hosted, no API key
+     app = FirecrawlApp(api_url=api_url)
      result = app.scrape_url(url, formats=["html"])  # HTML — need raw CSS, not just markdown
      # result.html → parse inline + linked CSS for: palette hex, type families (font-family
      #   stacks), spacing scale (recurring px/rem gaps, padding, margins)
      ```
+     If `FIRECRAWL_API_URL` is unset, skip the scrape entirely and take the fallback below.
      Fold the extracted palette/type/spacing into the seed. If the scrape fails (service unreachable / non-2xx / empty `result`), do NOT abort the skill — fall back to the Radix/Open-Color seed and note "reference URL scrape failed, used fallback" in the seed file.
 
 Write the seed to `.mockups/design-seed.md`: palette hex, type families, spacing scale, layout principles, component states, do's/don'ts. State one line summarizing the seed source.
@@ -186,7 +189,7 @@ ONE parallel Agent call, `model: "opus"`. Each writes `.mockups/design-<slug>/vN
 **Codex authors v9–v10 (cross-model generation; skip if `command -v codex` fails → Opus authors them as before).** All-Claude batches share one model's taste DNA — the WILD slots go to a different family. Codex stays read-only and returns HTML on stdout; **Claude writes the files** (write authority never delegates). Launch in the BACKGROUND *before* the Opus fan-out so it costs zero wall-clock, and give the Opus call only v1–v6:
 
 ```bash
-bash ~/.claude/skills/xcheck/scripts/codex-run.sh -m gpt-5.6-sol -s read-only "Output two WILD UI mockup variants as complete self-contained HTML documents, delimited by lines ===V9=== and ===V10===. Each: completely alien layout paradigm (not card grids/dashboards), inline <style> only, no external deps, light + dark sections with a data-theme toggle button, a labeled states strip (hover/focus/empty/error/loading), 2-3 <!-- ANNOTATION: --> comments, header comment '<!-- VARIANT: vN — paradigm (WILD, codex) -->'. Use these tokens verbatim: <paste seed tokens>. Real data, no lorem ipsum. Banned: <paste slop reject list>. Output ONLY the delimited HTML." > .mockups/design-<slug>/codex-wild.out 2>&1 &
+bash ~/.claude/skills/xcheck/scripts/codex-run.sh -m gpt-5.6-sol -s read-only "Output two WILD UI mockup variants as complete self-contained HTML documents, delimited by lines ===V9=== and ===V10===. Each: completely alien layout paradigm (not card grids/dashboards), inline <style> only, no external deps, light + dark sections with a data-theme toggle button, a labeled states strip (hover/focus/empty/error/loading), 2-3 <!-- ANNOTATION: --> comments, header comment '<!-- VARIANT: vN — paradigm (WILD, codex) -->'. Use these tokens verbatim: <paste seed tokens>. Real data, no lorem ipsum. Banned: <paste the slop reject list you just read from ANTISLOP.md ## GUI Slop + UI_MOCKUPS.md kill rules>. Output ONLY the delimited HTML." > .mockups/design-<slug>/codex-wild.out 2>&1 &
 ```
 
 After the Opus agents finish, wait for the Codex job; split `codex-wild.out` and Write `v9.html` / `v10.html` yourself. **Split gotcha (verified):** codex echoes the prompt (which contains the delimiter strings) AND prints the answer twice (streamed + final) — match delimiters as whole lines only and use the LAST `===V9===`/`===V10===` pair; trim v10 at its final `</html>` — but first READ what came back: each document must be plain HTML/CSS/minimal-JS (no scripts fetching remote URLs, no external deps) and contain `<html`. Fails the check or missing → regenerate that slot with Opus (never block the round). Codex variants pass through the SAME validator as everyone.
@@ -196,15 +199,16 @@ After the Opus agents finish, wait for the Codex job; split `codex-wild.out` and
 - **States strip**: a thin labeled row at the bottom showing all 5 interactive states as small labeled boxes: `hover` · `focus` · `empty` · `error` · `loading`, each showing the relevant component in that state. Real styled boxes, not placeholder text.
 - **2–3 annotation callouts**: inline HTML comments at the most non-obvious decision points (why this column count, type scale, component placement): `<!-- ANNOTATION: [one sentence explaining this layout/hierarchy choice] -->`.
 
-Each brief carries: design seed + Design Read line + the three dial values + any named design system from Step 1 + Taste/Swiss/UIwiki rule text (FALLBACKS if vendor absent) + the slop reject list below + LIGHT+DARK rule. BOLD constraint added when BOLD MODE is on.
+Each brief carries: design seed + Design Read line + the three dial values + any named design system from Step 1 + Taste/Swiss/UIwiki rule text (FALLBACKS if vendor absent) + the slop reject list read fresh per Step 3 (`ANTISLOP.md ## GUI Slop` + `UI_MOCKUPS.md` kill rules) + LIGHT+DARK rule. BOLD constraint added when BOLD MODE is on.
 
 Each brief also carries the **Astryx awareness line**: if this is a React + npm project (a `package.json` with `react` in deps and a lockfile — NOT a CDN/babel page), read `skills/design/ASTRYX_CATALOG.md` first; where the design calls for a rich interaction (hover preview, typeahead/power search, chat, command palette, stacked toasts, carousel/lightbox, token input), the mockup must **mock that Meta-quality behavior** (simulate it visually / with minimal inline JS) so the winning design already assumes the component exists — it will be pulled from the project's prefab library (or Astryx when the project has none — see `skills/design/PREFAB_SOURCING.md`), not hand-built, at build time. Only interactions in the generated `skills/design/ASTRYX_CATALOG.md` count — it lists the package's real 90+ components. Non-React or CDN-React projects: ignore this line, hand-build as normal.
 
 ## Step 3 — Validator + combined view + AI pick
 
 ### Validator pass
-Spawn a judge agent running Taste + Swiss + UIwiki lenses on all 8. Reject any variant that hits the **slop reject list** and regenerate it (max 2 rounds, specific brief per reject):
-> card grids · accordion-only · sidebar-nav + icon rows · gradient CTAs (blue->purple / teal->green) · rounded corners >8px everywhere · glassmorphism · sans-only type hierarchy · hero + centered-CTA layout · shadcn/MUI/Tailwind-UI starter DNA · badge/pill stat rows · progress bars everywhere · skeleton loaders · "Powered by" badges · hover scale transforms.
+**Slop reject list (read fresh at run time — never inlined here):** `~/.claude/docs/ANTISLOP.md` → `## GUI Slop` and every sub-section under it (template & framing, marketing-page, component, media) is canonical, plus the mockup-only kill rules in `~/.claude/docs/UI_MOCKUPS.md`. Read the section as it stands — do not assume this list of sub-sections is current. Read both before judging and before writing any brief that cites the list.
+
+Spawn a judge agent running Taste + Swiss + UIwiki lenses on all 8, carrying that freshly-read reject list. Reject any variant that hits it and regenerate it (max 2 rounds, specific brief per reject).
 
 If BOLD MODE: also reject any variant that reads as a minor refresh of the current app. Minimum 6 survivors required before proceeding.
 

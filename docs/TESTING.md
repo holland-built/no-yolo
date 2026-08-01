@@ -8,9 +8,9 @@ For any bug fix or new feature:
 3. Write the minimum code to pass.
 4. Refactor only if tests still pass.
 
-### Goal-Driven Restatement (Rule 4)
+### Goal-Driven Restatement
 
-Restate every vague instruction as a verifiable goal before acting → `~/.claude/docs/CORE_RULES.md` rule 4.
+Restate every vague instruction as a verifiable goal before acting — "write a failing test, then make it pass", not "improve the tests".
 
 For multi-step work, append a per-step verification to each step: `[Step] → verify: [check]`.
 

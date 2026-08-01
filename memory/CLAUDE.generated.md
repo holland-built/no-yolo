@@ -1,5 +1,5 @@
 <!-- GENERATED FROM ~/.claude/memory/facts/ — DO NOT EDIT. Run /memory-compile. -->
-<!-- compiled 2026-07-26 -->
+<!-- compiled 2026-07-31 -->
 # Learned Preferences (compiled from curated memory)
 
 Compiled from the fact store. Each line links its source fact.
@@ -11,6 +11,7 @@ Compiled from the fact store. Each line links its source fact.
 - **Ship UI redesigns surface-by-surface into the real app, screenshot each** — For large UI redesigns, build one surface at a time straight into the running app and verify each in the browser before the next — don't iterate on abstract mockups/plans. ([feedback-realapp-incremental-ui](memory/facts/feedback-realapp-incremental-ui.md))
 - **Delegate ≥5-lookup scans to a subagent** — When answering one question needs ≥5 read-only tool calls (Grep/Glob/Read/read-only Bash), dispatch cavecrew-investigator (or Explore) instead of running them inline — quiet screen, slower context growth ([pattern-delegate-scans-to-subagents](memory/facts/pattern-delegate-scans-to-subagents.md))
 - **Auto-commit on push commands** — When the user says 'push to <branch>', auto-commit all local changes first (add, generate message, commit, push) without asking. ([user-auto-commit-on-push](memory/facts/user-auto-commit-on-push.md))
+- **All coding runs on Opus** — Every implementation/code-writing subagent uses model opus, not sonnet. Planning stays fable; audit/research subagents follow whatever the task specifies. ([user-opus-for-all-coding](memory/facts/user-opus-for-all-coding.md))
 - **Bulleted/table output, never prose** — Default output is a bulleted list or markdown table; no long prose paragraphs. Code/commands in fenced blocks. ([user-output-format-bullets](memory/facts/user-output-format-bullets.md))
 - **Single-paste prompts always** — When the user needs to run something, give ONE consolidated copy-paste block, never a numbered list of separate prompts/commands. ([user-single-paste-prompts](memory/facts/user-single-paste-prompts.md))
 - **Always subagent-driven plan execution** — After writing any plan, immediately dispatch subagent-driven development; never ask 'inline or subagent', never offer inline. ([user-subagent-execution](memory/facts/user-subagent-execution.md))

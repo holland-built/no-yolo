@@ -146,7 +146,7 @@ The borrowed sets install one command each:
 - `npx skills@latest add emilkowalski/skills` — screen-polish rules that `/design` and `/design-audit` read. Six skills: `emil-design-eng`, `apple-design`, `pick-ui-library`, `animation-vocabulary`, `find-animation-opportunities`, `improve-animations`
 - `npx skills@latest add tt-a1i/archify` — the diagram maker
 
-Two commands are hidden from `/my-skills` but still real: `/antislop`, which runs inside `/health` and `/release`, and `/tdd`, which is the same loop that step 4 of `/build` runs.
+Two commands are hidden from `/my-skills` but still real: `/antislop`, which runs inside `/health` and `/release`, and `/tdd`, the standalone version of the red/green loop that step 4 of `/build` inlines in compressed form. `/build` does not call `/tdd` — the two have drifted (`/build`'s copy dropped the refactor step, the stop-on-unexpected-red, and the done criteria).
 
 ## Model guidance
 

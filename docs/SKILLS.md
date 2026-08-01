@@ -2,7 +2,7 @@
 
 ## Installed sources
 
-- **Core rules** — `~/.claude/docs/CORE_RULES.md` (loaded every session via CLAUDE.md)
+- **Core rules** — switched off since 2026-07-29; see `~/.claude/docs/EXPERIMENT_CORE_RULES.md`
 - **Plain English mode** — on by default, hook-enforced (`hooks/eli5-activate.js`)
 - **Caveman** — optional terse-output plugin (`/caveman lite|full|ultra`); conflicts with plain English mode, pick one
 - Custom skills under `~/.claude/skills/` — run `/my-skills` to list them

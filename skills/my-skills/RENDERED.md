@@ -74,7 +74,7 @@
 | checkup | One wellness pass (read-only except safe regen) over your ~/.claude skill library — plumbing gates, doc drift and dead references, how far behind or ahead of GitHub you are, prose slop, the skill-library audit, and a memory lint; auto-fixes only the safe regenerated menus, then pauses with a plain-English summary before you pick what to fix. | You want one health check of your whole ~/.claude setup | Runs every existing check for you in one go and only touches the safe auto-generated files — nothing else changes without your OK |
 | literal | Turns off AI's push-back for a stretch — it just does exactly what you say, no proposals, no mockups, until you flip it back. | You're making rapid changes and want zero push-back for a while | The challenge-by-default posture is great for direction, but during fast knob-turning you just want it done — this mutes it. |
 
-## Helpers (called by other skills)
+## Helpers (called by other skills, or standalone companions to one)
 
 | Skill | What it does | When to use | Why vs manual |
 | --- | --- | --- | --- |
