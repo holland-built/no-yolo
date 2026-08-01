@@ -276,9 +276,6 @@ else
   if npx skills@latest add tt-a1i/archify; then RESULTS+=("archify: OK"); else echo "    ! archify install failed"; RESULTS+=("archify: FAILED"); fi
 fi
 echo ""
-echo "    Note: one more plugin installs inside Claude Code (not the terminal):"
-echo "      /plugin marketplace add JuliusBrussee/caveman  # terse mode (optional)"
-echo ""
 echo "    Optional: design pipeline MCP servers (add to settings.json mcpServers block):"
 echo "      interface-design (design memory) — github.com/Dammyjay93/interface-design"
 echo "      design-refine (variant compare)  — github.com/0xdesign/design-plugin"
@@ -298,7 +295,6 @@ if [ -f "$PLUGINS_JSON" ] && command -v python3 >/dev/null 2>&1; then
   esac
 else
   echo "    No installed_plugins.json found — install recommended plugins inside Claude Code:"
-  echo "      /plugin marketplace add JuliusBrussee/caveman       # terse mode"
   echo "      /plugin marketplace add pbakaus/impeccable          # frontend polish (/design hands off to it)"
   echo "    Maintainer's extras (optional, not required by any skill):"
   echo "      /plugin marketplace add karpathy/karpathy-skills     # Karpathy skill set"

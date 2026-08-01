@@ -78,7 +78,7 @@ File: `~/.claude/learnings.md`
 ## Current conventions — living snapshot (last refreshed: YYYY-MM-DD — model: <model-id>)
 
 ### 1. Output conventions
-<bullets from CLAUDE.generated.md and CLAUDE.md — format prefs, caveman mode, table vs prose, single-paste rule>
+<bullets from CLAUDE.generated.md and CLAUDE.md — format prefs, plain-English mode, table vs prose, single-paste rule>
 
 ### 2. Scope rules
 <from CODE_REVIEW.md — every changed line traces to the ask, no unrelated edits, no cleanup, no speculative refactors; simplicity filter>

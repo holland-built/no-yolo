@@ -38,10 +38,10 @@ env -i PATH=/nonexistent HOME="$FAKE_HOME" "$BASH_BIN" "$SHIM" "$REPO/hooks/lock
 rc2=$?
 assert_eq "no node: lockstep-guard fail-closed exit code" "2" "$rc2"
 
-# --- Case 3: PATH stripped, no node anywhere -> caveman-activate.js -> exit 0 (fail open, harmless) ---
-env -i PATH=/nonexistent HOME="$FAKE_HOME" "$BASH_BIN" "$SHIM" "$REPO/hooks/caveman-activate.js"
+# --- Case 3: PATH stripped, no node anywhere -> eli5-activate.js -> exit 0 (fail open, harmless) ---
+env -i PATH=/nonexistent HOME="$FAKE_HOME" "$BASH_BIN" "$SHIM" "$REPO/hooks/eli5-activate.js"
 rc3=$?
-assert_eq "no node: caveman-activate quiet exit code" "0" "$rc3"
+assert_eq "no node: eli5-activate quiet exit code" "0" "$rc3"
 
 rm -rf "$FAKE_HOME"
 

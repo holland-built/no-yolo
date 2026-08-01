@@ -19,6 +19,13 @@ Shape:
 
 ---
 
+## 2026-08-02 — removed nine plugin collections and the scaffolding one left behind (`pending`)
+
+- Ten marketplaces, 262MB, three ever invoked. Gone: ruflo (317 skill files, 92MB), two Obsidian
+  packs, karpathy-guidelines, design-and-refine and an empty duplicate superpowers. **525MB → 416MB.**
+- Caveman left 9 tracked files that shipped to every stranger who cloned this. Removing them found
+  `hooks/statusline.sh` calling a deleted script every prompt, and a test executing another.
+
 ## 2026-08-02 — every audit looked in one directory (`f490f92`)
 
 - `/skill-audit` globbed `~/.claude/skills/*/` and never touched `plugins/marketplaces/`: 49 skill

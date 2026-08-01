@@ -79,7 +79,6 @@ Everything here is optional. Install one only when you want the command that use
 
 | Add-on | What it does | Used by | Install |
 |---|---|---|---|
-| [Caveman plugin](https://github.com/JuliusBrussee/caveman) | Short replies, fewer tokens | optional | `/plugin marketplace add JuliusBrussee/caveman` |
 | [impeccable plugin](https://github.com/pbakaus/impeccable) | Polishes an existing screen | `/design` hands off to it | `/plugin marketplace add pbakaus/impeccable` |
 | [Codex plugin](https://github.com/openai/codex-plugin-cc) | Gets a second opinion from OpenAI's Codex | `/xcheck` and others (see note) | `/plugin marketplace add openai/codex-plugin-cc` then `/plugin install codex@openai-codex` |
 | [archify](https://github.com/tt-a1i/archify) | Turns a description into a diagram | diagrams | installed by `setup.sh` |
@@ -213,7 +212,7 @@ Example: `Opus 5 · 42%ctx · 5h 18% 3h · wk 40% 5d · no-yolo* · ⬢ prod`
 | `no-yolo*` | the folder you are in. The `*` means you have changes not yet saved to git. |
 | `⬢ prod` | which environment the branch you're on counts as |
 
-It is drawn by `hooks/statusline.sh`. If you install the optional caveman or literal modes, a badge for each appears at the front.
+It is drawn by `hooks/statusline.sh`. When literal mode is on, a badge for it appears at the front.
 
 ## The CLAUDE.md instruction chain
 
