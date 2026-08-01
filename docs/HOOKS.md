@@ -6,7 +6,7 @@ Hook scripts in `~/.claude/hooks/` run automatically at harness events (session 
 
 - **eli5-activate.js** — plain-language output mode. On by default. SessionStart emits the full ruleset; UserPromptSubmit re-injects a one-line reminder every turn, which is what stops it drifting.
 - **prompt-scan-nudge.js** — SessionStart; surfaces the model recorded in the last `/prompt-scan` so Claude can offer a re-scan if the current model differs.
-- **lockstep-guard.js** — PreToolUse (Edit/Write/NotebookEdit); denies file mutation while `.lockstep-active` exists. Toggle: `/lockstep`.
+- **lockstep-guard.js** — PreToolUse (Edit/Write/NotebookEdit **and Bash**); denies file mutation, plus 12 destructive shell patterns (`rm -rf`, `git reset --hard`, force-push, `filter-repo`, `DROP TABLE`…), judged per command segment so `npm test && rm -rf dist` is caught. Ordinary Bash passes. `/lockstep off` is itself an `rm -f` of the flag, so that one command is exempt — without the exemption the mode denies its own release. Alone among these guards it fails CLOSED on a malformed payload while the flag is present. Toggle: `/lockstep`.
 - **worktree-autoarm.js** — SessionStart; arms the worktree guard when a session opens inside a linked git worktree, and prunes stale flags for deleted worktrees.
 - **worktree-guard.js** — PreToolUse (Edit/Write/NotebookEdit); once a worktree is armed for a repo, denies edits to that repo's main checkout outside the active worktree.
 - **literal-mode-tracker.js** — UserPromptSubmit; owns the `/literal` on/off state (`.literal-active`) and re-injects the literal-mode reminder each turn while it is on. Emits nothing while off. Toggle: `/literal`.
@@ -22,8 +22,6 @@ Hook scripts in `~/.claude/hooks/` run automatically at harness events (session 
 
 It proves one thing only: none of the listed phrases appeared. It cannot see parroting the ask back, invented or static filler values, padding, forced rule-of-three, empty caveats, overclaimed completion that used different words, or any GUI slop at all. Those stay with `/antislop` and the design judge. A green light here is not a verdict on the reply.
 
-Present but not wired by default: `caveman-*` scripts (config, stats, activate, mode-tracker, statusline). They belong to the optional Caveman plugin — see below.
-
 ## Plain English mode (default)
 
 `eli5-activate.js` keeps every reply in plain words: no jargon, a small chart for a list, one sentence for a single point. Code, commands and security warnings are still written out exactly, because those need to be precise.
@@ -32,17 +30,9 @@ State: `.eli5-active`. Turn off with `ELI5_MODE=off`, or say "stop eli5" to drop
 
 Why a hook and not a rule in a file: the same instruction lived in `memory/CLAUDE.generated.md` for months and drifted constantly, because a written preference is a suggestion. A hook fires every turn and cannot be forgotten.
 
-## Caveman mode (optional, off by default)
-
-The Caveman plugin cuts tokens roughly 75% by dropping filler. It is **not** installed or wired by default, and it conflicts with plain English mode: caveman keeps technical terms exact, which is the opposite goal. Pick one.
-
-Install: `/plugin marketplace add JuliusBrussee/caveman`. Toggle: `/caveman lite|full|ultra`, off with "stop caveman". State: `.caveman-active`. Set `defaultMode: "off"` in `~/.config/caveman/config.json` to disable it without uninstalling.
-
 ## Setup
 
 ```bash
 # Make hooks executable after clone (also done by setup.sh)
 chmod +x ~/.claude/hooks/*.sh
 ```
-
-Deeper module reference → [HOOKS_INTERNALS.md](HOOKS_INTERNALS.md).

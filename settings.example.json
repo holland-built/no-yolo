@@ -207,14 +207,6 @@
     "type": "command",
     "command": "bash \"$HOME/.claude/hooks/statusline.sh\""
   },
-  "extraKnownMarketplaces": {
-    "caveman": {
-      "source": {
-        "source": "github",
-        "repo": "JuliusBrussee/caveman"
-      }
-    }
-  },
   "voice": {
     "enabled": true,
     "mode": "tap"

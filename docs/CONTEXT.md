@@ -27,7 +27,7 @@ The connected services are the problem: 60.4k, six times everything else put tog
 
 ## Scan delegation (hard rule, not advice)
 
-- **≥5 read-only tool calls for one question → MUST delegate** to `caveman:cavecrew-investigator` (fallback `Explore`); report findings only. Under 5 → inline fine.
+- **≥5 read-only tool calls for one question → MUST delegate** to `Explore`; report findings only. Under 5 → inline fine.
 - Exceptions: user asks to watch live; sequential lookups (each depends on the last); skills that already dispatch their own agents.
 - Why it's hard: soft "prefer subagents" advice sat here for weeks and changed nothing — inline grep waterfalls kept filling screens and context.
 - For UI work, use text-based checks before screenshots — they're faster.

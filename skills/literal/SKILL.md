@@ -18,7 +18,7 @@ Mode: $ARGUMENTS
 
 ## How it's wired
 
-The on/off state is owned by the hook `literal-mode-tracker.js`, not by this skill — this skill does not write the flag itself. Mirrors how the `caveman` skill leaves its own state to its hook (contrast with `lockstep`, which touches its flag file directly). Saying `/literal` runs this skill so the toggle registers in conversation, but the actual state lives with the hook.
+The on/off state is owned by the hook `literal-mode-tracker.js`, not by this skill — this skill does not write the flag itself. Contrast with `lockstep`, the other sticky mode here, whose skill touches its flag file directly. Saying `/literal` runs this skill so the toggle registers in conversation, but the actual state lives with the hook.
 
 ## Turning on
 

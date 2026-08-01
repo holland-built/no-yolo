@@ -23,9 +23,8 @@ const INLINE_SAFEWORDS = [
 ];
 
 // Existence-based, symlink-refusing check — the flag's presence IS the
-// state; contents are never read. Self-contained (does not reuse
-// caveman-config's readFlag, which whitelists caveman mode strings and
-// would reject a content-less/literal flag).
+// state; contents are never read. Self-contained on purpose: a shared
+// reader that whitelists mode strings would reject a content-less flag.
 function isFlagPresent(targetPath) {
   try {
     const st = fs.lstatSync(targetPath);
@@ -36,9 +35,9 @@ function isFlagPresent(targetPath) {
   }
 }
 
-// Symlink-safe, atomic flag creation. Mirrors caveman-config's
-// safeWriteFlag pattern (O_NOFOLLOW + 0600 + temp/rename) but simplified:
-// the flag is existence-based so the written content is a placeholder.
+// Symlink-safe, atomic flag creation: O_NOFOLLOW + 0600 + temp/rename.
+// Simplified because the flag is existence-based, so the written content
+// is only a placeholder.
 function safeCreateFlag(targetPath) {
   try {
     const dir = path.dirname(targetPath);

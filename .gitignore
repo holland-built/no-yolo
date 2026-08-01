@@ -90,7 +90,6 @@ history.jsonl
 # runtime markers
 .pending-tasks.md
 learnings.md
-.caveman-active
 .lockstep-active
 .literal-active
 .eli5-active
@@ -121,3 +120,10 @@ skills/archify
 # --md-only backup of CLAUDE.md (restored by full setup)
 CLAUDE.md.pre-md-only
 skills/resolving-merge-conflicts
+
+# stray temp copies of ~/.claude.json — the harness leaves these behind on an
+# interrupted write. They carry mcpServers blocks with live tokens and API keys,
+# and two were found untracked and UNIGNORED on 2026-08-02, one 70KB. A single
+# `git add -A` would have published them.
+.claude.json.tmp.*
+*.json.tmp.*

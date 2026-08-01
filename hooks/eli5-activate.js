@@ -3,12 +3,11 @@
 //
 // Why this is a hook and not a preference: the eli5 rule lived in
 // memory/CLAUDE.generated.md for months and drifted constantly, because a
-// preference is a suggestion the model follows when it remembers. Caveman mode
-// never drifted, because it is injected every single turn. Same machinery here.
+// preference is a suggestion the model follows when it remembers. Injecting
+// it every single turn is what stops the drift.
 //
-// Replaces caveman for this user. Caveman optimised for FEWER TOKENS and kept
-// "technical terms exact" — which preserved the jargon. That is the opposite of
-// what is wanted. This optimises for BEING UNDERSTOOD.
+// This optimises for BEING UNDERSTOOD, not for fewer tokens. A terse mode that
+// keeps "technical terms exact" preserves the jargon — the opposite of the goal.
 //
 // Two events:
 //   SessionStart      -> emit the full ruleset once
