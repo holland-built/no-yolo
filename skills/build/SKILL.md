@@ -201,7 +201,7 @@ Confirm the phase-0/phase-2 **success predicate** holds against reality — the 
 
 **Critical-path smoke test (mandatory):** exercise the project's critical path end to end (detected during stack setup) and confirm it still works — a change can pass its own test yet break the money path. Drive it in the browser (Playwright) or via the path's API/CLI; show the observed result.
 
-Then append to `docs/DAILY_CHANGELOG.md` under `## <date> — <feature>` a table: `File | Line(s) | Change`, citing before→after numbers.
+Then prepend to `docs/DAILY_CHANGELOG.md`: **`## <date> — <one line a stranger understands> (`<commit>`)` plus 2–4 bullets, no more.** What changed, and what it means for someone using the setup. The reasoning — root cause, what you rejected, the before→after numbers — goes in the COMMIT MESSAGE, which is attached to the diff where `git blame` will find it. Do not write it twice: that file hit 704 lines in one month, and a sampled entry shared 66 of its 72 distinctive words with its own commit.
 
 Task is NOT done until: success predicate met + stress test/repro survived + **regression test committed and green** + **critical path smoke-tested** + changelog appended + full suite green.
 
