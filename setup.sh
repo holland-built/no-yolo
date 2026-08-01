@@ -276,6 +276,9 @@ else
   if npx skills@latest add tt-a1i/archify; then RESULTS+=("archify: OK"); else echo "    ! archify install failed"; RESULTS+=("archify: FAILED"); fi
 fi
 echo ""
+echo "    Nothing to install for impeccable: /antislop, /design-audit and /design run"
+echo "      'npx -y impeccable detect' on demand (github.com/pbakaus/impeccable) — needs network."
+echo ""
 echo "    Optional: design pipeline MCP servers (add to settings.json mcpServers block):"
 echo "      interface-design (design memory) — github.com/Dammyjay93/interface-design"
 echo "      design-refine (variant compare)  — github.com/0xdesign/design-plugin"
@@ -294,9 +297,8 @@ if [ -f "$PLUGINS_JSON" ] && command -v python3 >/dev/null 2>&1; then
       printf '%s\n' "$OUT" | awk -F'\t' '{printf "    %-42s %-14s %s\n",$1,$2,$3}' ;;
   esac
 else
-  echo "    No installed_plugins.json found — install recommended plugins inside Claude Code:"
-  echo "      /plugin marketplace add pbakaus/impeccable          # frontend polish (/design hands off to it)"
-  echo "    Maintainer's extras (optional, not required by any skill):"
+  echo "    No installed_plugins.json found — no plugin is required by any skill."
+  echo "    Maintainer's extras (optional), install inside Claude Code:"
   echo "      /plugin marketplace add karpathy/karpathy-skills     # Karpathy skill set"
   echo "      /plugin marketplace add design-plugins/design-and-refine  # UI design"
   echo "      /plugin marketplace add AgriciDaniel/claude-obsidian # Obsidian integration"
