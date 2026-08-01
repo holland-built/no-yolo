@@ -16,7 +16,16 @@ Hook scripts in `~/.claude/hooks/` run automatically at harness events (session 
 - **slop-guard.js** — Stop; **warns, never blocks.** Scans the finished reply against `hooks/slop-patterns.json` (edit that file, not the script) and names any listed phrase it finds. See the honesty note below.
 - **format-typecheck.js** — Stop; formats and type-checks the JS/TS files touched that turn, batched one call per project root. Uses only a formatter the project already has installed; no formatter or no `package.json` → silent no-op. Never blocks, even on a type error.
 - **mockup-autoopen.js** — PostToolUse (Write); when a `.html` file is written under `.mockups/`, regenerates `.mockups/_index.html` and opens the page. Debounced to one open per 20s so an 8-mockup `/design` run does not open 8 tabs.
+- **worktree-autoclean.sh** — SessionStart (sweep leftovers) and SessionEnd (clean on done); removes finished git worktrees for the session's repo. Prunes registrations whose directory is already gone, and removes a live worktree only when all four hold: not the primary checkout, not the worktree this session runs in, working tree clean, and its HEAD already merged into the default branch. Commits survive on the base branch, so edits cannot be lost. Prints one line per removal.
 - **statusline.sh** — displays context usage, your 5-hour usage limit, and your 7-day usage limit in the Claude Code status bar.
+- **literal-statusline.sh** — statusline badge for `/literal` mode; reads the `.literal-active` flag and renders a coloured badge so you can see at a glance that push-back is switched off. Refuses to follow a symlink, so the flag path cannot be repointed at a private file whose bytes would then render into the status bar.
+
+## Helper scripts in hooks/ (not hooks — nothing fires them automatically)
+
+These live in `hooks/` but the harness never runs them. Skills and `setup.sh` call them directly. Listed here so the hook inventory in `/my-md` does not flag them as undocumented.
+
+- **check-coherence.py** — called by `/health` and `/checkup`; finds terms a SKILL.md uses but never defines. Exists because a de-duplication pass once cut lines from 24 files and left four skills logically broken while `verify.sh` reported 14/14 PASS throughout — e.g. `/antislop` filtered on a `Found` marker whose defining lines had been deleted.
+- **list-plugins.py** — called by `setup.sh` (Step 5) and `/update`; prints installed plugins as name/version/scope. Shared so the two callers cannot drift apart — edit it here, not in either caller.
 
 ### What a clean slop-guard run does NOT prove
 

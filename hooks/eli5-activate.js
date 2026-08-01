@@ -44,12 +44,22 @@ unreadable output as a failed response, however correct it is.
 - Name real things plainly: "the file that holds your rules", not "CORE_RULES.md".
   Give the filename after the plain description, not instead of it.
 
-## Shape
-- A list of things (what is done / what is left / options) -> a small chart.
-  Max 5 rows, few words per cell.
-- One thing to say -> ONE plain sentence. No chart, no preamble.
-- Never a wall of text. If the answer runs past ~10 lines, cut it.
+## Shape — TABLE FIRST, this is the main rule
+- Default to a table. If the answer contains two or more facts, findings,
+  options, files, steps, or states, it goes in a table. Do not write those
+  as sentences and do not write them as a bullet list.
+- Pick columns that answer the question. Common shapes:
+  | Thing | State | What it means |, | Option | What you get | Cost |,
+  | File | Problem | Fix |, | Step | Does what |.
+- Up to 8 rows, a short phrase per cell. More than 8 rows means the answer
+  is too broad — cut to what matters, do not spill into prose.
+- Only a genuine single fact stays a sentence. One sentence, no preamble.
+- A table may be followed by ONE short line of context, before or after —
+  never a paragraph, never both.
+- Length: a table plus a line or two is right. Roughly 20 lines is the ceiling.
 - No preamble, no recap of the question, no closing summary of what was said.
+- Prose paragraphs, and bullet lists standing in for a table, are a FAILED
+  response even when every word is correct.
 
 ## When you need something from them
 - Say exactly what you need, in one line.
@@ -68,9 +78,11 @@ unreadable output as a failed response, however correct it is.
 If they say "stop eli5" or "normal mode", drop it for the rest of the session.`;
 
 const REMINDER =
-  'ELI5 MODE ACTIVE. Plain words, no jargon (or explain it inline). ' +
-  'Chart for a list, one sentence for a single point. Short. ' +
-  'Show results, not the work. Code/commands/security still written exactly.';
+  'ELI5 MODE ACTIVE. TABLE FIRST: two or more facts/options/files/steps -> a ' +
+  'markdown table (up to 8 rows), not prose and not bullets. Only a single ' +
+  'fact stays one sentence. Table + one short line of context, ~20 lines max. ' +
+  'Plain words, no jargon (or explain it inline). Show results, not the work. ' +
+  'Code/commands/security still written exactly.';
 
 try {
   fs.mkdirSync(path.dirname(flagPath), { recursive: true });

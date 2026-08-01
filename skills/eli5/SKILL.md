@@ -1,6 +1,6 @@
 ---
 name: eli5
-description: Use this skill when the user types /eli5, and automatically on every completed-work summary, next-actions list, or question to the user. Explains any skill, command, plan, decision, or finished work in plain English, short, no jargon. Mode B: a simple ask/reminder/single next step is ONE plain sentence; a status list (what's done / what's left / options) is a small chart. No mandatory "why" padding.
+description: Use this skill when the user types /eli5, says 'as a table', 'table that', 'reprint that', 'again in plain words', or 'in a chart', and automatically on every completed-work summary, next-actions list, or question to the user. Explains any skill, command, plan, decision, or finished work in plain English, no jargon, table-shaped. Mode C reprints the answer just given as a table, with no argument and nothing re-researched.
 user-invocable: true
 argument-hint: "[skill name, plan text, command, or file path]"
 model: haiku
@@ -16,9 +16,25 @@ Explain what something actually does before the user says yes to it.
 
 ## How to run
 
+### Step 0a — reprint mode (check this FIRST)
+
+If the user is pointing at the answer you just gave — "as a table", "table that",
+"reprint that", "again in plain words", "in a chart", or a bare `/eli5` right after
+a prose answer — this is **Mode C**. Do NOT show the skill picker, do NOT read any
+file, do NOT re-run any research.
+
+Take the immediately preceding assistant message and re-emit it as a table. Same
+facts, nothing added, nothing looked up again. Columns come from the content:
+`| Thing | State |`, `| Option | What you get |`, `| File | Problem | Fix |`,
+`| Step | Does what |`. Up to 8 rows, a short phrase per cell, no jargon. One short
+line of context after the table if it genuinely needs one. Then stop.
+
+If the previous answer had only one fact in it, say that one fact in one sentence
+and note there was nothing to tabulate.
+
 ### Step 0 — no argument
 
-If no argument was provided, run:
+If Step 0a did not apply and no argument was provided, run:
 
 ```bash
 grep -E "^[a-z][a-z0-9-]+\|" ~/.claude/skills/my-skills/STORIES.md | cut -d'|' -f1 | sort
@@ -58,12 +74,12 @@ Both modes output a TABLE, never prose paragraphs.
 
 ### Mode B — finished work / next steps
 
-The user is non-technical. Plain, short, no jargon is the constant. **Pick the form by the content:**
+The user is non-technical. Plain words and table shape are both constant. **Pick the form by the content:**
 
-**One thing to say — a simple ask, a reminder, or a single next step → ONE plain sentence.** No table.
+**A genuine single fact — one reminder, one next step → ONE plain sentence.** No table.
 > Saved and switched on. Next: run `/memory-compile` when you want it live.
 
-**A status list — what's done, what's left, or a set of options → a small chart.** Use it only when there really is a list:
+**Everything else — two or more facts, findings, options, files, steps or states → a table.** This is the default, not the exception:
 
 | What | Status | Type this |
 |---|---|---|
@@ -72,8 +88,8 @@ The user is non-technical. Plain, short, no jargon is the constant. **Pick the f
 | Live-test the judge | optional | `/design` |
 
 Hard rules for Mode B:
-- **Shorter always wins.** A few words per cell, ≤5 rows. Fragments, not sentences.
+- **A few words per cell, up to 8 rows.** Fragments, not sentences. More than 8 rows means the answer is too broad — cut rows, never spill into prose.
 - **No jargon anywhere.** Translate any technical term inline, or cut it. "md file", "supersede", "compile" → say what it does.
 - **No mandatory "why."** Add a reason ONLY if it's short and changes the decision — never a paragraph, never history/justification padding.
 - Asks say plainly what you need; options spelled "A: … / B: …" in plain words.
-- No prose walls before/after — one lead-in sentence max. When unsure between a sentence and a chart, use the sentence.
+- One short line of context, before or after the table — never both, never a paragraph. When unsure between a sentence and a table, use the table.

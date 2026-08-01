@@ -2,7 +2,7 @@ diagnose|Solo: forces systematic evidence-gathering. --debate: six theories surf
 archify|Self-contained HTML with inline SVG, dark/light toggle, in-browser PNG/JPEG/WebP/SVG export — no diagram app, no install. A validation gate blocks delivery on overlapping boxes, off-canvas nodes and masked labels, so a broken diagram cannot be handed over as done
 build|Nothing ships without a plan, tests, and proof. No more "works on my machine" done claims
 plan|First-try success goes from ~70% to ~90% when the hard calls are made up front, not mid-build
-my-md|One command instead of hunting across two directory trees
+my-md|One command instead of hunting across two directory trees and a hooks folder
 my-skills|You forget you have tools. This is the map
 design-audit|Five independent lenses catch what one reviewer misses — audit is read-only, fix gate keeps you in control before anything builds
 tdd|The RED test is proof you actually fixed it. Without it you're asserting, not proving
@@ -20,7 +20,7 @@ ponytail-help|Fast lookup beats interrupting flow to reread docs
 ponytail-review|Most review tools look for what to add. This one specifically hunts what to remove
 antislop|AI writing has 25 known tell patterns. This catches them before they reach users
 better-prompt|Shows before/after with rationale instead of guessing why a prompt underperformed
-eli5|Forces the "wait, do you actually get this?" check before you say yes
+eli5|Forces the "wait, do you actually get this?" check — and turns a wall of words into a table
 last-30|GitHub stars and HN posts from 3 years ago are noise. Last 30 days is actual traction
 md-check|Other skills call it with --pre before writing a new note, so you never get two files on one topic
 prompt-scan|Keeps /better-prompt's reference material from going stale

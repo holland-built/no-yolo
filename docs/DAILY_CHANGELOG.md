@@ -19,6 +19,15 @@ Shape:
 
 ---
 
+## 2026-08-01 — answers come back as tables, and hooks stop being invisible (`97d73c9`)
+
+- The plain-language hook told Claude "one thing to say → one sentence, cut past ~10 lines",
+  which pushed answers back into scattered prose and left the user typing `/eli5` to get a table
+  again. Now it is table-first: two or more facts go in a table, up to 8 rows, ~20 lines. Say
+  "as a table" or "reprint that" and `/eli5` re-emits the previous answer in table form.
+- `/my-md` now lists every hook and what it does, flagging any with no write-up — which found
+  four running silently. `/release` hard-blocks on an undocumented hook so it cannot drift again.
+
 ## 2026-08-02 — /antislop had been finding nothing for a day (`95e9512`)
 
 - It read bullets under `## Writing Tells (25)`. Yesterday's trim renamed that heading to `(15)`,
