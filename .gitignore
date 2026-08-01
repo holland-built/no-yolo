@@ -127,3 +127,7 @@ skills/resolving-merge-conflicts
 # `git add -A` would have published them.
 .claude.json.tmp.*
 *.json.tmp.*
+
+# python bytecode from the catalog scripts
+__pycache__/
+*.pyc

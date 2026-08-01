@@ -13,10 +13,18 @@ after you (or `/update vendor <name>`) run the install command, but never on Git
 | emil-design-eng (+6) | `emilkowalski/skills` | `npx skills@latest add emilkowalski/skills` (hashes pinned in `skills-lock.json`) | `.agents/skills/{emil-design-eng,apple-design,animation-vocabulary,find-animation-opportunities,improve-animations,review-animations,pick-ui-library}` | `/design`, `/design-audit`, `/debate --ui` |
 | archify | `tt-a1i/archify` | `npx skills@latest add tt-a1i/archify` (hash pinned in `skills-lock.json`) | `.agents/skills/archify` | diagrams — replaced the tracked draw.io skill 2026-07-17 |
 | resolving-merge-conflicts | `mattpocock/skills` | `curl` the single `SKILL.md` from `skills/engineering/resolving-merge-conflicts/` (14 lines, no scripts, MIT) | `.agents/skills/resolving-merge-conflicts` | merge/rebase conflicts — the one gap with no in-house coverage |
-| impeccable | Orca app (com.stablyai.orca) | managed by Orca app, not npx | `~/.agents/skills/impeccable` | design-system authoring for net-new sites |
+| impeccable **(CLI, on demand)** | `pbakaus/impeccable` | `npx -y impeccable detect` — run on demand, nothing is installed | **none** (never lands on disk) | `/antislop`, `/design-audit`, `/design` validator |
+| impeccable **(Orca skill)** | Orca app (com.stablyai.orca) | managed by Orca app, not npx | `~/.agents/skills/impeccable` | design-system authoring for net-new sites |
 | computer-use | Orca app (com.stablyai.orca) | managed by Orca app, not npx | `~/.agents/skills/computer-use` | Orca desktop control |
 | orca-cli | Orca app (com.stablyai.orca) | managed by Orca app, not npx | `~/.agents/skills/orca-cli` | Orca CLI wiring |
 | interface-design | `Dammyjay93/interface-design` | `npx skills@latest add Dammyjay93/interface-design` | `~/.agents/skills/interface-design` | product UI craft (`/interface-design:design-review`, `/interface-design:design-deslop`) — **no attribution in local files, add on next touch** |
+
+> **Two different things are called "impeccable" — they share nothing but the word.** The CLI row is
+> Paul Bakaus's npm package, fetched per run by `npx -y impeccable detect` (59 grep-level source
+> checks, no model call, no API key, no local copy); it replaced a 376MB `plugins/marketplaces/`
+> clone that was never plugin-installed and never invoked, deleted 2026-08-01. The Orca row is an
+> 8KB SKILL.md the Orca app syncs to `~/.agents/skills/impeccable`; it is still installed, still
+> used, and is NOT going anywhere. Neither one updates or uninstalls the other.
 
 > **Manual-only skills in this pack:** `review-animations` and `pick-ui-library` both set
 > `disable-model-invocation: true`, so the Skill tool REFUSES to run them (verified by test:
@@ -37,6 +45,9 @@ taste-skill is **vendored** (a copy fetched locally, never on GitHub).
 ponytail / improve / emil-design-eng are **npx-installed** as symlinks (not vendored) — two of the
 three have their fetched content hashes recorded in `skills-lock.json` for drift detection;
 `shadcn/improve` has no lockfile entry (see Maintenance notes in the plan for why).
+The impeccable CLI is a third kind — **on-demand npx**: no vendored copy, no install, no lockfile
+entry, nothing on disk to go stale. `/update` Step 4.6 checks it as kind (c): it may report which
+version npm publishes, and may never report it "up to date" — there is no local copy to compare.
 
 If a local path doesn't exist yet (fresh clone, or never installed), the skills that use it
 fall back to their built-in FALLBACKS block — nothing breaks, you get the baked-in minimum

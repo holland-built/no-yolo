@@ -1,6 +1,6 @@
 ---
 name: design
-description: Use this skill when the user types /design, says 'design this', 'new design', 'redesign', 'fresh look', 'start over on the UI', or 'show me design options'. Fresh generation only — never preserves the existing design; full pipeline documented in Mode select / Redirects below. Second mode — component-pull: fires on 'put a button here', 'add a chat box', 'drop in a card', 'add a component', 'drop in a component' — pulls a finished, project-themed component from the project's library (or Astryx) instead of hand-building it, with a preview-confirm gate (React-only). Third mode — mockup-match: fires on 'make it match this mockup', 'match this mockup', 'port this mockup', 'make my site look like this mockup' with an HTML mockup + existing surface — ports it VERBATIM into a new component, gated on a shown overlay screenshot. Auto-redirects audit/review to /design-audit, existing-UI polish to the impeccable plugin.
+description: Use this skill when the user types /design, says 'design this', 'new design', 'redesign', 'fresh look', 'start over on the UI', or 'show me design options'. Fresh generation only — never preserves the existing design; full pipeline documented in Mode select / Redirects below. Second mode — component-pull: fires on 'put a button here', 'add a chat box', 'drop in a card', 'add a component', 'drop in a component' — pulls a finished, project-themed component from the project's library (or Astryx) instead of hand-building it, with a preview-confirm gate (React-only). Third mode — mockup-match: fires on 'make it match this mockup', 'match this mockup', 'port this mockup', 'make my site look like this mockup' with an HTML mockup + existing surface — ports it VERBATIM into a new component, gated on a shown overlay screenshot. Auto-redirects audit/review to /design-audit, existing-UI polish to /design-audit's fix flow.
 user-invocable: true
 argument-hint: "[text | URL | screenshot | domain context] [--apply-spec <file>]"
 allowed-tools:
@@ -29,7 +29,7 @@ Decide the mode from `$ARGUMENTS` before anything else:
 ## Redirects (check first)
 `/design` is the single entry point for all UI work. A redirect means: invoke that skill now, in this same response — never tell the user to type a different command themselves.
 - `$ARGUMENTS` contains `audit`, `review`, `analyze`, `what's wrong`, `find problems` -> invoke `/design-audit` now.
-- `$ARGUMENTS` contains `polish`, `tighten`, `existing`, `impeccable`, `fix the design`, `clean up the ui`, `update`, `edit`, `change`, `tweak`, `adjust` (and no BOLD-mode word below is also present) -> invoke `impeccable:impeccable` now (`/plugin marketplace add pbakaus/impeccable` if not present). That's real-code polish over what's already built — an independent tool with its own rules. Never run both engines on the same request: they produce incompatible artifacts (throwaway mockup HTML vs live edits).
+- `$ARGUMENTS` contains `polish`, `tighten`, `existing`, `fix the design`, `clean up the ui`, `update`, `edit`, `change`, `tweak`, `adjust` (and no BOLD-mode word below is also present) -> invoke `/design-audit` now and carry it THROUGH its fix gate: answer `y` to "Fix Critical + High?" rather than stopping at the report the way the audit redirect above does. That is the polish path — `/design-audit` ranks what is actually wrong with the built UI, then its Fix Flow briefs every mockup as an EVOLUTION of the current design against those findings (explicitly not a reinvention), you pick one, and it builds and verifies: tsc + lint + build, Playwright smoke, WCAG contrast recheck, re-audit of the changed files. Never run both engines on the same request: this skill's fresh-gen throws the current design away, which is the opposite of what polish asked for.
 - `--apply-spec <file>` present -> jump to the APPLY-SPEC branch (skip Steps 0-4).
 - Anything else -> this skill's own pipeline (Steps 0-4), taste-skill-driven.
 
@@ -210,7 +210,13 @@ Each brief also carries the **Astryx awareness line**: if this is a React + npm 
 ### Validator pass
 **Slop reject list (read fresh at run time — never inlined here):** `~/.claude/docs/ANTISLOP.md` → `## GUI Slop` and every sub-section under it (template & framing, marketing-page, component, media) is canonical, plus the mockup-only kill rules in `~/.claude/docs/UI_MOCKUPS.md`. Read the section as it stands — do not assume this list of sub-sections is current. Read both before judging and before writing any brief that cites the list.
 
-Spawn a judge agent running Taste + Swiss + UIwiki lenses on all 8, carrying that freshly-read reject list. Reject any variant that hits it and regenerate it (max 2 rounds, specific brief per reject).
+**Deterministic pre-pass (free, advisory).** Before the judge agent, grep the generated mockups for known AI-design tells — 59 rule-level checks (`text-purple-600`, `nested-cards`, `animate-bounce`, `tight-leading`, `bg-clip-text`), no model call, no API key, no cost, one shell round trip:
+```bash
+timeout 30 npx --yes impeccable detect ".mockups/design-<slug>/" 2>/dev/null || echo "impeccable detect unavailable — skipped"
+```
+Run it ONCE, up front, for the whole directory — never per variant. `npx` missing, offline registry, non-zero exit, or the 30s cap hit -> print that one line and carry on; this NEVER blocks a round, and a run without it is a normal run. **Never `impeccable install`** — that writes `PRODUCT.md`/`DESIGN.md` into the user's project; `detect` is read-only and works in a project that was never set up for it. Hand the hits to the judge below as evidence, quoting rule names verbatim. **Advisory only:** the judge stays the sole gate — a flagged variant the judge clears, lives.
+
+Spawn a judge agent running Taste + Swiss + UIwiki lenses on all 8, carrying that freshly-read reject list plus any detect hits. Reject any variant that hits it and regenerate it (max 2 rounds, specific brief per reject).
 
 If BOLD MODE: also reject any variant that reads as a minor refresh of the current app. Minimum 6 survivors required before proceeding.
 

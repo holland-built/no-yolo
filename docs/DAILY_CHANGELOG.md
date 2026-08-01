@@ -19,6 +19,15 @@ Shape:
 
 ---
 
+## 2026-08-02 — /antislop had been finding nothing for a day (`pending`)
+
+- It read bullets under `## Writing Tells (25)`. Yesterday's trim renamed that heading to `(15)`,
+  so `/health`, `/checkup`, `/md-check`, `/better-prompt` and `/release` all silently found zero
+  writing tells. Now matches by prefix, and **stops rather than reporting CLEAN on an empty read**.
+- `npx impeccable detect` wired into `/antislop`, `/design-audit` and `/design` — 59 mechanical
+  source checks, no model call, no key, silent skip when offline. Its 376MB plugin clone deleted;
+  the plugin was never installed, so `/design`'s polish redirect had always pointed at nothing.
+
 ## 2026-08-02 — removed nine plugin collections and the scaffolding one left behind (`eb14eb6`)
 
 - Ten marketplaces, 262MB, three ever invoked. Gone: ruflo (317 skill files, 92MB), two Obsidian

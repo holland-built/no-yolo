@@ -20,7 +20,7 @@ argument-hint: "[preview|full|rules|rollback|restore <name>|vendor <name>|market
 | `/update rollback` | Undo the last update, go back to what you had |
 | `/update restore <skill-name>` | Bring back a skill that was removed in an update |
 | `/update vendor <name>` | Re-vendor a stale third-party skill (e.g. taste-skill) from upstream, re-pin the commit |
-| `/update marketplace <name>` | `git pull` a stale orphaned marketplace (e.g. impeccable) to latest |
+| `/update marketplace <name>` | `git pull` a stale orphaned marketplace (cloned under `plugins/marketplaces/`, but not plugin-installed) to latest |
 
 ## How to run
 
@@ -90,7 +90,7 @@ Table: **Plugin | Installed version | Scope**. Flag version `unknown` or `?` as 
 ### Step 4.6 — third-party skill drift (read-only)
 Read `docs/THIRD_PARTY_SKILLS.md` for names, install commands, and local paths (none of this content is in git — see that file).
 
-**There are TWO install kinds and they need different checks.** Getting this wrong is not theoretical: this step used to test `SOURCE.md` for every row, so the four npx-installed skills — which never have one — reported `NOT INSTALLED` forever and their real drift was invisible. `archify` sat two weeks and 13 files behind while this check stayed quiet. Route by the row's **Install command** column:
+**There are THREE install kinds and they need different checks.** Getting this wrong is not theoretical: this step used to test `SOURCE.md` for every row, so the four npx-installed skills — which never have one — reported `NOT INSTALLED` forever and their real drift was invisible. `archify` sat two weeks and 13 files behind while this check stayed quiet. Route by the row's **Install command** and **Local path** columns:
 
 **(a) Vendored** (install command is `/update vendor <name>`) — has a `SOURCE.md`:
 ```bash
@@ -127,14 +127,27 @@ else echo "<name>: STALE — body differs from upstream"; fi
 If a future patch touches the body, this rule stops holding — say so in the report rather than quietly widening it.
 Status: `up to date`, `⚠️ STALE — reinstall to pick up upstream changes`, `NOT INSTALLED`, or `⚠️ CANNOT CHECK`. **A row that cannot be checked is never reported as up to date** — that is how the last one hid.
 
+**(c) On-demand npx** (Local path column is `none`, install command is a bare `npx -y <pkg> <cmd>` — e.g. `impeccable`) — the package is fetched and run at call time and **leaves nothing on disk**. There is no `SOURCE.md` and no local file, so *both* checks above are inapplicable: do not test for `SOURCE.md`, do not diff, do not `ls` the path. The only fact obtainable is what the registry currently publishes, and that is information, not a verdict:
+```bash
+if ! command -v npx >/dev/null 2>&1; then echo "<name>: CANNOT CHECK — npx not on PATH"
+else
+  PUB=$(npm view <pkg> version 2>/dev/null)
+  if [ -n "$PUB" ]; then echo "<name>: on-demand — npm publishes $PUB (nothing local to compare)"
+  else echo "<name>: CANNOT CHECK — registry unreachable (offline?)"; fi
+fi
+```
+This kind has exactly two allowed statuses: `on-demand — npm publishes vX.Y.Z (nothing local to compare)` and `⚠️ CANNOT CHECK`. **Never print `up to date`** — there is no local copy for that to be true *of*; every `npx` run already takes latest. Never print `STALE` (nothing can be stale) and never `NOT INSTALLED` (not-installed is the correct, permanent state for this kind — reporting it as a fault is precisely the failure recorded above, where four rows sat red for months and a real two-week drift hid inside the noise). Offline, or `npx` missing → `CANNOT CHECK`, never a clean result.
+
 Table: **Name | Kind | Status**. If `gh`/`curl` are unavailable or the table has no rows, say the check was skipped — do not print an all-clear you did not earn.
 
 Never auto-update inside this check — output the fix that matches the kind:
 > Vendored skill "<name>" is behind upstream. Run `/update vendor <name>` to re-vendor it.
 > npx-installed skill "<name>" is behind upstream. Run its own install command from `docs/THIRD_PARTY_SKILLS.md` (`npx skills@latest add <repo>`) — the `skills` CLI re-pins `skills-lock.json` itself. Then check `docs/THIRD_PARTY_SKILLS.md`'s "Local patches" table: a reinstall silently reverts every patch listed there.
 
+On-demand rows get **no fix line at all** — there is nothing to update. If a published version needs holding still, pin it in the calling skill's command (`npx -y <pkg>@<version>`), not here.
+
 ### Step 4.7 — orphaned marketplaces (read-only)
-Marketplaces git-cloned into `plugins/marketplaces/<name>/` with **no** `<plugin>@<name>` key in `installed_plugins.json` are invisible to Step 4.5, so a skill can drift with zero warning (e.g. `impeccable`, cloned straight from `pbakaus/impeccable`).
+Marketplaces git-cloned into `plugins/marketplaces/<name>/` with **no** `<plugin>@<name>` key in `installed_plugins.json` are invisible to Step 4.5, so a skill can drift with zero warning. (History: `pbakaus/impeccable` sat here as a 376MB clone that was never plugin-installed and never invoked. It was deleted 2026-08-01 and replaced by on-demand `npx -y impeccable detect` — kind (c) in Step 4.6. Do not re-clone it.)
 ```bash
 python3 - "$HOME/.claude/plugins/known_marketplaces.json" "$HOME/.claude/plugins/installed_plugins.json" <<'PYEOF'
 import json, sys, os
@@ -249,7 +262,7 @@ Show which commits touched that skill and let the user pick which version to res
 ### Step 11 — if argument is `vendor <name>`
 Look up `<name>` in `docs/THIRD_PARTY_SKILLS.md`. If no row matches: "No vendored third-party skill named '<name>' — see `/update` to see what's tracked." Stop.
 
-**REFUSE if the row is npx-installed** (its Install command contains `npx skills@latest`). The recipe below fetches `skills/<x>/SKILL.md` into `<vendor-path>/<x>.md` — for an npx skill, whose local path is a whole package directory of code, schemas and examples, that writes a stray markdown file and leaves the real install untouched while reporting success. Say instead: "'<name>' is npx-installed, not vendored — run `<its own install command>` from `docs/THIRD_PARTY_SKILLS.md`. The `skills` CLI re-pins `skills-lock.json` itself." Stop.
+**REFUSE unless the row's Install command is `/update vendor <name>`** — that is the only vendored kind. Everything else (npx-installed, on-demand npx, `curl`-a-single-file, Orca-managed) must be turned away here. The recipe below fetches `skills/<x>/SKILL.md` into `<vendor-path>/<x>.md` — for an npx skill, whose local path is a whole package directory of code, schemas and examples, that writes a stray markdown file and leaves the real install untouched while reporting success. Say instead: "'<name>' isn't vendored — run `<its own install command>` from `docs/THIRD_PARTY_SKILLS.md`." For an npx-installed row add "the `skills` CLI re-pins `skills-lock.json` itself"; for an on-demand row add "there is nothing to install — it is fetched per run." Stop.
 
 `<vendor-path>` is gitignored — never touches git, never committed; the command works identically for a first install or a refresh.
 

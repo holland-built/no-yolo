@@ -137,7 +137,7 @@ Claude adjudicates each returned item under the Chairman's evidence rules (Step 
 1. **One-paragraph summary** — brief a CEO in 60 seconds, nuance not headline
 2. **5 key findings** — ranked by reliability; note which perspectives support/challenge each. ADMITTED arguments only — the Chairman's DISCOUNTED rulings are binding.
 3. **Hidden connection** — one non-obvious link that only shows up across all 7 perspectives
-4. **Actionable insight** — what should someone in the user's role actually DO differently? Specific. End by naming which installed tool executes it (e.g. `/design` fresh UI, `/design-audit` find problems, impeccable plugin polish existing UI, `/design component-pull` add an element, `/build` feature, `/plan` interview) — every debate ends pointed at a tool, not just a verdict.
+4. **Actionable insight** — what should someone in the user's role actually DO differently? Specific. End by naming which installed tool executes it (e.g. `/design` fresh UI, `/design-audit` find problems in existing UI, `/design component-pull` add an element, `/build` feature, `/plan` interview) — every debate ends pointed at a tool, not just a verdict.
 5. **Frontier question** — the one question that, if answered, would change everything
 
 ### Step 6 — Peer review

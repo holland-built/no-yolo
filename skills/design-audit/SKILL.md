@@ -34,7 +34,19 @@ ONE parallel Agent call. Each returns `severity | rule | file:line | observed | 
 2. **Swiss** — grid / type scale / color count.
 3. **UIwiki** — 20 rules scored.
 4. **WCAG 2.1 AA** — contrast, focus-visible, keyboard, aria, reduced-motion.
-5. **CSS health** — hardcoded values, magic numbers, inconsistent tokens.
+5. **CSS health** — hardcoded values, magic numbers, inconsistent tokens. Deterministic evidence
+   first, judgement second: grep the audited source for known AI-design tells — 59 rule-level
+   checks (`text-purple-600`, `nested-cards`, `animate-bounce`, `tight-leading`, `bg-clip-text`),
+   no model call, no API key, no cost.
+   ```bash
+   timeout 30 npx --yes impeccable detect "<audited path>" 2>/dev/null || echo "impeccable detect unavailable — skipped"
+   ```
+   Fold each hit into this lens's rows alongside its own findings, rule name verbatim in `rule`,
+   the tool named as the evidence source. **Degrades silently:** `npx` missing, offline, non-zero
+   exit, or the 30s cap hit -> print that one line and run the lens on judgement alone. It is
+   additive evidence, never a gate, and never a reason to stall the parallel Agent call.
+   **Never `impeccable install`** — that writes `PRODUCT.md`/`DESIGN.md` into the user's project;
+   `detect` is read-only and works in a project that was never set up for it.
 
 **Conditional 6th lens — Motion.** Add ONLY when the surface has real animation, transition,
 gesture, drag, sheet, or scroll-driven code (grep for `transition`, `animate`, `@keyframes`,

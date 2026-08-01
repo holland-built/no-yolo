@@ -79,7 +79,7 @@ Everything here is optional. Install one only when you want the command that use
 
 | Add-on | What it does | Used by | Install |
 |---|---|---|---|
-| [impeccable plugin](https://github.com/pbakaus/impeccable) | Polishes an existing screen | `/design` hands off to it | `/plugin marketplace add pbakaus/impeccable` |
+| [impeccable](https://github.com/pbakaus/impeccable) | 59 deterministic checks on UI source (no model call, no API key) | `/antislop`, `/design-audit`, `/design` | Nothing to install — run on demand as `npx -y impeccable detect` (needs Node + network) |
 | [Codex plugin](https://github.com/openai/codex-plugin-cc) | Gets a second opinion from OpenAI's Codex | `/xcheck` and others (see note) | `/plugin marketplace add openai/codex-plugin-cc` then `/plugin install codex@openai-codex` |
 | [archify](https://github.com/tt-a1i/archify) | Turns a description into a diagram | diagrams | installed by `setup.sh` |
 | [fallow](https://www.npmjs.com/package/fallow) | Finds code nothing uses any more | `/health` | installed by `setup.sh` (`npm install -g fallow@2.98.0`) |
