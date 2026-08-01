@@ -180,7 +180,7 @@ One row per finding:
 Kind vocab:
 - **DEDUPE** — delete the duplicate line(s); keep the canonical copy (name which file:line stays)
 - **MERGE** — fold the smaller file's unique content into the larger, delete the smaller (only when overlap >40%)
-- **TRIM** — an OVERSIZE file: propose what moves out and where. Append-only logs (`DAILY_CHANGELOG.md`, `learnings.md` §6) are EXEMPT — never trim them.
+- **TRIM** — an OVERSIZE file: propose what moves out and where. `learnings.md` §6 is an append-only log and is EXEMPT — never trim it. `DAILY_CHANGELOG.md` is NOT exempt any more: it is capped at 2–4 bullets per release, and months roll into `docs/changelog/YYYY-MM.md`. Flag it OVERSIZE past ~150 lines and propose the month roll, don't propose rewriting entries.
 - **DRIFT-FIX** — rewrite the CLAUDE.md description line to match its SKILL.md `description`
 
 ### Step 3 — Approve-all gate

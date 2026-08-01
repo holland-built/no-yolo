@@ -17,7 +17,7 @@ NO_YOLO.md|Skill authoring rules for when working in ~/.claude as the no-yolo re
 ANTISLOP.md|15 AI writing tells (fake precision, overclaimed completion, agree-then-fold) + 42 GUI slop patterns incl. media tells. Canonical extraction target for /prompt-scan and /antislop.
 CONTEXT_VOCAB.md|Shared vocabulary — name a concept here once, reference it in prompts to cut token cost. Has ~/.claude system terms; add project-specific terms while working, delete after.
 learnings.md|Compiled prompt conventions written by /prompt-scan. Feeds /better-prompt. Appends dated sections on each run — never overwrites prior entries.
-DAILY_CHANGELOG.md|Running log of every change shipped — /release appends a dated entry here before pushing. Open to see what changed and when.
+DAILY_CHANGELOG.md|Running log of what shipped, capped at 2-4 bullets per release — the reasoning lives in the commit message, not here. /release prepends an entry before pushing. Older months roll into docs/changelog/YYYY-MM.md.
 README_FORMAT.md|Spec file listing the 16 required README section headings. /release reads this and hard-blocks the commit if any section is missing or renamed.
 SKILL_TRIGGERS.md|The routing rule that says a matched trigger fires the Skill tool first, plus the skill-discovery fallback. CLAUDE.md imports it. Per-skill triggers live in each SKILL.md description, not here — the 27 blocks that used to live here cost ~2.4k tokens a session duplicating what the harness already injects.
 THIRD_PARTY_SKILLS.md|Registry of vendored (non-plugin) third-party skill content, pinned to an upstream commit per row. /update reads this to flag drift — read-only, never auto-pulls.
@@ -26,3 +26,4 @@ HOOKS_INTERNALS.md|Developer reference for the caveman hook JS modules (optional
 MCP_SERVICES.md|Optional MCP-backed services (Firecrawl web-data provider) — install steps, the try-MCP-then-fallback pattern skills use, and where endpoint values live (never in tracked files).
 SHIP.md|Release playbook for this repo — environments, pre-push steps, hard guards, optional GitHub release recipe. /release reads and runs it; never push without it.
 FLAGS.md|Generated reference of every skill's arguments and flags — built by regen.py from skill frontmatter, never hand-edited.
+2026-07.md|Archived July 2026 changelog entries, kept verbatim in the old long form. Rolled out of DAILY_CHANGELOG.md 2026-08-02 when that file hit 704 lines in a month.
