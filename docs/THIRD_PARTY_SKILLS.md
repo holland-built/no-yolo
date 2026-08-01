@@ -12,6 +12,7 @@ after you (or `/update vendor <name>`) run the install command, but never on Git
 | improve | `shadcn/improve` | `npx skills@latest add shadcn/improve` | `skills/improve` | `/health`, `/improve` |
 | emil-design-eng (+6) | `emilkowalski/skills` | `npx skills@latest add emilkowalski/skills` (hashes pinned in `skills-lock.json`) | `.agents/skills/{emil-design-eng,apple-design,animation-vocabulary,find-animation-opportunities,improve-animations,review-animations,pick-ui-library}` | `/design`, `/design-audit`, `/debate --ui` |
 | archify | `tt-a1i/archify` | `npx skills@latest add tt-a1i/archify` (hash pinned in `skills-lock.json`) | `.agents/skills/archify` | diagrams — replaced the tracked draw.io skill 2026-07-17 |
+| resolving-merge-conflicts | `mattpocock/skills` | `curl` the single `SKILL.md` from `skills/engineering/resolving-merge-conflicts/` (14 lines, no scripts, MIT) | `.agents/skills/resolving-merge-conflicts` | merge/rebase conflicts — the one gap with no in-house coverage |
 | impeccable | Orca app (com.stablyai.orca) | managed by Orca app, not npx | `~/.agents/skills/impeccable` | design-system authoring for net-new sites |
 | computer-use | Orca app (com.stablyai.orca) | managed by Orca app, not npx | `~/.agents/skills/computer-use` | Orca desktop control |
 | orca-cli | Orca app (com.stablyai.orca) | managed by Orca app, not npx | `~/.agents/skills/orca-cli` | Orca CLI wiring |
@@ -45,6 +46,7 @@ instead of the real upstream rules until you run the install command.
 
 | Skill | Patch | Why | Re-apply after reinstall |
 |---|---|---|---|
+| resolving-merge-conflicts | rewrote `description:` to carry trigger phrases, and added `user-invocable: true` | Upstream's description is one clause with no trigger words, so the router never fired it and typing the name did nothing. This repo's rule is that a skill's triggers live in its own `description` — see `docs/SKILL_TRIGGERS.md`. | Re-apply both lines after any re-fetch; the file is 14 lines, so it is a 30-second edit |
 | improve | added `user-invocable: true` to its frontmatter | Upstream ships without it, so typing `/improve` never fired. `/health`'s H3 was unaffected: invoking a skill via the Skill tool ignores that field. | `setup.sh` now re-applies it automatically after install; manual fallback: re-add the line to `~/.agents/skills/improve/SKILL.md` |
 
 Check this table after any `npx skills@latest add ...`. The patches live outside git on

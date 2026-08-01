@@ -48,6 +48,7 @@ checkup
 literal
 
 ## Helpers (called by other skills, or standalone companions to one)
+resolving-merge-conflicts
 antislop
 tdd
 emil-design-eng
