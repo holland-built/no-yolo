@@ -2,6 +2,9 @@
 
 [![last commit](https://img.shields.io/github/last-commit/holland-built/no-yolo?style=flat-square&label=last%20commit)](https://github.com/holland-built/no-yolo/commits/main)
 [![checks](https://img.shields.io/github/actions/workflow/status/holland-built/no-yolo/ci.yml?branch=main&style=flat-square&label=checks)](https://github.com/holland-built/no-yolo/actions)
+[![release](https://img.shields.io/github/v/release/holland-built/no-yolo?style=flat-square&label=release)](https://github.com/holland-built/no-yolo/releases/latest)
+[![commits](https://img.shields.io/github/commit-activity/t/holland-built/no-yolo?style=flat-square&label=commits)](https://github.com/holland-built/no-yolo/commits/main)
+[![licence](https://img.shields.io/github/license/holland-built/no-yolo?style=flat-square&label=licence)](LICENSE)
 
 ## What this is
 
