@@ -11,8 +11,8 @@
 | prompt-scan | Scan prompts, log learnings | better-prompt | Sharpen a rough prompt |
 | archify | Zero-dep diagram generator | remember-that | Save facts across sessions |
 | my-skills | This skill menu | whats-next | Shows unfinished work |
-| release | One command, any repo | eli5 | Plain-English explain anything, no jargon |
-| my-md | List all markdown files | md-check | Audit + fix docs |
+| release | One command, any repo | eli5 | Plain-English table, no jargon |
+| my-md | Your md files and hooks | md-check | Audit + fix docs |
 | skill-audit | Audit skill library health | update | Check/apply setup updates |
 | lockstep | Hard block on edits | checkup | Full skill-library health pass |
 | literal | Obey exactly, no push-back | — | — |

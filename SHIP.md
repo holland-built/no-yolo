@@ -17,6 +17,15 @@ Repo: `github.com/holland-built/no-yolo`. Run `/release` from anywhere under `~/
 
 3.5. **Orphan check (warn only):** run `/md-check --orphans`; print DANGLING/UNREFERENCED verdicts. This is the standing "nothing on GitHub that isn't real, nothing real that's invisible" guarantee — the repo is meant to be a full working backup/template, so a dangling reference (describes something that no longer exists) or an unreferenced skill (exists but undiscoverable) both defeat that purpose. Actually invoke it every run — this is not optional busywork, it's the check that would have caught the impeccable mess before it shipped.
 4. **GLOBAL_DESCRIPTIONS coverage (warn only):** every root/docs `.md` must have a line in `skills/my-md/GLOBAL_DESCRIPTIONS.md`; print MISSING.
+4.5. **Hook write-up coverage (HARD BLOCK):** every script in `hooks/` must have a `- **<filename>** — …` line in `docs/HOOKS.md`. Run:
+   ```bash
+   for f in hooks/*.js hooks/*.sh hooks/*.py; do
+     n=$(basename "$f"); [ "$n" = "node-shim.sh" ] && continue
+     grep -qF "**$n**" docs/HOOKS.md || echo "UNDOCUMENTED: $n"
+   done
+   ```
+   Any output → STOP and write the line before shipping. Hard block, not a warning, because warn-only is precisely what let this drift: four scripts (`worktree-autoclean.sh`, `literal-statusline.sh`, `check-coherence.py`, `list-plugins.py`) ran silently with no write-up until `/my-md` grew a hook section on 2026-08-01 and surfaced them. Hooks are the least visible part of the setup — nothing in the UI says one exists — so an undocumented hook is invisible twice over. A helper that lives in `hooks/` but is called by a skill rather than fired by the harness still needs a line; put it under `## Helper scripts in hooks/`. Adding a line is a 30-second fix, which is why this blocks rather than nags.
+
 5. **Changelog (HARD CAP — 2-4 bullets):** prepend `## <date> — <one line a stranger understands> (`<commit hash>`)` plus **2–4 bullets, never more**. What changed, and what it means for whoever uses this setup. The full reasoning belongs in the commit message, not here — see the header of `docs/DAILY_CHANGELOG.md` for why. Skip `.gitignore` and the changelog itself. Older months live in `docs/changelog/YYYY-MM.md`; archive the current month there once it exceeds ~150 lines.
 6. **README format check (HARD BLOCK):** every `## ` heading in `docs/README_FORMAT.md` must exist in `README.md`; missing → STOP. Run `bash verify.sh` from the repo root; the `README format headings` row must read PASS. This is the identical script CI runs.
 7. **README count patch:** update "N custom commands" / "plus N borrowed from plugins" from the live skill dir counts. ALSO resync the inline skills table in `## Skills inventory` to match `skills/my-skills/RENDERED_FAST.md` verbatim — it is a copy and drifts silently when a skill is added or renamed.
