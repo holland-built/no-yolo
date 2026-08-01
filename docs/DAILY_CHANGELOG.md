@@ -19,7 +19,7 @@ Shape:
 
 ---
 
-## 2026-08-02 — removed nine plugin collections and the scaffolding one left behind (`pending`)
+## 2026-08-02 — removed nine plugin collections and the scaffolding one left behind (`eb14eb6`)
 
 - Ten marketplaces, 262MB, three ever invoked. Gone: ruflo (317 skill files, 92MB), two Obsidian
   packs, karpathy-guidelines, design-and-refine and an empty duplicate superpowers. **525MB → 416MB.**
