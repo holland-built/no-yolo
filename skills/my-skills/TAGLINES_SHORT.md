@@ -36,3 +36,4 @@ find-animation-opportunities|Finds missing animations
 improve-animations|Motion audit + plans
 pick-ui-library|Curated library picks
 fixloop|Find and fix, no commentary.
+resolving-merge-conflicts|Resolve merge conflicts

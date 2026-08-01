@@ -78,6 +78,7 @@
 
 | Skill | What it does | When to use | Why vs manual |
 | --- | --- | --- | --- |
+| resolving-merge-conflicts | Resolve a stuck merge or rebase by reading both sides' intent first. | A merge or rebase has stopped with conflict markers in your files | Reads the commits, PRs and issues behind BOTH sides before choosing, keeps both intents where they fit, and never bails out with --abort — so you don't lose someone's work to whichever branch happened to win |
 | antislop | Check text/UI for AI-slop tells. Violations table + verdict. | Before shipping any user-facing text or README — or when output feels generic | AI writing has 25 known tell patterns. This catches them before they reach users |
 | tdd | Failing test first, then make it pass. Red→green discipline. | Bug fixes, new features, anywhere tests matter | The RED test is proof you actually fixed it. Without it you're asserting, not proving |
 | emil-design-eng | Emil Kowalski's UI-polish and animation-taste rules — feeds /design and /design-audit. | Automatically, inside /design and /design-audit, when a mockup has real animation | Vaul/Sonner-author taste rules catch wrong easing, wrong shadows, wrong timing agents usually miss |

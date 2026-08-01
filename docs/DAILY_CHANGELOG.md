@@ -1,5 +1,31 @@
 # Changelog
 
+## 2026-08-01 — the last two audit steps, and a proposal that quietly dropped three docs
+
+**Merge conflicts have a skill now** (step 16). The one gap with no in-house coverage. 14 lines
+from `mattpocock/skills`, gitignored, recorded in `docs/THIRD_PARTY_SKILLS.md` with its local
+patch logged: upstream's `description` is a single clause with no trigger words, so the router
+never fired it and typing the name did nothing. Rewritten to carry triggers, `user-invocable`
+added. Both lines need re-applying after any re-fetch — the file is 14 lines, so it is a
+30-second edit. What it does that matters: reads the commits, PRs and issues behind BOTH sides
+before choosing, and never runs `--abort`.
+
+**`CLAUDE.md` pointers are now trigger-conditioned** (step 23). Every Workflow line names the
+condition that makes a doc relevant, then the doc — "Before writing any UI code, read
+UI_MOCKUPS.md" rather than "UI/GUI changes → UI_MOCKUPS.md". An 18-trial test found the bare
+arrow form reads as a menu: sessions opened all thirteen sibling docs at once, where the
+conditioned form opened almost none. The HARD RULE was reworded to permit and require this shape,
+and now carries the reason so nobody "tidies" it back to arrows.
+
+**The prepared proposal was not adopted verbatim.** `proposed-CLAUDE.md` silently dropped three
+pointers — `SKILLS.md`, `CONTEXT_VOCAB.md`, `SKILL_RECOMMENDATIONS.md` — and the entire Output
+Mode section, while being described as a correctness-only rewrite. All three are live documents;
+dropping them makes them unreachable from the pointer chain. They are kept, in the conditioned
+form, and output modes fold into the hooks line. Checked afterwards: every `docs/*.md` is still
+reachable, the core-rules import is still absent, and the file is the same 63 lines it was.
+
+The experiment is untouched and still ends 2026-08-28.
+
 ## 2026-08-01 — /lockstep can finally stop a delete
 
 `/lockstep` exists because a written "don't code yet" gets ignored a few messages later. Its own
