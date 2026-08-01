@@ -28,7 +28,7 @@ cat package.json 2>/dev/null | python3 -c "import json,sys; d=json.load(sys.stdi
 State one line: `Project: [type] · stack: [X]`. Detect whether a brand DESIGN.md
 (Awesome DESIGN.md 9-section format) is in use.
 
-## Step 1 — 5–7 parallel lens agents
+## Step 1 — 5–8 parallel lens agents
 ONE parallel Agent call. Each returns `severity | rule | file:line | observed | expected`.
 1. **Taste** — anti-slop fingerprint (FALLBACKS if sub-skill absent).
 2. **Swiss** — grid / type scale / color count.
@@ -51,6 +51,17 @@ other lenses. Also flag any motion that ignores `prefers-reduced-motion` as Crit
 
 If a brand DESIGN.md is in use, add a **7th lens**: compare the UI against that brand's
 do's/don'ts and component states.
+
+**Conditional 8th lens — Live render.** Every lens above reads source; this one loads the page
+and reports what actually renders. Add ONLY when a URL is reachable (dev server already up, or
+the user gives one). No URL → note `Live render: skipped (no URL)` and move on — never start a
+dev server unasked, and never guess at what a page does. Drive it with Playwright CLI or
+headless Chrome (not the MCP), and report in the same `severity | rule | file:line | observed |
+expected` shape — no source line → cite `<url> @ <viewport>` in that column.
+- **Console + network** — any console error or failed request on load = Critical. Warnings = Medium.
+- **Core Web Vitals** — LCP ≥ 2.5s, CLS ≥ 0.1, INP ≥ 200ms = High, one row each, with the measured number as `observed`.
+- **axe-core** — run it on the loaded page; map its impact to severity (critical→Critical, serious→High, moderate/minor→Medium). Overlaps the WCAG lens by design: axe proves at runtime what lens 4 infers from source, so a finding both agree on is already verified.
+- **Breakpoints** — screenshot at 375 / 768 / 1440 and read them for overflow, collapsed layout, clipped text, and touch targets under 44px.
 
 ## Step 2 — Adversarial verify
 Spawn an independent agent that challenges every **Critical** finding. Each Critical must be

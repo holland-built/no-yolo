@@ -22,7 +22,7 @@ Implement using vertical-slice TDD. Target: $ARGUMENTS
 
 ```
 1. Write ONE failing test for the smallest useful behavior
-2. Run it → confirm it fails (red)
+2. Run it → confirm it fails, for the reason you intended (red)
 3. Write the minimum code to make it pass
 4. Run it → confirm it passes (green)
 5. Refactor if needed (keep green)
@@ -38,6 +38,15 @@ Each slice = one test + one implementation + one green bar.
 1. Read the target file(s) — understand what already exists
 2. Identify the smallest useful behavior to test first (the "tracer bullet")
 3. State it in one sentence: "Given X, when Y, then Z"
+4. **Agree the seams first.** Name where you will test — the public function, the HTTP boundary, the DB adapter — and what you will fake, then stop and get the user's OK before writing a single test. Tests are the hardest thing in the diff to move later; picking the seam alone means rewriting them when the user wanted a different level. If they name a different seam, use theirs.
+
+---
+
+## Two ways a test can be worthless
+
+**Tautological test — banned.** If the assertion recomputes the expected value using the same logic as the code under test, it passes no matter what the code does, including wrong. Expected values are written by hand as literals: `expect(total).toBe(17.5)`, never `expect(total).toBe(price * qty * (1 + rate))`. Same ban on asserting against the implementation's own output, a shared helper both sides call, or a snapshot you just regenerated to make it pass. If you can't state the expected value without running the code, you don't yet understand the behavior — go work that out first.
+
+**Unvalidated red — doesn't count.** A test you wrote but never executed is not RED, it's unknown. Run it and read the failure. It must fail *because the behavior is missing* — not on an import error, typo, wrong fixture path, or bad mock setup. A green-on-first-run test is a bug in the test: it's asserting something already true, so fix the test before writing any implementation.
 
 ---
 
