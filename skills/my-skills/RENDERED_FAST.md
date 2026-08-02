@@ -4,15 +4,15 @@
 | design-audit | 5-lens UI violation audit | match-all | Conform siblings to one golden |
 | build | Full feature build pipeline | plan | Pre-build decision interview |
 | health | Diff, health + trend review | xcheck | Codex second opinion on plans |
-| fixloop | Find and fix, no commentary. | last-30 | Trending last 30 days |
-| watch | Ask a video questions | video-to-kb | YouTube video to KB note |
-| ingest-docs | Docs to context files | diagnose | Root-cause bug analysis |
-| debate | 7-persona decision debate | improve | Deep audit, generates plans |
-| prompt-scan | Scan prompts, log learnings | better-prompt | Sharpen a rough prompt |
-| archify | Zero-dep diagram generator | remember-that | Save facts across sessions |
-| my-skills | This skill menu | whats-next | Shows unfinished work |
-| release | One command, any repo | eli5 | Plain-English table, no jargon |
-| my-md | Your md files and hooks | md-check | Audit + fix docs |
-| skill-audit | Audit skill library health | update | Check/apply setup updates |
-| lockstep | Hard block on edits | checkup | Full skill-library health pass |
-| literal | Obey exactly, no push-back | — | — |
+| fixloop | Find and fix, no commentary. | dep-audit | npm dependency risk audit |
+| last-30 | Trending last 30 days | watch | Ask a video questions |
+| video-to-kb | YouTube video to KB note | ingest-docs | Docs to context files |
+| diagnose | Root-cause bug analysis | debate | 7-persona decision debate |
+| improve | Deep audit, generates plans | prompt-scan | Scan prompts, log learnings |
+| better-prompt | Sharpen a rough prompt | archify | Zero-dep diagram generator |
+| remember-that | Save facts across sessions | my-skills | This skill menu |
+| whats-next | Shows unfinished work | release | One command, any repo |
+| eli5 | Plain-English table, no jargon | my-md | Your md files and hooks |
+| md-check | Audit + fix docs | skill-audit | Audit skill library health |
+| update | Check/apply setup updates | lockstep | Hard block on edits |
+| checkup | Full skill-library health pass | literal | Obey exactly, no push-back |

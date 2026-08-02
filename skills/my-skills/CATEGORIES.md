@@ -12,6 +12,7 @@ plan
 health
 xcheck
 fixloop
+dep-audit
 
 ## Research
 last-30

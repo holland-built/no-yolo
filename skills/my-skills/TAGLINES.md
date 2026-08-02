@@ -45,3 +45,4 @@ literal|Turns off AI's push-back for a stretch — it just does exactly what you
 match-all|Point at one perfected UI instance; conform every sibling to its design language, adapted not cloned.
 fixloop|Autonomous find-fix-ship loop. Stops narrating, just fixes at recommended settings.
 resolving-merge-conflicts|Resolve a stuck merge or rebase by reading both sides' intent first.
+dep-audit|npm supply-chain pass: leaked keys, npm advisories, licences, dependency inventory, Next.js config checks — one severity-ranked table, and a printed list of what it did not check.

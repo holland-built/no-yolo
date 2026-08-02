@@ -45,3 +45,4 @@ literal|You're making rapid changes and want zero push-back for a while
 match-all|One instance looks right and its siblings don't — make them all match it without hand-editing each
 fixloop|You're tired of being told what's broken and want it fixed and shipped without a running commentary or a decision to make per finding
 resolving-merge-conflicts|A merge or rebase has stopped with conflict markers in your files
+dep-audit|Before shipping a Next.js or Node app, or when you want to know what your packages drag in

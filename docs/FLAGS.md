@@ -11,6 +11,7 @@ Every argument and flag each skill accepts, straight from the skill files themse
 | build | `[describe the feature to build]` |
 | checkup | `(no arguments — one full read-only pass)` |
 | debate | `<topic or decision> [--ui]` |
+| dep-audit | `[repo path — defaults to the current repo]` |
 | design | `[text \| URL \| screenshot \| domain context] [--apply-spec <file>]` |
 | design-audit | `[surface to audit]` |
 | diagnose | `[describe the bug or paste the error] [--debate]` |

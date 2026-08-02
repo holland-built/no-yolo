@@ -21,6 +21,7 @@
 | health | Diff + codebase health + /last-30 trends, with every fix walked past you one at a time. | Before merging any non-trivial change, when a codebase needs a cleanup pass, or when you want fixes informed by what's currently trending | Replaces three separate commands with one routed pass — trend radar, secret scan and antislop are automatic, and you approve each fix one at a time instead of one blind batch |
 | xcheck | Cross-model critique: Codex reviews your plan, Claude adjudicates, 2-round cap. | Automatically inside /plan, /debate, /build, /diagnose --debate, /design-audit — or /xcheck to bounce any plan off Codex manually | A different model family catches blind spots self-review can't — findings-only protocol stops rewrite ping-pong, convergence gate stops endless nitpicking |
 | fixloop | Autonomous find-fix-ship loop. Stops narrating, just fixes at recommended settings. | You're tired of being told what's broken and want it fixed and shipped without a running commentary or a decision to make per finding | One decision instead of dozens — you set the goal once and it hunts by severity, proves each defect against live data, ships each fix, and hands you a single table at the end instead of a running commentary |
+| dep-audit | npm supply-chain pass: leaked keys, npm advisories, licences, dependency inventory, Next.js config checks — one severity-ranked table, and a printed list of what it did not check. | Before shipping a Next.js or Node app, or when you want to know what your packages drag in | Five checks in one pass with nothing installed, and it prints its own blind spots every run so a clean table is never mistaken for full coverage |
 
 ## Research
 
@@ -98,6 +99,7 @@
 | build | `[describe the feature to build]` |
 | checkup | `(no arguments — one full read-only pass)` |
 | debate | `<topic or decision> [--ui]` |
+| dep-audit | `[repo path — defaults to the current repo]` |
 | design | `[text \| URL \| screenshot \| domain context] [--apply-spec <file>]` |
 | design-audit | `[surface to audit]` |
 | diagnose | `[describe the bug or paste the error] [--debate]` |
