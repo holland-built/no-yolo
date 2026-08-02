@@ -115,7 +115,7 @@
         "skills/my-skills/WHEN_TO_USE.md": "1c08322dc9fad7d79449aef2cf4f41ca1e9475eb159b64cf92b2f86aa8e886af",
         "skills/my-skills/WHY_TO_USE.md": "4d4ec8592393649a9a27700f4b5dedf12eb048fafafdfda4bf86505b4f26dd36"
       },
-      "structureSha": "aab100f36c425309563ffb1dda4a6f03a557c3ff37e74299a90641c8a7029176"
+      "structureSha": "f1b11e9c47bfae253fd014f7bb6fb594bc16ddf15473b32d7cd8974370b374b3"
     },
     "fixloop": {
       "descSha": "f44e9ee4fbc72e655e5059b31ff7847b4b5226321508d09068e9e6deb975773e",
@@ -292,15 +292,15 @@
       "structureSha": "1c5e29155fd96e3eb702be21a4ee9b249609312f76d6b7de4769455daac1dc00"
     },
     "route-map": {
-      "descSha": "5e99c1890a2eb88006d16a088aca2446febe7c64495ecb05fb026da7fd5f88c2",
+      "descSha": "acd885fd04680b54a0c96989b614600afd3b6ae0212845e6da64b34a5289a257",
       "rows": {
-        "skills/my-skills/STORIES.md": "e7cc49a98436b9796580df2f3c376c305ca4e5442f487f4150d00665cc6efb54",
-        "skills/my-skills/TAGLINES.md": "083bec1f3cfabb4bf0fe488a7634f191ff49eaf15a38dedf03031115bf7025cd",
+        "skills/my-skills/STORIES.md": "2aa78cf713a032d2ebe11c66a940152a2f924e71b1220c03a1acb10c04c79525",
+        "skills/my-skills/TAGLINES.md": "a05d6ce41a38edf407cf97ba7a3232cdd0e4f04a38fe697259e5b4b631182700",
         "skills/my-skills/TAGLINES_SHORT.md": "4dffbaef6de8c96bcacb2189fd39caa4ce93b5d9700e43f82bb37df63af8c47c",
         "skills/my-skills/WHEN_TO_USE.md": "3f5f56f9e4435ae85d0bf509d3166839657e726f89f44fc580ee1b67b6776b04",
-        "skills/my-skills/WHY_TO_USE.md": "a66b19e792a415b846c18aa0ae77e1e622340fd7b2e0cc6838efaf1bb592f125"
+        "skills/my-skills/WHY_TO_USE.md": "20170acbc1426cfabb9bf2efb374d9ed7703f650e24078aed76dbab46b73784b"
       },
-      "structureSha": "589e4e0c4635f300f3c54e9973e7ed714ffe5019affce52effdf28b23f38fff8"
+      "structureSha": "678d369d3ce3a711d49eed5c50d1eb773c585fe2665aaee1d0eac7d216627636"
     },
     "skill-audit": {
       "descSha": "519af3556a64af64b12df33bfc8cb2caac5fcd3873e240a1ed4f9cfaf2bfb26d",
