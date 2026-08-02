@@ -139,38 +139,64 @@ fi
 # 8. tracked-content scan — CI backstop for the local pre-commit hook
 #    (pre-commit only guards staged diffs on machines that ran setup.sh; a
 #    --no-verify commit or a pre-setup commit would otherwise publish a leak).
-#    The INFRA rules below are the one remaining mirrored pair: they mirror
-#    INFRA_PATTERNS in hooks/pre-commit, so if one changes, mirror the other.
-#    The CREDENTIAL rules are NOT mirrored anywhere any more — they live in
-#    hooks/secret-patterns.txt and are reachable only by executing
-#    hooks/secret-scan.sh, which pre-commit, this file and /health all call. No
-#    caller holds a copy, so there is no second copy left to drift.
+#    NEITHER rule set is mirrored anywhere any more. The credential rules live in
+#    hooks/secret-patterns.txt; the private-network / internal-infra rules live in
+#    hooks/infra-patterns.txt. Both are reachable only by executing
+#    hooks/secret-scan.sh (--infra selects the second), which pre-commit, this file
+#    and /health all call. No caller holds a copy of either, so there is no second
+#    copy left to drift.
 #    Excludes are ONLY files that legitimately document the patterns.
-# NO \b IN THIS PATTERN. git grep on macOS does not honour \b — it silently
-# matches nothing, so the hostname rules were DEAD on the very machine that does
-# the committing: a leaked <host>.home or <host>.internal sailed through the
-# scan and only a Linux run would ever have caught it. Meanwhile GNU grep on
-# Linux honoured \b and matched a plain pathlib home() call, reporting private
-# data in a file that had none. Failing open on one platform and crying wolf on the other, from
-# one metacharacter. Explicit character classes behave the same everywhere.
-INFRA_SCAN='192\.168\.[0-9]{1,3}\.[0-9]{1,3}|(^|[^0-9])10\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}|172\.(1[6-9]|2[0-9]|3[01])\.[0-9]{1,3}\.[0-9]{1,3}|100\.(6[4-9]|[7-9][0-9]|1[0-1][0-9]|12[0-7])\.[0-9]{1,3}\.[0-9]{1,3}|(^|[^A-Za-z0-9._-])[a-z0-9-]+\.(internal|corp|lan|home)($|[^A-Za-z0-9-])|(^|[^A-Za-z0-9._-])[a-z0-9-]+\.[a-z0-9-]+\.local($|[^A-Za-z0-9-])'
-# hooks/secret-patterns.txt is excluded for the same reason as the probe fixtures, but it
-# is NOT pinned by sha256: a file of regexes matches its own rules (the ghp_ rule looks
-# exactly like a ghp_ token), and unlike the fixtures it is MEANT to change every time a
-# vendor prefix is added. Its compensating control is inside the scanner instead —
-# secret-scan.sh lints the file on every single run: bare literals with no metacharacter
-# (i.e. a pasted value, not a rule), \b, a rule count under 25, a pattern that will not
-# compile, and any credential-shaped string in a COMMENT all make it refuse to scan.
-SCAN_EXCLUDE=(':!hooks/pre-commit' ':!verify.sh' ':!skills/health/SKILL.md' ':!.no-yolo-deny.example.txt' ':!hooks/tests/infra-scan-probe.txt' ':!hooks/tests/infra-scan-clean.txt' ':!hooks/secret-patterns.txt')
+#
+# WHY THE INFRA RULES CARRY NO \b — kept here because this is the scan that went
+# blind. The rules themselves have moved to hooks/infra-patterns.txt, whose header
+# now carries this warning, and hooks/secret-scan.sh's lint enforces it
+# mechanically (it refuses to load any rule file containing \b). git grep on macOS
+# does not honour \b — it silently matches nothing, so the hostname rules were DEAD
+# on the very machine that does the committing: a leaked <host>.home or
+# <host>.internal sailed through the scan and only a Linux run would ever have
+# caught it. Meanwhile GNU grep on Linux honoured \b and matched a plain pathlib
+# home() call, reporting private data in a file that had none. Failing open on one
+# platform and crying wolf on the other, from one metacharacter. Explicit character
+# classes behave the same everywhere — which is why the character-class form is the
+# one that survived into the rule file, and the \b form was deleted.
+#
+# Both rule files are excluded for the same reason as the probe fixtures, but NEITHER
+# is pinned by sha256: a file of regexes matches its own rules (the ghp_ rule looks
+# exactly like a ghp_ token; the RFC1918 rules look like RFC1918 addresses), and unlike
+# the fixtures they are MEANT to change — every new vendor prefix lands in one of them.
+# Their compensating control is inside the scanner instead — secret-scan.sh lints
+# whichever file it loads on every single run: bare literals with no metacharacter
+# (i.e. a pasted value, not a rule), \b, a rule count under that file's own floor, a
+# pattern that will not compile, and any string in a COMMENT that matches the file's own
+# rules all make it refuse to scan.
+SCAN_EXCLUDE=(':!hooks/pre-commit' ':!verify.sh' ':!skills/health/SKILL.md' ':!.no-yolo-deny.example.txt' ':!hooks/tests/infra-scan-probe.txt' ':!hooks/tests/infra-scan-clean.txt' ':!hooks/secret-patterns.txt' ':!hooks/infra-patterns.txt')
 
-# The pattern file is the single source for every credential rule in this repo. If it is
-# missing, gutted, or holds an uncompilable rule, the scanner refuses to scan at all — this
-# row is where that surfaces, and it fails CLOSED.
+# The two pattern files are the single source for every leak rule in this repo. If either
+# is missing, gutted, or holds an uncompilable rule, the scanner refuses to scan at all —
+# these rows are where that surfaces, and they fail CLOSED.
 if "$ROOT/hooks/secret-scan.sh" --check >/tmp/verify-secretscan.log 2>&1; then
   record PASS "secret pattern file healthy"
 else
   record FAIL "secret pattern file healthy — pattern file missing/gutted/invalid (see /tmp/verify-secretscan.log)"
 fi
+
+if "$ROOT/hooks/secret-scan.sh" --infra --check >/tmp/verify-infrascan.log 2>&1; then
+  record PASS "infra pattern file healthy"
+else
+  record FAIL "infra pattern file healthy — pattern file missing/gutted/invalid (see /tmp/verify-infrascan.log)"
+fi
+
+# One probe line through ONE rule set of the scanner. $1 is the rule-set flag ("--infra"
+# or empty), $2 the line. Returns the scanner's own status verbatim: 0 caught, 1 not
+# caught, anything else the scan COULD NOT RUN — which every caller below turns into its
+# own FAIL, never a silent missed line.
+scan_line() {
+  if [ -n "$1" ]; then
+    printf '%s\n' "$2" | "$ROOT/hooks/secret-scan.sh" "$1" >/dev/null 2>&1
+  else
+    printf '%s\n' "$2" | "$ROOT/hooks/secret-scan.sh" >/dev/null 2>&1
+  fi
+}
 
 # 8a. POSITIVE CONTROL — prove the pattern can still MATCH, before trusting a
 #     clean result from it.
@@ -228,11 +254,13 @@ else
     record FAIL "infra scan probe fixtures changed — pinned hash mismatch (see above)"
   else
     # BOTH rule sets get exercised per line, because neither one alone can catch the
-    # fixture: the infra values (RFC1918/CGNAT addresses, .internal/.lan hostnames)
-    # exist only in $INFRA_SCAN, and the credential values only in the pattern file
-    # behind secret-scan.sh. Testing one would silently declare the other's planted
-    # lines "missed", so a line counts as caught if EITHER engine sees it.
-    scan_probe=$(mktemp -d)
+    # fixture: the infra values (RFC1918/CGNAT addresses, internal-TLD hostnames) live
+    # in hooks/infra-patterns.txt and the credential values in hooks/secret-patterns.txt.
+    # Testing one would silently declare the other's planted lines "missed", so a line
+    # counts as caught if EITHER rule set sees it. Both halves are now the SAME
+    # executable, so this control tests the thing the hook actually runs — the git grep
+    # sandbox it used to need (a tempdir, one file per probe line, `git -C` so the
+    # pathspec sat inside the tree git grep searched) is gone with the second engine.
     scan_missed=""
     scan_broke=0
     scan_i=0
@@ -241,20 +269,19 @@ else
       # Strip the `@@` escape marker — see the fixture header for why it exists.
       probe_line=${probe_line//@@/}
       scan_i=$((scan_i + 1))
-      printf '%s\n' "$probe_line" > "$scan_probe/leak-$scan_i.txt"
-      # git -C so the pathspec is INSIDE the directory git grep runs in: a path
-      # outside the repo is rejected, and `--no-index -- -` does not read stdin at
-      # all (it always exits 1, reporting every planted value as missed). A control
-      # that cannot tell "the scan is blind" from "my probe is broken" is not a
-      # control — the first version of this was exactly that.
+      # 0 = matched, 1 = no match, ANYTHING ELSE = the scan could not run. A broken
+      # scanner exits non-zero on every line, which reads identically to "the rules
+      # are blind" — so it gets its own flag and its own FAIL, never counted as a miss.
       scan_hit=0
-      if git -C "$scan_probe" grep --no-index -qIE "$INFRA_SCAN" -- "leak-$scan_i.txt" 2>/dev/null; then
-        scan_hit=1
-      else
-        # 0 = matched, 1 = no match, ANYTHING ELSE = the scan could not run. A broken
-        # scanner exits non-zero on every line, which reads identically to "the rules
-        # are blind" — so it gets its own flag and its own FAIL, never counted as a miss.
-        printf '%s\n' "$probe_line" | "$ROOT/hooks/secret-scan.sh" >/dev/null 2>&1
+      scan_line --infra "$probe_line"
+      scan_rc=$?
+      case "$scan_rc" in
+        0) scan_hit=1 ;;
+        1) ;;
+        *) scan_broke=1 ;;
+      esac
+      if [ "$scan_hit" -eq 0 ]; then
+        scan_line '' "$probe_line"
         scan_rc=$?
         case "$scan_rc" in
           0) scan_hit=1 ;;
@@ -274,14 +301,18 @@ else
       case "$probe_line" in ''|'#'*) continue ;; esac
       probe_line=${probe_line//@@/}
       scan_j=$((scan_j + 1))
-      printf '%s\n' "$probe_line" > "$scan_probe/clean-$scan_j.txt"
-      # A clean line is a false positive if EITHER engine fires on it — the negative
-      # control has to cover both rule sets too, or half the crying-wolf goes unseen.
+      # A clean line is a false positive if EITHER rule set fires on it — the negative
+      # control has to cover both, or half the crying-wolf goes unseen.
       scan_hit=0
-      if git -C "$scan_probe" grep --no-index -qIE "$INFRA_SCAN" -- "clean-$scan_j.txt" 2>/dev/null; then
-        scan_hit=1
-      else
-        printf '%s\n' "$probe_line" | "$ROOT/hooks/secret-scan.sh" >/dev/null 2>&1
+      scan_line --infra "$probe_line"
+      scan_rc=$?
+      case "$scan_rc" in
+        0) scan_hit=1 ;;
+        1) ;;
+        *) scan_broke=1 ;;
+      esac
+      if [ "$scan_hit" -eq 0 ]; then
+        scan_line '' "$probe_line"
         scan_rc=$?
         case "$scan_rc" in
           0) scan_hit=1 ;;
@@ -294,7 +325,6 @@ else
     FALSE POSITIVE: $probe_line"
       fi
     done < "$PROBE_CLEAN"
-    rm -rf "$scan_probe"
 
     if [ "$scan_broke" -eq 1 ]; then
       record FAIL "infra scan positive control — hooks/secret-scan.sh could not run (exit >1); the control is unfalsifiable, not clean"
@@ -312,29 +342,29 @@ else
   fi
 fi
 
-# git grep exits 0 when it FINDS matches — inverted vs the other checks on purpose, and
-# that inversion is exactly how this row used to FAIL OPEN. It was
-# `if git grep ...; then FAIL; else PASS; fi`, which routes exit 1 (searched everything,
-# found nothing) and exit >=2 (git grep ERRORED — bad pathspec, unreadable tree, a regex
-# it would not compile) into the same PASS branch. The scan breaking looked identical to
-# the repo being clean. Both halves now capture their status explicitly and PASS is only
-# reachable from a real, completed, empty result.
-git grep -nIE "$INFRA_SCAN" -- . "${SCAN_EXCLUDE[@]}" >/tmp/verify-scan.log 2>&1
-infra_rc=$?
-
-# Credential half: ONE invocation of the same executable pre-commit runs, over the same
-# file set. The list is built with a NUL-safe read loop and not xargs — xargs exits 123
-# when the child exited 1..125, so "no credentials found" (grep 1) and "the scanner blew
-# up" (grep 2) both arrive as 123, which is the fail-open bug above in a different suit.
+# Both halves are now ONE executable over ONE file list — the same executable, and the
+# same two rule files, pre-commit runs. The list is built with a NUL-safe read loop and
+# not xargs — xargs exits 123 when the child exited 1..125, so "nothing found" (grep 1)
+# and "the scanner blew up" (grep 2) both arrive as 123, which is a fail-open in disguise.
+#
+# The status of each half is captured explicitly, because this row used to FAIL OPEN on
+# exactly that inversion: it was `if git grep ...; then FAIL; else PASS; fi`, which routes
+# exit 1 (searched everything, found nothing) and exit >=2 (the scan ERRORED — bad
+# pathspec, unreadable tree, a regex that would not compile) into the same PASS branch.
+# The scan breaking looked identical to the repo being clean. PASS is now reachable only
+# from a real, completed, empty result on BOTH halves.
 cred_files=()
 while IFS= read -r -d '' f; do cred_files+=("$f"); done < <(git ls-files -z -- . "${SCAN_EXCLUDE[@]}")
+infra_rc=1
 cred_rc=1
 if [ "${#cred_files[@]}" -eq 0 ]; then
   # bash 3.2 (stock macOS) errors on "${arr[@]}" for an empty array under set -u, so this
   # is guarded — but an empty list is also an anomaly in its own right. A scan of zero
-  # files finds zero credentials and that is not a clean bill of health.
+  # files finds zero leaks and that is not a clean bill of health.
   cred_rc=99
 else
+  "$ROOT/hooks/secret-scan.sh" --infra --files "${cred_files[@]}" >/tmp/verify-scan.log 2>&1
+  infra_rc=$?
   "$ROOT/hooks/secret-scan.sh" --files "${cred_files[@]}" >>/tmp/verify-scan.log 2>&1
   cred_rc=$?
 fi
@@ -342,7 +372,7 @@ fi
 if [ "$cred_rc" -eq 99 ]; then
   record FAIL "tracked-content scan — git ls-files returned NO files to scan; the result is empty, not clean"
 elif [ "$infra_rc" -ge 2 ] || [ "$cred_rc" -ge 2 ]; then
-  record FAIL "tracked-content scan COULD NOT RUN (git grep exit $infra_rc, secret-scan.sh exit $cred_rc) — see /tmp/verify-scan.log"
+  record FAIL "tracked-content scan COULD NOT RUN (infra scan exit $infra_rc, credential scan exit $cred_rc) — see /tmp/verify-scan.log"
 elif [ "$infra_rc" -eq 0 ]; then
   record FAIL "tracked-content scan — private/infra value in a tracked file (see /tmp/verify-scan.log)"
 elif [ "$cred_rc" -eq 0 ]; then
@@ -351,64 +381,60 @@ else
   record PASS "tracked-content scan"
 fi
 
-# 8b. The pre-commit hook's own pattern gets the same control.
-#     verify.sh's comment says "Patterns mirror INFRA_PATTERNS in hooks/pre-commit
-#     — if one changes, mirror the other", and they HAVE diverged: this file's \b
-#     was replaced with explicit character classes and pre-commit's was not. That
-#     divergence is fine ONLY as long as pre-commit's pattern still works in the
-#     engine pre-commit actually uses (grep -EI — BSD grep on macOS, GNU on Linux,
-#     which do honour \b where git grep does not). Asserted, not assumed, on
-#     whichever platform this runs.
+# 8b. The COMMIT-BLOCKING path gets the same control, run the way pre-commit runs it.
+#     This check used to lift the hook's patterns out with sed, because pre-commit
+#     carried them as text: first `PATTERNS`, then — after the credential rules moved
+#     — just `INFRA_PATTERNS`. Both parses are now gone, because pre-commit holds NO
+#     pattern copy at all: step 2 executes hooks/secret-scan.sh and step 3 executes it
+#     again with --infra. There is nothing left to parse out of the hook, and nothing
+#     left that can go stale between the two files.
+#
+#     8a and 8b are no longer two engines against one fixture; they are two CALLERS of
+#     one engine. 8b keeps its own row because it asserts the exact pair of invocations
+#     that block a commit, and a caller can still be wired up wrong.
 if [ -f hooks/pre-commit ] && [ -f "$PROBE_LEAK" ]; then
-  # pre-commit applies BOTH rule sets to the same added lines, so both get controlled —
-  # but only the infra half is still text inside pre-commit to parse out. The credential
-  # half used to be read the same way (`sed -n 's/^PATTERNS="\(.*\)"$/\1/p'`), and that
-  # parse died the instant PATTERNS moved. It has moved: pre-commit step 2 no longer holds
-  # a copy of the credential rules, it EXECUTES hooks/secret-scan.sh — the same executable
-  # this check calls below. There is nothing to parse and nothing left to go stale.
-  # The infra sed parse stays, because those rules are still inline in pre-commit and a
-  # rename must still fail loudly rather than quietly control nothing.
-  pc_infra=$(sed -n 's/^INFRA_PATTERNS="\(.*\)"$/\1/p' hooks/pre-commit)
-  if [ -z "$pc_infra" ]; then
-    record FAIL "pre-commit INFRA_PATTERNS not found — the commit-blocking infra scan may have been renamed"
-  else
-    pc_missed=""
-    pc_broke=0
-    pc_n=0
-    while IFS= read -r probe_line; do
-      case "$probe_line" in ''|'#'*) continue ;; esac
-      probe_line=${probe_line//@@/}
-      pc_n=$((pc_n + 1))
-      pc_hit=0
-      # The exact invocation pre-commit's step 3 uses on its added lines.
-      if printf '%s\n' "$probe_line" | grep -qEI "$pc_infra" 2>/dev/null; then
-        pc_hit=1
-      else
-        # The exact invocation pre-commit's step 2 uses. Same three-way handling as 8a:
-        # a scanner that cannot run is a FAIL of its own, never a silent missed line.
-        printf '%s\n' "$probe_line" | "$ROOT/hooks/secret-scan.sh" >/dev/null 2>&1
-        pc_rc=$?
-        case "$pc_rc" in
-          0) pc_hit=1 ;;
-          1) ;;
-          *) pc_broke=1 ;;
-        esac
-      fi
-      if [ "$pc_hit" -eq 0 ] && [ "$pc_broke" -eq 0 ]; then
-        pc_missed="${pc_missed}
-    MISSED: $probe_line"
-      fi
-    done < "$PROBE_LEAK"
-    if [ "$pc_broke" -eq 1 ]; then
-      record FAIL "pre-commit scan positive control — hooks/secret-scan.sh could not run (exit >1); the commit-blocking scan is unfalsifiable"
-    elif [ "$pc_n" -eq 0 ]; then
-      record FAIL "pre-commit scan positive control — no usable probe lines"
-    elif [ -n "$pc_missed" ]; then
-      printf 'pre-commit scan is BLIND (on %s, secret-scan.sh + grep -EI):%s\n' "$(uname -s)" "$pc_missed"
-      record FAIL "pre-commit scan positive control — the commit-blocking pattern misses values it must catch"
-    else
-      record PASS "pre-commit scan positive control ($pc_n planted caught via secret-scan.sh + grep -EI)"
+  pc_missed=""
+  pc_broke=0
+  pc_n=0
+  while IFS= read -r probe_line; do
+    case "$probe_line" in ''|'#'*) continue ;; esac
+    probe_line=${probe_line//@@/}
+    pc_n=$((pc_n + 1))
+    pc_hit=0
+    # The exact invocation pre-commit's step 3 uses on its added lines. Same three-way
+    # handling as 8a: a scanner that cannot run is a FAIL of its own, never a silent
+    # missed line.
+    scan_line --infra "$probe_line"
+    pc_rc=$?
+    case "$pc_rc" in
+      0) pc_hit=1 ;;
+      1) ;;
+      *) pc_broke=1 ;;
+    esac
+    if [ "$pc_hit" -eq 0 ]; then
+      # The exact invocation pre-commit's step 2 uses.
+      scan_line '' "$probe_line"
+      pc_rc=$?
+      case "$pc_rc" in
+        0) pc_hit=1 ;;
+        1) ;;
+        *) pc_broke=1 ;;
+      esac
     fi
+    if [ "$pc_hit" -eq 0 ] && [ "$pc_broke" -eq 0 ]; then
+      pc_missed="${pc_missed}
+    MISSED: $probe_line"
+    fi
+  done < "$PROBE_LEAK"
+  if [ "$pc_broke" -eq 1 ]; then
+    record FAIL "pre-commit scan positive control — hooks/secret-scan.sh could not run (exit >1); the commit-blocking scan is unfalsifiable"
+  elif [ "$pc_n" -eq 0 ]; then
+    record FAIL "pre-commit scan positive control — no usable probe lines"
+  elif [ -n "$pc_missed" ]; then
+    printf 'pre-commit scan is BLIND (on %s, secret-scan.sh both rule sets):%s\n' "$(uname -s)" "$pc_missed"
+    record FAIL "pre-commit scan positive control — the commit-blocking pattern misses values it must catch"
+  else
+    record PASS "pre-commit scan positive control ($pc_n planted caught via secret-scan.sh, credential + infra)"
   fi
 fi
 

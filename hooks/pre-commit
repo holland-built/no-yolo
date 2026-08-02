@@ -4,10 +4,12 @@
 # personal data, private-network/infra values, and terms from .no-yolo-deny.txt.
 
 # Credential / personal patterns — the five that CANNOT be shared.
-# Every vendor credential FORMAT rule now lives in hooks/secret-patterns.txt and is
-# applied by one executable, hooks/secret-scan.sh, which all three consumers call
-# (this hook step 2, verify.sh, skills/health/SKILL.md). One rule file, one reader,
-# one regex engine — so there is nothing left to keep in sync by hand.
+# Every vendor credential FORMAT rule now lives in hooks/secret-patterns.txt, and every
+# private-network / internal-infra rule in hooks/infra-patterns.txt. Both are applied by
+# one executable, hooks/secret-scan.sh (step 2 and step 3 below), which every consumer
+# calls — this hook, verify.sh, skills/health/SKILL.md. Two rule files, one reader, one
+# regex engine, and NO pattern text left in this hook at all: there is nothing to keep in
+# sync by hand and nothing for verify.sh check 8b to parse back out.
 # These five stay local because a shared scan cannot carry them:
 #   - the unguarded WORD forms (password=, secret:, api_key=) match the pinned CLEAN
 #     fixture's own line `example config: api_key = <your-key-here>`
@@ -16,15 +18,6 @@
 # Both are safe here only because this runs against the staged diff, where the
 # excluded-file list below supplies the context those rules lack.
 LOCAL_PATTERNS="/Users/[a-zA-Z0-9_-]+|session: [a-f0-9-]{36}|password\s*[:=]|secret\s*[:=]|api[_-]?key\s*[:=]"
-
-# Private-network / internal-infra patterns — these leaked once (a self-hosted
-# LAN IP, a tailnet host) and the credential patterns above didn't catch them.
-# Docs must use placeholders (<your-host>, <port>), never real private values.
-#   RFC1918 LAN IPs (192.168/16, 10/8, 172.16-31)
-#   Tailscale CGNAT range (100.64/10)
-#   Internal-only hostname TLDs (.internal .corp .lan .home + *.local hostnames)
-# Mirrored by verify.sh check 8 (tracked-content scan) — if this changes, mirror it there.
-INFRA_PATTERNS="192\.168\.[0-9]{1,3}\.[0-9]{1,3}|(^|[^0-9])10\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}|172\.(1[6-9]|2[0-9]|3[01])\.[0-9]{1,3}\.[0-9]{1,3}|100\.(6[4-9]|[7-9][0-9]|1[0-1][0-9]|12[0-7])\.[0-9]{1,3}\.[0-9]{1,3}|[a-z0-9-]+\.(internal|corp|lan|home)\b|[a-z0-9-]+\.[a-z0-9-]+\.local\b"
 
 BLOCKED_FILES=(
   "memory/facts/"
@@ -76,21 +69,25 @@ ADDED=$(grep -E "^\+" "$T/all.diff" | grep -vE "^\+\+\+" | grep -v "\[a-zA-Z" | 
 
 # The same, with the probe fixtures' hunks removed, for the infra scan only. Done
 # per-file via --cached -- :!path so a probe line cannot be attributed to another
-# file's diff.
+# file's diff. hooks/infra-patterns.txt is excluded for the same reason
+# hooks/secret-patterns.txt is excluded below: a file of infra regexes matches its own
+# rules. Its compensating control is secret-scan.sh, which lints that file's comments
+# against its own patterns and refuses to run on a hit.
 git diff --cached -- . ":!hooks/tests/infra-scan-probe.txt" ":!hooks/tests/infra-scan-clean.txt" \
+  ":!hooks/infra-patterns.txt" \
   > "$T/noprobe.diff" || { echo "❌ BLOCKED: git diff failed — the scan did not run (fail closed)"; exit 1; }
 ADDED_NOPROBE=$(grep -E "^\+" "$T/noprobe.diff" | grep -vE "^\+\+\+" | grep -v "\[a-zA-Z" | grep -v "\[a-z0-9")
 
 # The same again, minus every file that legitimately CONTAINS credential formats:
-# the two pinned probe fixtures, plus the five files that document the patterns
-# themselves (this hook, verify.sh, the health skill, the deny-list example, and
-# hooks/secret-patterns.txt — a file of credential regexes matches its own rules on
-# every line; its compensating control is secret-scan.sh, which lints that file's
-# comments against its own patterns and refuses to run on a hit).
+# the two pinned probe fixtures, plus the six files that document the patterns
+# themselves (this hook, verify.sh, the health skill, the deny-list example, and the
+# two rule files — a file of regexes matches its own rules on every line; their
+# compensating control is secret-scan.sh, which lints whichever file it loads against
+# that file's own patterns and refuses to run on a hit).
 # This list mirrors verify.sh's SCAN_EXCLUDE — change one, change the other.
 # The fixtures are sha256-pinned by verify.sh, so excluding them hides nothing.
 git diff --cached -- . ":!hooks/pre-commit" ":!verify.sh" ":!skills/health/SKILL.md" \
-  ":!.no-yolo-deny.example.txt" ":!hooks/secret-patterns.txt" \
+  ":!.no-yolo-deny.example.txt" ":!hooks/secret-patterns.txt" ":!hooks/infra-patterns.txt" \
   ":!hooks/tests/infra-scan-probe.txt" ":!hooks/tests/infra-scan-clean.txt" \
   > "$T/cred.diff" || { echo "❌ BLOCKED: git diff failed — the scan did not run (fail closed)"; exit 1; }
 ADDED_CRED=$(grep -E "^\+" "$T/cred.diff" | grep -vE "^\+\+\+" | grep -v "\[a-zA-Z" | grep -v "\[a-z0-9")
@@ -99,13 +96,13 @@ ADDED_CRED=$(grep -E "^\+" "$T/cred.diff" | grep -vE "^\+\+\+" | grep -v "\[a-zA
 # This hook runs as a COPY in .git/hooks, outside the repo tree, so the scanner has to
 # be resolved from the repo root at runtime — the same idiom the deny-list uses below.
 SCAN="$(git rev-parse --show-toplevel)/hooks/secret-scan.sh"
-[ -x "$SCAN" ] || { echo "❌ BLOCKED: hooks/secret-scan.sh missing or not executable — the credential scan cannot run (fail closed)"; exit 1; }
+[ -x "$SCAN" ] || { echo "❌ BLOCKED: hooks/secret-scan.sh missing or not executable — the leak scans cannot run (fail closed)"; exit 1; }
 
-# The scan that runs is the WORKING-TREE scanner and pattern file, not the versions
-# being committed. An unstaged edit to either would approve a different staged
+# The scan that runs is the WORKING-TREE scanner and rule files, not the versions
+# being committed. An unstaged edit to any of them would approve a different staged
 # implementation than the one that was tested.
-if ! git diff --quiet -- hooks/secret-scan.sh hooks/secret-patterns.txt 2>/dev/null; then
-  echo "❌ BLOCKED: hooks/secret-scan.sh or hooks/secret-patterns.txt has unstaged changes."
+if ! git diff --quiet -- hooks/secret-scan.sh hooks/secret-patterns.txt hooks/infra-patterns.txt 2>/dev/null; then
+  echo "❌ BLOCKED: hooks/secret-scan.sh or one of its rule files has unstaged changes."
   echo "   The scan that just ran is not the scan being committed. Stage them, then commit."
   exit 1
 fi
@@ -129,8 +126,19 @@ if [ -n "$MATCHES" ] || [ -n "$LOCAL_MATCHES" ]; then
   exit 1
 fi
 
-# 3 — Block private-network / internal-infra values (use placeholders in docs)
-INFRA=$(echo "$ADDED_NOPROBE" | grep -EI "$INFRA_PATTERNS")
+# 3 — Block private-network / internal-infra values (use placeholders in docs).
+# These leaked once (a self-hosted LAN IP, a tailnet host) and the credential rules
+# above did not catch them. Same executable as step 2, second rule file:
+# hooks/infra-patterns.txt. Same status allowlist too — only 0 (match) and 1 (no match)
+# are outcomes, and anything else means the scan could not run.
+INFRA=$(printf '%s\n' "$ADDED_NOPROBE" | "$SCAN" --infra)
+rc=$?
+if [ "$rc" -ne 0 ] && [ "$rc" -ne 1 ]; then
+  echo "❌ BLOCKED: secret-scan.sh --infra exited $rc — the private-network scan could not run (fail closed)."
+  echo "   Check hooks/infra-patterns.txt is present and every rule compiles."
+  exit 1
+fi
+
 if [ -n "$INFRA" ]; then
   echo "❌ BLOCKED: private network / internal infra value in diff:"
   echo "$INFRA"

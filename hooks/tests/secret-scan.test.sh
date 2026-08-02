@@ -19,6 +19,7 @@ set -uo pipefail
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 REAL_SCAN="$REPO/hooks/secret-scan.sh"
 REAL_RULES="$REPO/hooks/secret-patterns.txt"
+REAL_INFRA="$REPO/hooks/infra-patterns.txt"
 
 fail=0
 results=()
@@ -38,6 +39,7 @@ cp "$REAL_SCAN" "$SANDBOX/secret-scan.sh"
 chmod 755 "$SANDBOX/secret-scan.sh"
 SCAN="$SANDBOX/secret-scan.sh"
 RULES="$SANDBOX/secret-patterns.txt"
+INFRA_RULES="$SANDBOX/infra-patterns.txt"
 
 # N synthetic, valid, distinct rules — each carries regex metacharacters, so they clear
 # the "bare literal" lint, and none of them is credential-shaped.
@@ -46,6 +48,18 @@ mkrules() {
   : > "$RULES"
   while [ "$i" -le "$want" ]; do
     printf 'zzrule%d[0-9]{4}\n' "$i" >> "$RULES"
+    i=$((i + 1))
+  done
+}
+
+# The same for the --infra rule set, which the scanner reads from a SECOND file next to
+# itself. Synthetic again: no real LAN address or internal hostname appears in this
+# source, so committing this test cannot trip the very infra scan it tests.
+mkinfrarules() {
+  local want="$1" i=1
+  : > "$INFRA_RULES"
+  while [ "$i" -le "$want" ]; do
+    printf 'zzinfra%d[0-9]{4}\n' "$i" >> "$INFRA_RULES"
     i=$((i + 1))
   done
 }
@@ -196,6 +210,63 @@ assert_eq "16. git host token prefix rule present" "0" "$rc"
 
 n_real="$(grep -cvE '^[[:space:]]*#|^[[:space:]]*$' "$REAL_RULES")"
 assert_eq "16. real rule count" "26" "$n_real"
+
+# --- Cases 17-23: --infra, the SECOND rule set. Same executable, same lints, same exit
+#     codes — a different file and a different floor (6, its real rule count; the infra
+#     set is closed, so losing one rule is a regression, not routine growth).
+#     Every lint below is proved to apply to whichever file is loaded, not just the
+#     credential one: that is the whole reason the two sets could be consolidated.
+
+# --- Case 17: 5 infra rules, one under the floor -> refuse to scan gutted ---
+mkinfrarules 5
+"$SCAN" --infra --check >/dev/null 2>&1
+rc=$?
+assert_eq "17. --infra 5 rules (below minimum 6)" "2" "$rc"
+
+# --- Case 18: a rule with no metacharacter is a pasted value, not a rule ---
+mkinfrarules 6
+printf 'zzliteralnometachar\n' >> "$INFRA_RULES"
+"$SCAN" --infra --check >/dev/null 2>&1
+rc=$?
+assert_eq "18. --infra bare literal rule (LINT 1)" "2" "$rc"
+
+# --- Case 19: the word-boundary escape is banned here too. It is the exact
+#     metacharacter that made this scan blind under git grep on macOS, which is why
+#     the character-class form is the one that survived into the rule file. ---
+mkinfrarules 6
+printf '%s\n' 'zzwordboundary[0-9]{3}\b' >> "$INFRA_RULES"
+"$SCAN" --infra --check >/dev/null 2>&1
+rc=$?
+assert_eq "19. --infra word-boundary escape (LINT 2)" "2" "$rc"
+
+# --- Case 20: stdin match -> 0, and the matching line is passed through ---
+mkinfrarules 6
+out="$(printf 'zzinfra19999\n' | "$SCAN" --infra)"
+rc=$?
+assert_eq "20. --infra stdin match exit code" "0" "$rc"
+assert_eq "20. --infra stdin match passes the line through" "zzinfra19999" "$out"
+
+# --- Case 21: stdin, no match -> EXACTLY 1, the healthy result pre-commit keys off ---
+printf 'nothing of interest here\n' | "$SCAN" --infra >/dev/null
+rc=$?
+assert_eq "21. --infra stdin no-match is exit 1, not failure" "1" "$rc"
+
+# --- Case 22: the two rule sets do not bleed into each other. A credential-shaped
+#     value must NOT be caught by --infra, or the per-file floors mean nothing. ---
+mkrules 25
+mkinfrarules 6
+printf 'zzrule19999\n' | "$SCAN" --infra >/dev/null
+rc=$?
+assert_eq "22. --infra ignores the credential rule set" "1" "$rc"
+
+# --- Case 23: REAL INSTALL. The only case that proves the shipped infra rules load,
+#     lint and compile — and that the shipped set has not quietly shrunk. ---
+"$REAL_SCAN" --infra --check >/dev/null 2>&1
+rc=$?
+assert_eq "23. real hooks/infra-patterns.txt --infra --check" "0" "$rc"
+
+n_infra="$(grep -cvE '^[[:space:]]*#|^[[:space:]]*$' "$REAL_INFRA")"
+assert_eq "23. real infra rule count" "6" "$n_infra"
 
 printf '\n%-6s  %s\n' RESULT CASE
 for r in "${results[@]}"; do printf '%-6s  %s\n' "${r%%|*}" "${r#*|}"; done
