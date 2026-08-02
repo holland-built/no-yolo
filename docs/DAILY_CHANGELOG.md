@@ -19,6 +19,16 @@ Shape:
 
 ---
 
+## 2026-08-02 — new `/dep-audit`: five checks on your packages, one table (`8f9ab01`)
+
+- Leaked keys, known-vulnerable packages, licences, what you actually depend on, and a short
+  Next.js safety checklist — merged into one list sorted worst-first. Installs nothing.
+- It prints what it did *not* check every single time, so a clean result is never mistaken
+  for full coverage. It is not a replacement for a real container scanner and says so.
+- Two things only running it could find: it was reporting 20 fake problems here (all test
+  files), and in a folder with no `package.json` npm quietly scans the folder *above* and
+  blames this one. Both fixed.
+
 ## 2026-08-02 — the key-detection rules stopped existing in three places (`0ee2710`)
 
 - The same ~29 rules were typed into three files, kept in step only by a comment in each
