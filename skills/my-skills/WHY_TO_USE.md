@@ -46,3 +46,4 @@ match-all|Broadcasts the good one's language, not a copy — too-basic siblings 
 fixloop|One decision instead of dozens — you set the goal once and it hunts by severity, proves each defect against live data, ships each fix, and hands you a single table at the end instead of a running commentary
 resolving-merge-conflicts|Reads the commits, PRs and issues behind BOTH sides before choosing, keeps both intents where they fit, and never bails out with --abort — so you don't lose someone's work to whichever branch happened to win
 dep-audit|Five checks in one pass with nothing installed, and it prints its own blind spots every run so a clean table is never mistaken for full coverage
+route-map|Every route is re-enumerated from the tree and re-proved live on every run, so a new page nobody wrote a row for, a row for a page you deleted, an expectation nobody reviewed, and a check that reached no verdict all come back RED instead of quietly green

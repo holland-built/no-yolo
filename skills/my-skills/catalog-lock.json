@@ -291,6 +291,17 @@
       },
       "structureSha": "1c5e29155fd96e3eb702be21a4ee9b249609312f76d6b7de4769455daac1dc00"
     },
+    "route-map": {
+      "descSha": "5e99c1890a2eb88006d16a088aca2446febe7c64495ecb05fb026da7fd5f88c2",
+      "rows": {
+        "skills/my-skills/STORIES.md": "e7cc49a98436b9796580df2f3c376c305ca4e5442f487f4150d00665cc6efb54",
+        "skills/my-skills/TAGLINES.md": "083bec1f3cfabb4bf0fe488a7634f191ff49eaf15a38dedf03031115bf7025cd",
+        "skills/my-skills/TAGLINES_SHORT.md": "4dffbaef6de8c96bcacb2189fd39caa4ce93b5d9700e43f82bb37df63af8c47c",
+        "skills/my-skills/WHEN_TO_USE.md": "3f5f56f9e4435ae85d0bf509d3166839657e726f89f44fc580ee1b67b6776b04",
+        "skills/my-skills/WHY_TO_USE.md": "a66b19e792a415b846c18aa0ae77e1e622340fd7b2e0cc6838efaf1bb592f125"
+      },
+      "structureSha": "589e4e0c4635f300f3c54e9973e7ed714ffe5019affce52effdf28b23f38fff8"
+    },
     "skill-audit": {
       "descSha": "519af3556a64af64b12df33bfc8cb2caac5fcd3873e240a1ed4f9cfaf2bfb26d",
       "rows": {
