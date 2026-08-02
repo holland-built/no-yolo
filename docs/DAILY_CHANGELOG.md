@@ -19,6 +19,17 @@ Shape:
 
 ---
 
+## 2026-08-02 — the commit blocker could not tell a working rule from a blind one (`c8dfcc1`)
+
+- It only caught keys sitting next to a giveaway word — "secret" or "api key" with an equals
+  sign after it. A real token pasted into a doc sailed straight through, because a real token
+  carries no such word. It now knows ~20 vendor key formats by sight.
+- Nothing tested that: the credential rules had no proof they still worked, and the copy of the
+  hook your commits actually run was three days stale, so a planted GitHub token committed
+  cleanly while every check stayed green. Both gaps now have a test that goes red.
+- Release dates are now read from git instead of typed from memory — four entries had the wrong
+  day, which put the file out of order.
+
 ## 2026-08-01 — answers come back as tables, and hooks stop being invisible (`97d73c9`)
 
 - The plain-language hook told Claude "one thing to say → one sentence, cut past ~10 lines",
@@ -28,7 +39,7 @@ Shape:
 - `/my-md` now lists every hook and what it does, flagging any with no write-up — which found
   four running silently. `/release` hard-blocks on an undocumented hook so it cannot drift again.
 
-## 2026-08-02 — /antislop had been finding nothing for a day (`95e9512`)
+## 2026-08-01 — /antislop had been finding nothing for a day (`95e9512`)
 
 - It read bullets under `## Writing Tells (25)`. Yesterday's trim renamed that heading to `(15)`,
   so `/health`, `/checkup`, `/md-check`, `/better-prompt` and `/release` all silently found zero
@@ -37,14 +48,14 @@ Shape:
   source checks, no model call, no key, silent skip when offline. Its 376MB plugin clone deleted;
   the plugin was never installed, so `/design`'s polish redirect had always pointed at nothing.
 
-## 2026-08-02 — removed nine plugin collections and the scaffolding one left behind (`eb14eb6`)
+## 2026-08-01 — removed nine plugin collections and the scaffolding one left behind (`eb14eb6`)
 
 - Ten marketplaces, 262MB, three ever invoked. Gone: ruflo (317 skill files, 92MB), two Obsidian
   packs, karpathy-guidelines, design-and-refine and an empty duplicate superpowers. **525MB → 416MB.**
 - Caveman left 9 tracked files that shipped to every stranger who cloned this. Removing them found
   `hooks/statusline.sh` calling a deleted script every prompt, and a test executing another.
 
-## 2026-08-02 — every audit looked in one directory (`f490f92`)
+## 2026-08-01 — every audit looked in one directory (`f490f92`)
 
 - `/skill-audit` globbed `~/.claude/skills/*/` and never touched `plugins/marketplaces/`: 49 skill
   files audited, **401 ignored**, while every report said the library was healthy. New Dimension 0
@@ -54,7 +65,7 @@ Shape:
   that would have caught drift was broken until yesterday. Now warns per release, still never
   auto-pulls: `taste-skill` drives what `/design` builds.
 
-## 2026-08-02 — the changelog stopped copying out the commit history (`580be39`)
+## 2026-08-01 — the changelog stopped copying out the commit history (`580be39`)
 
 - 43 July entries moved to `docs/changelog/2026-07.md`; this file restarts short.
 - `/build` and `SHIP.md` now cap entries at 2–4 lines with a commit hash, so the long form cannot
