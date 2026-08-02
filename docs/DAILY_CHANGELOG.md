@@ -19,6 +19,17 @@ Shape:
 
 ---
 
+## 2026-08-02 — `/route-map` v2: pages prove themselves, no more typed word lists (`5c1ebc9`)
+
+- Your product team debated yesterday's checker and won: hand-typed "expected words" barely
+  guarded anything and went red on every normal edit. Now each page's full structure is
+  captured automatically and compared to a copy you approved once — approving is just
+  committing a file.
+- Proved on the hard case: broke a shared component while the page's own file stayed
+  untouched — the page still went red, naming exactly what changed.
+- Also new: your real phone/email are pinned, so a wrong digit in a call/text/email link goes
+  red; dangerous link types are flagged; and the checker finally has its own tests (78).
+
 ## 2026-08-02 — one list for the network rules too, and `/eli5` says where you are (`9727bba`)
 
 - The rules that stop your home network details leaking were still typed into two files, in two
