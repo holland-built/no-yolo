@@ -19,6 +19,15 @@ Shape:
 
 ---
 
+## 2026-08-02 — new `/route-map`: proves a page shows the right thing (`2b0af0e`)
+
+- Everything you had only proved a page loaded. This opens every page in a real browser and
+  checks the words on it against an expectation you reviewed once, kept in the app itself.
+- It finds the pages by reading the app, every run — so a new page nobody wrote an expectation
+  for, a leftover expectation for a page you deleted, and anything it cannot prove all go red.
+- Proved it works by breaking one page on purpose: exactly that page went red, the other four
+  stayed green, and the file was put back untouched.
+
 ## 2026-08-02 — new `/dep-audit`: five checks on your packages, one table (`8f9ab01`)
 
 - Leaked keys, known-vulnerable packages, licences, what you actually depend on, and a short
