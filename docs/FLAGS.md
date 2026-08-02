@@ -29,6 +29,7 @@ Every argument and flag each skill accepts, straight from the skill files themse
 | quick-mockup | `[what to lay out] [--variants N, default 5]` |
 | release | `[env: dev\|staging\|prod] [optional commit message] [--auto]` |
 | remember-that | `<fact> \| d <id> \| m <id> \| audit \| compile \| (empty=extract from context)` |
+| route-map | `[app repo path — defaults to the current repo]` |
 | skill-audit | `[--audit] [--build-verifier <skill-name>] [--gotchas] [--research]` |
 | tdd | `[describe the feature or function to implement]` |
 | update | `[preview\|full\|rules\|rollback\|restore <name>\|vendor <name>\|marketplace <name>]` |

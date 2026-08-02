@@ -38,3 +38,4 @@ pick-ui-library|Curated library picks
 fixloop|Find and fix, no commentary.
 resolving-merge-conflicts|Resolve merge conflicts
 dep-audit|npm dependency risk audit
+route-map|Proves every page's content

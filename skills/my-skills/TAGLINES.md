@@ -46,3 +46,4 @@ match-all|Point at one perfected UI instance; conform every sibling to its desig
 fixloop|Autonomous find-fix-ship loop. Stops narrating, just fixes at recommended settings.
 resolving-merge-conflicts|Resolve a stuck merge or rebase by reading both sides' intent first.
 dep-audit|npm supply-chain pass: leaked keys, npm advisories, licences, dependency inventory, Next.js config checks — one severity-ranked table, and a printed list of what it did not check.
+route-map|Opens every Next.js route in a real headless browser and proves the words on the page match a reviewed expectation kept in the app's own ROUTEMAP.md — content, not just a 200. Mismatches go to a Claude-plus-Codex ruling; anything it cannot prove is RED.
