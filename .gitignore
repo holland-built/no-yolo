@@ -73,6 +73,9 @@ advisor-plans/
 tasks/
 proposals/
 brainstorms/
+# /xcheck + /build phase 4.5 scratch — Codex round transcripts and spec handoffs.
+# Ephemeral by design; the accepted findings are folded into brainstorms/ instead.
+.xcheck/
 .pending-audit-*.md
 .audit-*-detail/
 .mockups/
