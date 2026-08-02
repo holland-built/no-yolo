@@ -19,6 +19,16 @@ Shape:
 
 ---
 
+## 2026-08-02 — the key-detection rules stopped existing in three places (`0ee2710`)
+
+- The same ~29 rules were typed into three files, kept in step only by a comment in each
+  saying "remember to update the others". They had already drifted apart once. Now there is
+  one list and one program that reads it, and all three callers call that program.
+- It refuses to run rather than run blind: no list, an empty list, a broken rule, or fewer
+  than 25 rules stops the commit and turns the checker red instead of reporting clean.
+- A second model reviewed the plan and found five real ways the old code could say "clean"
+  when it had actually scanned nothing. All five are fixed and each now has a test.
+
 ## 2026-08-02 — the commit blocker could not tell a working rule from a blind one (`c8dfcc1`)
 
 - It only caught keys sitting next to a giveaway word — "secret" or "api key" with an equals
