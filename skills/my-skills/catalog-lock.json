@@ -59,6 +59,17 @@
       },
       "structureSha": "adfc0ce45b3ebf69149241a6dc3ec3f75c31046cb8daccb5d6f46182dfb17b4b"
     },
+    "dep-audit": {
+      "descSha": "7fd727eff05c5666ed9b79d736ec8d34fcd6f224474bfdfa2ce3c53e74f65227",
+      "rows": {
+        "skills/my-skills/STORIES.md": "04d256c8cf19c501c54251705ecf3512477cb1522eb45f5006854198b69d5661",
+        "skills/my-skills/TAGLINES.md": "c10aa4206ddf3a17c146a8a0e1312bd1fb953e056562b08961f25a93809cfe4d",
+        "skills/my-skills/TAGLINES_SHORT.md": "2374b2ea9c655268167e4505e0633e0d811ea780830f2e2d897a8a707bb39c50",
+        "skills/my-skills/WHEN_TO_USE.md": "81718f8f32c7de8702691bd0ecffcc9f742b891d47d65a8f95747cdf348be981",
+        "skills/my-skills/WHY_TO_USE.md": "d0ae90c88f562e9cd4333529511ad14d79793e097ac1a6208d2b3e01984879e7"
+      },
+      "structureSha": "aa86d23baf1c7ce3bceb86847e85a73f7568d5bc009f2c43db42513994500c48"
+    },
     "design": {
       "descSha": "67b9175258d6793fb322d8ea9076a5225f55e913bdfe986cbbba15f33a75f0aa",
       "rows": {
