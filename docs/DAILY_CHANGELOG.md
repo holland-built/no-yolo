@@ -19,6 +19,15 @@ Shape:
 
 ---
 
+## 2026-08-02 — one list for the network rules too, and `/eli5` says where you are (`9727bba`)
+
+- The rules that stop your home network details leaking were still typed into two files, in two
+  slightly different dialects. Now one list, one program, like the key rules this morning.
+- Proved it: a real home-network address still stops a real commit, and deleting the rule list
+  turns the checker red instead of quietly passing.
+- `/eli5` now tells you where you are in multi-step work, gives times in real units, ends open
+  work with one thing you can do in two minutes, and caps lists you must act on at five.
+
 ## 2026-08-02 — new `/route-map`: proves a page shows the right thing (`2b0af0e`)
 
 - Everything you had only proved a page loaded. This opens every page in a real browser and
