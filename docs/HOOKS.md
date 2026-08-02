@@ -26,6 +26,7 @@ These live in `hooks/` but the harness never runs them. Skills and `setup.sh` ca
 
 - **check-coherence.py** — called by `/health` and `/checkup`; finds terms a SKILL.md uses but never defines. Exists because a de-duplication pass once cut lines from 24 files and left four skills logically broken while `verify.sh` reported 14/14 PASS throughout — e.g. `/antislop` filtered on a `Found` marker whose defining lines had been deleted.
 - **list-plugins.py** — called by `setup.sh` (Step 5) and `/update`; prints installed plugins as name/version/scope. Shared so the two callers cannot drift apart — edit it here, not in either caller.
+- **secret-scan.sh** — the single credential scanner. Called by the pre-commit hook (step 2), verify.sh (checks 8/8a/8b) and /health. Loads hooks/secret-patterns.txt, lints it, and greps stdin or files. Fails closed: a missing, empty, gutted or uncompilable pattern file blocks the commit and turns verify.sh red rather than reporting clean. Nothing else may read the pattern file — one engine only.
 
 ### What a clean slop-guard run does NOT prove
 

@@ -143,6 +143,14 @@ echo '## zz-selftest-heading-that-is-not-in-readme' >> docs/README_FORMAT.md
 assert_red "README format headings" "check 6 catches a README missing a required heading"
 cp "$TMP/README_FORMAT.md.bak" docs/README_FORMAT.md
 
+# 8. secret pattern file — the credential rules live in ONE file now, so deleting it
+#    must fail the scan CLOSED. A scanner that reports "clean" with no rules loaded
+#    is the exact decoration this self-test exists to catch.
+backup hooks/secret-patterns.txt
+rm hooks/secret-patterns.txt
+assert_red "secret pattern file" "removing hooks/secret-patterns.txt turns the credential scan red instead of passing clean"
+cp "$TMP/secret-patterns.txt.bak" hooks/secret-patterns.txt
+
 # final: repo must be green again once everything is restored
 restore_ok=1
 bash verify.sh >/dev/null 2>&1 || restore_ok=0
