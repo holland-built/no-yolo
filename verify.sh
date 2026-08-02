@@ -149,6 +149,16 @@ fi
 # data in a file that had none. Failing open on one platform and crying wolf on the other, from
 # one metacharacter. Explicit character classes behave the same everywhere.
 INFRA_SCAN='192\.168\.[0-9]{1,3}\.[0-9]{1,3}|(^|[^0-9])10\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}|172\.(1[6-9]|2[0-9]|3[01])\.[0-9]{1,3}\.[0-9]{1,3}|100\.(6[4-9]|[7-9][0-9]|1[0-1][0-9]|12[0-7])\.[0-9]{1,3}\.[0-9]{1,3}|(^|[^A-Za-z0-9._-])[a-z0-9-]+\.(internal|corp|lan|home)($|[^A-Za-z0-9-])|(^|[^A-Za-z0-9._-])[a-z0-9-]+\.[a-z0-9-]+\.local($|[^A-Za-z0-9-])'
+# Credential FORMATS — mirrors the second half of PATTERNS in hooks/pre-commit.
+# The original credential rules were `password|secret|api[_-]?key` followed by `:`
+# or `=`, which only fire when a giveaway WORD sits next to the value. Real tokens
+# carry no such word: a bare `ghp_…` or `sk-ant-…` pasted into a doc matched
+# nothing. These are vendor-assigned prefixes with fixed lengths, so they identify
+# themselves and effectively cannot false-positive on prose — the idea is borrowed
+# from Trivy's secret ruleset, without the tool: this repo has zero dependencies,
+# so Trivy's actual job (finding vulnerable packages) would scan nothing here.
+CRED_SCAN='gh[opsru]_[A-Za-z0-9]{36}|github_pat_[A-Za-z0-9_]{22,}|sk-ant-[A-Za-z0-9_-]{20,}|sk-proj-[A-Za-z0-9_-]{20,}|xox[abprs]-[A-Za-z0-9-]{10,}|AIza[0-9A-Za-z_-]{35}|sk_live_[0-9A-Za-z]{20,}|glpat-[A-Za-z0-9_-]{20}|npm_[A-Za-z0-9]{36}|-----BEGIN [A-Z ]*PRIVATE KEY-----|aws_secret_access_key[[:space:]]*[:=]|postgres://[^@[:space:]<>]+@|mysql://[^@[:space:]<>]+@|mongodb\+srv://[^@[:space:]<>]+@|redis://:[^@[:space:]<>]+@|[Bb]earer [A-Za-z0-9._-]{20,}|eyJ[A-Za-z0-9_-]{10,}\.eyJ[A-Za-z0-9_-]{10,}\.|SG\.[0-9A-Za-z_-]{22}\.[0-9A-Za-z_-]{43}|rk_live_[0-9A-Za-z]{24,}|sk-[a-zA-Z0-9]{20,}'
+LEAK_SCAN="$INFRA_SCAN|$CRED_SCAN"
 SCAN_EXCLUDE=(':!hooks/pre-commit' ':!verify.sh' ':!skills/health/SKILL.md' ':!.no-yolo-deny.example.txt' ':!hooks/tests/infra-scan-probe.txt' ':!hooks/tests/infra-scan-clean.txt')
 # 8a. POSITIVE CONTROL — prove the pattern can still MATCH, before trusting a
 #     clean result from it.
@@ -210,6 +220,8 @@ else
     scan_i=0
     while IFS= read -r probe_line; do
       case "$probe_line" in ''|'#'*) continue ;; esac
+      # Strip the `@@` escape marker — see the fixture header for why it exists.
+      probe_line=${probe_line//@@/}
       scan_i=$((scan_i + 1))
       printf '%s\n' "$probe_line" > "$scan_probe/leak-$scan_i.txt"
       # git -C so the pathspec is INSIDE the directory git grep runs in: a path
@@ -217,7 +229,7 @@ else
       # all (it always exits 1, reporting every planted value as missed). A control
       # that cannot tell "the scan is blind" from "my probe is broken" is not a
       # control — the first version of this was exactly that.
-      if ! git -C "$scan_probe" grep --no-index -qIE "$INFRA_SCAN" -- "leak-$scan_i.txt" 2>/dev/null; then
+      if ! git -C "$scan_probe" grep --no-index -qIE "$LEAK_SCAN" -- "leak-$scan_i.txt" 2>/dev/null; then
         scan_missed="${scan_missed}
     MISSED: $probe_line"
       fi
@@ -227,9 +239,10 @@ else
     scan_j=0
     while IFS= read -r probe_line; do
       case "$probe_line" in ''|'#'*) continue ;; esac
+      probe_line=${probe_line//@@/}
       scan_j=$((scan_j + 1))
       printf '%s\n' "$probe_line" > "$scan_probe/clean-$scan_j.txt"
-      if git -C "$scan_probe" grep --no-index -qIE "$INFRA_SCAN" -- "clean-$scan_j.txt" 2>/dev/null; then
+      if git -C "$scan_probe" grep --no-index -qIE "$LEAK_SCAN" -- "clean-$scan_j.txt" 2>/dev/null; then
         scan_false="${scan_false}
     FALSE POSITIVE: $probe_line"
       fi
@@ -251,7 +264,7 @@ else
 fi
 
 # git grep exits 0 when it FINDS matches — inverted vs the other checks on purpose
-if git grep -nIE "$INFRA_SCAN" -- . "${SCAN_EXCLUDE[@]}" >/tmp/verify-scan.log 2>&1; then
+if git grep -nIE "$LEAK_SCAN" -- . "${SCAN_EXCLUDE[@]}" >/tmp/verify-scan.log 2>&1; then
   record FAIL "tracked-content scan — private/infra value in a tracked file (see /tmp/verify-scan.log)"
 else
   record PASS "tracked-content scan"
@@ -266,14 +279,22 @@ fi
 #     which do honour \b where git grep does not). Asserted, not assumed, on
 #     whichever platform this runs.
 if [ -f hooks/pre-commit ] && [ -f "$PROBE_LEAK" ]; then
-  pc_pattern=$(sed -n 's/^INFRA_PATTERNS="\(.*\)"$/\1/p' hooks/pre-commit)
-  if [ -z "$pc_pattern" ]; then
-    record FAIL "pre-commit INFRA_PATTERNS not found — the commit-blocking scan may have been renamed"
+  # BOTH of pre-commit's patterns, because pre-commit applies both to the same
+  # added lines (step 2 runs PATTERNS, step 3 runs INFRA_PATTERNS). Reading only
+  # INFRA_PATTERNS meant every credential rule in PATTERNS — including the AKIA
+  # one that predates this — had no control at all: nothing could tell a working
+  # credential rule from a blind one, which is the exact failure 8a exists to stop.
+  pc_infra=$(sed -n 's/^INFRA_PATTERNS="\(.*\)"$/\1/p' hooks/pre-commit)
+  pc_cred=$(sed -n 's/^PATTERNS="\(.*\)"$/\1/p' hooks/pre-commit)
+  pc_pattern="$pc_infra|$pc_cred"
+  if [ -z "$pc_infra" ] || [ -z "$pc_cred" ]; then
+    record FAIL "pre-commit PATTERNS/INFRA_PATTERNS not found — the commit-blocking scan may have been renamed"
   else
     pc_missed=""
     pc_n=0
     while IFS= read -r probe_line; do
       case "$probe_line" in ''|'#'*) continue ;; esac
+      probe_line=${probe_line//@@/}
       pc_n=$((pc_n + 1))
       # The exact invocation pre-commit uses on its added lines.
       if ! printf '%s\n' "$probe_line" | grep -qEI "$pc_pattern" 2>/dev/null; then
@@ -290,6 +311,24 @@ if [ -f hooks/pre-commit ] && [ -f "$PROBE_LEAK" ]; then
       record PASS "pre-commit scan positive control ($pc_n planted caught by grep -EI)"
     fi
   fi
+fi
+
+# 8c. the INSTALLED hook is the TRACKED hook. setup.sh COPIES hooks/pre-commit into
+#     .git/hooks/pre-commit, so the two drift the moment the tracked one is edited
+#     and nothing re-runs setup.sh. On the machine that wrote this check the copy
+#     was frozen at Jul 30: every later edit to the tracked source — including the
+#     credential rules added the same hour — changed nothing at commit time, and a
+#     planted ghp_ token committed cleanly. Checks 8a/8b both passed throughout,
+#     because both test the tracked PATTERN and neither tests the installed FILE.
+#     Local-only: a CI checkout has no .git/hooks/pre-commit and never commits.
+if [ -f .git/hooks/pre-commit ]; then
+  if cmp -s .git/hooks/pre-commit hooks/pre-commit; then
+    record PASS "installed pre-commit matches tracked source"
+  else
+    record FAIL "installed .git/hooks/pre-commit is STALE — your commits are not running the tracked scan; fix: cp hooks/pre-commit .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit"
+  fi
+elif [ -d .git ]; then
+  record WARN "no .git/hooks/pre-commit installed — commits are unscanned locally; run setup.sh"
 fi
 
 # 9. skill coherence — every SKILL.md branches only on terms it also defines,

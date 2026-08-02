@@ -15,6 +15,17 @@
 # which is the same discipline the catalog lock already uses. Editing it to
 # smuggle a value past the scan fails the build instead.
 #
+# ESCAPE MARKER — two at-signs, `@`+`@` (spelled apart here so only real probe lines
+# carry it). A probe line may contain the marker anywhere; every reader DELETES all
+# occurrences of it before matching, so the expanded line is byte-identical to the
+# token our patterns must catch while the STORED line matches no credential regex,
+# ours or a vendor's. It exists because GitHub Push Protection rejected the push on
+# 2026-08-01 (GH013) over three synthetic tokens here; a per-secret unblock URL would
+# fix only this repo, and this is a public template other people clone and push, so
+# they would hit the identical wall. verify.sh check 8a proves the stripping still
+# works: a reader that forgets to strip stops matching that line, and 8a goes red
+# naming it.
+#
 # Lines starting with # are ignored by the reader.
 rfc1918-a 192.168.1.50
 rfc1918-b 10.1.1.77
@@ -25,3 +36,30 @@ host wiki.corp
 host nas.lan
 host printer.home
 mdns foo.bar.local
+# --- credential-format values (added 2026-08-01) ---
+# Vendor-assigned token prefixes. These carry NO nearby "password"/"secret"/"api_key"
+# word, which is why the original PATTERNS missed every one of them. All synthetic:
+# the bodies are keyboard filler, not revoked real keys.
+ghpat ghp_AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+ghfine github_pat_AAAAAAAAAAAAAAAAAAAAAAA_BBBBBBBBBB
+anthropic sk-ant-api03-AAAAAAAAAAAAAAAAAAAAAAAAAAAA
+openai sk-proj-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+slack xox@@b-1111111111-AAAAAAAAAAAAAAAAAAAA
+google AIzaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+stripe sk_@@live_AAAAAAAAAAAAAAAAAAAAAAAA
+gitlab glpat-AAAAAAAAAAAAAAAAAAAA
+npmtoken npm_AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+privkey -----BEGIN OPENSSH PRIVATE KEY-----
+awssecret aws_secret_access_key = AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+# --- credential rules synced from /health (added 2026-08-01) ---
+# skills/health/SKILL.md already scanned for these; the commit blocker did not, so
+# they were caught only when someone remembered to type /health. All synthetic.
+pg postgres://appuser:hunter2@db.example.com:5432/app
+my mysql://root:hunter2@127.0.0.1/app
+mongo mongodb+srv://user:hunter2@cluster0.example.net
+redis redis://:hunter2@cache.example.com:6379
+bearer Authorization: Bearer AAAAAAAAAAAAAAAAAAAAAAAA
+jwt eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.abc
+sendgrid SG.AAAAAAAAAAAAAAAAAAAAAA.BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+stripe rk_@@live_AAAAAAAAAAAAAAAAAAAAAAAA
+openai sk-AAAAAAAAAAAAAAAAAAAAAAAA

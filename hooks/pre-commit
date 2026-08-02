@@ -4,7 +4,16 @@
 # personal data, private-network/infra values, and terms from .no-yolo-deny.txt.
 
 # Credential / personal patterns
-PATTERNS="/Users/[a-zA-Z0-9_-]+|session: [a-f0-9-]{36}|password\s*[:=]|secret\s*[:=]|api[_-]?key\s*[:=]|AKIA[0-9A-Z]{16}"
+# The first six rules need a giveaway WORD next to the value (password=, secret:,
+# api_key=). A real token carries no such word, so a bare ghp_… or sk-ant-… pasted
+# into a doc matched nothing here for months — only AKIA… was a real token FORMAT.
+# The rules after AKIA are vendor-assigned prefixes with fixed lengths: they name
+# themselves, so they catch a pasted key with no context and effectively cannot
+# false-positive on prose. Borrowed from Trivy's secret ruleset, not the tool —
+# this repo has no dependencies, so Trivy's real job would scan nothing here.
+# Mirrored by verify.sh CRED_SCAN — if this changes, mirror it there. Both are
+# positive-controlled against hooks/tests/infra-scan-probe.txt (verify.sh 8a/8b).
+PATTERNS="/Users/[a-zA-Z0-9_-]+|session: [a-f0-9-]{36}|password\s*[:=]|secret\s*[:=]|api[_-]?key\s*[:=]|AKIA[0-9A-Z]{16}|gh[opsru]_[A-Za-z0-9]{36}|github_pat_[A-Za-z0-9_]{22,}|sk-ant-[A-Za-z0-9_-]{20,}|sk-proj-[A-Za-z0-9_-]{20,}|xox[abprs]-[A-Za-z0-9-]{10,}|AIza[0-9A-Za-z_-]{35}|sk_live_[0-9A-Za-z]{20,}|glpat-[A-Za-z0-9_-]{20}|npm_[A-Za-z0-9]{36}|-----BEGIN [A-Z ]*PRIVATE KEY-----|aws_secret_access_key[[:space:]]*[:=]|postgres://[^@[:space:]<>]+@|mysql://[^@[:space:]<>]+@|mongodb\+srv://[^@[:space:]<>]+@|redis://:[^@[:space:]<>]+@|[Bb]earer [A-Za-z0-9._-]{20,}|eyJ[A-Za-z0-9_-]{10,}\.eyJ[A-Za-z0-9_-]{10,}\.|SG\.[0-9A-Za-z_-]{22}\.[0-9A-Za-z_-]{43}|rk_live_[0-9A-Za-z]{24,}|sk-[a-zA-Z0-9]{20,}"
 
 # Private-network / internal-infra patterns — these leaked once (a self-hosted
 # LAN IP, a tailnet host) and the credential patterns above didn't catch them.
@@ -60,8 +69,17 @@ ADDED=$(git diff --cached | grep -E "^\+" | grep -vE "^\+\+\+" | grep -v "\[a-zA
 ADDED_NOPROBE=$(git diff --cached -- . ":!hooks/tests/infra-scan-probe.txt" ":!hooks/tests/infra-scan-clean.txt" \
   | grep -E "^\+" | grep -vE "^\+\+\+" | grep -v "\[a-zA-Z" | grep -v "\[a-z0-9")
 
+# The same again, minus every file that legitimately CONTAINS credential formats:
+# the two pinned probe fixtures, plus the four files that document the patterns
+# themselves (this hook, verify.sh, the health skill, the deny-list example).
+# This list mirrors verify.sh's SCAN_EXCLUDE — change one, change the other.
+# The fixtures are sha256-pinned by verify.sh, so excluding them hides nothing.
+ADDED_CRED=$(git diff --cached -- . ":!hooks/pre-commit" ":!verify.sh" ":!skills/health/SKILL.md" \
+  ":!.no-yolo-deny.example.txt" ":!hooks/tests/infra-scan-probe.txt" ":!hooks/tests/infra-scan-clean.txt" \
+  | grep -E "^\+" | grep -vE "^\+\+\+" | grep -v "\[a-zA-Z" | grep -v "\[a-z0-9")
+
 # 2 — Block personal / credential content
-MATCHES=$(echo "$ADDED" | grep -E "$PATTERNS")
+MATCHES=$(echo "$ADDED_CRED" | grep -E "$PATTERNS")
 if [ -n "$MATCHES" ]; then
   echo "❌ BLOCKED: personal data pattern found in diff:"
   echo "$MATCHES"
