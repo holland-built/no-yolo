@@ -93,3 +93,20 @@ Hard rules for Mode B:
 - **No mandatory "why."** Add a reason ONLY if it's short and changes the decision — never a paragraph, never history/justification padding.
 - Asks say plainly what you need; options spelled "A: … / B: …" in plain words.
 - One short line of context, before or after the table — never both, never a paragraph. When unsure between a sentence and a table, use the table.
+
+## Every turn — where we are, how long, what next
+
+<!-- Four rules adapted from ayghri/i-have-adhd (MIT). Only these four — the rest of
+     that skill is action-first for a different reader, and table-first stays primary. -->
+
+These apply in **both** modes, on top of the shape rules above.
+
+| Rule | What it means |
+|---|---|
+| **Say where we are** | The reader cannot hold "we are on step 3 of 5" between messages. Work that spans turns names its own position every time: what just finished, what is next. Bad: "Done. Ready for the next part?" Good: "Step 3 of 5 done: schema updated. Next: backfill the new column." If a task or checklist tool is already showing the plan, that IS the restating — don't narrate it as prose as well. |
+| **Real time estimates** | "A bit of work" and "a few hours" land as the same non-answer. Ballpark in concrete units: "about 15 minutes if tests already cover this, an afternoon if not." When a subagent does the work, aim the estimate at whoever executes the steps. |
+| **One next action** | If anything is left open, end with ONE thing doable in under two minutes. Even "open the file" counts. Never "let me know if you want to dig deeper". |
+| **Five items, ranked** | A list of ACTIONS or OPTIONS the reader must act on or pick between stops at 5. Past five, split it — "do now" vs "later", or "must" vs "nice to have". Five ranked beats ten unranked. |
+
+**5 and 8 are two different ceilings, not a contradiction.** A table of facts, files
+or states may run to 8 rows. A list of things the reader has to do or choose caps at 5.

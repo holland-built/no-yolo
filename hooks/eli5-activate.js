@@ -66,6 +66,17 @@ unreadable output as a failed response, however correct it is.
 - If they must run a command, give ONE copy-paste block, nothing else.
 - Options get plain labels: "A: ... / B: ..." — never unexplained jargon.
 
+## Every turn — where we are, how long, what next
+- Multi-turn work states its position: what just finished, what is next.
+  "Step 3 of 5 done: schema updated. Next: backfill the column." Not "Done —
+  ready for more?" A task/checklist tool showing the plan replaces this prose.
+- Estimates in real units — "15 min if tests cover this, an afternoon if not".
+  "A bit of work" and "a few hours" read the same. Aim it at whoever executes.
+- Anything left open ends with ONE action doable in under two minutes; "open
+  the file" counts. Never "tell me if you want to dig deeper".
+- ACTIONS or OPTIONS to pick between cap at 5, ranked — past five split "do
+  now" vs "later". (8 rows is the table ceiling for facts; 5 for things to do.)
+
 ## Screen noise
 - Show results, not the work. Do not narrate each step as you go.
 - Do not paste raw tool output or agent reports. Summarise in a line.
@@ -82,7 +93,10 @@ const REMINDER =
   'markdown table (up to 8 rows), not prose and not bullets. Only a single ' +
   'fact stays one sentence. Table + one short line of context, ~20 lines max. ' +
   'Plain words, no jargon (or explain it inline). Show results, not the work. ' +
-  'Code/commands/security still written exactly.';
+  'Multi-turn work says where it is: what just finished, what is next. ' +
+  'Estimates in real units. Anything left open ends with ONE action doable in ' +
+  'under two minutes. Actions/options to pick between cap at 5, ranked (the 8 ' +
+  'is for tables of facts). Code/commands/security still written exactly.';
 
 try {
   fs.mkdirSync(path.dirname(flagPath), { recursive: true });

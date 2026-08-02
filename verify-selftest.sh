@@ -151,6 +151,15 @@ rm hooks/secret-patterns.txt
 assert_red "secret pattern file" "removing hooks/secret-patterns.txt turns the credential scan red instead of passing clean"
 cp "$TMP/secret-patterns.txt.bak" hooks/secret-patterns.txt
 
+# 8. infra pattern file — the private-network rules were the LAST hand-copied pair
+#    (hooks/pre-commit's INFRA_PATTERNS and verify.sh's INFRA_SCAN). They now live in
+#    one file behind the same scanner, so deleting it must fail the scan CLOSED exactly
+#    the way deleting the credential file does.
+backup hooks/infra-patterns.txt
+rm hooks/infra-patterns.txt
+assert_red "infra pattern file" "removing hooks/infra-patterns.txt turns the infra scan red instead of passing clean"
+cp "$TMP/infra-patterns.txt.bak" hooks/infra-patterns.txt
+
 # final: repo must be green again once everything is restored
 restore_ok=1
 bash verify.sh >/dev/null 2>&1 || restore_ok=0

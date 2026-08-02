@@ -1,12 +1,22 @@
 #!/usr/bin/env bash
-# hooks/secret-scan.sh — THE credential scanner. Single pattern source, single engine.
+# hooks/secret-scan.sh — THE leak scanner. Two rule files, one reader, one engine.
 # Callers (nobody holds a copy of the rules):
 #   hooks/pre-commit step 2  -> "$(git rev-parse --show-toplevel)/hooks/secret-scan.sh"
-#   verify.sh checks 8/8a/8b -> "$ROOT/hooks/secret-scan.sh"   (the CHECKOUT's copy; CI has no $HOME/.claude)
+#   hooks/pre-commit step 3  -> the same path, with --infra
+#   verify.sh checks 8/8a/8b -> "$ROOT/hooks/secret-scan.sh" [--infra]   (the CHECKOUT's copy; CI has no $HOME/.claude)
 #   skills/health/SKILL.md   -> "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/secret-scan.sh"  (/health runs in OTHER repos)
-# The pattern file lives NEXT TO THIS SCRIPT and is resolved relative to it, so each
-# caller automatically gets the copy it means.
+# Rule sets:
+#   (default) secret-patterns.txt — credential formats. What /health scans in OTHER repos.
+#   --infra   infra-patterns.txt  — private LAN / internal-infra values. NEVER loaded by
+#             /health: RFC1918 addresses are legitimate content in most other repos.
+# The two sets stay separate files because the two blocking consumers apply them to
+# DIFFERENT inputs (pre-commit's step 2 excludes the pattern-documenting files, step 3
+# does not), and because a single joined pattern would let one set's rules vanish inside
+# the other's minimum-count floor.
+# Both files live NEXT TO THIS SCRIPT and are resolved relative to it, so each caller
+# automatically gets the copy it means.
 # Modes: (none) = filter stdin; --files <f>... = scan files, file:line output; --check = load+lint+compile only.
+# --infra is a rule-set selector, not a mode — it composes with all three.
 # There is deliberately NO mode that prints the joined pattern: exporting it would let a
 # caller feed it to a different regex engine (git grep), recreating the \b portability bug
 # this executable exists to end.
@@ -19,7 +29,22 @@ set -uo pipefail
 die() { printf 'secret-scan: %s\n' "$1" >&2; exit 2; }
 
 SELF_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)" || die "cannot resolve own directory"
-PATTERN_FILE="$SELF_DIR/secret-patterns.txt"
+
+# Rule-set selection. The floor is PER FILE and set from that file's real rule count, so
+# neither set can be gutted inside the other's slack — refusing to scan with a gutted
+# pattern set is the whole point of the floor.
+#   credentials: 26 rules today, floor 25 (this file is MEANT to grow with each vendor).
+#   infra:        6 rules today, floor  6 (a closed set — three RFC1918 ranges, the CGNAT
+#                 range, two hostname-TLD rules; losing even one is a regression, and
+#                 adding one means raising this number deliberately).
+PATTERN_NAME="secret-patterns.txt"
+MIN_RULES=25
+if [ "${1:-}" = "--infra" ]; then
+  shift
+  PATTERN_NAME="infra-patterns.txt"
+  MIN_RULES=6
+fi
+PATTERN_FILE="$SELF_DIR/$PATTERN_NAME"
 
 [ -f "$PATTERN_FILE" ] || die "pattern file missing: $PATTERN_FILE"
 [ -r "$PATTERN_FILE" ] || die "pattern file unreadable: $PATTERN_FILE"
@@ -37,7 +62,7 @@ n_wb="$(printf '%s\n' "$rules" | grep -cF '\b')"
 [ "$n_wb" -eq 0 ] || die "\\b found in $n_wb rule line(s) — use explicit character classes"
 
 n="$(printf '%s\n' "$rules" | grep -c .)"
-[ "$n" -ge 25 ] || die "only $n rules loaded (minimum 25) — refusing to scan with a gutted pattern set"
+[ "$n" -ge "$MIN_RULES" ] || die "only $n rules loaded from $PATTERN_NAME (minimum $MIN_RULES) — refusing to scan with a gutted pattern set"
 
 PATTERN="$(printf '%s\n' "$rules" | paste -sd'|' -)"
 
@@ -48,11 +73,12 @@ grep -qE -e "$PATTERN" </dev/null 2>/dev/null
 rc=$?
 [ "$rc" -eq 1 ] || die "compile test returned $rc (want 1) — pattern did not compile, or grep is not behaving"
 
-# LINT 3 — the comments in this file are scanned by NOTHING ELSE (the file is excluded from
-# the enforcement scans because it self-matches), so a real key pasted into a comment would
-# hide here forever. Not circular: comments are not rules. Line numbers only.
+# LINT 3 — the comments in a rule file are scanned by NOTHING ELSE (both files are excluded
+# from the enforcement scans because they self-match), so a real key or a real LAN address
+# pasted into a comment would hide there forever. Not circular: comments are not rules.
+# Line numbers only.
 cbad="$(grep -nE '^[[:space:]]*#' "$PATTERN_FILE" | grep -E -e "$PATTERN" | cut -d: -f1 | tr '\n' ' ')"
-[ -z "$cbad" ] || die "credential-shaped value in a COMMENT at line(s): ${cbad}-- never paste a real key here"
+[ -z "$cbad" ] || die "value matching $PATTERN_NAME's own rules in a COMMENT at line(s): ${cbad}-- never paste a real value here"
 
 case "${1:-}" in
   --check) exit 0 ;;
@@ -60,5 +86,5 @@ case "${1:-}" in
            [ "$#" -ge 1 ] || die "--files needs at least one path"
            exec grep -HnEI -e "$PATTERN" -- "$@" ;;
   '')      exec grep -EI -e "$PATTERN" ;;
-  *)       die "unknown mode: $1 (stdin, --files, or --check)" ;;
+  *)       die "unknown mode: $1 (stdin, --files, or --check; --infra goes FIRST)" ;;
 esac
