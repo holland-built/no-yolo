@@ -56,6 +56,7 @@ Duplicate keys, unknown directives, and a row with fewer than 3 or more than 4 c
 | `!seed <command>` | state seeding, run once before any visit. |
 | `!empty never` | the default and only accepted value: no page is legitimately blank. Under 40 characters of visible text is RED unless that row's note says `empty-ok`. |
 | `!ack <keyword>` | acknowledges a `redirects`, `rewrites`, `basePath` or `trailingSlash` keyword in `next.config.*` and commits the map to carrying rows for it. Unacked presence kills the run. |
+| `!links off` / `!links external` | `off` skips link checking entirely and says so in the output. `external` widens it to external links as well. Absent (the default) checks internal links and in-page anchors but not external ones. Any other value is fatal. |
 
 **Drafting a map.** With no ROUTEMAP.md, enumerate, read each route's source, and write one row per route carrying `draft` in its
 note. `draft` marks an expectation nobody has reviewed yet and is always RED, so an unreviewed map can never report green.
@@ -93,6 +94,17 @@ Anything outside this table is fatal (RC `2`) and named in the failure. Nothing 
 | `EMPTY` | under 40 characters of visible text and no `empty-ok` |
 | `VISIT_FAILED` | the browser could not load the URL; the error text is the reason |
 | `no verdict` | adjudication reached no ruling — see the ruling table below |
+
+## Link checking — internal links and in-page anchors, on by default
+
+Every `a[href]` on each visited page is collected and de-duplicated run-wide by resolved URL, so a nav bar repeated on 5 pages is checked ONCE — `report.json`'s `links` section still records every page a link appeared on, plus its bucket, status and visible text. Each link lands in exactly one bucket below, never a silent skip, and a broken one prints `RED<TAB>link <link><TAB><reason> from <pages> — text "<text>"`, the same shape as a route row. A broken link is RED, so one dead link alone makes the whole run exit `1`.
+
+| Bucket | What it is, and what happens to it |
+|---|---|
+| internal | same origin as the base URL, a root-relative path, or an `href` too malformed to parse — counted as ours so it can never escape unchecked. CHECKED with `fetch`: HEAD, retried as GET on `405` or `501` because a dev server may refuse HEAD, redirects followed. A final status ≥ 400, or a request that throws, is broken |
+| in-page anchor | an `href` starting with `#`. CHECKED against the page it was found on — an element with that `id` or `name` must exist; `#` alone and `#top` always pass. A dead anchor is a real broken link and is the check most link checkers miss |
+| external | a different origin. NOT checked unless `!links external` is set, because a third party being down must never redden your own check. Each one is listed as `SKIPPED`, counted, and never implied to have passed |
+| non-http | any scheme that is not `http`/`https` — `mailto:`, `tel:`, `sms:`, `javascript:`, `data:`. Reported as `INFO`, never checked |
 
 ## What a green run actually guarantees
 

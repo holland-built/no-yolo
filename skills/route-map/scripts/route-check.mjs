@@ -15,6 +15,10 @@
  * Every operational error funnels through die() -> exit 2 (B2); nothing throws
  * uncaught, and the dev server is always torn down (B3).
  *
+ * While each page is open its links are also collected; internal links and in-page
+ * anchors are verified (B10). A broken link is RED and so makes the exit 1 — it
+ * never gets its own exit code. `!links off` skips it; `!links external` widens it.
+ *
  * report.json rows carry `expectedCellSafe`: the pipe-free form of the row's
  * expected cell. Adjudication MUST use that value when appending was:"<old
  * cell>" to a note, so a pipe can never break the row parser on the next run (B5).
@@ -171,7 +175,7 @@ async function main() {
   try { mkdirSync(OUT, { recursive: true }); }
   catch (err) { die(`cannot create out-dir '${OUT}': ${err.message}`); }
 
-  const DIRECTIVES = new Set(['base', 'auth', 'seed', 'login', 'ack', 'empty']);
+  const DIRECTIVES = new Set(['base', 'auth', 'seed', 'login', 'ack', 'empty', 'links']);
   const dirv = {}, acks = new Set(), rows = [], rowByPattern = new Map();
   for (const [i, raw] of mapText.split('\n').entries()) {
     const line = raw.trim(), ln = i + 1;
@@ -199,6 +203,9 @@ async function main() {
     rows.push(row); rowByPattern.set(row.pattern, row);
   }
   if (dirv.empty && dirv.empty !== 'never') die(`${mapPath}: '!empty ${dirv.empty}' is not supported — only '!empty never' (the default)`);
+  if (dirv.links && dirv.links !== 'off' && dirv.links !== 'external')
+    die(`${mapPath}: '!links ${dirv.links}' is not supported — use '!links off' or '!links external'`);
+  const LINKS = dirv.links === 'off' ? 'off' : dirv.links === 'external' ? 'external' : 'on';   // default: internal + anchors
 
   const cfgFile = ['next.config.js', 'next.config.mjs', 'next.config.ts'].map(f => join(appRoot, f)).find(existsSync);
   const cfgText = cfgFile ? readFileSync(cfgFile, 'utf8') : '';
@@ -295,6 +302,89 @@ async function main() {
     }
   }
 
+  /* ---------- link checking (B10 — a dead link is RED, never a silent skip) ---------- */
+  const baseOrigin = new URL(base).origin;
+  const linkRecs = new Map();                                                           // ONE record per resolved URL
+  const SCHEME = /^([A-Za-z][A-Za-z0-9+.-]*):/;
+  const fragOf = h => { try { return decodeURIComponent(h.slice(1)); } catch { return h.slice(1); } };
+  /** Gather every a[href] on the open page and bucket it. Anchors are judged HERE,
+   *  because `#foo` can only be resolved against the page it was found on. */
+  async function collectLinks(page, pageUrl, pattern) {
+    const got = await page.evaluate(() => ({
+      links: [...document.querySelectorAll('a[href]')].map(el => ({
+        href: el.getAttribute('href') || '',
+        text: [el.textContent || '', el.getAttribute('aria-label') || '', el.querySelector('img')?.alt || '']
+          .join(' ').replace(/\s+/g, ' ').trim().slice(0, 60),
+      })),
+      ids: [...document.querySelectorAll('[id], a[name]')].map(el => el.id || el.getAttribute('name') || ''),
+    }));
+    const idSet = new Set(got.ids.filter(Boolean));
+    for (const { href, text } of got.links) {
+      const h = href.trim();
+      let bucket = 'internal', key, display = h, badUrl = false, anchorTarget = null;
+      if (h.startsWith('#')) {
+        bucket = 'anchor'; anchorTarget = fragOf(h);
+        key = pageUrl.split('#')[0] + '#' + anchorTarget;                                // per-page by construction
+      } else {
+        const m = SCHEME.exec(h);
+        if (m && !/^https?$/i.test(m[1])) { bucket = 'non-http'; key = 'non-http:' + h; }
+        else {
+          let u = null;
+          try { u = new URL(h, pageUrl); } catch { badUrl = true; }
+          if (u) {
+            bucket = u.origin === baseOrigin ? 'internal' : 'external';
+            key = u.href;
+            display = bucket === 'internal' ? u.pathname + u.search + u.hash : u.href;
+          } else key = 'bad-url:' + h;              // unparseable → counted as OURS, so it goes RED, never skipped
+        }
+      }
+      let rec = linkRecs.get(key);
+      if (!rec) {
+        rec = { url: key, href: h, display, bucket, text, badUrl, anchorTarget, pages: [], verdict: null, reason: '', status: null, finalUrl: null };
+        linkRecs.set(key, rec);
+      }
+      if (!rec.pages.includes(pattern)) rec.pages.push(pattern);
+      if (!rec.text && text) rec.text = text;
+      if (bucket === 'anchor' && rec.verdict === null) {
+        const ok = anchorTarget === '' || anchorTarget.toLowerCase() === 'top' || idSet.has(anchorTarget);
+        rec.verdict = ok ? 'GREEN' : 'RED';
+        rec.reason = ok ? '' : `no element with id "${anchorTarget}"`;
+      }
+    }
+  }
+  /** HEAD first, GET on 405/501 (dev servers can be picky), redirects followed. */
+  async function verifyLinks() {
+    const cache = new Map();                                                            // one request per distinct path
+    const probe = async url => {
+      const bare = url.split('#')[0];
+      if (cache.has(bare)) return cache.get(bare);
+      let out;
+      try {
+        const opt = { redirect: 'follow', signal: AbortSignal.timeout(20000) };
+        let res = await fetch(bare, { method: 'HEAD', ...opt });
+        if (res.status === 405 || res.status === 501) res = await fetch(bare, { method: 'GET', ...opt });
+        out = { verdict: res.status >= 400 ? 'RED' : 'GREEN', status: res.status, finalUrl: res.url || bare, err: '' };
+      } catch (err) { out = { verdict: 'RED', status: null, finalUrl: bare, err: err.message }; }
+      cache.set(bare, out);
+      return out;
+    };
+    for (const rec of linkRecs.values()) {
+      if (rec.bucket === 'anchor') continue;                                            // already judged, on its page
+      if (rec.bucket === 'non-http') {
+        rec.verdict = 'INFO'; rec.reason = `${(SCHEME.exec(rec.href) || [, '?'])[1].toLowerCase()}: link — reported, never checked`; continue;
+      }
+      if (rec.bucket === 'external' && LINKS !== 'external') {
+        rec.verdict = 'SKIPPED'; rec.reason = "external — not checked, '!links external' is not set"; continue;
+      }
+      if (rec.badUrl) { rec.verdict = 'RED'; rec.reason = `unresolvable href "${rec.href}"`; continue; }
+      const r = await probe(rec.url);
+      rec.verdict = r.verdict; rec.status = r.status; rec.finalUrl = r.finalUrl;
+      rec.reason = r.verdict === 'GREEN' ? '' : (r.status ? String(r.status) : `request failed — ${r.err}`);
+    }
+  }
+  const linkLine = l => `${l.verdict}\tlink ${l.display}\t${l.reason}`
+    + (l.pages.length ? ` from ${l.pages.join(', ')}` : '') + (l.text ? ` — text "${l.text}"` : '');
+
   const records = new Map();                                                            // B8 — ONE record per pattern
   const put = (pattern, rec) => { records.set(pattern, { pattern, ...rec }); return records.get(pattern); };
   const checkRedirect = async (row, url) => {
@@ -360,6 +450,7 @@ async function main() {
           const text = await stableText(page);
           writeFileSync(join(OUT, art + '.txt'), text);
           await page.screenshot({ path: join(OUT, art + '.png'), fullPage: true });
+          if (LINKS !== 'off') await collectLinks(page, page.url(), r.pattern);
           if (text.length < 40 && !/\bempty-ok\b/.test(row.note)) { ok = false; reason = 'EMPTY — under 40 chars of visible text and no empty-ok'; }
           else if (row.expected.length === 0) { ok = false; reason = 'NO_EXPECTATION — row has no quoted substrings'; }
           else {
@@ -399,15 +490,33 @@ async function main() {
     await browser.close().catch(() => {});
   }
 
+  if (LINKS !== 'off') await verifyLinks();                                             // server is still up here
+  const links = [...linkRecs.values()];
+  const linkRed = links.filter(l => l.verdict === 'RED');
+  const nBucket = b => links.filter(l => l.bucket === b).length;
+  const linkSummary = {
+    mode: LINKS, total: links.length, internal: nBucket('internal'), anchor: nBucket('anchor'),
+    external: nBucket('external'), nonHttp: nBucket('non-http'),
+    externalSkipped: links.filter(l => l.verdict === 'SKIPPED').length, broken: linkRed.length,
+  };
+
   const report = [...records.values()];
   const red = report.filter(r => r.verdict === 'RED').length;
   writeFileSync(join(OUT, 'report.json'), JSON.stringify({
     base, router: ROOT, meta, intercepts,
     summary: { total: report.length, green: report.length - red, red },
-    report,
+    report, linkSummary, links,
   }, null, 2));
   for (const r of report) console.log(`${r.verdict}\t${r.pattern}\t${r.reason || 'ok'}`);
-  return red ? 1 : 0;                                                                   // B1
+  if (LINKS === 'off') console.log("INFO\tlinks\tSKIPPED — '!links off' is set in the map, so NO link was checked");
+  else {
+    for (const l of linkRed) console.log(linkLine(l));
+    for (const l of links) if (l.verdict === 'SKIPPED' || l.verdict === 'INFO') console.log(linkLine(l));
+    console.log(`INFO\tlinks\t${linkSummary.total} found — ${linkSummary.internal} internal, ${linkSummary.anchor} in-page anchor, `
+      + `${linkSummary.external} external (${linkSummary.externalSkipped} skipped by default), ${linkSummary.nonHttp} non-http; `
+      + `${linkSummary.broken} BROKEN`);
+  }
+  return red + linkRed.length ? 1 : 0;                                                  // B1 — a broken link is RED
 }
 
 let code = 2;
