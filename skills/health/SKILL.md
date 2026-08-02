@@ -40,11 +40,38 @@ PATH_ARG="${PATH_ARG:-.}"
 
 ### Secret Scan (auto)
 
+The credential rules are **not** written here any more. They live in `hooks/secret-patterns.txt` and are applied by `hooks/secret-scan.sh` — the same executable the pre-commit blocker and `verify.sh` call, so the three can no longer drift apart. `/health` runs inside OTHER repos, so the scanner is resolved from the installed config dir, never a repo-relative path.
+
 ```bash
-git diff $(git merge-base HEAD origin/main 2>/dev/null || git merge-base HEAD main 2>/dev/null || echo "HEAD~1") HEAD 2>/dev/null \
-  | grep -niE "(api_key\s*[=:]\s*['\"]?[a-zA-Z0-9_\-]{16,}|apikey\s*[=:]\s*['\"]?[a-zA-Z0-9_\-]{16,}|secret\s*[=:]\s*['\"]?[a-zA-Z0-9_\-]{16,}|password\s*[=:]\s*['\"]?[a-zA-Z0-9_\-]{8,}|passwd\s*[=:]\s*['\"]?[a-zA-Z0-9_\-]{8,}|AKIA[0-9A-Z]{16}|sk-[a-zA-Z0-9]{20,}|ghp_[a-zA-Z0-9]{36}|postgres://[^@\s]+@|mysql://[^@\s]+@|mongodb\+srv://[^@\s]+@|redis://:[^@\s]+@|bearer [a-zA-Z0-9\-_\.]{20,}|AIza[0-9A-Za-z_\-]{35}|github_pat_[0-9A-Za-z_]{22,}|gho_[A-Za-z0-9]{36}|ghu_[A-Za-z0-9]{36}|ghs_[A-Za-z0-9]{36}|ghr_[A-Za-z0-9]{36}|xox[baprs]-[0-9A-Za-z\-]{10,}|sk_live_[0-9A-Za-z]{24,}|rk_live_[0-9A-Za-z]{24,}|sk-ant-[0-9A-Za-z_\-]{20,}|sk-proj-[0-9A-Za-z_\-]{20,}|npm_[0-9A-Za-z]{36}|SG\.[0-9A-Za-z_\-]{22}\.[0-9A-Za-z_\-]{43}|glpat-[0-9A-Za-z_\-]{20}|-----BEGIN [A-Z ]*PRIVATE KEY-----|eyJ[A-Za-z0-9_\-]{10,}\.eyJ[A-Za-z0-9_\-]{10,}\.)"
+SCAN="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/secret-scan.sh"
+TMP="$(mktemp -d)"
+BASE=$(git merge-base HEAD origin/HEAD 2>/dev/null || git rev-parse HEAD~1 2>/dev/null) || BASE=""
+
+if [ ! -x "$SCAN" ]; then
+  echo "SCAN_DID_NOT_RUN|scanner not executable at $SCAN"
+elif [ -z "$BASE" ]; then
+  echo "SCAN_DID_NOT_RUN|no diff base — neither origin/HEAD nor HEAD~1 resolved"
+elif ! git diff "$BASE" HEAD > "$TMP/health.diff"; then
+  echo "SCAN_DID_NOT_RUN|git diff $BASE HEAD failed — nothing was written to scan"
+else
+  "$SCAN" --files "$TMP/health.diff"
+  echo "SCAN_STATUS|$?"
+fi
+rm -rf "$TMP"
 ```
-Any match → add a 🔑 Critical row per match to the unified findings list (Phase 3). Secret findings are **never** auto-applied, regardless of approval or `--auto` — surface only. No match → note `Secret scan: clean` in the roll-up.
+
+Every producer is checked, and the diff goes to a temp **file** rather than down a pipe — a pipe hands the scanner empty input when `git diff` fails, which exits 1 and reads as "clean" while nothing was scanned. The file form also gives `--files` real line numbers, which the stdin mode cannot.
+
+| Output | Meaning | Action |
+|---|---|---|
+| `SCAN_DID_NOT_RUN\|<reason>` | a producer failed; nothing was scanned | ONE 🔑 Critical row: `secret scanner did not run — <reason>`. **STOP here** — never report clean |
+| lines, then `SCAN_STATUS\|0` | matches found | one 🔑 Critical row per printed line — the finding text and its line number |
+| `SCAN_STATUS\|1` | no matches | note `Secret scan: clean` in the roll-up |
+| `SCAN_STATUS\|<anything else>` | the scanner itself failed | ONE 🔑 Critical row: `secret scanner failed — pattern file missing or invalid; the scan did NOT run` |
+
+Secret findings are **never** auto-applied, regardless of approval or `--auto` — surface only.
+
+One accepted behaviour change: the old inline block used `grep -niE` (case-insensitive); the shared scanner is case-sensitive, matching what the two blocking consumers already did. Vendor key prefixes are case-defined, so nothing real is lost.
 
 ### Antislop Check on .md Files (auto)
 

@@ -3,17 +3,19 @@
 # Installed into .git/hooks/pre-commit by setup.sh. Blocks commits containing
 # personal data, private-network/infra values, and terms from .no-yolo-deny.txt.
 
-# Credential / personal patterns
-# The first six rules need a giveaway WORD next to the value (password=, secret:,
-# api_key=). A real token carries no such word, so a bare ghp_… or sk-ant-… pasted
-# into a doc matched nothing here for months — only AKIA… was a real token FORMAT.
-# The rules after AKIA are vendor-assigned prefixes with fixed lengths: they name
-# themselves, so they catch a pasted key with no context and effectively cannot
-# false-positive on prose. Borrowed from Trivy's secret ruleset, not the tool —
-# this repo has no dependencies, so Trivy's real job would scan nothing here.
-# Mirrored by verify.sh CRED_SCAN — if this changes, mirror it there. Both are
-# positive-controlled against hooks/tests/infra-scan-probe.txt (verify.sh 8a/8b).
-PATTERNS="/Users/[a-zA-Z0-9_-]+|session: [a-f0-9-]{36}|password\s*[:=]|secret\s*[:=]|api[_-]?key\s*[:=]|AKIA[0-9A-Z]{16}|gh[opsru]_[A-Za-z0-9]{36}|github_pat_[A-Za-z0-9_]{22,}|sk-ant-[A-Za-z0-9_-]{20,}|sk-proj-[A-Za-z0-9_-]{20,}|xox[abprs]-[A-Za-z0-9-]{10,}|AIza[0-9A-Za-z_-]{35}|sk_live_[0-9A-Za-z]{20,}|glpat-[A-Za-z0-9_-]{20}|npm_[A-Za-z0-9]{36}|-----BEGIN [A-Z ]*PRIVATE KEY-----|aws_secret_access_key[[:space:]]*[:=]|postgres://[^@[:space:]<>]+@|mysql://[^@[:space:]<>]+@|mongodb\+srv://[^@[:space:]<>]+@|redis://:[^@[:space:]<>]+@|[Bb]earer [A-Za-z0-9._-]{20,}|eyJ[A-Za-z0-9_-]{10,}\.eyJ[A-Za-z0-9_-]{10,}\.|SG\.[0-9A-Za-z_-]{22}\.[0-9A-Za-z_-]{43}|rk_live_[0-9A-Za-z]{24,}|sk-[a-zA-Z0-9]{20,}"
+# Credential / personal patterns — the five that CANNOT be shared.
+# Every vendor credential FORMAT rule now lives in hooks/secret-patterns.txt and is
+# applied by one executable, hooks/secret-scan.sh, which all three consumers call
+# (this hook step 2, verify.sh, skills/health/SKILL.md). One rule file, one reader,
+# one regex engine — so there is nothing left to keep in sync by hand.
+# These five stay local because a shared scan cannot carry them:
+#   - the unguarded WORD forms (password=, secret:, api_key=) match the pinned CLEAN
+#     fixture's own line `example config: api_key = <your-key-here>`
+#     (hooks/tests/infra-scan-clean.txt), and that fixture must stay clean;
+#   - /Users/… would flag ordinary documentation paths in the public tracked-content scan.
+# Both are safe here only because this runs against the staged diff, where the
+# excluded-file list below supplies the context those rules lack.
+LOCAL_PATTERNS="/Users/[a-zA-Z0-9_-]+|session: [a-f0-9-]{36}|password\s*[:=]|secret\s*[:=]|api[_-]?key\s*[:=]"
 
 # Private-network / internal-infra patterns — these leaked once (a self-hosted
 # LAN IP, a tailnet host) and the credential patterns above didn't catch them.
@@ -39,6 +41,9 @@ BLOCKED_FILES=(
   "paste-cache/"
 )
 
+T="$(mktemp -d)"
+trap 'rm -rf "$T"' EXIT
+
 echo "🔍 no-yolo pre-commit: scanning for personal data..."
 
 # 1 — Block personal dirs (only additions/modifications — allow deletions)
@@ -60,29 +65,65 @@ done
 # They are the ONE place in this repo a real leak could hide, so verify.sh pins both
 # by sha256 and fails if either changes without the hash being updated. Keep this
 # list and verify.sh's SCAN_EXCLUDE in step.
+# Each diff is produced ONCE, into a file, and its exit status checked immediately.
+# Inline `$(git diff ... | grep ...)` hid a fail-open: a git diff that failed left the
+# variable empty, every scan below found nothing, and the hook printed "clean" while
+# blind. `set -o pipefail` is NOT the fix — grep exiting 1 is normal in these pipelines
+# and would abort step 1 on every ordinary commit.
 # added lines only, minus lines that are themselves regex patterns
-ADDED=$(git diff --cached | grep -E "^\+" | grep -vE "^\+\+\+" | grep -v "\[a-zA-Z" | grep -v "\[a-z0-9")
+git diff --cached > "$T/all.diff" || { echo "❌ BLOCKED: git diff failed — the scan did not run (fail closed)"; exit 1; }
+ADDED=$(grep -E "^\+" "$T/all.diff" | grep -vE "^\+\+\+" | grep -v "\[a-zA-Z" | grep -v "\[a-z0-9")
 
 # The same, with the probe fixtures' hunks removed, for the infra scan only. Done
 # per-file via --cached -- :!path so a probe line cannot be attributed to another
 # file's diff.
-ADDED_NOPROBE=$(git diff --cached -- . ":!hooks/tests/infra-scan-probe.txt" ":!hooks/tests/infra-scan-clean.txt" \
-  | grep -E "^\+" | grep -vE "^\+\+\+" | grep -v "\[a-zA-Z" | grep -v "\[a-z0-9")
+git diff --cached -- . ":!hooks/tests/infra-scan-probe.txt" ":!hooks/tests/infra-scan-clean.txt" \
+  > "$T/noprobe.diff" || { echo "❌ BLOCKED: git diff failed — the scan did not run (fail closed)"; exit 1; }
+ADDED_NOPROBE=$(grep -E "^\+" "$T/noprobe.diff" | grep -vE "^\+\+\+" | grep -v "\[a-zA-Z" | grep -v "\[a-z0-9")
 
 # The same again, minus every file that legitimately CONTAINS credential formats:
-# the two pinned probe fixtures, plus the four files that document the patterns
-# themselves (this hook, verify.sh, the health skill, the deny-list example).
+# the two pinned probe fixtures, plus the five files that document the patterns
+# themselves (this hook, verify.sh, the health skill, the deny-list example, and
+# hooks/secret-patterns.txt — a file of credential regexes matches its own rules on
+# every line; its compensating control is secret-scan.sh, which lints that file's
+# comments against its own patterns and refuses to run on a hit).
 # This list mirrors verify.sh's SCAN_EXCLUDE — change one, change the other.
 # The fixtures are sha256-pinned by verify.sh, so excluding them hides nothing.
-ADDED_CRED=$(git diff --cached -- . ":!hooks/pre-commit" ":!verify.sh" ":!skills/health/SKILL.md" \
-  ":!.no-yolo-deny.example.txt" ":!hooks/tests/infra-scan-probe.txt" ":!hooks/tests/infra-scan-clean.txt" \
-  | grep -E "^\+" | grep -vE "^\+\+\+" | grep -v "\[a-zA-Z" | grep -v "\[a-z0-9")
+git diff --cached -- . ":!hooks/pre-commit" ":!verify.sh" ":!skills/health/SKILL.md" \
+  ":!.no-yolo-deny.example.txt" ":!hooks/secret-patterns.txt" \
+  ":!hooks/tests/infra-scan-probe.txt" ":!hooks/tests/infra-scan-clean.txt" \
+  > "$T/cred.diff" || { echo "❌ BLOCKED: git diff failed — the scan did not run (fail closed)"; exit 1; }
+ADDED_CRED=$(grep -E "^\+" "$T/cred.diff" | grep -vE "^\+\+\+" | grep -v "\[a-zA-Z" | grep -v "\[a-z0-9")
 
 # 2 — Block personal / credential content
-MATCHES=$(echo "$ADDED_CRED" | grep -E "$PATTERNS")
-if [ -n "$MATCHES" ]; then
+# This hook runs as a COPY in .git/hooks, outside the repo tree, so the scanner has to
+# be resolved from the repo root at runtime — the same idiom the deny-list uses below.
+SCAN="$(git rev-parse --show-toplevel)/hooks/secret-scan.sh"
+[ -x "$SCAN" ] || { echo "❌ BLOCKED: hooks/secret-scan.sh missing or not executable — the credential scan cannot run (fail closed)"; exit 1; }
+
+# The scan that runs is the WORKING-TREE scanner and pattern file, not the versions
+# being committed. An unstaged edit to either would approve a different staged
+# implementation than the one that was tested.
+if ! git diff --quiet -- hooks/secret-scan.sh hooks/secret-patterns.txt 2>/dev/null; then
+  echo "❌ BLOCKED: hooks/secret-scan.sh or hooks/secret-patterns.txt has unstaged changes."
+  echo "   The scan that just ran is not the scan being committed. Stage them, then commit."
+  exit 1
+fi
+
+MATCHES=$(printf '%s\n' "$ADDED_CRED" | "$SCAN")
+rc=$?
+# Only 0 (match) and 1 (no match) are outcomes. Anything else means the scan could not run.
+if [ "$rc" -ne 0 ] && [ "$rc" -ne 1 ]; then
+  echo "❌ BLOCKED: secret-scan.sh exited $rc — the credential scan could not run (fail closed)."
+  echo "   Check hooks/secret-patterns.txt is present and every rule compiles."
+  exit 1
+fi
+
+LOCAL_MATCHES=$(printf '%s\n' "$ADDED_CRED" | grep -E "$LOCAL_PATTERNS")
+if [ -n "$MATCHES" ] || [ -n "$LOCAL_MATCHES" ]; then
   echo "❌ BLOCKED: personal data pattern found in diff:"
-  echo "$MATCHES"
+  [ -n "$MATCHES" ] && echo "$MATCHES"
+  [ -n "$LOCAL_MATCHES" ] && echo "$LOCAL_MATCHES"
   echo ""
   echo "Fix the content above, then re-stage and commit."
   exit 1
