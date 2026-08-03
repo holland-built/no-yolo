@@ -90,7 +90,9 @@ Table: **Plugin | Installed version | Scope**. Flag version `unknown` or `?` as 
 ### Step 4.6 — third-party skill drift (read-only)
 Read `docs/THIRD_PARTY_SKILLS.md` for names, install commands, and local paths (none of this content is in git — see that file).
 
-**There are THREE install kinds and they need different checks.** Getting this wrong is not theoretical: this step used to test `SOURCE.md` for every row, so the four npx-installed skills — which never have one — reported `NOT INSTALLED` forever and their real drift was invisible. `archify` sat two weeks and 13 files behind while this check stayed quiet. Route by the row's **Install command** and **Local path** columns:
+**There are FOUR install kinds and they need different checks.** Getting this wrong is not theoretical: this step used to test `SOURCE.md` for every row, so the four npx-installed skills — which never have one — reported `NOT INSTALLED` forever and their real drift was invisible. `archify` sat two weeks and 13 files behind while this check stayed quiet.
+
+**Routing rule — read the Name cell FIRST, then the Install command, then Local path.** A Name cell marked **ADOPTED RULES** is kind (d) and nothing else, no matter what the other columns say. Only if the Name cell carries no such marker do the other columns decide: `SOURCE.md`-bearing vendored rows are (a), `npx skills@latest add` rows are (b), and a Local path of `none` **plus a real npm package in a bare `npx -y <pkg> <cmd>` install command** is (c). Local path `none` on its own never means (c) — kind (d) is also `none` and has no package, so `npm view` returns nothing and the row would read `CANNOT CHECK` forever. `docs/THIRD_PARTY_SKILLS.md` warns about exactly that mis-route; obey the marker.
 
 **(a) Vendored** (install command is `/update vendor <name>`) — has a `SOURCE.md`:
 ```bash
@@ -138,6 +140,17 @@ fi
 ```
 This kind has exactly two allowed statuses: `on-demand — npm publishes vX.Y.Z (nothing local to compare)` and `⚠️ CANNOT CHECK`. **Never print `up to date`** — there is no local copy for that to be true *of*; every `npx` run already takes latest. Never print `STALE` (nothing can be stale) and never `NOT INSTALLED` (not-installed is the correct, permanent state for this kind — reporting it as a fault is precisely the failure recorded above, where four rows sat red for months and a real two-week drift hid inside the noise). Offline, or `npx` missing → `CANNOT CHECK`, never a clean result.
 
+**(d) Adopted rules** (Name cell marked **ADOPTED RULES**, Local path `none`, install command says nothing to install and carries a pinned upstream sha — e.g. `i-have-adhd`) — no file of theirs is on disk, now or ever; some of their *ideas* were rewritten by hand into our own files. There is nothing to install, no package, and no `SOURCE.md`, so (a)/(b)/(c) are all inapplicable: do not `ls` the path, do not diff, do not `npm view`. The only obtainable fact is whether upstream has moved past the pinned sha recorded in the row:
+```bash
+PINNED="<pinned sha from the row, e.g. d05af1e>"
+REPO="<upstream repo from the row, e.g. ayghri/i-have-adhd>"
+UP=$(gh api "repos/$REPO/commits/HEAD" --jq .sha 2>/dev/null | cut -c1-7)
+if [ -z "$UP" ]; then echo "<name>: ⚠️ CANNOT CHECK — gh unavailable / unauthenticated / rate-limited / offline"
+elif [ "$UP" = "$PINNED" ]; then echo "<name>: pinned at $PINNED — upstream unchanged"
+else echo "<name>: ⚠️ UPSTREAM MOVED — pinned $PINNED, upstream now $UP; re-read the adopted rules and decide by hand whether to re-adapt"; fi
+```
+This kind has exactly three allowed statuses: `pinned at <sha> — upstream unchanged`, `⚠️ UPSTREAM MOVED — pinned <old>, upstream now <new>; re-read the adopted rules and decide by hand whether to re-adapt`, and `⚠️ CANNOT CHECK — gh unavailable / unauthenticated / rate-limited / offline`. **Never print `up to date`** — nothing local exists for that to be true *of*. Never `STALE` — nothing is on disk to go stale. Never `NOT INSTALLED` — not-installed is the correct, permanent state for this kind, and reporting it as a fault is the same failure recorded above for kind (c), where rows sat red for months and a real two-week drift hid in the noise.
+
 Table: **Name | Kind | Status**. If `gh`/`curl` are unavailable or the table has no rows, say the check was skipped — do not print an all-clear you did not earn.
 
 Never auto-update inside this check — output the fix that matches the kind:
@@ -145,6 +158,9 @@ Never auto-update inside this check — output the fix that matches the kind:
 > npx-installed skill "<name>" is behind upstream. Run its own install command from `docs/THIRD_PARTY_SKILLS.md` (`npx skills@latest add <repo>`) — the `skills` CLI re-pins `skills-lock.json` itself. Then check `docs/THIRD_PARTY_SKILLS.md`'s "Local patches" table: a reinstall silently reverts every patch listed there.
 
 On-demand rows get **no fix line at all** — there is nothing to update. If a published version needs holding still, pin it in the calling skill's command (`npx -y <pkg>@<version>`), not here.
+
+Adopted-rules rows get **no command either — the fix is a person, not a script.** An upstream move is never auto-appliable: these are hand-adapted prose rules that now live in two of our own files, so the only correct response is a human re-reading the upstream rules and deciding whether ours still hold. For `i-have-adhd` those rules live in `skills/eli5/SKILL.md` (the "Every turn" table) and `hooks/eli5-activate.js`. Output:
+> Upstream of adopted-rules row "<name>" moved past the pinned sha. Nothing to install. Re-read the upstream rules yourself, decide by hand whether to re-adapt `skills/eli5/SKILL.md` and `hooks/eli5-activate.js`, and if you do, bump the pinned sha in that row of `docs/THIRD_PARTY_SKILLS.md`.
 
 ### Step 4.7 — orphaned marketplaces (read-only)
 Marketplaces git-cloned into `plugins/marketplaces/<name>/` with **no** `<plugin>@<name>` key in `installed_plugins.json` are invisible to Step 4.5, so a skill can drift with zero warning. (History: `pbakaus/impeccable` sat here as a 376MB clone that was never plugin-installed and never invoked. It was deleted 2026-08-01 and replaced by on-demand `npx -y impeccable detect` — kind (c) in Step 4.6. Do not re-clone it.)
@@ -219,7 +235,7 @@ Confirm: "Pulling all updates and re-running setup. This takes about 30 seconds.
 
 Run **Shared: sync-and-run** with `bash ~/.claude/setup.sh` as `<SETUP_CMD>`.
 
-After success: plain-English summary of what changed. Then re-run Steps 4.6 and 4.7's checks — for any row/marketplace STALE, ask once: "Also update third-party content — <names> — to latest? (y/n)". If yes, run Step 11 (`vendor <name>`) and/or Step 12 (`marketplace <name>`) for each. Tell user: "Reopen Claude Code to pick up the changes."
+After success: plain-English summary of what changed. Then re-run Steps 4.6 and 4.7's checks — for any row/marketplace STALE, ask once: "Also update third-party content — <names> — to latest? (y/n)". If yes, run Step 11 (`vendor <name>`) and/or Step 12 (`marketplace <name>`) for each. **Kind (d) rows are excluded from this offer** even when they report `⚠️ UPSTREAM MOVED` — there is no command that could update them; re-adapting is a human edit to our own files. Tell user: "Reopen Claude Code to pick up the changes."
 
 ### Step 8 — if argument is `rules`
 Run **Shared: sync-and-run** with `bash ~/.claude/setup.sh --md-only` as `<SETUP_CMD>`. Tell user: "Rules updated. Tool installs skipped. Reopen Claude Code to pick up changes."
@@ -262,7 +278,7 @@ Show which commits touched that skill and let the user pick which version to res
 ### Step 11 — if argument is `vendor <name>`
 Look up `<name>` in `docs/THIRD_PARTY_SKILLS.md`. If no row matches: "No vendored third-party skill named '<name>' — see `/update` to see what's tracked." Stop.
 
-**REFUSE unless the row's Install command is `/update vendor <name>`** — that is the only vendored kind. Everything else (npx-installed, on-demand npx, `curl`-a-single-file, Orca-managed) must be turned away here. The recipe below fetches `skills/<x>/SKILL.md` into `<vendor-path>/<x>.md` — for an npx skill, whose local path is a whole package directory of code, schemas and examples, that writes a stray markdown file and leaves the real install untouched while reporting success. Say instead: "'<name>' isn't vendored — run `<its own install command>` from `docs/THIRD_PARTY_SKILLS.md`." For an npx-installed row add "the `skills` CLI re-pins `skills-lock.json` itself"; for an on-demand row add "there is nothing to install — it is fetched per run." Stop.
+**REFUSE unless the row's Install command is `/update vendor <name>`** — that is the only vendored kind. Everything else (npx-installed, on-demand npx, adopted rules, `curl`-a-single-file, Orca-managed) must be turned away here. The recipe below fetches `skills/<x>/SKILL.md` into `<vendor-path>/<x>.md` — for an npx skill, whose local path is a whole package directory of code, schemas and examples, that writes a stray markdown file and leaves the real install untouched while reporting success. Say instead: "'<name>' isn't vendored — run `<its own install command>` from `docs/THIRD_PARTY_SKILLS.md`." For an npx-installed row add "the `skills` CLI re-pins `skills-lock.json` itself"; for an on-demand row add "there is nothing to install — it is fetched per run"; for an adopted-rules row add "there is nothing to install — the rules were re-written by hand into our own files." Stop.
 
 `<vendor-path>` is gitignored — never touches git, never committed; the command works identically for a first install or a refresh.
 
