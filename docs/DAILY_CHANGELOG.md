@@ -19,6 +19,15 @@ Shape:
 
 ---
 
+## 2026-08-03 — menus fix themselves, and `/my-skills` shows which command does the most (`03708ed`)
+
+- Editing a skill used to quietly break the menus, and you only found out hours later when a
+  push was blocked. Now it repairs itself the moment you edit — silently, unless it did something.
+- It deliberately never re-approves a skill's description for you: that record means "a person
+  read this", so it prints the one command to run instead of faking your signature.
+- `/my-skills` now has a Bundles section — seven commands run several others, and nothing said
+  so. Also: the rules borrowed from the ADHD skill are now tracked, so you'll know if they change.
+
 ## 2026-08-02 — `/route-map` v2: pages prove themselves, no more typed word lists (`5c1ebc9`)
 
 - Your product team debated yesterday's checker and won: hand-typed "expected words" barely
