@@ -35,6 +35,19 @@ fi
 
 Print verbatim — complete GFM with tables. Do NOT rephrase or reformat.
 
+### Section 2 — Bundles (both modes, always)
+
+Straight after the menu, print the bundle table so the reader can see which single
+command runs several of the skills above:
+
+```bash
+cat "$HOME/.claude/skills/my-skills/BUNDLES.md"
+```
+
+Print verbatim. BUNDLES.md is hand-maintained (regen.py does NOT touch it — it holds
+no per-skill rows, so it is not a catalog source and not in catalog-lock.json). When a
+bundle skill's pipeline changes, edit BUNDLES.md; no regen or relock is needed.
+
 > Both RENDERED.md and RENDERED_FAST.md are rebuilt automatically by /release. To rebuild manually, re-run the RENDERED regen (see `~/.claude/SHIP.md` → ## Steps → "Regenerate menus").
 
 ### Section 3 — Relationships (what each skill leans on) — deep mode only

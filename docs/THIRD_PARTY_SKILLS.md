@@ -18,6 +18,7 @@ after you (or `/update vendor <name>`) run the install command, but never on Git
 | computer-use | Orca app (com.stablyai.orca) | managed by Orca app, not npx | `~/.agents/skills/computer-use` | Orca desktop control |
 | orca-cli | Orca app (com.stablyai.orca) | managed by Orca app, not npx | `~/.agents/skills/orca-cli` | Orca CLI wiring |
 | interface-design | `Dammyjay93/interface-design` | `npx skills@latest add Dammyjay93/interface-design` | `~/.agents/skills/interface-design` | product UI craft (`/interface-design:design-review`, `/interface-design:design-deslop`) — **no attribution in local files, add on next touch** |
+| i-have-adhd **(ADOPTED RULES — not an installed skill)** | `ayghri/i-have-adhd` (MIT) | **nothing to install.** Four named rules only — *Say where we are*, *Real time estimates*, *One next action*, *Five items, ranked* — were adapted by hand on 2026-08-02 in commit `9727bba`. Upstream pinned at `d05af1e`. Drift check: `gh api repos/ayghri/i-have-adhd/commits/HEAD --jq .sha` — first 7 chars ≠ `d05af1e` means upstream moved; re-read those four rules there and decide by hand whether to re-adapt. | **none** (no file from that repo is on disk, now or ever) | `/eli5` — the "Every turn" table in `skills/eli5/SKILL.md`, and the same four rules in `hooks/eli5-activate.js`. The rest of that skill was deliberately NOT adopted. |
 
 > **Two different things are called "impeccable" — they share nothing but the word.** The CLI row is
 > Paul Bakaus's npm package, fetched per run by `npx -y impeccable detect` (59 grep-level source
@@ -48,6 +49,23 @@ three have their fetched content hashes recorded in `skills-lock.json` for drift
 The impeccable CLI is a third kind — **on-demand npx**: no vendored copy, no install, no lockfile
 entry, nothing on disk to go stale. `/update` Step 4.6 checks it as kind (c): it may report which
 version npm publishes, and may never report it "up to date" — there is no local copy to compare.
+
+`i-have-adhd` is a **fourth kind — adopted rules (d)**, and it is the one row where the
+"never a copy in this repo" rule at the top does not apply: no *file* of theirs is here, but four
+of their ideas were rewritten into our own words inside `skills/eli5/SKILL.md` and
+`hooks/eli5-activate.js`, and that text IS in git. MIT permits it; the attribution comment in
+`eli5/SKILL.md` and this row are the licence obligation. **`/update` Step 4.6 must not route this
+row to kind (c)** just because its Local path is `none` — there is no npm package, so
+`npm view` returns nothing and the row would read `CANNOT CHECK` forever. Check it like this:
+```bash
+HEAD=$(gh api repos/ayghri/i-have-adhd/commits/HEAD --jq .sha 2>/dev/null | cut -c1-7)
+if [ -z "$HEAD" ]; then echo "i-have-adhd: CANNOT CHECK — gh unavailable"
+elif [ "$HEAD" = "d05af1e" ]; then echo "i-have-adhd: up to date (adopted rules, pinned d05af1e)"
+else echo "i-have-adhd: ⚠️ upstream moved d05af1e → $HEAD — re-read the four rules by hand"; fi
+```
+The verdict is advisory: upstream moving does NOT mean our four rules are wrong, only that a human
+should look. There is nothing to re-install and no `/update vendor` path — if a re-adaptation is
+made, edit the two files by hand and bump the pinned sha in the row above.
 
 If a local path doesn't exist yet (fresh clone, or never installed), the skills that use it
 fall back to their built-in FALLBACKS block — nothing breaks, you get the baked-in minimum
