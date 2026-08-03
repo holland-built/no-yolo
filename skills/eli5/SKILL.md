@@ -97,7 +97,8 @@ Hard rules for Mode B:
 ## Every turn — where we are, how long, what next
 
 <!-- Four rules adapted from ayghri/i-have-adhd (MIT). Only these four — the rest of
-     that skill is action-first for a different reader, and table-first stays primary. -->
+     that skill is action-first for a different reader, and table-first stays primary.
+     Upstream drift is tracked in docs/THIRD_PARTY_SKILLS.md (pinned d05af1e). -->
 
 These apply in **both** modes, on top of the shape rules above.
 
