@@ -211,7 +211,9 @@ It is drawn by `hooks/statusline.sh`. When literal mode is on, a badge for it ap
 
 ## The CLAUDE.md instruction chain
 
-`CLAUDE.md` holds pointers and nothing else: `@memory/CLAUDE.generated.md`, `@docs/SKILL_TRIGGERS.md`, and one line per topic (Planning → `PLANNING.md`, and so on). Never put an actual rule in `CLAUDE.md`. Put it in the right topic file and point at it. (`@docs/CORE_RULES.md` is imported here too — 8 rules, down from 35 after a six-day test with them switched off.)
+`CLAUDE.md` holds pointers and nothing else: three imports — `@memory/CLAUDE.generated.md` (learned preferences), `@docs/CORE_RULES.md` (8 rules, down from 35 after a six-day test with them switched off), and `@docs/ANTISLOP.md` — then one line per topic, each naming the condition before the file (Before any multi-file change → `PLANNING.md`, and so on). Never put an actual rule in `CLAUDE.md`. Put it in the right topic file and point at it.
+
+Anti-slop is imported rather than pointed at, and it is the only doc treated that way: a pointer gets read after the writing has already started.
 
 ## What's excluded
 

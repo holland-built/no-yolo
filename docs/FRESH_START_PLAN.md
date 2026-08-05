@@ -10,7 +10,7 @@ GitHub (`holland-built/no-yolo`) forever — nothing in this plan destroys anyth
 | Skills built | 52 (33 own, 19 borrowed) |
 | Skills never invoked across 474 sessions | 24 |
 | Commits, last 30 days / all time | 179 / 281 |
-| Most-edited file | `docs/DAILY_CHANGELOG.md` (169 edits) |
+| Most-edited file | `docs/DAILY_CHANGELOG.md` (169 edits) | <!-- gone-on-purpose -->
 | Next 6 most-edited | the `skills/my-skills/` catalogue files (~390 edits) |
 
 The config isn't too big. The self-describing layer around it is — catalogues, lock files,
