@@ -84,15 +84,44 @@ python3 "$HOME/.claude/hooks/list-plugins.py"
 ```
 (Shared lister — same script setup.sh Step 5 uses. Prints TSV `name<TAB>version<TAB>scope`, or "No plugins installed.")
 
-Table: **Plugin | Installed version | Scope**. Flag version `unknown` or `?` as ⚠️ "may be stale — reinstall to pin a version". Then output verbatim:
+**Listing the installed version is not a check.** This step printed versions for months and compared them to nothing, so a plugin could fall arbitrarily far behind and still read as a clean row. The published version is already on disk — each marketplace clone carries a `.claude-plugin/marketplace.json` — so compare them:
+```bash
+python3 - "$HOME/.claude/plugins/installed_plugins.json" "$HOME/.claude/plugins/known_marketplaces.json" <<'PYEOF'
+import json, sys, os
+inst = json.load(open(sys.argv[1])).get("plugins", {})
+mkts = json.load(open(sys.argv[2])) if os.path.exists(sys.argv[2]) else {}
+for key, entries in inst.items():
+    if "@" not in key:
+        continue
+    plugin, mkt = key.split("@", 1)
+    for e in entries:                                   # value is a LIST of install records
+        local = e.get("version") or "unknown"
+        loc = (mkts.get(mkt) or {}).get("installLocation") or os.path.join(
+            os.path.expanduser("~/.claude/plugins/marketplaces"), mkt)
+        man = os.path.join(loc, ".claude-plugin", "marketplace.json")
+        pub = None
+        if os.path.exists(man):
+            for p in json.load(open(man)).get("plugins", []):   # top-level "plugins" array
+                if p.get("name") == plugin:
+                    pub = p.get("version")                       # per-plugin, NOT metadata.version
+        print("\t".join([plugin, mkt, local, pub or "?", e.get("scope", "?")]))
+PYEOF
+```
+Field shapes are verified, not guessed: `installed_plugins.json` maps `<plugin>@<marketplace>` to a **list** of records each carrying `version` and `scope`; `marketplace.json` carries a top-level `plugins` array whose entries have `name` and `version`. A marketplace-level `metadata.version` also exists on some manifests (`openai-codex` has one, `design-plugins` does not) — **never read that as the plugin's version**; it tracks the marketplace, and on a multi-plugin marketplace it is a different number entirely.
+
+Table: **Plugin | Installed version | Published version | Status | Scope** (this block's output supersedes the lister's three columns — run the lister first only to catch "No plugins installed."). An installed version of `unknown` or `?` still gets the old flag, ⚠️ "may be stale — reinstall to pin a version", *and* forces the Status column to `⚠️ CANNOT TELL`. Status is `current` when the two versions are equal, `⚠️ BEHIND — marketplace publishes <pub>` when they differ, and `⚠️ CANNOT TELL` when either side is `?`/`unknown` (no manifest, no matching plugin name, or an unpinned install). **Never report `current` for a row you could not compare** — an uncomparable row reads as clean only because nothing was checked, which is the exact failure this block was added to end. A local version *ahead* of the marketplace is also `⚠️ CANNOT TELL`, not `current`: it usually means the marketplace clone itself is stale, so run Step 4.7's pull first and re-check.
+
+This is read-only. Never run `/plugin update` and never edit either JSON file. Then output verbatim:
 > To check for plugin updates, run `/plugin list` inside Claude Code, then `/plugin update <name>` for any that are outdated. Plugins can't be updated from outside the session.
 
+(Baseline, measured 2026-08-03: `codex@openai-codex` 1.0.6 and `design-and-refine@design-plugins` 1.1.0 were both current against their marketplaces. A row that goes `⚠️ BEHIND` is therefore real drift, not a first-run artefact.)
+
 ### Step 4.6 — third-party skill drift (read-only)
-Read `docs/THIRD_PARTY_SKILLS.md` for names, install commands, and local paths (none of this content is in git — see that file).
+Read `docs/THIRD_PARTY_SKILLS.md` for names, install commands, and local paths (none of this content is in git — see that file). **Read two sections of it, not one:** the main pointer table at the top drives kinds (a)–(d), and the "Codex-only skills — installed in `~/.agents/skills/`, invisible to Claude Code" section drives kind (e). Reading only the top table is how 14 skills stayed unchecked for months.
 
-**There are FOUR install kinds and they need different checks.** Getting this wrong is not theoretical: this step used to test `SOURCE.md` for every row, so the four npx-installed skills — which never have one — reported `NOT INSTALLED` forever and their real drift was invisible. `archify` sat two weeks and 13 files behind while this check stayed quiet.
+**There are FIVE install kinds and they need different checks.** Getting this wrong is not theoretical: this step used to test `SOURCE.md` for every row, so the four npx-installed skills — which never have one — reported `NOT INSTALLED` forever and their real drift was invisible. `archify` sat two weeks and 13 files behind while this check stayed quiet.
 
-**Routing rule — read the Name cell FIRST, then the Install command, then Local path.** A Name cell marked **ADOPTED RULES** is kind (d) and nothing else, no matter what the other columns say. Only if the Name cell carries no such marker do the other columns decide: `SOURCE.md`-bearing vendored rows are (a), `npx skills@latest add` rows are (b), and a Local path of `none` **plus a real npm package in a bare `npx -y <pkg> <cmd>` install command** is (c). Local path `none` on its own never means (c) — kind (d) is also `none` and has no package, so `npm view` returns nothing and the row would read `CANNOT CHECK` forever. `docs/THIRD_PARTY_SKILLS.md` warns about exactly that mis-route; obey the marker.
+**Routing rule — read the section FIRST, then the Name cell, then the Install command, then Local path.** Every row in the "Codex-only skills" section is kind (e) and nothing else; the four kinds below apply only to rows in the main pointer table. Within that table, a Name cell marked **ADOPTED RULES** is kind (d) and nothing else, no matter what the other columns say. Only if the Name cell carries no such marker do the other columns decide: `SOURCE.md`-bearing vendored rows are (a), `npx skills@latest add` rows are (b), and a Local path of `none` **plus a real npm package in a bare `npx -y <pkg> <cmd>` install command** is (c). Local path `none` on its own never means (c) — kind (d) is also `none` and has no package, so `npm view` returns nothing and the row would read `CANNOT CHECK` forever. `docs/THIRD_PARTY_SKILLS.md` warns about exactly that mis-route; obey the marker.
 
 **(a) Vendored** (install command is `/update vendor <name>`) — has a `SOURCE.md`:
 ```bash
@@ -109,16 +138,20 @@ Status: `not installed — run /update vendor <name> to install` if `SOURCE.md` 
 ```bash
 LOCAL="<local-path>/SKILL.md"                       # e.g. .agents/skills/archify/SKILL.md
 TMP=$(mktemp)
-# Repo layouts differ: ponytail/emilkowalski nest under skills/, archify does not. Try both.
+# Repo layouts differ three ways: ponytail/emilkowalski nest under skills/, archify does not,
+# and interface-design hides under .claude/skills/. Try all three, in this order.
 curl -fsS "https://raw.githubusercontent.com/<repo>/main/skills/<name>/SKILL.md" -o "$TMP" 2>/dev/null \
-  || curl -fsS "https://raw.githubusercontent.com/<repo>/main/<name>/SKILL.md" -o "$TMP" 2>/dev/null
+  || curl -fsS "https://raw.githubusercontent.com/<repo>/main/<name>/SKILL.md" -o "$TMP" 2>/dev/null \
+  || curl -fsS "https://raw.githubusercontent.com/<repo>/main/.claude/skills/<name>/SKILL.md" -o "$TMP" 2>/dev/null
 if [ ! -f "$LOCAL" ]; then echo "<name>: NOT INSTALLED"
-elif [ ! -s "$TMP" ]; then echo "<name>: CANNOT CHECK — no upstream SKILL.md at either path"
+elif [ ! -s "$TMP" ]; then echo "<name>: CANNOT CHECK — no upstream SKILL.md at any of the three paths"
 elif diff -q "$TMP" "$LOCAL" >/dev/null 2>&1; then echo "<name>: up to date"
 else echo "<name>: STALE"; fi
 rm -f "$TMP"
 ```
 **Compare files, never shell variables.** `UP=$(curl …)` then piping it to `diff` strips the trailing newline and makes *every* skill report STALE — a freshly installed one included. That false positive was hit while writing this step; curl straight to a temp file instead.
+
+**Two paths were not enough.** `interface-design` lives at `.claude/skills/interface-design/SKILL.md` in `Dammyjay93/interface-design` — measured: the `skills/` and bare paths both return 404, the `.claude/skills/` one returns 200. With only two fallbacks that row printed `CANNOT CHECK` on every run since it was installed, which is the kind (b) version of the failure kind (c) already records. If a fourth layout ever appears, the row's own `skillPath` in `~/.agents/.skill-lock.json` is the authoritative answer — read it rather than guessing a fourth curl.
 
 **Locally patched skills need the body compared, not the whole file.** Any row in `docs/THIRD_PARTY_SKILLS.md`'s "Local patches applied on top of upstream" table is *supposed* to differ from upstream, so a whole-file diff reports it STALE forever and a real upstream change hides in the noise. Every patch recorded there so far is frontmatter-only, so for those rows diff the body — everything after the closing `---` — and report `patched (frontmatter)` when only the frontmatter differs:
 ```bash
@@ -150,6 +183,50 @@ elif [ "$UP" = "$PINNED" ]; then echo "<name>: pinned at $PINNED — upstream un
 else echo "<name>: ⚠️ UPSTREAM MOVED — pinned $PINNED, upstream now $UP; re-read the adopted rules and decide by hand whether to re-adapt"; fi
 ```
 This kind has exactly three allowed statuses: `pinned at <sha> — upstream unchanged`, `⚠️ UPSTREAM MOVED — pinned <old>, upstream now <new>; re-read the adopted rules and decide by hand whether to re-adapt`, and `⚠️ CANNOT CHECK — gh unavailable / unauthenticated / rate-limited / offline`. **Never print `up to date`** — nothing local exists for that to be true *of*. Never `STALE` — nothing is on disk to go stale. Never `NOT INSTALLED` — not-installed is the correct, permanent state for this kind, and reporting it as a fault is the same failure recorded above for kind (c), where rows sat red for months and a real two-week drift hid in the noise.
+
+**(e) Codex-only skills** (every row in `docs/THIRD_PARTY_SKILLS.md`'s "Codex-only skills" section — 14 of them, under `~/.agents/skills/`) — installed by `npx skills@latest add … -g`, symlinked into every agent *except* Claude Code, so **Claude Code never loads them and no `/health`, `/skill-audit` or router pass has ever seen them.** Codex does load them, and they are third-party content on this machine, so they drift like anything else: measured 2026-08-03, the ten `obra/superpowers` skills were **242 commits behind** upstream `44c9b2d` and `microsoft-foundry` was local `1.1.5` against upstream `1.2.1` — both silent for months. **Severity is lower than kinds (a)–(d), not zero:** a stale row here degrades Codex sessions only, so rank these below every other kind in the report and never let one block an otherwise-clean pass. Membership test, if a row's kind is ever in doubt: `npx skills@latest list -g --json` prints an `agents` array per skill, and kind (e) is exactly the skills whose array omits `Claude Code`.
+
+**The `skills` CLI has no read-only check.** Verified against `npx skills@latest --help`: the subcommands are `add`, `use`, `remove`, `list`/`ls`, `find`, `update`, `experimental_install`, `init`, `experimental_sync` — `update` writes, and nothing reports drift without writing. `list -g --json` enumerates what is installed but never contacts upstream. **Do not invent a `check` flag.** The only read-only check available is comparing each locked entry in `~/.agents/.skill-lock.json` against upstream yourself, which is what the block below does — the lock file records each skill's `source` repo *and* its exact `skillPath`, so no path guessing is needed:
+**Feed it the names from the doc, never the whole lock file.** `.skill-lock.json` holds ~109 entries, most of them project-scoped installs long gone from `~/.agents/skills/`; looping the file wholesale prints ~85 rows of `NOT INSTALLED` (verified by running it) and buries the eight real STALE rows in exactly the noise kinds (c) and (d) were rewritten to stop. It also re-reports kind (b) rows — `impeccable`, `interface-design`, `archify` and the ponytail/emil packs all live under `~/.agents/skills/` too, and `impeccable` is a deliberate hand-edited fork that must stay in kind (b) where the patch rules apply. So set `NAMES` from the "Codex-only skills" section's Name(s) column and nothing else; the lock file only supplies `source` and `skillPath` for those names.
+Keep the name list **inside the Python heredoc**, not in a shell variable: an unquoted `$NAMES` does not word-split under zsh (the default shell here), so the whole list arrives as one argument and every row reports `NOT INSTALLED` — hit while writing this step.
+```bash
+ROWS=$(mktemp)
+python3 - "$HOME/.agents/.skill-lock.json" <<'PYEOF' > "$ROWS"
+import json, sys
+# Names come from the doc section, never from a disk listing. Keep this comment OUTSIDE the
+# string — anything inside it becomes a bogus skill name via .split().
+NAMES = """
+dispatching-parallel-agents executing-plans finishing-a-development-branch receiving-code-review
+requesting-code-review subagent-driven-development using-git-worktrees verification-before-completion
+writing-plans writing-skills skill-creator microsoft-foundry web-design-guidelines
+full-output-enforcement
+""".split()
+locked = json.load(open(sys.argv[1])).get("skills", {})
+for name in NAMES:
+    e = locked.get(name)
+    if not e:
+        print("\t".join([name, "", ""])); continue      # in the doc, absent from the lock
+    print("\t".join([name, e.get("source", ""), e.get("skillPath", "")]))
+PYEOF
+while IFS=$'\t' read -r NAME REPO PATHY; do
+  LOCAL="$HOME/.agents/skills/$NAME/SKILL.md"
+  [ -f "$LOCAL" ] || { echo "$NAME: NOT INSTALLED (in the doc, missing on disk)"; continue; }
+  [ -n "$REPO" ] && [ -n "$PATHY" ] || { echo "$NAME: ⚠️ CANNOT CHECK — no lock entry to resolve upstream from"; continue; }
+  TMP=$(mktemp)
+  curl -fsS "https://raw.githubusercontent.com/$REPO/HEAD/$PATHY" -o "$TMP" 2>/dev/null
+  if [ ! -s "$TMP" ]; then echo "$NAME: ⚠️ CANNOT CHECK — upstream unreachable or path moved"
+  elif diff -q "$TMP" "$LOCAL" >/dev/null 2>&1; then echo "$NAME: up to date"
+  else echo "$NAME: ⚠️ STALE — differs from upstream $REPO"; fi
+  rm -f "$TMP"
+done < "$ROWS"
+rm -f "$ROWS"
+```
+**Compare files, never shell variables** — same trailing-newline trap as kind (b), same fix. `skillFolderHash` in the lock file is *not* usable for this: it is a hash of the folder as installed, and there is no published upstream hash to compare it to, so diffing the fetched `SKILL.md` is the check. Only `SKILL.md` is compared, so a change confined to a sibling reference file inside the skill folder will not be caught — say that in the report rather than implying a full-folder verdict.
+
+This kind has exactly four allowed statuses: `up to date`, `⚠️ STALE — differs from upstream <repo>`, `NOT INSTALLED (in the doc, missing on disk)`, and `⚠️ CANNOT CHECK` (upstream unreachable, path moved, or no lock entry). **A row that cannot be checked is never reported as up to date.** Never print a commit count unless you actually fetched one (`gh api repos/<repo>/compare/<sha>...HEAD --jq .ahead_by`) — the 242 figure above is a recorded measurement, not a number to reprint as if freshly computed. `computer-use` and `orca-cli` also sit under `~/.agents/skills/` but are **not** kind (e) — they are Orca-app-managed rows in the main pointer table with no refresh command at all, so `npx skills@latest update -g` will never move them. Keep them out of `NAMES`; if they surface anywhere, report `managed by Orca — no refresh command`, never `STALE`.
+
+Codex-only rows share ONE fix line for the whole group — never one per row, or a STALE superpowers batch prints ten identical commands:
+> N Codex-only skill(s) are behind upstream — <names>. They affect Codex sessions only; Claude Code does not load them. Run `npx skills@latest update -g` to refresh the whole global set. Check `docs/THIRD_PARTY_SKILLS.md`'s "Local patches" table first — `update` reverts patches exactly the way `add` does.
 
 Table: **Name | Kind | Status**. If `gh`/`curl` are unavailable or the table has no rows, say the check was skipped — do not print an all-clear you did not earn.
 
@@ -198,8 +275,9 @@ What do you want to do?
   /update rollback            — go back to what you had before
   /update vendor <name>       — re-vendor a stale third-party skill
   /update marketplace <name>  — git pull a stale orphaned marketplace
+  npx skills@latest update -g — refresh the Codex-only skills (not a /update mode; run it yourself)
 ```
-(The last two only appear if Steps 4.6/4.7 found something STALE.)
+(The last three only appear if Steps 4.6/4.7 found something STALE — the `npx` line only when kind (e) rows are STALE. It is deliberately not a `/update` subcommand: the `skills` CLI re-pins its own lockfile, and wrapping it would hide that `update -g` reverts every local patch.)
 
 Then stop. Do not auto-pull.
 
@@ -235,7 +313,7 @@ Confirm: "Pulling all updates and re-running setup. This takes about 30 seconds.
 
 Run **Shared: sync-and-run** with `bash ~/.claude/setup.sh` as `<SETUP_CMD>`.
 
-After success: plain-English summary of what changed. Then re-run Steps 4.6 and 4.7's checks — for any row/marketplace STALE, ask once: "Also update third-party content — <names> — to latest? (y/n)". If yes, run Step 11 (`vendor <name>`) and/or Step 12 (`marketplace <name>`) for each. **Kind (d) rows are excluded from this offer** even when they report `⚠️ UPSTREAM MOVED` — there is no command that could update them; re-adapting is a human edit to our own files. Tell user: "Reopen Claude Code to pick up the changes."
+After success: plain-English summary of what changed. Then re-run Steps 4.6 and 4.7's checks — for any row/marketplace STALE, ask once: "Also update third-party content — <names> — to latest? (y/n)". If yes, run Step 11 (`vendor <name>`) and/or Step 12 (`marketplace <name>`) for each. **Kinds (d) and (e) are excluded from this offer** even when they report `⚠️ UPSTREAM MOVED` / `⚠️ STALE` — for (d) there is no command that could update them, re-adapting is a human edit to our own files; for (e) the fix is `npx skills@latest update -g`, which Step 11 correctly refuses and which reverts local patches, so print its fix line and let the user run it. Tell user: "Reopen Claude Code to pick up the changes."
 
 ### Step 8 — if argument is `rules`
 Run **Shared: sync-and-run** with `bash ~/.claude/setup.sh --md-only` as `<SETUP_CMD>`. Tell user: "Rules updated. Tool installs skipped. Reopen Claude Code to pick up changes."

@@ -1,8 +1,15 @@
 #!/usr/bin/env node
 // slop-guard — Stop hook. Scans the assistant's last message for a short list of
-// literal slop phrases from docs/ANTISLOP.md. WARNS ONLY: writes to stderr and
-// always exits 0. It can never block a reply, and a broken/missing pattern file
-// or transcript makes it exit 0 in silence rather than break a session.
+// literal slop phrases from docs/ANTISLOP.md.
+//
+// BLOCKS ONCE, THEN WARNS. On the first Stop of a turn that matches a listed
+// phrase it emits {"decision":"block"} on stdout, which sends the reply back to be
+// rewritten. Claude Code sets `stop_hook_active` on the retry, and on that pass the
+// hook only warns to stderr — so a false positive costs one rewrite, never a loop.
+// Set SLOP_GUARD=warn to drop back to warn-only.
+//
+// Exit code stays 0 in every path: Stop hooks block via stdout JSON, not via exit
+// status, and a broken/missing pattern file or transcript must never break a session.
 //
 // ---------------------------------------------------------------------------
 // WHAT A CLEAN RUN PROVES — AND WHAT IT DOES NOT
@@ -162,7 +169,21 @@ function main() {
       const text = lastAssistantText(data.transcript_path);
       if (text) {
         const findings = scan(text, loadPatterns(patternsPath));
-        if (findings.length) process.stderr.write(formatWarning(findings));
+        if (findings.length) {
+          const warning = formatWarning(findings);
+          process.stderr.write(warning);
+          // Block only on the first Stop of the turn. `stop_hook_active` is true on
+          // the rewrite pass, so one false positive costs one retry, not a loop.
+          if (!data.stop_hook_active && process.env.SLOP_GUARD !== 'warn') {
+            process.stdout.write(JSON.stringify({
+              decision: 'block',
+              reason: warning +
+                'Rewrite the reply without those phrases. Do not apologise for them, ' +
+                'do not mention this check, and do not pad the rewrite to compensate. ' +
+                'If a phrase is genuinely correct here, keep it and say why in one line.',
+            }));
+          }
+        }
       }
     } catch (e) {
       // Silent fail — a warning-only hook must never make noise about itself.

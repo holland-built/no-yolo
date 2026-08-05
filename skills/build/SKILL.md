@@ -1,6 +1,6 @@
 ---
 name: build
-description: Use this skill when the user types /build, says 'build', 'build this feature end to end', 'do it all', 'plan if needed and do it', 'take all your suggestions and build', or otherwise asks for the whole job done in one go. Full feature pipeline: evidence → grill-me → Fable plan → approval gate → UI mockup gate → TDD → Opus build → regression gate → prove.
+description: Use this skill when the user types /build, says 'build', 'build this feature end to end', 'do it all', 'plan if needed and do it', 'take all your suggestions and build', or otherwise asks for the whole job done in one go. Also the door for small changes — 'make the header blue', 'the wording is off', 'too much spacing' — it sizes the job itself rather than sending you to another command. Every run opens by declaring the size it picked, the pieces it will use and why they beat the alternative, then waits. Full pipeline: evidence → grill-me → Fable plan → approval gate → UI mockup gate → TDD → Opus build → regression gate → prove.
 user-invocable: true
 argument-hint: "[describe the feature to build]"
 allowed-tools:
@@ -17,15 +17,47 @@ Feature: $ARGUMENTS
 
 **Agent rule:** Never write code inline. All planning → Fable agent. All implementation → Opus agent(s). Coordinator reads + dispatches only.
 
-## Routing — pick the right tool BEFORE running the pipeline
-- **Spatial/layout bug** (overlap, clip, truncation) → Phase 0A (Playwright DOM measurement). Trivial fix path if cause already measured.
-- **Color/typography/token/spacing nits** → NOT /build. Use `/design-audit` to find issues or `/design` to see options.
-- **Visual/aesthetic redesign** → /build WITH the mockup gate.
-- **Trivial fix** (1–2 files, cause already known) → fast path: phase 0 only → skip plan → approve → build.
-- **Code quality / dead code / YAGNI audit** → STOP, run `/health` instead.
-- **Genuine multi-step feature** → full pipeline below.
+## −1 — Read the room, then declare (HARD gate, runs every time)
 
-State which path you're taking in one line before proceeding.
+**One door.** `/build` takes everything from "make the header blue" to a new subsystem. It does
+not send the user somewhere else to retype their request. It works out how big the job is, says
+so, and waits to be corrected.
+
+**Read before classifying** (silently, no narration): the project's own `CLAUDE.md`, its
+`design-system/MASTER.md` or CSS tokens, and the files the ask actually names. The global rules
+are already in context — `docs/ANTISLOP.md` loads every session; the rest arrive via the
+conditioned pointers in `~/.claude/CLAUDE.md`. Read the project first: its rules beat the
+global defaults wherever they collide.
+
+**Then pick exactly one size:**
+
+| Size | Test for it | Pipeline |
+|---|---|---|
+| **tweak** | 1–2 files, cause already obvious, no new behaviour — colour, wording, spacing, a copy change | 0 → 5 → 6. Skip grill-me, plan, mockups |
+| **fix** | Something is broken and the cause is NOT yet located | 0 → 2 → 3 → 4 → 5 → 5.5 → 6 |
+| **feature** | New behaviour that did not exist | full pipeline |
+| **redesign** | How an existing surface looks is what changes | full pipeline WITH the 3.5 mockup gate |
+
+Unsure between two sizes? Pick the **smaller** one and say which one you nearly picked. An
+under-called tweak costs one more round; an over-called tweak costs the user an hour of gates.
+
+**Choosing the pieces — best tool wins, and you name why.** There is no fixed order and no
+native-first rule. Judge per job: a built-in is usually the safest bet because nothing can drift
+under it; a local skill wins when it carries a rule the built-in has never heard of; a
+downloaded skill wins when it is genuinely better at that one thing. Say which and why in one
+line — an unexplained pick is the failure, not a wrong pick.
+
+**Then print exactly this block and STOP:**
+
+```
+Size:       <tweak|fix|feature|redesign> — <one line: what made it that size>
+Using:      <piece>, <piece>, <piece>
+Instead of: <the obvious alternative> — <one line: why the pick beat it>
+Go, or redirect?
+```
+
+Do not read past this gate until the user answers. "Go", "yes", or a corrected size all count;
+silence does not. If they name a different size, take theirs and do not argue it a second time.
 
 ## Stack — auto-detect (do this FIRST, silently)
 Project-agnostic: before phase 0, detect the project's commands and record them for the run:
@@ -96,6 +128,8 @@ Then check for a persisted design system first, falling back to CSS tokens:
 - **If no MASTER.md**: extract tokens from the project's CSS (`:root` variables, font-family declarations, color palette, spacing scale).
 
 Either way, every variant MUST use these tokens verbatim — no made-up hex codes or font names.
+
+**Design references (read-only).** Read `~/.claude/skills/design/DESIGN_REFS.md` and follow its routing to pull only the references this UI task actually needs — visual direction, component-rule structure, motion, library choice. Do not read all of them, and never let a reference's opinions override the tokens above.
 ### Step A — Generate 8 variants
 Build **exactly 8 variants** as individual files `.mockups/build-<slug>/<slug>-v1.html` … `v6.html` plus `v9.html`/`v10.html` (fan out in ONE parallel call):
 - **v1–v6**: conservative to polished, all using real design tokens, each a DISTINCT layout paradigm — not the same card grid with different spacing.
@@ -174,7 +208,7 @@ Run the ALWAYS gates on every run; add CONDITIONAL gates only when the diff touc
 - **Lint + typecheck** — the detected linter + type checker (e.g. `eslint`, `tsc --noEmit` / `npm run build`). Zero new errors. Warnings triaged.
 - **Duplicate / recreate scan** — for every NEW symbol (function, component, hook, type, util) the build introduced, grep the tree for an existing one with the same/similar name or role. If a sibling already does it, STOP — reuse it, don't add a twin. (Per-run enforcement of "already exists — do NOT recreate".)
 - **Secret scan** — grep the diff for keys/tokens/passwords/connection strings (`gitleaks` if available, else pattern grep for `sk-`, `api_key`, `AKIA`, `postgres://`, etc.). NOTHING secret enters a commit.
-- **Reviewer-agent pass** — spawn one `Agent` (code-reviewer or `cavecrew-reviewer`) on the diff. Severity-tagged findings only; resolve or triage each before commit.
+- **Reviewer-agent pass** — spawn one `Agent` (`code-reviewer`) on the diff. Severity-tagged findings only; resolve or triage each before commit.
 
 **CONDITIONAL:**
 - **Security review** — IF the diff touches auth, API routes, secrets/env, DB queries, or user input → spawn `security-auditor` on those files. Check authz, injection, secret handling, input validation.
@@ -200,6 +234,14 @@ Confirm the phase-0/phase-2 **success predicate** holds against reality — the 
 **Lock it against regression (mandatory):** convert the success predicate into a committed automated test — a Playwright assertion for the measured layout invariant, or a unit/integration test for the logic predicate. Add it to the suite; confirm it goes RED on the pre-fix code (git stash the fix, run, confirm fail, restore) when feasible, then GREEN.
 
 **Critical-path smoke test (mandatory):** exercise the project's critical path end to end (detected during stack setup) and confirm it still works — a change can pass its own test yet break the money path. Drive it in the browser (Playwright) or via the path's API/CLI; show the observed result.
+
+**Page-content check (mandatory when `ui_change: true` and the repo is Next.js).** A measurement proves the layout holds and a screenshot proves it renders; neither proves the *words on the page* are still right. Run `route-map` scoped to the routes this run touched — never the whole site, which turns a 10-second check into minutes:
+
+```bash
+node "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/skills/route-map/scripts/route-check.mjs" "$PWD" --enumerate
+```
+
+Take the enumerated routes, keep only those whose page or component files appear in this run's diff, and run the checker against a `ROUTEMAP.md` holding just those rows (write one at the repo root if absent — a row per touched route, `expected` left empty is normal and correct). Exit code `0` is the only pass; `1` lists every RED row and blocks; `2` means the checker could not run, which is a flag, not a pass. Non-Next.js repos skip this and say so in one line — never record a skipped check as clean.
 
 Then prepend to `docs/DAILY_CHANGELOG.md`: **`## <date> — <one line a stranger understands> (`<commit>`)` plus 2–4 bullets, no more.** What changed, and what it means for someone using the setup. The reasoning — root cause, what you rejected, the before→after numbers — goes in the COMMIT MESSAGE, which is attached to the diff where `git blame` will find it. Do not write it twice: that file hit 704 lines in one month, and a sampled entry shared 66 of its 72 distinctive words with its own commit.
 
