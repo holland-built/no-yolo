@@ -96,7 +96,7 @@ careful about permissions. Read what it wants to do, then allow it.
 Open Claude Code in any folder and run:
 
 ```
-/my-skills
+/checkup
 ```
 
 A table of commands means the install worked.
@@ -122,7 +122,7 @@ project runs on itself.
 | `! gh missing` | Optional. The `/health` and `/release` commands want it. Mac: `brew install gh` · Linux: `sudo apt install gh`. Then `gh auth login` |
 | Several summary lines read `FAILED`, with an error mentioning `styleText` | Your Node is too old. Check with `node --version`; it must be 20 or newer. Install a newer one (Step 1 table) and run Step 5 again |
 | A single summary line reads `FAILED` | Open `README.md`, find that name in the **Add-ons** table, and run the command in its Install column by hand. Then run Step 5 again |
-| `/my-skills` shows nothing | Quit Claude Code and open it again. It only reads `~/.claude` at startup |
+| `/checkup` shows nothing | Quit Claude Code and open it again. It only reads `~/.claude` at startup |
 | A `verify.sh` row reads `FAIL` | Read the message on that row. This is a deeper check than the installer does, so it usually needs someone who codes |
 | You want it all gone | `rm -rf ~/.claude` then, if you had one before, `mv ~/.claude.bak ~/.claude` |
 

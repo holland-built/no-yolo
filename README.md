@@ -20,7 +20,7 @@ Once you do, Claude Code starts working like this:
 - Every time you publish, the files are checked for mistakes and stale text.
 - Any kind of project works. The design tools stay quiet unless there is a screen to design.
 
-Copy it to your own GitHub account (that's called a **fork**) and it's yours. Change any file, add your own commands. `/update` can still pull in later improvements without wiping what you wrote.
+Copy it to your own GitHub account (that's called a **fork**) and it's yours. Change any file, add your own commands. `/checkup` can still spot in later improvements without wiping what you wrote.
 
 ## Install on a new machine
 
@@ -32,7 +32,7 @@ git clone https://github.com/holland-built/no-yolo.git ~/.claude
 bash ~/.claude/setup.sh
 ```
 
-Then open Claude Code anywhere and type `/my-skills`. If you get a table of commands back, it worked.
+Then open Claude Code anywhere and type `/checkup`. If you get a table of commands back, it worked.
 
 For a fuller check, run `bash ~/.claude/verify.sh`. Every row should say PASS. It is the same script the automated checks run.
 
@@ -60,7 +60,7 @@ Two smaller installs:
 
 **No Codex on your machine?** Fine. The steps that would use it notice it is missing and skip themselves. Nothing errors.
 
-**Read next:** `CLAUDE.md` (the map) → `memory/CLAUDE.generated.md` (the working preferences that load every session) → `/my-skills` (every command). Everything else is reached from those three.
+**Read next:** `CLAUDE.md` (the map) → `memory/CLAUDE.generated.md` (the working preferences that load every session) → `/checkup` (every command). Everything else is reached from those three.
 
 ## Prerequisites
 
@@ -79,12 +79,12 @@ Everything here is optional. Install one only when you want the command that use
 
 | Add-on | What it does | Used by | Install |
 |---|---|---|---|
-| [impeccable](https://github.com/pbakaus/impeccable) | 59 deterministic checks on UI source (no model call, no API key) | `/antislop`, `/design-audit`, `/design` | Nothing to install — run on demand as `npx -y impeccable detect` (needs Node + network) |
+| [impeccable](https://github.com/pbakaus/impeccable) | 59 deterministic checks on UI source (no model call, no API key) | `/design`, `/checkup` | Nothing to install — run on demand as `npx -y impeccable detect` (needs Node + network) |
 | [Codex plugin](https://github.com/openai/codex-plugin-cc) | Gets a second opinion from OpenAI's Codex | `/xcheck` and others (see note) | `/plugin marketplace add openai/codex-plugin-cc` then `/plugin install codex@openai-codex` |
 | [archify](https://github.com/tt-a1i/archify) | Turns a description into a diagram | diagrams | installed by `setup.sh` |
 | [fallow](https://www.npmjs.com/package/fallow) | Finds code nothing uses any more | `/health` | installed by `setup.sh` (`npm install -g fallow@2.98.0`) |
 | [gh (GitHub CLI)](https://cli.github.com/) | GitHub from the terminal | `/health`, `/release` | Mac: `brew install gh` · Linux: `sudo apt install gh` — then `gh auth login` |
-| [Groq Whisper key](https://console.groq.com/) | Turns speech in a video into text | `/video-to-kb` | Free API key, then `export GROQ_API_KEY=...` in `~/.zshrc` |
+| [Groq Whisper key](https://console.groq.com/) | Turns speech in a video into text | `/watch` | Free API key, then `export GROQ_API_KEY=...` in `~/.zshrc` |
 | [Chrome](https://www.google.com/chrome/) | Renders design previews | `/design`, `/build` | Usually already there. Mac: `brew install --cask google-chrome` · Linux: download the `.deb` from the link |
 | [Playwright MCP](https://github.com/microsoft/playwright-mcp) | Lets Claude drive a browser | `/build` | Add the `playwright` MCP server to `settings.json` (see below) |
 | Firecrawl MCP | Searches and reads web pages | optional | See `docs/MCP_SERVICES.md` |
@@ -93,7 +93,7 @@ Everything here is optional. Install one only when you want the command that use
 
 The install commands show Mac (`brew`). On Linux use your package manager (`sudo apt install gh`) or the vendor's page.
 
-> **More on the Codex add-on.** `/xcheck`, `/health`, `/build`, `/design` and `/design-audit` use it directly. `/plan`, `/debate` and `/diagnose --debate` use it through their `/xcheck` step. Every one of them skips it quietly if it isn't installed. It needs a ChatGPT login (the free tier works) or an OpenAI API key. `/xcheck` asks for the `gpt-5.6-sol` model, which may need a paid plan; without it, Codex falls back to your default model.
+> **More on the Codex add-on.** `/xcheck`, `/health`, `/build`, `/design` and `/design` use it directly. `/build --plan-only`, `/debate` and `/health --debate` use it through their `/xcheck` step. Every one of them skips it quietly if it isn't installed. It needs a ChatGPT login (the free tier works) or an OpenAI API key. `/xcheck` asks for the `gpt-5.6-sol` model, which may need a paid plan; without it, Codex falls back to your default model.
 
 > **MCP servers** give Claude an extra tool. You add one as a block of settings in `settings.json` — see the [Claude MCP docs](https://docs.anthropic.com/en/docs/claude-code/mcp).
 >
@@ -111,7 +111,7 @@ Nothing to do. Skills make their own folders when they need them, like `brainsto
 |---|---|
 | `CLAUDE.md` | The main rules file. It holds no rules itself — it points at the others. |
 | `docs/CORE_RULES.md` | 8 core rules, rebuilt 2026-08-04 from the survivors of a six-day test that unloaded all 35. Each one names the evidence that earned it back |
-| `docs/*.md` | One file per topic (planning, testing, memory, and so on), each pointed at by `CLAUDE.md`. A one-line summary of every file is in [`skills/my-md/GLOBAL_DESCRIPTIONS.md`](skills/my-md/GLOBAL_DESCRIPTIONS.md) |
+| `docs/*.md` | One file per topic (planning, testing, memory, and so on), each pointed at by `CLAUDE.md`. `/checkup` lists them and flags any that nothing reads |
 | `memory/` | Things you asked it to remember. `facts/` is the real copy; `CLAUDE.generated.md` is built from it. |
 | `skills/` | Your commands, plus links to the borrowed ones |
 | `hooks/` | Small scripts that run by themselves: plain English mode, the bottom status bar, the edit blocker |
@@ -150,7 +150,7 @@ The rule: a planning model writes the plan, then separate agents do the building
 
 ## Keeping your setup up to date
 
-Type `/update` in any folder. You don't need to know git. It checks GitHub without changing anything, tells you in plain words what is different, then you pick one:
+Type `/checkup` in this folder. You don't need to know git. It checks GitHub without changing anything, tells you in plain words what is different, then you pick what to act on:
 
 | You type | What happens |
 |---|---|
@@ -164,11 +164,23 @@ If you have edited files yourself, `full` is still safe. It puts your edits asid
 
 ## Keeping your fork in sync
 
-A fork is your own copy of this repo on your GitHub account. `/update full` works whether you cloned this directly or forked it. For a fork it also links your copy back to the original and replays your own changes on top, so nothing you wrote is lost. After that, send your copy back up with `git push --force origin main`. It reminds you.
+A fork is your own copy of this repo on your GitHub account. `/checkup` tells you when the original has moved on, without changing anything. To actually pull those changes in:
+
+```bash
+cd ~/.claude
+git remote add upstream https://github.com/holland-built/no-yolo.git 2>/dev/null
+git fetch upstream && git rebase upstream/main
+```
+
+That replays your own changes on top, so nothing you wrote is lost. Then `git push --force origin main`.
 
 ## Add a new skill
 
-Make a file at `skills/<name>/SKILL.md` with `user-invocable: true` in it, and put the phrases that should trigger it in that same `description`. Then update the list files in `skills/my-skills/`, run `regen.py`, and re-seal with `catalog_lock.py --relock`. Full checklist: `docs/NO_YOLO.md`.
+Make a file at `skills/<name>/SKILL.md` with `user-invocable: true`, and put the phrases that should trigger it in that same `description`. That is the whole checklist.
+
+There is deliberately no catalogue to update, no lock file to re-seal and no index to regenerate. This repo used to have all three, and maintaining them cost more edits than the skills themselves — roughly 390 commits against files whose only job was describing other files. `/checkup` now derives the inventory from the folder at read time instead.
+
+Before adding one, ask whether an existing skill should gain a mode instead. Seventeen commands with modes beat fifty-two commands; that is the entire lesson of this repo's first six weeks.
 
 ## Update memory preferences
 
@@ -209,8 +221,8 @@ These are kept out of git on purpose.
 |---|---|
 | `settings.json` | It is specific to your computer — paths, connections, possibly API keys. Never commit it. Start from `settings.example.json`. |
 | `plugins/` and plugin shortcuts (`ponytail*/`, `improve`, …) | Other people's code. Reinstall from the Add-ons table. |
-| `skills/design/vendor/` | Other people's code. `/update vendor taste-skill` fetches it. See `docs/THIRD_PARTY_SKILLS.md`. |
-| `.pending-tasks.md`, `learnings.md` | Working files on your machine: the `/whats-next` list and the `/prompt-scan` output |
+| `skills/design/vendor/` | Other people's code, fetched on demand. `/checkup` reports when it has drifted from upstream. |
+| `.pending-tasks.md`, `learnings.md` | Working files on your machine: the `/whats-next` list and the `/better-prompt --refresh` output |
 | `cache/`, `sessions/`, `history.jsonl`, logs | Temporary files |
 
 ## Uninstall

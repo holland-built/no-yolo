@@ -14,7 +14,7 @@ Restate every vague instruction as a verifiable goal before acting — "write a 
 
 For multi-step work, append a per-step verification to each step: `[Step] → verify: [check]`.
 
-Use skill: `/tdd`.
+Use skill: `/build` (its TDD phase).
 
 ## A Check Must Prove It Can Fail
 
