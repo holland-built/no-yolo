@@ -239,11 +239,40 @@ Each brief also carries the **Astryx awareness line**: if this is a React + npm 
 ### Validator pass
 **Slop reject list (read fresh at run time — never inlined here):** `~/.claude/docs/ANTISLOP.md` → `## GUI Slop` and every sub-section under it (template & framing, marketing-page, component, media) is canonical, plus the mockup-only kill rules in `~/.claude/docs/UI_MOCKUPS.md`. Read the section as it stands — do not assume this list of sub-sections is current. Read both before judging and before writing any brief that cites the list.
 
-**Deterministic pre-pass (free, advisory).** Before the judge agent, grep the generated mockups for known AI-design tells — 59 rule-level checks (`text-purple-600`, `nested-cards`, `animate-bounce`, `tight-leading`, `bg-clip-text`), no model call, no API key, no cost, one shell round trip:
+**Deterministic pre-pass (free, advisory).** Before the judge agent, scan the generated mockups for known AI-design tells (`ai-color-palette`, `nested-cards`, `gradient-text`, `tiny-text`, `low-contrast`, …) — no model call, no API key, no cost, one shell round trip. Report whatever rule count the tool itself emits; never state a number here, because the registry is someone else's and changes on their release:
 ```bash
-timeout 30 npx --yes impeccable detect ".mockups/design-<slug>/" 2>/dev/null || echo "impeccable detect unavailable — skipped"
+TARGET=".mockups/design-<slug>/"
+n=$(find "$TARGET" -type f \( -name '*.html' -o -name '*.htm' -o -name '*.jsx' \
+  -o -name '*.tsx' -o -name '*.css' -o -name '*.vue' -o -name '*.svelte' \) 2>/dev/null | wc -l | tr -d ' ')
+if [ "$n" = "0" ]; then
+  echo "⚠️ impeccable UNVERIFIED — no scannable files under $TARGET; a clean result here would mean nothing"
+else
+  out=$(npx --yes impeccable@3.5.0 detect "$TARGET" 2>&1); rc=$?
+  printf '%s\n' "$out"
+  if printf '%s' "$out" | grep -q 'cannot access'; then
+    echo "⚠️ impeccable UNVERIFIED — could not read $TARGET"
+  else
+    case $rc in
+      0) echo "impeccable: clean ($n files scanned)" ;;
+      2) echo "impeccable: findings above — evidence, not a verdict ($n files scanned)" ;;
+      *) echo "⚠️ impeccable UNVERIFIED (exit $rc) — the pre-pass did NOT run" ;;
+    esac
+  fi
+fi
 ```
-Run it ONCE, up front, for the whole directory — never per variant. `npx` missing, offline registry, non-zero exit, or the 30s cap hit -> print that one line and carry on; this NEVER blocks a round, and a run without it is a normal run. **Never `impeccable install`** — that writes `PRODUCT.md`/`DESIGN.md` into the user's project; `detect` is read-only and works in a project that was never set up for it. Hand the hits to the judge below as evidence, quoting rule names verbatim. **Advisory only:** the judge stays the sole gate — a flagged variant the judge clears, lives.
+Run it ONCE, up front, for the whole directory — never per variant. All four branches were tested against v3.5.0 on 2026-08-05: findings, clean, missing path, empty directory.
+
+**Exit 2 means findings, not failure.** `detect` exits `2` when it finds anti-patterns and `0` when clean, so a bare `|| echo "…unavailable…"` reports a successful scan as a skip.
+
+**Exit 0 does NOT prove anything was scanned.** A missing path prints `Warning: cannot access …` and still exits `0`; an empty directory prints nothing and exits `0`. Both look identical to a clean pass. That is why the file count and the `cannot access` grep are in the block — delete either and "clean" starts meaning "did not look".
+
+**A failed run must be visible.** Print the `UNVERIFIED` line and say it in the round summary; never let a missing scan read as a clean one. (This block previously wrapped the call in `timeout 30`, which is not a command on macOS — so the pre-pass silently never ran, and `|| echo` made that look normal. Do not reintroduce a wrapper that is not on the machine.)
+
+**Version is pinned deliberately.** `@latest` re-resolves per call, so the rule set can change with no commit to review. Bump the pin as a normal change.
+
+**Never `impeccable install`** — that writes `PRODUCT.md`/`DESIGN.md` into the user's project; `detect` is read-only and works in a project that was never set up for it. Hand the hits to the judge below as evidence, quoting rule names verbatim. **Advisory only:** the judge stays the sole gate — a flagged variant the judge clears, lives.
+
+**Static scan reaches about half the quality rules.** Verified 2026-08-05 against v3.5.0 on local HTML: `low-contrast`, `tiny-text`, `justified-text`, `all-caps-body`, `wide-tracking` and `skipped-heading` DO fire on files. Planted violations for `broken-image`, `line-length`, `cramped-padding`, `tight-leading`, `text-overflow` and `clipped-overflow-container` did NOT — those need a rendered page at a real viewport (`detect <url> --viewport WxH`). A clean mockup pre-pass therefore does not mean the shipped surface is clean.
 
 Spawn a judge agent running Taste + Swiss + UIwiki lenses on all 8, carrying that freshly-read reject list plus any detect hits. Reject any variant that hits it and regenerate it (max 2 rounds, specific brief per reject).
 

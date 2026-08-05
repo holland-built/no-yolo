@@ -127,7 +127,7 @@ folder. *Otherwise* → the one list.
 | Plugin | Fate |
 |---|---|
 | codex | Keep — backs `/xcheck` (30 uses) |
-| caveman | Keep — its agents ran 232 times |
+| caveman | **Gone.** Removed 2026-08-03 in `eb14eb6`, along with its 9 tracked files. This row said "Keep — its agents ran 232 times" until 2026-08-05, two days after the removal, and that stale row caused caveman to be treated as wanted and re-updated. Usage counters record the past; they are not evidence something is still wired in |
 | design-and-refine | Delete — 0 real invocations |
 | superpowers, ecc | 3 real uses each. Leave for now |
 

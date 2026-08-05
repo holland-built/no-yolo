@@ -26,8 +26,8 @@
 ---
 
 ## GUI Slop
-> **This list is canonical.** `/design`, `/build`, `/health`, `/debate --ui` and `UI_MOCKUPS.md` all read it — add new patterns HERE and nowhere else.
-> `UI_MOCKUPS.md` holds a small set of deliberate mockup-specific kill rules *on top of* this list; it does not mirror it. Do not copy this list into a skill.
+> **This list is canonical.** `/design`, `/build`, `/health` and `/debate --ui` all read it — add new patterns HERE and nowhere else.
+> The mockup-only kill rules moved in from `UI_MOCKUPS.md` on 2026-08-05 and are now the `### Mockup-only kill rules` subsection below, so this file is the single home. `UI_MOCKUPS.md` keeps mockup *workflow* only — counts, paths, output format — and holds no tells. Do not copy this list into a skill.
 > For deep landing-page-specific rules (100+), read `skills/design/vendor/taste-skill/taste-skill.md` §9 and its `redesign-skill.md` on demand — deliberately not merged here (third-party, never edited). That folder is gitignored, so on a fresh clone it is absent; `skills/design/TASTE_CORE.md` is the tracked distillation that always works.
 
 - **Gradient hero banner** — purple→blue full-bleed top section as the default page header
@@ -71,6 +71,19 @@
 - **Right-sliding drawer** — panel from the right with an × close button, used for content that had somewhere else to go
 - **"Learn more →"** — generic link text that names no destination (low-priority nit, not a reject on its own)
 - **Decorative animation** — fade-in on scroll, entrance bounces, hover `scale(1.05)`, motion serving no information purpose
+
+### Mockup-only kill rules
+> Absorbed from `UI_MOCKUPS.md` on 2026-08-05 per the rebuild plan's Chunk 4. These apply when judging a *set* of generated mockup variants, not when reviewing one shipped surface — that scoping is why they are their own subsection rather than being folded into the lists above.
+> Survivor quota: a set of 3 needs **at least 1** non-slop survivor; a set of 5 or more needs **at least 2**. If a variant matches, kill it and regenerate with a structurally different paradigm — do not nudge it.
+
+- **Accordion-only** — every group collapsed behind a chevron, with no other structure
+- **Floating cards on a tinted ground** — lighter-or-darker background as the only depth device
+- **Starter-template twin** — passes as Tailwind UI, shadcn, or Material UI with the copy swapped (same tell as **Starter-template look** above; kept here because in a mockup set it is an instant reject, not a discussion)
+- **Radius as the only softening** — corners over 8px doing all the work, applied everywhere
+- **Size-only hierarchy** — sans-serif with no weight, spacing, or colour contrast
+- **Interchangeable variant** — a layout whose description would fit 3+ other variants in the same set. This is the one rule with no equivalent above: it judges a variant against its *siblings*, so a set of ten competent near-identical mockups fails even when no single one would
+
+**Explicitly NOT slop** — structurally distinct paradigms, and the intended escape route from the rules above: terminal/CLI, Bloomberg data grid, editorial/magazine, bento grid, command palette, split-pane reference, single-column full-bleed, floating action panel, timeline, kanban.
 
 ### Media tells
 > For AI-generated images, video, logos, and slide decks. Adapted from `febbhav/signs-of-ai-design`.

@@ -21,18 +21,53 @@ ONE parallel Agent call. Each returns `severity | rule | file:line | observed | 
 3. **UIwiki** — 20 rules scored.
 4. **WCAG 2.1 AA** — contrast, focus-visible, keyboard, aria, reduced-motion.
 5. **CSS health** — hardcoded values, magic numbers, inconsistent tokens. Deterministic evidence
-   first, judgement second: grep the audited source for known AI-design tells — 59 rule-level
-   checks (`text-purple-600`, `nested-cards`, `animate-bounce`, `tight-leading`, `bg-clip-text`),
-   no model call, no API key, no cost.
+   first, judgement second: scan the audited source for known AI-design tells
+   (`ai-color-palette`, `nested-cards`, `gradient-text`, `low-contrast`, `tiny-text`, …), no model
+   call, no API key, no cost. Report the rule count the tool emits; never state one here.
    ```bash
-   timeout 30 npx --yes impeccable detect "<audited path>" 2>/dev/null || echo "impeccable detect unavailable — skipped"
+   TARGET="<audited path>"
+   n=$(find "$TARGET" -type f \( -name '*.html' -o -name '*.htm' -o -name '*.jsx' \
+     -o -name '*.tsx' -o -name '*.css' -o -name '*.vue' -o -name '*.svelte' \) 2>/dev/null | wc -l | tr -d ' ')
+   if [ "$n" = "0" ]; then
+     echo "⚠️ impeccable UNVERIFIED — no scannable files under $TARGET"
+   else
+     out=$(npx --yes impeccable@3.5.0 detect "$TARGET" 2>&1); rc=$?
+     printf '%s\n' "$out"
+     if printf '%s' "$out" | grep -q 'cannot access'; then
+       echo "⚠️ impeccable UNVERIFIED — could not read $TARGET"
+     else
+       case $rc in
+         0) echo "impeccable: clean ($n files scanned)" ;;
+         2) echo "impeccable: findings above — additive evidence, not a gate ($n files scanned)" ;;
+         *) echo "⚠️ impeccable UNVERIFIED (exit $rc) — deterministic evidence MISSING for this lens" ;;
+       esac
+     fi
+   fi
    ```
    Fold each hit into this lens's rows alongside its own findings, rule name verbatim in `rule`,
-   the tool named as the evidence source. **Degrades silently:** `npx` missing, offline, non-zero
-   exit, or the 30s cap hit -> print that one line and run the lens on judgement alone. It is
-   additive evidence, never a gate, and never a reason to stall the parallel Agent call.
+   the tool named as the evidence source. It is additive evidence, never a gate, and never a
+   reason to stall the parallel Agent call.
+
+   **Exit 2 means findings, not failure** — `detect` exits `2` when it finds anti-patterns, `0`
+   when clean. A bare `|| echo "…unavailable…"` reports a successful scan as a skip.
+
+   **Exit 0 does NOT prove anything was scanned** — a missing path warns and still exits `0`, and
+   an empty directory prints nothing and exits `0`. The file count and the `cannot access` grep
+   are what separate "clean" from "did not look".
+
+   **Degrades LOUDLY, not silently.** If it could not run, the lens must carry `UNVERIFIED` in its
+   rows rather than reading as clean. (This block previously used `timeout 30`, which is not a
+   command on macOS, so the scan never ran here and the fallback hid it.)
+
    **Never `impeccable install`** — that writes `PRODUCT.md`/`DESIGN.md` into the user's project;
    `detect` is read-only and works in a project that was never set up for it.
+
+   **Static scan reaches about half the quality rules** — verified 2026-08-05 on v3.5.0.
+   `low-contrast`, `tiny-text`, `justified-text`, `all-caps-body`, `wide-tracking`,
+   `skipped-heading` fire on source files. `broken-image`, `line-length`, `cramped-padding`,
+   `tight-leading`, `text-overflow`, `clipped-overflow-container` need a rendered page
+   (`detect <url> --viewport WxH`). Say which mode ran, so a source-only pass is not read as full
+   coverage.
 
 **Acceptance-criteria structure (read-only, partial).** Shape this audit's testable acceptance criteria and
 QA checklist from `~/.agents/skills/impeccable/SKILL.md`, reading ONLY `## Guideline Authoring Workflow`,

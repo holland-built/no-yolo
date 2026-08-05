@@ -9,19 +9,17 @@ No exceptions for new components, redesigns, layout changes, or visual refactors
 **At least 1–2 of the variations must be wildly different** — different layout paradigm, opposite density, unexpected color treatment, or unconventional structure. Safe incremental variations only reveal safe incremental taste. Wild variations reveal where the real ceiling is.
 
 ## Slop prohibition (applies to every mockup, every skill)
-> Canonical GUI slop list: `~/.claude/docs/ANTISLOP.md ## GUI Slop`. Check any output against this list before shipping it.
 
-Before presenting mockups to the user, self-check every variant against the canonical GUI slop list in `ANTISLOP.md`. If a variant matches — kill it, regenerate it with a structurally different paradigm. For sets of 3: minimum 1 non-slop survivor. For sets of 5+: minimum 2.
+**Moved 2026-08-05.** The mockup kill rules, the survivor quota, and the "not slop" paradigm list
+now live in `~/.claude/docs/ANTISLOP.md` → `### Mockup-only kill rules`, under `## GUI Slop`.
+Read them there. Nothing about them changed except the address.
 
-**Mockup-specific kill rules (additions not in ANTISLOP.md) — instant reject if the variant's PRIMARY design expression is:**
-- Accordion-only (all groups collapsed behind a chevron, no other structure)
-- Floating cards on a darker/lighter background as the only device
-- Looks like a Tailwind UI, shadcn, or Material UI starter template
-- Rounded corners (>8px) as the only softening device, applied everywhere
-- Sans-serif + size-only hierarchy (no weight contrast, spacing, or color differentiation)
-- Any layout that could describe 3+ other variants in the same set
+Why the move: ANTISLOP.md's own header says patterns are added "HERE and nowhere else", and this
+file held six of them, so the canonical list had two homes. That is the exact duplication the
+rebuild's deciding rule forbids — a rule lives in exactly one file; everything else points at it.
 
-**Not slop** — structurally distinct paradigms: terminal/CLI, Bloomberg data grid, editorial/magazine, bento grid, command palette, split-pane reference, single-column full-bleed, floating action panel, timeline, kanban.
+Everything below this line is mockup **workflow**, not slop judgement — where files go, how many
+variants, what to output. It stays here because it is a different job from a list of tells.
 
 ## ALWAYS: pop it in Chrome + keep a master index
 
