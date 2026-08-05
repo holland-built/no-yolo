@@ -1,0 +1,150 @@
+---
+name: dep-audit
+description: Use this skill when the user types /dep-audit, says 'audit my dependencies', 'check for vulnerable packages', 'what licences am I using', or 'security scan this app'. npm-only supply-chain pass — leaked keys, npm advisories, licences, dependency inventory and a small Next.js config checklist, merged into one severity-ranked table. This is NOT a Trivy equivalent — it never scans OS or container packages, builds no SBOM, and reads no infrastructure-as-code.
+user-invocable: true
+effort: high
+argument-hint: "[repo path — defaults to the current repo]"
+allowed-tools: [Bash, Read, Grep, Glob]
+---
+
+Arguments: $ARGUMENTS — installs nothing; every tool below is `git` or the `npm` already present.
+
+## Preflight
+
+```bash
+TARGET="$(echo "$ARGUMENTS" | xargs)"; TARGET="${TARGET:-.}"
+ROOT="$(cd "$TARGET" 2>/dev/null && (git rev-parse --show-toplevel 2>/dev/null || pwd))" || ROOT=""
+TMP="$(mktemp -d)"   # $TMP and $ROOT are reused below — one shell session, rm -rf "$TMP" at the end
+[ -n "$ROOT" ] && echo "ROOT|$ROOT" || echo "ROOT|UNRESOLVED"
+[ -f "$ROOT/package.json" ] && echo "NPM|yes" || echo "NPM|no"
+```
+
+**Hard gate — `NPM|no` means every npm step below is SKIPPED, not attempted.** `npm audit`/`npm ls`
+walk *up* the tree, so with no `package.json` they silently report a parent's `node_modules`
+(verified: run in `~/.claude` they reported six vulnerabilities belonging to the *home directory
+above it*) — real-looking findings about packages
+the repo does not have. When `NPM|no`, still run step 1, still print the blind-spots section, and
+say: `no package.json at <ROOT> — npm passes skipped (not clean, unrun)`.
+
+## 1 — Leaked keys (always runs)
+
+**Branch first: is `$ROOT` the no-yolo repo itself?** If it holds BOTH `hooks/secret-scan.sh` and
+`verify.sh`, the tracked-content scan is already `verify.sh`'s job — delegate, never repeat it:
+
+```bash
+(cd "$ROOT" && bash verify.sh) > "$TMP/verify.out" 2>&1; echo "VERIFY_RC|$?"
+grep -m1 'tracked-content scan' "$TMP/verify.out" || echo "KEYS_ROW|missing"
+```
+
+| verify.sh row | Key-scan row |
+|---|---|
+| `PASS tracked-content scan` | INFO `key scan clean (via verify.sh)` |
+| `FAIL tracked-content scan …` | one CRITICAL row quoting the FAIL text verbatim |
+| no such row, or `VERIFY_RC` non-zero and no row | CRITICAL `key scan DID NOT RUN — verify.sh produced no tracked-content row` |
+
+Why delegate rather than re-scan: `verify.sh`'s `SCAN_EXCLUDE` names the six files that hold
+credential formats on purpose and sha256-pins the two test fixtures, so excluding them hides
+nothing — it tells a real leak from a fixture. A bare re-scan cannot: it returns ~20 hits on the
+repo's own pattern list and fixtures, and a wall of expected findings trains the reader to ignore
+the table.
+
+**Every other repo** — scan tracked files with the shared scanner:
+
+```bash
+SCAN="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/secret-scan.sh"
+if [ ! -x "$SCAN" ]; then echo "SCAN_DID_NOT_RUN|scanner not executable at $SCAN"
+elif ! "$SCAN" --check 2>/dev/null; then echo "SCAN_DID_NOT_RUN|scanner self-check failed"
+else
+  files=(); while IFS= read -r -d '' f; do [ -f "$ROOT/$f" ] && files+=("$ROOT/$f"); done \
+    < <(git -C "$ROOT" ls-files -z 2>/dev/null)
+  if [ "${#files[@]}" -eq 0 ]; then echo "SCAN_DID_NOT_RUN|no tracked files (not a git repo?)"
+  else "$SCAN" --files "${files[@]}"; echo "SCAN_STATUS|$?"; fi
+fi
+```
+
+Resolved from the installed config dir — **never** a repo-relative path. Fail closed, as `/health` does:
+
+| Output | Action |
+|---|---|
+| `SCAN_DID_NOT_RUN\|<reason>` | CRITICAL `key scan DID NOT RUN — <reason>`. Never report clean |
+| lines, then `SCAN_STATUS\|0` | one CRITICAL row per printed `file:line` |
+| `SCAN_STATUS\|1` | no matches — one INFO row `key scan clean (N tracked files)` |
+| `SCAN_STATUS\|` anything else | CRITICAL `key scan DID NOT RUN — scanner exited <rc>` |
+
+Never pipe the file list through `xargs` — it collapses grep's exit 1 ("no match") into 123, destroying the 0/1 contract the table above depends on.
+
+## 2 — Vulnerable packages
+
+```bash
+npm --prefix "$ROOT" audit --json > "$TMP/audit.json" 2>/dev/null; echo "AUDIT_RC|$?"
+```
+
+`AUDIT_RC` 0 or 1 is normal (1 = advisories found); anything else, or unparseable JSON → one HIGH
+row saying the advisory pass did not run. Read `.metadata.vulnerabilities` for per-severity counts,
+then one row per key in `.vulnerabilities`: package, `severity`, `via[0].title`, and the fixed
+version from `fixAvailable` (`true`, `false`, or `{name, version}`).
+
+## 3 — Licences
+
+```bash
+# --long is REQUIRED: plain `npm ls --json` emits no `license` field at all, so the
+# licence pass would walk a tree of packages and silently report zero findings.
+npm --prefix "$ROOT" ls --json --long --all > "$TMP/tree.json" 2>/dev/null
+```
+
+Walk `dependencies` recursively. **Skip any node with no `version`** — uninstalled optional
+platform binaries (`*-linux-x64-gnu`, `*-win32-*`) carry no licence because they carry no package,
+and counting them invents ~100 phantom findings. Permissive allowlist: MIT, ISC, BSD-2-Clause,
+BSD-3-Clause, Apache-2.0, 0BSD. Flag anything else LOW (copyleft — MPL/LGPL/GPL — MODERATE), and
+missing/`UNKNOWN` on an *installed* package MODERATE. `license` may be a string or `{type: ...}`.
+
+## 4 — Inventory
+
+```bash
+npm --prefix "$ROOT" ls --depth=0 2>/dev/null | tail -n +2 | grep -c '^[├└]'   # direct
+npm --prefix "$ROOT" ls --all --parseable 2>/dev/null | wc -l                  # total resolved
+```
+
+One INFO row: direct count and transitive count (total minus direct); `problems` entries from the tree JSON (extraneous / missing / peer conflicts) become LOW rows.
+
+## 5 — Next.js config checklist
+
+Only when `next` is a dependency. Three checks, each an evidence-backed row:
+
+- **Secrets in the client bundle** — `grep -rEn 'NEXT_PUBLIC_[A-Z0-9_]*(KEY|TOKEN|SECRET|PASSWORD)'` over the repo and `.env*`: CRITICAL, every `NEXT_PUBLIC_` var is inlined into shipped JS. Also run `secret-scan.sh --files` over just the `'use client'` files — never a second pattern set.
+- **Headers in `next.config.*`** — read it. No `headers()` block or no `Content-Security-Policy` → HIGH. `Access-Control-Allow-Origin: *` → HIGH. No `X-Frame-Options`/CSP `frame-ancestors` → MODERATE.
+- **Exposed environment** — `git ls-files | grep -E '(^|/)\.env'` (a tracked `.env*` that is not `.env.example` is CRITICAL), and `process.env.` inside any `'use client'` file with no `NEXT_PUBLIC_` prefix → HIGH (undefined at runtime, or leaked if bundled).
+
+## Output — ONE table
+
+Merge every source into a single table — `| Severity | Area | Finding | Where | Fix |` — ranked CRITICAL → HIGH → MODERATE → LOW → INFO. Not five tables, not one per phase. `Area` is Keys / Advisory / Licence / Inventory / Next.js; `Where` is `file:line`, a package name, or the config key — never "the codebase"; `Fix` is one action, not a paragraph.
+
+## What this did NOT check
+
+Print this on **every** run, pass or fail, verbatim in substance:
+
+- No OS or container package scanning — nothing outside `node_modules` was looked at.
+- No SBOM was produced.
+- No licence-policy or SPDX evaluation — licences are matched against a hardcoded allowlist, not against your policy.
+- No infrastructure-as-code checks — Dockerfiles, compose files, terraform and k8s manifests are not read.
+
+**A clean result here therefore does not mean full coverage.** It means npm-level findings only.
+
+## Why these gaps are acceptable
+
+Verified 2026-08-02 across the three active app repos:
+
+- `~/AI/salty` — none.
+- `~/AI/wayfinder-redesign` — `docker-compose.yml`, one `postgres:17-alpine` dev database.
+- `~/AI/Caliber` — none (its only `.yml` files are Playwright page snapshots).
+
+The gap is *narrow, not absent*. Two repos have no infrastructure to scan; the third's only
+container is a stock upstream Postgres for local dev — not built here, not deployed, no
+application Dockerfile and no manifests behind it. A container scanner would have one target, and
+would repeat what `postgres:17-alpine`'s own release notes say.
+
+**Reconsider a real scanner (Trivy/Grype) the moment any one of these is true:**
+
+1. Any repo gains a `Dockerfile` — an image *you* build is an image you own the CVEs of.
+2. `wayfinder-redesign`'s compose grows past a dev-only database, or its image ships anywhere.
+3. Any repo gains terraform, a k8s manifest, or a pipeline that builds a container.

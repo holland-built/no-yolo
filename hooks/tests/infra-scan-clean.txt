@@ -1,0 +1,37 @@
+# NEGATIVE-CONTROL FIXTURE for the infra-leak scan. Read by verify.sh check 8a.
+#
+# Every line below MUST NOT match. A pattern that matches everything is as useless
+# as one that matches nothing, and reads as "working" just the same — this is the
+# half of the control that catches an over-broad pattern.
+#
+# The addresses are the documentation ranges (RFC5737 TEST-NET, and well-known
+# public resolvers). The rest are the specific false positives this pattern has
+# actually produced or nearly produced: version numbers that look like octets, and
+# a plain Path.home() call that an earlier `\b`-based rule matched as an internal
+# hostname on Linux.
+#
+# Pinned by sha256 for the same reason as the probe file — see its header.
+#
+# Lines starting with # are ignored by the reader.
+documentation 203.0.113.10 and 198.51.100.4 are TEST-NET ranges
+public 8.8.8.8 and 1.1.1.1
+version 10.2 of the spec, section 172.3, port 100.64
+a path like Path.home() and a call to os.homedir()
+example.com and my.example.org
+# --- credential near-misses (added 2026-08-01) ---
+# Each is a shape the credential rules must NOT match: prose about the tools, a
+# placeholder, and a real public identifier that merely starts the same way.
+run gh pr create and set GITHUB_TOKEN in the environment
+put your key in ANTHROPIC_API_KEY, never in a file
+example config: api_key = <your-key-here>
+the sk-learn library and a variable named skip_live_check
+a heading that says BEGIN PRIVATE and nothing more
+# --- connection-string near-misses (added 2026-08-01) ---
+# Placeholder URLs are the shape docs legitimately use. An earlier version of the
+# database rules matched postgres://<user>:<password>@<host> and would have blocked
+# every install doc in the repo; <> is excluded from the class for exactly this.
+connect with postgres://<user>:<password>@<host>/<db> as a placeholder
+set DATABASE_URL to mongodb+srv://<user>:<pass>@<cluster> in your env
+send a Bearer token in the Authorization header
+redis:// and mysql:// are the URL schemes we support
+the sk-learn library and scikit-learn are the same thing
