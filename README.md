@@ -110,7 +110,7 @@ Nothing to do. Skills make their own folders when they need them, like `brainsto
 | Path | What it holds |
 |---|---|
 | `CLAUDE.md` | The main rules file. It holds no rules itself — it points at the others. |
-| `docs/CORE_RULES.md.off` | The core rules, switched off on purpose since 2026-07-29. Nothing loads them; `docs/EXPERIMENT_CORE_RULES.md` says why and how to bring them back |
+| `docs/CORE_RULES.md` | 8 core rules, rebuilt 2026-08-04 from the survivors of a six-day test that unloaded all 35. Each one names the evidence that earned it back |
 | `docs/*.md` | One file per topic (planning, testing, memory, and so on), each pointed at by `CLAUDE.md`. A one-line summary of every file is in [`skills/my-md/GLOBAL_DESCRIPTIONS.md`](skills/my-md/GLOBAL_DESCRIPTIONS.md) |
 | `memory/` | Things you asked it to remember. `facts/` is the real copy; `CLAUDE.generated.md` is built from it. |
 | `skills/` | Your commands, plus links to the borrowed ones |
@@ -217,7 +217,7 @@ It is drawn by `hooks/statusline.sh`. When literal mode is on, a badge for it ap
 
 ## The CLAUDE.md instruction chain
 
-`CLAUDE.md` holds pointers and nothing else: `@memory/CLAUDE.generated.md`, `@docs/SKILL_TRIGGERS.md`, and one line per topic (Planning → `PLANNING.md`, and so on). Never put an actual rule in `CLAUDE.md`. Put it in the right topic file and point at it. (The core-rules import sat here too until 2026-07-29 — it is switched off for an experiment; see `docs/EXPERIMENT_CORE_RULES.md`.)
+`CLAUDE.md` holds pointers and nothing else: `@memory/CLAUDE.generated.md`, `@docs/SKILL_TRIGGERS.md`, and one line per topic (Planning → `PLANNING.md`, and so on). Never put an actual rule in `CLAUDE.md`. Put it in the right topic file and point at it. (`@docs/CORE_RULES.md` is imported here too — 8 rules, down from 35 after a six-day test with them switched off.)
 
 ## What's excluded
 
