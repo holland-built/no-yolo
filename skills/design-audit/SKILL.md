@@ -48,6 +48,19 @@ ONE parallel Agent call. Each returns `severity | rule | file:line | observed | 
    **Never `impeccable install`** — that writes `PRODUCT.md`/`DESIGN.md` into the user's project;
    `detect` is read-only and works in a project that was never set up for it.
 
+**Acceptance-criteria structure (read-only, partial).** Shape this audit's testable acceptance criteria and
+QA checklist from `~/.agents/skills/impeccable/SKILL.md`, reading ONLY `## Guideline Authoring Workflow`,
+`## Required Output Structure`, `## Component Rule Expectations`, `## Quality Gates`, `## Accessibility`.
+IGNORE `## Brand`, `## Style Foundations`, `## Rules: Do`, `## Rules: Don't`, and NEVER read the sibling
+`DESIGN.md` — they impose a foreign palette (#CC8800, cream) and typeface (Chakra Petch/JetBrains Mono), and
+the audited project's own tokens always win. Frozen local fork (last changed 2026-06-23), reference text
+only — never invoked as a skill, and there is no `/impeccable` command. Path missing -> skip silently, never block.
+
+**Full reference index.** `~/.claude/skills/design/DESIGN_REFS.md` is the complete routing table for every
+design reference available — read it for any lens needing one the blocks here don't name (notably
+`interface-design`, reachable only from there: craft/hierarchy/token and design-system-consistency lenses for
+product UI — dashboards, admin, settings; not marketing pages).
+
 **Conditional 6th lens — Motion.** Add ONLY when the surface has real animation, transition,
 gesture, drag, sheet, or scroll-driven code (grep for `transition`, `animate`, `@keyframes`,
 `motion.`, `spring`, `drag`, `swipe`). Ground this lens by READING two installed skills as

@@ -41,7 +41,9 @@ Every dispatch prompt must bound how much other code the change could break.
 
 Pre-built specialist agent definitions — each knows a specific domain.
 
-> The `agents/` roster is a curated cut of the community subagents pack (VoltAgent-style definitions). Three are hard-wired into skills — `/build` dispatches `code-reviewer`, `security-auditor`, and `accessibility-tester` — the rest are an optional dispatch menu for the role tables below. Unused ones cost nothing at runtime; prune freely in your fork.
+> The `agents/` roster is a curated cut of the community subagents pack (VoltAgent-style definitions) — none of it is authored here. Three are hard-wired into skills — `/build` dispatches `code-reviewer`, `security-auditor`, and `accessibility-tester` — the rest are an optional dispatch menu for the role tables below.
+>
+> **Unused ones are not free.** Every agent's `description` frontmatter is injected into the system prompt each session whether it is ever dispatched or not — 17 definitions cost roughly 300 tokens per session. Measured 2026-08-04: four have never been dispatched once (`api-designer`, `fastapi-developer`, `performance-engineer`, `prompt-engineer`). Prune freely in your fork; the saving is real but small, and a pruned agent is one prompt away from being wanted again.
 
 **Cross-cutting (use most days):**
 - `debugger` — bug hunts (Karpathy "write a failing test")

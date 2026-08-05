@@ -1,5 +1,5 @@
 <!-- GENERATED FROM ~/.claude/memory/facts/ — DO NOT EDIT. Run /memory-compile. -->
-<!-- compiled 2026-08-01 -->
+<!-- compiled 2026-08-03 -->
 # Learned Preferences (compiled from curated memory)
 
 Compiled from the fact store. Each line links its source fact.
@@ -9,7 +9,7 @@ Compiled from the fact store. Each line links its source fact.
 - **Challenge-by-default posture — propose-and-wait on substantive asks** — Reconciles rules 1/3/6/7/10 into one posture — on a substantive ask (change, complaint, direction, decision) AI proposes an alternative and WAITS instead of acting or asking bare permission; suppressed by /literal mode or an inline safeword. ([feedback-challenge-by-default](memory/facts/feedback-challenge-by-default.md))
 - **eli5 output — table first, plain words; only a single fact stays a sentence** — Output to the user must be plain + jargon-free AND table-shaped by default. Two or more facts, options, files, steps or states go in a markdown table (up to 8 rows) — not prose, not a bullet list. Only a genuine single fact is one sentence. Table plus one short line of context, ~20 lines max. ([feedback-eli5-plain-short](memory/facts/feedback-eli5-plain-short.md))
 - **Ship UI redesigns surface-by-surface into the real app, screenshot each** — For large UI redesigns, build one surface at a time straight into the running app and verify each in the browser before the next — don't iterate on abstract mockups/plans. ([feedback-realapp-incremental-ui](memory/facts/feedback-realapp-incremental-ui.md))
-- **Delegate ≥5-lookup scans to a subagent** — When answering one question needs ≥5 read-only tool calls (Grep/Glob/Read/read-only Bash), dispatch cavecrew-investigator (or Explore) instead of running them inline — quiet screen, slower context growth ([pattern-delegate-scans-to-subagents](memory/facts/pattern-delegate-scans-to-subagents.md))
+- **Delegate ≥5-lookup scans to a subagent** — When answering one question needs ≥5 read-only tool calls (Grep/Glob/Read/read-only Bash), dispatch the Explore agent instead of running them inline — quiet screen, slower context growth ([pattern-delegate-scans-to-subagents](memory/facts/pattern-delegate-scans-to-subagents.md))
 - **Auto-commit on push commands** — When the user says 'push to <branch>', auto-commit all local changes first (add, generate message, commit, push) without asking. ([user-auto-commit-on-push](memory/facts/user-auto-commit-on-push.md))
 - **All coding runs on Opus** — Every implementation/code-writing subagent uses model opus, not sonnet. Planning stays fable; audit/research subagents follow whatever the task specifies. ([user-opus-for-all-coding](memory/facts/user-opus-for-all-coding.md))
 - **Bulleted/table output, never prose** — Default output is a bulleted list or markdown table; no long prose paragraphs. Code/commands in fenced blocks. ([user-output-format-bullets](memory/facts/user-output-format-bullets.md))

@@ -173,6 +173,20 @@ Write the seed to `.mockups/design-seed.md`: palette hex, type families, spacing
 
 The Design Read line, the three dial values, and the design-system decision all feed the Step 2 briefs alongside the six-category direction.
 
+**Component-rule structure (read-only, partial).** When a brief has to spell out component rules,
+acceptance criteria, or a QA checklist, READ ONLY these sections of `~/.agents/skills/impeccable/SKILL.md`:
+`## Guideline Authoring Workflow`, `## Required Output Structure`, `## Component Rule Expectations`,
+`## Quality Gates`, `## Accessibility`. IGNORE `## Brand`, `## Style Foundations`, `## Rules: Do`,
+`## Rules: Don't`, and NEVER read the sibling `DESIGN.md` — they impose a foreign palette (#CC8800, cream)
+and typeface (Chakra Petch/JetBrains Mono), and the project's own tokens always win; it shapes how rules are
+written, never the visual direction. Frozen local fork (last changed 2026-06-23), reference text only — never
+invoked as a skill, and there is no `/impeccable` command. Path missing -> skip silently, never block.
+
+**Full reference index.** `~/.claude/skills/design/DESIGN_REFS.md` is the complete routing table for every
+design reference available — read it when this step needs one the blocks here don't name (notably
+`interface-design`, reachable only from there: domain/colour-world/signature exploration, squint/swap tests,
+concentric radius, surface-elevation percentages — product UI only, never marketing pages).
+
 **Motion grounding (conditional).** If the surface involves motion — gestures, drags, swipes,
 sheets, drawers, scroll-driven effects, or non-trivial transitions — first READ
 `~/.claude/.agents/skills/apple-design/SKILL.md` and pass its rules into every mockup agent's

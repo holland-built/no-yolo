@@ -117,13 +117,49 @@ test('every shipped pattern compiles and is loaded by the hook', () => {
 for (const entry of shipped) {
   test(`positive control fires: ${entry.tell}`, () => {
     const result = runOnText(POSITIVE_CONTROLS[entry.tell]);
-    assert.strictEqual(result.status, 0, 'the hook must never block');
+    // Exit status stays 0 in every path — a Stop hook blocks via stdout JSON,
+    // never via exit code, and a non-zero exit would look like a crashed hook.
+    assert.strictEqual(result.status, 0, 'exit status must stay 0');
     assert.ok(
       result.stderr.includes(entry.tell),
       `expected a warning naming "${entry.tell}", got: ${JSON.stringify(result.stderr)}`
     );
+    assert.strictEqual(
+      JSON.parse(result.stdout || '{}').decision, 'block',
+      `expected a block decision for "${entry.tell}", got: ${JSON.stringify(result.stdout)}`
+    );
   });
 }
+
+// --- blocking contract: block once, then let the rewrite through ------------
+
+test('the rewrite pass warns but does not block again', () => {
+  const dir = makeSandbox();
+  const transcript = writeTranscript(dir, POSITIVE_CONTROLS['Sign-off CTA']);
+  const result = runGuard(dir, { transcript_path: transcript, stop_hook_active: true });
+  assert.strictEqual(result.status, 0);
+  assert.ok(result.stderr.includes('Sign-off CTA'), 'it must still say what it found');
+  assert.strictEqual(result.stdout, '', 'a second block would loop the turn forever');
+});
+
+test('SLOP_GUARD=warn restores warn-only behaviour', () => {
+  const prev = process.env.SLOP_GUARD;
+  process.env.SLOP_GUARD = 'warn';
+  try {
+    const result = runOnText(POSITIVE_CONTROLS['Sign-off CTA']);
+    assert.strictEqual(result.status, 0);
+    assert.ok(result.stderr.includes('Sign-off CTA'));
+    assert.strictEqual(result.stdout, '', 'warn mode must not emit a block decision');
+  } finally {
+    if (prev === undefined) delete process.env.SLOP_GUARD; else process.env.SLOP_GUARD = prev;
+  }
+});
+
+test('a clean reply blocks nothing', () => {
+  const result = runOnText('Fixed the retry loop in src/queue.js:412 — the exit condition compared');
+  assert.strictEqual(result.stdout, '');
+  assert.strictEqual(result.stderr, '');
+});
 
 test('warning is modest — it disclaims being a verdict', () => {
   const result = runOnText(POSITIVE_CONTROLS['Sign-off CTA']);
