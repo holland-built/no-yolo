@@ -9,7 +9,7 @@ No exceptions for new components, redesigns, layout changes, or visual refactors
 **At least 1–2 of the variations must be wildly different** — different layout paradigm, opposite density, unexpected color treatment, or unconventional structure. Safe incremental variations only reveal safe incremental taste. Wild variations reveal where the real ceiling is.
 
 ## Slop prohibition (applies to every mockup, every skill)
-> Canonical GUI slop list: `~/.claude/docs/ANTISLOP.md ## GUI Slop`. Run `/antislop` to check any output.
+> Canonical GUI slop list: `~/.claude/docs/ANTISLOP.md ## GUI Slop`. Check any output against this list before shipping it.
 
 Before presenting mockups to the user, self-check every variant against the canonical GUI slop list in `ANTISLOP.md`. If a variant matches — kill it, regenerate it with a structurally different paradigm. For sets of 3: minimum 1 non-slop survivor. For sets of 5+: minimum 2.
 
@@ -39,10 +39,10 @@ Two hard rules, every time a mockup is created or changed:
 .mockups/<skill>-<slug>/<name>.html
 ```
 
-`.mockups/design-checkout/`, `.mockups/build-nav/`, `.mockups/quick-login/`, `.mockups/match-all-cards/`.
+`.mockups/design-checkout/`, `.mockups/build-nav/`, `.mockups/design-quick-login/`, `.mockups/design-match-cards/`.
 
 - **The leading dot is load-bearing.** `.mockups/` is what every project's ignore rule matches. `/build` once said `mockups/` without it on one line and `.mockups/` on another; the un-dotted path was not covered by the ignore rule, so those files were committable. Audited and fixed 2026-08-01 — if you add a skill that writes mockups, this is the line that stops it happening again.
-- **The `<skill>-` prefix is load-bearing too.** `/build` used a bare `<slug>`, so building a feature called `quick` would have landed inside `/quick-mockup`'s folder. Prefix everything.
+- **The `<skill>-` prefix is load-bearing too.** `/build` used a bare `<slug>`, so building a feature called `quick` would have landed inside `/design` (quick sketch mode)'s folder. Prefix everything.
 - **Every project needs `.mockups/` in its own ignore list.** This repo's covers this repo only. Check any project you have run `/design` or `/build` in.
 - **Delete intermediate files before finishing** — `codex-wild.out`, `codex-synth.out`, marker files dropped into an app's public dir to verify which server is serving. They are debris, not artifacts, and nothing else cleans them up.
 
@@ -57,7 +57,7 @@ Two hard rules, every time a mockup is created or changed:
 
 | Situation | Tool | Variations |
 |---|---|---|
-| Fast throwaway layout sketch, no build | `/quick-mockup` | up to 5 style-matched functional variants, one page |
+| Fast throwaway layout sketch, no build | `/design` (quick sketch mode) | up to 5 style-matched functional variants, one page |
 | Manual or ad-hoc mockup (no skill) | this doc's manual flow | 5–8 |
 | Full feature pipeline | `/build` | 10 (phase 3.5 gate) |
 | Fresh design + build pipeline | `/design` | 10 Opus mockups (8 paradigms + 2 wild) → confirmed one feeds the build |
@@ -123,6 +123,6 @@ Pick 5–8 from this list, depending on what's being designed:
 ## Skill Reference
 
 - `/build` — full feature pipeline with 10-variant mockup gate (phase 3.5)
-- `/design-audit` — read-only audit: 5 lenses → violations table + top-10 improvements
-- `/quick-mockup` — fast disposable layout mockups: up to 5 style-matched, lightly-functional candidates on one combined page with an AI pick, reads the project's CSS tokens
+- `/design` (audit mode) — read-only audit: 5 lenses → violations table + top-10 improvements
+- `/design` (quick sketch mode) — fast disposable layout mockups: up to 5 style-matched, lightly-functional candidates on one combined page with an AI pick, reads the project's CSS tokens
 - `/design` — fresh design pipeline: 10 Opus mockups (8 paradigms + 2 wild) → slop validator → confirm → Fable plan → Opus build

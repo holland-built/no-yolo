@@ -1,5 +1,5 @@
 # Anti-Slop Reference
-> Canonical extraction target for `/prompt-scan` and `/antislop`. One bullet per tell.
+> Canonical extraction target for `/better-prompt --refresh`, and the list `/design` and the slop-guard hook both read. One bullet per tell.
 > 15 writing tells + 42 GUI tells (12 default patterns + 7 template & framing + 8 marketing-page + 7 component + 8 media).
 > Every rule states the TELL — what makes the pattern suspicious — so a borderline case can be judged instead of pattern-matched.
 
@@ -26,7 +26,7 @@
 ---
 
 ## GUI Slop
-> **This list is canonical.** `/antislop`, `/design`, `/build`, `/debate --ui`, and `UI_MOCKUPS.md` all read it — add new patterns HERE and nowhere else.
+> **This list is canonical.** `/design`, `/build`, `/health`, `/debate --ui` and `UI_MOCKUPS.md` all read it — add new patterns HERE and nowhere else.
 > `UI_MOCKUPS.md` holds a small set of deliberate mockup-specific kill rules *on top of* this list; it does not mirror it. Do not copy this list into a skill.
 > For deep landing-page-specific rules (100+), read `skills/design/vendor/taste-skill.md` §9 and `redesign-skill.md` on demand — deliberately not merged here (third-party, never edited).
 
