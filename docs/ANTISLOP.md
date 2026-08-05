@@ -28,7 +28,7 @@
 ## GUI Slop
 > **This list is canonical.** `/design`, `/build`, `/health`, `/debate --ui` and `UI_MOCKUPS.md` all read it — add new patterns HERE and nowhere else.
 > `UI_MOCKUPS.md` holds a small set of deliberate mockup-specific kill rules *on top of* this list; it does not mirror it. Do not copy this list into a skill.
-> For deep landing-page-specific rules (100+), read `skills/design/vendor/taste-skill.md` §9 and `redesign-skill.md` on demand — deliberately not merged here (third-party, never edited).
+> For deep landing-page-specific rules (100+), read `skills/design/vendor/taste-skill/taste-skill.md` §9 and its `redesign-skill.md` on demand — deliberately not merged here (third-party, never edited). That folder is gitignored, so on a fresh clone it is absent; `skills/design/TASTE_CORE.md` is the tracked distillation that always works.
 
 - **Gradient hero banner** — purple→blue full-bleed top section as the default page header
 - **Uniform card grid** — rounded cards with drop shadows as the default layout for any list

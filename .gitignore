@@ -17,8 +17,8 @@ remote-settings.json
 # third-party plugins (own repos)
 plugins/
 
-# vendored third-party skill content (own repos) — fetched locally by
-# /update vendor <name>, never committed; see docs/THIRD_PARTY_SKILLS.md
+# vendored third-party skill content (own repos) — stays local, never committed.
+# /checkup reports how far behind upstream it is; pulling it is always manual.
 skills/design/vendor/
 
 # external symlinked skills
