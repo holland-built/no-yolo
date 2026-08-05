@@ -1,0 +1,337 @@
+#!/usr/bin/env bash
+# setup.sh — idempotent post-clone setup for ~/.claude (no-yolo)
+#
+# Usage:
+#   bash ~/.claude/setup.sh             # full install — tools, CLI plugins, skill symlinks
+#   bash ~/.claude/setup.sh --md-only   # rules only — no tools, skill triggers stripped from CLAUDE.md
+#   bash ~/.claude/setup.sh --core-only # full install minus third-party plugin skills (step 4) — re-run plain setup.sh later to add them
+#
+set -euo pipefail
+
+CLAUDE_DIR="${HOME}/.claude"
+MODE="full"
+case "${1:-}" in
+  "") ;;
+  --md-only) MODE="md-only" ;;
+  --core-only) MODE="core-only" ;;
+  *)
+    echo "Unknown option: ${1}"
+    echo "Usage: bash setup.sh [--md-only | --core-only]  (no flag = full install)"
+    exit 2
+    ;;
+esac
+
+echo "==> Mode: $MODE"
+echo ""
+
+# ── Preflight: tool availability ─────────────────────────────────────────────
+echo "==> Preflight"
+# NOTE: no bash-4-only constructs (associative arrays) anywhere in this file —
+# stock macOS ships bash 3.2, and the documented install command is `bash setup.sh`.
+PRE_TOOLS="git node npm npx python3 claude"
+PRE_MISSING=" "
+for t in $PRE_TOOLS; do
+  if command -v "$t" >/dev/null 2>&1; then
+    printf "    %-8s found\n" "$t"
+  else
+    PRE_MISSING="${PRE_MISSING}${t} "
+    printf "    %-8s missing\n" "$t"
+  fi
+done
+
+pre_missing() { case "$PRE_MISSING" in *" $1 "*) return 0;; *) return 1;; esac; }
+
+if [[ "$MODE" == "full" || "$MODE" == "core-only" ]]; then
+  if pre_missing git; then
+    echo ""
+    echo "    ! git missing — required: the pre-commit secret-scanner install needs it."
+    echo "    Install: see README.md Prerequisites"
+    exit 1
+  fi
+  if [[ "$MODE" == "core-only" ]]; then
+    # core-only needs node only (hooks runtime) — npm is for third-party installs
+    if pre_missing node; then
+      echo ""
+      echo "    ! node missing — required for --core-only (hooks runtime)."
+      echo "    Install: https://nodejs.org/ (see README.md Prerequisites)"
+      exit 1
+    fi
+  elif pre_missing node || pre_missing npm; then
+    echo ""
+    echo "    ! node and/or npm missing — required for full install."
+    echo "    Install: https://nodejs.org/ (see README.md Prerequisites)"
+    exit 1
+  fi
+else
+  if pre_missing python3; then
+    echo ""
+    echo "    ! python3 missing — required for --md-only (see README.md Prerequisites)"
+    exit 1
+  fi
+fi
+# Node MAJOR version gate. Four add-ons install through the `skills` CLI, which
+# imports styleText from node:util — added in Node 20. On Ubuntu 24.04
+# `apt install nodejs` still gives v18, so a reader following the guide gets four
+# lines reading "install failed" plus a stack trace about a missing export, with
+# nothing anywhere connecting that to their Node version. Verified on a clean
+# 24.04 box: v18 fails all four, v22 installs all four. Say it once, up front,
+# in the words that lead to the fix.
+if ! pre_missing node; then
+  NODE_MAJOR="$(node --version 2>/dev/null | sed 's/^v//; s/[.].*//')"
+  case "$NODE_MAJOR" in
+    ""|*[!0-9]*) : ;;   # unreadable version — let the installs speak for themselves
+    *)
+      if [ "$NODE_MAJOR" -lt 20 ]; then
+        echo ""
+        echo "    ! node $(node --version) is too old — need 20 or newer (22 recommended)."
+        echo "      Four add-ons fail with a confusing 'styleText' error on this version."
+        if [ "$(uname -s)" = "Darwin" ]; then
+          echo "      Fix: brew install node@22"
+        else
+          echo "      Fix: curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash - && sudo apt install -y nodejs"
+          echo "           (Ubuntu's own 'apt install nodejs' is v18 and will not work)"
+        fi
+        exit 1
+      fi
+      ;;
+  esac
+fi
+
+if pre_missing claude; then
+  echo "    ! claude (Claude Code) not found on PATH — install: https://docs.anthropic.com/en/docs/claude-code"
+fi
+
+if command -v codex >/dev/null 2>&1; then
+  echo "    codex    found (cross-model checks active)"
+else
+  echo "    codex    not installed — cross-model check steps in skills will skip themselves; optional, add later via /plugin install codex@openai-codex"
+fi
+
+RESULTS=()
+
+# ── Step 1: settings.json ────────────────────────────────────────────────────
+echo "==> 1. settings.json"
+if [ -f "$CLAUDE_DIR/settings.json" ]; then
+  echo "    settings.json already exists — skipping copy"
+else
+  cp "$CLAUDE_DIR/settings.example.json" "$CLAUDE_DIR/settings.json"
+  echo "    Created settings.json from template"
+fi
+echo "    ACTION REQUIRED: ensure 'node' is on PATH for GUI-launched apps, then add your MCP servers to settings.json"
+
+# ── Step 2: hook permissions ─────────────────────────────────────────────────
+echo ""
+echo "==> 2. chmod hooks"
+if ls "$CLAUDE_DIR"/hooks/*.sh >/dev/null 2>&1; then
+  chmod +x "$CLAUDE_DIR"/hooks/*.sh
+  echo "    Hook scripts made executable"
+else
+  echo "    No hook scripts found — skipping"
+fi
+
+# Install the tracked pre-commit hook into this clone's .git/hooks. Without
+# this, a fresh clone of a PUBLIC template repo commits with NO secret scanning
+# — the guard that blocks personal data, LAN IPs, and deny-listed terms from
+# reaching GitHub would simply not exist. The source is tracked at
+# hooks/pre-commit; git never copies it into .git/hooks on its own.
+if [[ -f "$CLAUDE_DIR/hooks/pre-commit" ]] && git -C "$CLAUDE_DIR" rev-parse --git-dir >/dev/null 2>&1; then
+  HOOKS_DIR="$(git -C "$CLAUDE_DIR" rev-parse --git-path hooks)"
+  # rev-parse may return a path relative to CLAUDE_DIR
+  case "$HOOKS_DIR" in /*) : ;; *) HOOKS_DIR="$CLAUDE_DIR/$HOOKS_DIR" ;; esac
+  mkdir -p "$HOOKS_DIR"
+  cp "$CLAUDE_DIR/hooks/pre-commit" "$HOOKS_DIR/pre-commit"
+  chmod +x "$HOOKS_DIR/pre-commit"
+  echo "    Installed pre-commit secret-scanner into $HOOKS_DIR"
+else
+  echo "    No git dir or hooks/pre-commit — skipping hook install"
+fi
+
+# Seed the local (gitignored) deny-list from the template if absent, so the
+# deny-list mechanism is discoverable on a fresh install. Never overwrites an
+# existing one. Mirrors the settings.example.json -> settings.json pattern.
+if [[ -f "$CLAUDE_DIR/.no-yolo-deny.example.txt" && ! -f "$CLAUDE_DIR/.no-yolo-deny.txt" ]]; then
+  cp "$CLAUDE_DIR/.no-yolo-deny.example.txt" "$CLAUDE_DIR/.no-yolo-deny.txt"
+  echo "    Seeded .no-yolo-deny.txt from template (edit it for your company/private terms)"
+fi
+
+# ── MD-only: strip skill triggers from CLAUDE.md, then exit ─────────────────
+if [[ "$MODE" == "md-only" ]]; then
+  echo ""
+  echo "==> 3. Strip skill triggers from CLAUDE.md"
+  # Reversible: keep the pristine file so a later full setup can restore the
+  # stripped @memory/@triggers imports (md-only edits CLAUDE.md in place).
+  if [[ ! -f "$CLAUDE_DIR/CLAUDE.md.pre-md-only" ]]; then
+    cp "$CLAUDE_DIR/CLAUDE.md" "$CLAUDE_DIR/CLAUDE.md.pre-md-only"
+    echo "    Backed up original -> CLAUDE.md.pre-md-only (full setup restores it)"
+  fi
+  echo "    (reads current file — no hardcoded skill names)"
+
+  python3 - "$CLAUDE_DIR/CLAUDE.md" <<'PYEOF'
+import re, sys, pathlib
+
+p = pathlib.Path(sys.argv[1])
+text = p.read_text()
+
+# Remove @memory/CLAUDE.generated.md import line (memory system not included)
+text = re.sub(r'^@memory/CLAUDE\.generated\.md\n?', '', text, flags=re.MULTILINE)
+
+# Remove @docs/SKILL_TRIGGERS.md import line (triggers not included in md-only install)
+text = re.sub(r'^@docs/SKILL_TRIGGERS\.md\n?', '', text, flags=re.MULTILINE)
+
+# Remove skill trigger blocks. Each block is exactly:
+#   # skillname                (single lowercase word/hyphens)
+#   - **skillname** ...        (description + trigger)
+#   When the user types ...    (invocation line — may repeat for multi-phrase triggers)
+text = re.sub(
+    r'^# [a-z][a-z0-9-]+\n- \*\*.*\n(?:When the user .*\n?)+',
+    '',
+    text,
+    flags=re.MULTILINE
+)
+
+# Collapse triple+ blank lines left behind
+text = re.sub(r'\n{3,}', '\n\n', text)
+
+p.write_text(text)
+print("    Removed: @memory + @docs/SKILL_TRIGGERS imports")
+PYEOF
+
+  echo ""
+  echo "==> Done (MD-only)."
+  echo "    Core rules load automatically when you open Claude Code in any project."
+  echo "    Skills folder still present but Claude won't trigger them — safe to ignore or delete."
+  echo "    docs/SKILL_TRIGGERS.md remains on disk but is no longer imported — safe to ignore or delete."
+  echo ""
+  echo "    To install tools later: run bash ~/.claude/setup.sh (safe to re-run — skips anything already installed)"
+  exit 0
+fi
+
+# ── Full install ─────────────────────────────────────────────────────────────
+
+# Undo a previous --md-only strip: restore the pristine CLAUDE.md so the
+# @memory and @docs/SKILL_TRIGGERS.md imports come back.
+if [[ -f "$CLAUDE_DIR/CLAUDE.md.pre-md-only" ]]; then
+  if ! grep -q '@memory/CLAUDE\.generated\.md' "$CLAUDE_DIR/CLAUDE.md"; then
+    mv "$CLAUDE_DIR/CLAUDE.md.pre-md-only" "$CLAUDE_DIR/CLAUDE.md"
+    echo "    Restored full CLAUDE.md (undid earlier --md-only strip)"
+  else
+    rm "$CLAUDE_DIR/CLAUDE.md.pre-md-only"
+    echo "    current CLAUDE.md already has imports — stale backup discarded"
+  fi
+fi
+
+echo ""
+echo "==> 3. CLI tools"
+
+if [[ "$MODE" == "core-only" ]]; then
+  echo "    Skipped fallow install (--core-only) — add later: npm install -g fallow@2.98.0"
+  RESULTS+=("fallow: SKIPPED (--core-only)")
+elif command -v fallow >/dev/null 2>&1; then
+  echo "    fallow already installed"
+  RESULTS+=("fallow: OK")
+else
+  echo "    Installing fallow..."
+  # pinned; bump deliberately
+  if npm install -g fallow@2.98.0; then
+    RESULTS+=("fallow: OK")
+  else
+    echo "    ! fallow install failed — install manually: npm install -g fallow@2.98.0"
+    RESULTS+=("fallow: FAILED")
+  fi
+fi
+
+
+if command -v gh >/dev/null 2>&1; then
+  echo "    gh already installed"
+else
+  if [ "$(uname -s)" = "Darwin" ]; then
+    echo "    ! gh missing — install: brew install gh && gh auth login"
+  else
+    echo "    ! gh missing — install: sudo apt install gh && gh auth login"
+    echo "      (if apt has no 'gh': https://github.com/cli/cli/blob/trunk/docs/install_linux.md)"
+  fi
+fi
+
+echo ""
+echo "==> 4. Plugin skills"
+if [[ "$MODE" == "core-only" ]]; then
+  echo "    Skipped third-party installs (--core-only) — add them later: bash setup.sh"
+  RESULTS+=("third-party: SKIPPED (--core-only)")
+else
+  echo "    Installing ponytail..."
+  if npx skills@latest add DietrichGebert/ponytail; then RESULTS+=("ponytail: OK"); else echo "    ! ponytail install failed"; RESULTS+=("ponytail: FAILED"); fi
+  echo "    Installing improve..."
+  if npx skills@latest add shadcn/improve; then RESULTS+=("improve: OK"); else echo "    ! improve install failed"; RESULTS+=("improve: FAILED"); fi
+  # upstream ships without user-invocable, which kills /improve — re-apply the
+  # local patch (docs/THIRD_PARTY_SKILLS.md); harmless if already present
+  IMPROVE_MD="$HOME/.agents/skills/improve/SKILL.md"
+  if [ -f "$IMPROVE_MD" ] && ! grep -q '^user-invocable: true' "$IMPROVE_MD"; then
+    awk 'NR==1{print; print "user-invocable: true"; next} {print}' "$IMPROVE_MD" > "$IMPROVE_MD.tmp" \
+      && mv "$IMPROVE_MD.tmp" "$IMPROVE_MD" \
+      && echo "    Applied user-invocable patch to improve (see docs/THIRD_PARTY_SKILLS.md)"
+  fi
+  echo "    Installing emilkowalski/skills (design-eng taste rules — used by /design)..."
+  if npx skills@latest add emilkowalski/skills; then RESULTS+=("emilkowalski/skills: OK"); else echo "    ! emilkowalski/skills install failed"; RESULTS+=("emilkowalski/skills: FAILED"); fi
+  echo "    Installing archify (zero-dep diagrams)..."
+  if npx skills@latest add tt-a1i/archify; then RESULTS+=("archify: OK"); else echo "    ! archify install failed"; RESULTS+=("archify: FAILED"); fi
+fi
+echo ""
+echo "    Nothing to install for impeccable: /antislop, /design-audit and /design run"
+echo "      'npx -y impeccable detect' on demand (github.com/pbakaus/impeccable) — needs network."
+echo ""
+echo "    Optional: design pipeline MCP servers (add to settings.json mcpServers block):"
+echo "      interface-design (design memory) — github.com/Dammyjay93/interface-design"
+echo "      design-refine (variant compare)  — github.com/0xdesign/design-plugin"
+
+echo ""
+echo "==> 5. Plugins (Claude Code marketplace)"
+PLUGINS_JSON="$CLAUDE_DIR/plugins/installed_plugins.json"
+if [ -f "$PLUGINS_JSON" ] && command -v python3 >/dev/null 2>&1; then
+  # shared lister — one source of truth, also used by /update (skills/update/SKILL.md)
+  OUT=$(python3 "$CLAUDE_DIR/hooks/list-plugins.py" "$PLUGINS_JSON")
+  case "$OUT" in
+    "No plugins"*|"installed_plugins.json"*) echo "    $OUT" ;;
+    *)
+      echo "    Found $(printf '%s\n' "$OUT" | wc -l | tr -d ' ') installed plugins:"
+      printf "    %-42s %-14s %s\n" "NAME" "VERSION" "SCOPE"
+      printf '%s\n' "$OUT" | awk -F'\t' '{printf "    %-42s %-14s %s\n",$1,$2,$3}' ;;
+  esac
+else
+  echo "    No installed_plugins.json found — no plugin is required by any skill."
+  echo "    Maintainer's extras (optional), install inside Claude Code:"
+  echo "      /plugin marketplace add karpathy/karpathy-skills     # Karpathy skill set"
+  echo "      /plugin marketplace add design-plugins/design-and-refine  # UI design"
+  echo "      /plugin marketplace add AgriciDaniel/claude-obsidian # Obsidian integration"
+  echo "      /plugin marketplace add openai/codex-plugin-cc       # Codex from Claude Code (then /plugin install codex@openai-codex)"
+fi
+echo "    To check for plugin updates: run /plugin list in Claude Code, then /plugin update <name>"
+
+echo ""
+echo "==> 6. Environment variables (add to ~/.zshrc or ~/.bash_profile)"
+cat <<'ENVEOF'
+
+    export GROQ_API_KEY=your_key_here               # video-to-kb (Whisper transcription)
+    export OBSIDIAN_VAULT="$HOME/path/to/your/vault"  # video-to-kb vault root
+
+ENVEOF
+
+echo ""
+echo "==> Install summary"
+SUMMARY_FAIL=0
+for r in "${RESULTS[@]}"; do
+  echo "    $r"
+  case "$r" in *FAILED) SUMMARY_FAIL=1 ;; esac
+done
+
+if [[ "$SUMMARY_FAIL" == 1 ]]; then
+  echo ""
+  echo "FAILED steps above — re-run setup.sh after fixing, or install manually (see README Add-ons)"
+  exit 1
+fi
+
+echo "==> Done."
+echo ""
+echo "    Verify setup: claude --version"
+echo "    Check skills: run /my-skills in Claude Code"
+echo ""
+echo "    See README.md for full documentation."

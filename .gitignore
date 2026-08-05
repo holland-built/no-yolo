@@ -1,0 +1,136 @@
+# secrets
+.credentials.json
+settings.local.json
+*.local.json
+
+# machine-specific config (ship settings.example.json instead)
+# settings.json holds live API keys in `env` — it and EVERY backup of it must stay local.
+# Glob, not exact names: a one-off backup (settings.json.pre-hookfix.bak) once slipped
+# past the exact-name entries and would have been committed with live keys.
+settings.json
+settings.json*.bak
+settings.json.*
+# Orca / environment machine-local runtime config
+policy-limits.json
+remote-settings.json
+
+# third-party plugins (own repos)
+plugins/
+
+# vendored third-party skill content (own repos) — fetched locally by
+# /update vendor <name>, never committed; see docs/THIRD_PARTY_SKILLS.md
+skills/design/vendor/
+
+# external symlinked skills
+skills/improve
+skills/impeccable
+# Orca-managed external skills (symlinks to ~/.agents/skills/)
+skills/computer-use
+skills/orca-cli
+# emilkowalski/skills — animation/design-eng taste rules (npx skills@latest add emilkowalski/skills)
+skills/emil-design-eng
+skills/animation-vocabulary
+skills/review-animations
+# Skills installed into .agents/skills/ and symlinked into skills/ so they load
+# in every project, not only when editing ~/.claude. The symlinks are local
+# install state, not repo content.
+skills/apple-design
+skills/find-animation-opportunities
+skills/improve-animations
+skills/pick-ui-library
+skills/ponytail
+skills/ponytail-audit
+skills/ponytail-debt
+skills/ponytail-gain
+skills/ponytail-help
+skills/ponytail-review
+
+# interface-design = externally managed by npx skills@latest (symlink to ~/.agents/)
+skills/interface-design
+
+# runtime / session
+projects/
+sessions/
+session-data/
+session-env/
+shell-snapshots/
+file-history/
+ide/
+metrics/
+
+# caches
+cache/
+paste-cache/
+image-cache/
+
+# personal / private (project-scoped memories live in projects/ — already ignored)
+memory/compile-manifest.json
+memory/facts/
+
+# ephemeral work
+plans/
+advisor-plans/
+tasks/
+proposals/
+brainstorms/
+# /xcheck + /build phase 4.5 scratch — Codex round transcripts and spec handoffs.
+# Ephemeral by design; the accepted findings are folded into brainstorms/ instead.
+.xcheck/
+.pending-audit-*.md
+.audit-*-detail/
+.mockups/
+
+# archives / trash
+_archive_*/
+backups/
+.skill-trash/
+skills/*/_claude_bak/
+
+# logs
+history.jsonl
+*.log
+
+# runtime markers
+.pending-tasks.md
+learnings.md
+.lockstep-active
+.literal-active
+.eli5-active
+.worktree-active/
+.last-cleanup
+.last-update-result.json
+.learnings-turn-counter
+.reflect-turn-counter
+mcp-health-cache.json
+mcp-needs-auth-cache.json
+
+# OS
+.DS_Store
+.agents/
+
+# Claude Code runtime state (created when ~/.claude itself is opened as a project)
+.claude.json
+.claude/
+chrome/
+debug/
+
+# no-yolo local deny-list (company names / private hostnames — never published)
+.no-yolo-deny.txt
+
+# archify — npx-installed under .agents/; defensive entry
+skills/archify
+
+# --md-only backup of CLAUDE.md (restored by full setup)
+CLAUDE.md.pre-md-only
+skills/resolving-merge-conflicts
+
+# stray temp copies of ~/.claude.json — the harness leaves these behind on an
+# interrupted write. They carry mcpServers blocks with live tokens and API keys,
+# and two were found untracked and UNIGNORED on 2026-08-02, one 70KB. A single
+# `git add -A` would have published them.
+.claude.json.tmp.*
+*.json.tmp.*
+
+# python bytecode from the catalog scripts
+__pycache__/
+*.pyc

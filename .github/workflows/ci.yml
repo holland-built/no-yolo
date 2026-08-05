@@ -1,0 +1,90 @@
+name: verify
+on:
+  push:
+  pull_request:
+
+# WHY TWO PLATFORMS AND NOT ONE.
+#
+# This ran on ubuntu-latest only, and that is how a dead check went unnoticed: the
+# `\b` in the infra-leak scan's hostname rules matches NOTHING under git grep on
+# macOS, so on the machine that actually does the committing those rules were
+# silently off, while GNU grep on Linux honoured `\b` and the CI run stayed green.
+# One metacharacter, failing open on one platform.
+#
+# The commands are identical on both runners on purpose. The point is not to test
+# different things per OS — it is that the SAME check can behave differently per
+# OS, and only running it on both reveals which. Several checks in verify.sh are
+# platform-sensitive in exactly that way:
+#
+#   * the infra-leak scan and the pre-commit scan shell out to git grep / grep,
+#     whose regex engines differ (BSD vs GNU, and git's own is a third).
+#   * "setup.sh bash-3.2 clean" is only a REAL test on macOS, whose /bin/bash is
+#     3.2. On Linux /bin/bash is 5.x and the check passes trivially.
+#   * hooks/*.test.sh run under whatever /bin/bash the runner has.
+#
+# verify.sh needs no --os flag: it detects nothing and branches nowhere.
+jobs:
+  verify:
+    strategy:
+      # Both platforms always report. Without this a macOS failure cancels the
+      # Linux job, and the run shows one red X with no way to tell whether the
+      # problem is the check or the platform — the exact ambiguity this exists to
+      # remove.
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      # verify.sh shells to python3 (catalog_lock.py --check, regen.py --check).
+      # Don't rely on the runner image happening to preinstall it.
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # ubuntu-latest ships shellcheck; macos-latest does not. Without this the
+      # macOS run records "shellcheck not installed — skipped" as a WARN, and WARN
+      # never fails the build — so the gate would be quietly half-present on the
+      # platform this job was added to cover.
+      - name: Install shellcheck (macOS runners have none)
+        if: runner.os == 'macOS'
+        run: brew install shellcheck
+
+      - name: Run verify.sh
+        run: bash verify.sh
+
+      # verify.sh reports WARN for a check it could not run, and WARN never fails
+      # the build. That is right for a genuinely local-only check (the third-party
+      # patch guard, which guards an install and not the repo) and wrong for
+      # everything else: a suite that skips half its checks looks identical to one
+      # that passes them. This asserts the platform-sensitive ones actually ran.
+      - name: Assert the platform-sensitive checks actually ran
+        run: |
+          set -uo pipefail
+          bash verify.sh > /tmp/verify.out 2>&1 || true
+
+          # The two positive controls are the reason this matrix exists: they turn
+          # "the scan found nothing" into "the scan can still find something". If
+          # either is missing, the leak scan is back to being unfalsifiable here.
+          for check in \
+            "infra scan positive control" \
+            "pre-commit scan positive control" \
+            "tracked-content scan" \
+            "setup.sh bash-3.2 clean" \
+            "shellcheck"
+          do
+            if ! grep -qF "$check" /tmp/verify.out; then
+              echo "::error::verify.sh did not report '$check' on ${{ matrix.os }} — it did not run"
+              cat /tmp/verify.out
+              exit 1
+            fi
+            if grep -E '^WARN' /tmp/verify.out | grep -qF "$check"; then
+              echo "::error::'$check' recorded WARN on ${{ matrix.os }} — it was skipped, and WARN cannot fail the build"
+              cat /tmp/verify.out
+              exit 1
+            fi
+          done
+          echo "every platform-sensitive check ran on ${{ matrix.os }}"

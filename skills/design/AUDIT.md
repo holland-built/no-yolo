@@ -1,0 +1,216 @@
+
+# design-audit
+
+Target: $ARGUMENTS
+
+Audits your existing UI and optionally fixes it. Audit phase is always read-only. Fix phase
+generates 8 mockups, you pick one, then builds against your confirmed choice.
+
+## Step 0 — Detect project
+```bash
+head -20 CLAUDE.md 2>/dev/null
+cat package.json 2>/dev/null | python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('name','?'), d.get('description',''))" 2>/dev/null
+```
+State one line: `Project: [type] · stack: [X]`. Detect whether a brand DESIGN.md
+(Awesome DESIGN.md 9-section format) is in use.
+
+## Step 1 — 5–8 parallel lens agents
+ONE parallel Agent call. Each returns `severity | rule | file:line | observed | expected`.
+1. **Taste** — anti-slop fingerprint (FALLBACKS if sub-skill absent).
+2. **Swiss** — grid / type scale / color count.
+3. **UIwiki** — 20 rules scored.
+4. **WCAG 2.1 AA** — contrast, focus-visible, keyboard, aria, reduced-motion.
+5. **CSS health** — hardcoded values, magic numbers, inconsistent tokens. Deterministic evidence
+   first, judgement second: grep the audited source for known AI-design tells — 59 rule-level
+   checks (`text-purple-600`, `nested-cards`, `animate-bounce`, `tight-leading`, `bg-clip-text`),
+   no model call, no API key, no cost.
+   ```bash
+   timeout 30 npx --yes impeccable detect "<audited path>" 2>/dev/null || echo "impeccable detect unavailable — skipped"
+   ```
+   Fold each hit into this lens's rows alongside its own findings, rule name verbatim in `rule`,
+   the tool named as the evidence source. **Degrades silently:** `npx` missing, offline, non-zero
+   exit, or the 30s cap hit -> print that one line and run the lens on judgement alone. It is
+   additive evidence, never a gate, and never a reason to stall the parallel Agent call.
+   **Never `impeccable install`** — that writes `PRODUCT.md`/`DESIGN.md` into the user's project;
+   `detect` is read-only and works in a project that was never set up for it.
+
+**Acceptance-criteria structure (read-only, partial).** Shape this audit's testable acceptance criteria and
+QA checklist from `~/.agents/skills/impeccable/SKILL.md`, reading ONLY `## Guideline Authoring Workflow`,
+`## Required Output Structure`, `## Component Rule Expectations`, `## Quality Gates`, `## Accessibility`.
+IGNORE `## Brand`, `## Style Foundations`, `## Rules: Do`, `## Rules: Don't`, and NEVER read the sibling
+`DESIGN.md` — they impose a foreign palette (#CC8800, cream) and typeface (Chakra Petch/JetBrains Mono), and
+the audited project's own tokens always win. Frozen local fork (last changed 2026-06-23), reference text
+only — never invoked as a skill, and there is no `/impeccable` command. Path missing -> skip silently, never block.
+
+**Full reference index.** `~/.claude/skills/design/DESIGN_REFS.md` is the complete routing table for every
+design reference available — read it for any lens needing one the blocks here don't name (notably
+`interface-design`, reachable only from there: craft/hierarchy/token and design-system-consistency lenses for
+product UI — dashboards, admin, settings; not marketing pages).
+
+**Conditional 6th lens — Motion.** Add ONLY when the surface has real animation, transition,
+gesture, drag, sheet, or scroll-driven code (grep for `transition`, `animate`, `@keyframes`,
+`motion.`, `spring`, `drag`, `swipe`). Ground this lens by READING two installed skills as
+reference — do NOT invoke them, `review-animations` is `disable-model-invocation: true` and
+the Skill tool will refuse it:
+- `~/.claude/.agents/skills/apple-design/SKILL.md` — fluid-motion principles: motion starts
+  from the current on-screen value, inherits the user's velocity, projects momentum, stays
+  interruptible; springs over duration-based easing.
+- `~/.claude/.agents/skills/review-animations/SKILL.md` — the craft bar. Its stated posture is
+  "default to flagging; approval is earned."
+Report findings in the same `severity | rule | file:line | observed | expected` shape as the
+other lenses. Also flag any motion that ignores `prefers-reduced-motion` as Critical.
+
+If a brand DESIGN.md is in use, add a **7th lens**: compare the UI against that brand's
+do's/don'ts and component states.
+
+**Conditional 8th lens — Live render.** Every lens above reads source; this one loads the page
+and reports what actually renders. Add ONLY when a URL is reachable (dev server already up, or
+the user gives one). No URL → note `Live render: skipped (no URL)` and move on — never start a
+dev server unasked, and never guess at what a page does. Drive it with Playwright CLI or
+headless Chrome (not the MCP), and report in the same `severity | rule | file:line | observed |
+expected` shape — no source line → cite `<url> @ <viewport>` in that column.
+- **Console + network** — any console error or failed request on load = Critical. Warnings = Medium.
+- **Core Web Vitals** — LCP ≥ 2.5s, CLS ≥ 0.1, INP ≥ 200ms = High, one row each, with the measured number as `observed`.
+- **axe-core** — run it on the loaded page; map its impact to severity (critical→Critical, serious→High, moderate/minor→Medium). Overlaps the WCAG lens by design: axe proves at runtime what lens 4 infers from source, so a finding both agree on is already verified.
+- **Breakpoints** — screenshot at 375 / 768 / 1440 and read them for overflow, collapsed layout, clipped text, and touch targets under 44px.
+
+## Step 2 — Adversarial verify
+Spawn an independent agent that challenges every **Critical** finding. Each Critical must be
+confirmed with file:line evidence or downgraded. Record the verdict per finding.
+Then run the `xcheck` skill (Skill tool, `skill: "xcheck"`) on the surviving Criticals list as a
+second verifier from another model family — a Critical that Codex refutes AND lacks file:line
+evidence downgrades to High. No-ops silently if Codex is unavailable.
+
+## Step 3 — Output artifacts + fix gate
+
+### Output artifacts
+1. **Ranked violations table:** `| # | Lens | Finding | Severity | file:line |`
+   (Critical / High / Medium / Low).
+2. **Dependency-ordered implementation plan:** `| Priority | Change | Depends on | Scope (S/M/L) |`
+   grouped P0 / P1 / P2.
+
+Then run `/eli5` on the summary.
+
+### Fix gate
+After the eli5 summary, ask exactly:
+
+**"Fix Critical + High? Generates 8 mockups, you pick one, then builds. (y/n)"**
+- **n** -> done. Hand the P0/P1 plan to `/design` if you want a clean-sheet redesign instead.
+- **y** -> proceed to Fix Flow below.
+
+---
+
+## Fix Flow (only runs when user answers y above)
+
+Full mockup-first fix pipeline. Every step is mandatory — do not skip.
+
+### F1 — Brand seed
+Same as `/design` Step 0. Read CSS tokens, check Awesome DESIGN.md, write `.mockups/design-seed.md`.
+The seed tells agents which audit findings are token-level (fixable by swap) vs structural
+(require layout change). Note this distinction in the seed file.
+
+### F2 — Taste direction
+Same as `/design` Step 1. Invoke redesign-skill for direction. Use FALLBACKS if absent.
+
+### F3 — 8 mockups
+ONE parallel Agent call, `model: "opus"`. Same spec as `/design` Step 2 with one addition:
+
+Each agent brief carries the full P0 findings list from Step 3:
+> "The audit found these P0 issues: [list each P0 finding with file:line]. Your mockup MUST
+> visually resolve all of them. This is not a redesign — your mockup should feel like an
+> evolution of the current design that fixes the problems found, not a reinvention."
+
+**Reference URL (optional):** if the user's fix request includes an `http(s)://` reference URL,
+scrape it with the same `firecrawl-py` path as `/design` Step 0 — same env-var path
+(`FIRECRAWL_API_URL`, self-hosted, no API key, `formats=["html"]`; run the install guard first;
+unset env var -> skip the scrape) and
+inject its extracted palette/type/spacing tokens into every agent brief ALONGSIDE the P0
+findings — so the fix mockups both resolve the audit findings AND match the reference. Do not
+re-derive the scrape logic here; it is the same mechanism defined in `/design` Step 0. If the
+scrape fails, proceed with findings only.
+
+**v1–v6**: distinct paradigms (same paradigm list as `/design`).
+**v9–v10**: WILD — alien layout paradigm, still must address P0 findings. Codex authors these
+two per `/design` Step 2's wild-slot block (background, stdout-only, Claude writes the files,
+Opus fallback) — with the P0 findings list added to its prompt alongside the tokens.
+
+Every variant includes: light + dark sections, states strip (hover/focus/empty/error/loading),
+2–3 annotation callouts at key decisions.
+
+### F4 — Slop validate
+Same as `/design` Step 3 validator. Minimum 6 survivors.
+
+### F5 — Combined view + Chrome auto-open
+Same as `/design` Step 3 combined view. 4 rows x 2 columns (light | dark).
+```bash
+"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" \
+  --headless --disable-gpu --window-size=1400,900 \
+  --screenshot=".mockups/design-<slug>/all.png" \
+  "file://$PWD/.mockups/design-<slug>/all.html"
+open ".mockups/design-<slug>/all.html"
+```
+
+### F6 — AI recommendation
+Spawn ONE scoring agent. Scores all 8 on Taste + Swiss + UIwiki (same rubric as `/design`).
+Also run `/design`'s Codex second-judge call (the shared `codex-run.sh` runner) on
+`.mockups/design-<slug>/all.png` (same command, same rules: advisory only, skip silently
+without codex) and add its Codex column to the table.
+If the two picks split, run `/design`'s Synthesis round (crossover v11/v12 — synthesis briefs
+must also carry the P0 findings list); F7 then offers all 10.
+**Recommendation reason must be grounded in audit findings:**
+> "v6 — directly resolves the P0 contrast failures and type hierarchy issues flagged in the
+> audit, and has the strongest Swiss grid discipline of the survivors."
+
+Mark * winner in `all.html`. Show variant table with scores.
+
+### F7 — You pick
+**"Which variant? (confirm * vN / pick different vN / mix vA layout + vB colors / redo)"**
+- `redo` -> regenerate F3 with a different set.
+- **Do not write a single line of production code until you name a variant.**
+
+### F7.5 — Motion roadmap (only if the Motion lens produced findings)
+Invoke the `improve-animations` skill (Skill tool, `skill: "improve-animations"`) with the
+Motion lens findings and the target files. It is auto-invokable and read-only: it returns a
+prioritized motion audit plus self-contained implementation plans. Fold its plans into the F8
+plan rather than treating them as a separate track. Skip this step entirely when the Motion
+lens did not run or found nothing.
+
+### F8 — Opus plan
+Spawn Opus agent to write `brainstorms/design-audit-<slug>-plan-<date>.md`. Plan must:
+- List every P0 and P1 finding being addressed (from Step 3)
+- Cite approved variant tokens as source of truth
+- List every target file as "already exists — do NOT recreate: <path>"
+- Order changes so structural fixes (layout) precede token fixes (color/type)
+
+### F9 — Build (Opus agents)
+Dispatch Opus subagents per plan. Disjoint file clusters, no file overlap between agents.
+If any agent used `isolation: worktree`, merge its branch into the working branch now.
+
+### F9.5 — Worktree cleanup (mandatory if any F9 agent used worktree isolation)
+```bash
+git worktree list --porcelain | grep '^worktree' | grep '.claude/worktrees/agent-' | cut -d' ' -f2 | \
+  xargs -I{} git worktree remove {} --force
+git worktree prune
+git branch | grep 'worktree-agent-' | xargs -r git branch -D
+```
+Run only after confirming each branch's commits are merged (`git merge-base --is-ancestor <sha> HEAD`).
+
+### F10 — tsc + lint + build gate
+Zero new errors before proceeding. If any errors -> fix before Playwright.
+
+### F11 — Playwright + contrast recheck
+`npx playwright test` smoke — load each changed surface, assert no console errors, toggle
+dark mode. (Use CLI — NOT `ecc:playwright` MCP.)
+WCAG AA contrast re-check on every changed surface — >= 4.5:1 for text.
+
+### F12 — Re-audit changed files
+Re-run Step 1 lenses on changed files only. Every P0 finding from the original audit must
+show as resolved. If any P0 remains -> fix it before declaring done.
+
+### F13 — eli5 summary
+Run `/eli5` on: P0s resolved, P1s resolved, files changed, build status, contrast status.
+
+---
+
+## FALLBACKS
+Same Taste / Swiss / UIwiki rule text as `/design`.
