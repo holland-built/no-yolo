@@ -101,6 +101,40 @@ The install commands show Mac (`brew`). On Linux use your package manager (`sudo
 >
 > **Turning them back on.** On a computer only you use, you can add any of those five back to `permissions.allow` in your own `settings.json` (that file never leaves your machine), and set `skipAutoPermissionPrompt: true`. There is a safer route first: the `fewer-permission-prompts` skill reads what you actually run and writes a narrow approved list from that, instead of approving everything. Only remove the `Read(.env)` block if you understand what it exposes.
 
+### Running two accounts from one setup
+
+Claude Code keeps its login in the config folder, so two accounts need two folders. You cannot
+share one. What you *can* share is everything else — and you should, or the two drift apart.
+
+Point each account at its own folder with `CLAUDE_CONFIG_DIR`, as a shell alias:
+
+```sh
+alias cc-home='CLAUDE_CONFIG_DIR="$HOME/.claude" claude'
+alias cc-work='CLAUDE_CONFIG_DIR="$HOME/.claude-work" claude'
+```
+
+Then make the second folder a set of shortcuts back to this one. `~/.claude` is the authority;
+the other folder owns only its login, history and sessions:
+
+```sh
+cd "$HOME/.claude-work"
+for p in skills docs hooks agents commands memory CLAUDE.md settings.json; do
+  [ -e "$p" ] && [ ! -L "$p" ] && mv "$p" "$p.replaced-$(date +%F)"
+  ln -s "$HOME/.claude/$p" "$p"
+done
+```
+
+**`settings.json` is the one people miss, and it is the one that bites.** Skills and docs are
+usually linked on day one; settings gets copied instead, then edited in one folder and not the
+other. On 2026-08-05 that drift left the work folder pointing at five hooks this repo had
+deleted — two errors on every session start, `MODULE_NOT_FOUND`, and none of the plain-English
+mode, slop guard, format check or approved-command list that the main folder had. Link it, don't
+copy it. Anything you genuinely want to differ per account (a pinned model, an extra plugin)
+belongs in `~/.claude/settings.json` for both, or in neither.
+
+Because `settings.json` is gitignored, cloning this repo cannot recreate those links for you —
+that is why they are written down here.
+
 ## Set up a new project
 
 Nothing to do. Skills make their own folders when they need them, like `brainstorms/`. The one thing you might add is an MCP server in `settings.json` under `"mcpServers"`, for example `"playwright": { "command": "npx", "args": ["-y", "@playwright/mcp@latest"] }`. Add one only when a skill asks for it.
