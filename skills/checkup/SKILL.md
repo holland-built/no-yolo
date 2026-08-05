@@ -73,18 +73,37 @@ appearing in two files:
 more than half their headings: `| File A | File B | Shared headings |`
 
 **Orphans, both directions:**
-- A doc referenced by `CLAUDE.md` or a skill that doesn't exist on disk → **dangling**
+- Any tracked file naming a doc, skill, hook, agent or script that isn't on disk → **dangling**
 - A doc on disk that nothing reads → **unreferenced**
 
 ```bash
 for f in docs/*.md; do b=$(basename "$f")
-  n=$(grep -rl "$b" CLAUDE.md skills/ hooks/ docs/ 2>/dev/null | grep -v "^$f$" | wc -l | tr -d ' ')
+  n=$(grep -rl "$b" CLAUDE.md README.md INSTALL.md SHIP.md skills/ hooks/ docs/ 2>/dev/null | grep -v "^$f$" | wc -l | tr -d ' ')
   [ "$n" = "0" ] && echo "  unreferenced: $b"
 done
-grep -ohE 'docs/[A-Z_]+\.md' CLAUDE.md skills/*/SKILL.md 2>/dev/null | sort -u | while read p; do
-  [ -f "$p" ] || echo "  dangling: $p"
-done
+git ls-files -- '*.md' | while read -r src; do
+  grep -v 'gone-on-purpose' "$src" \
+    | grep -oE '`(docs|skills|hooks|agents|commands)/[A-Za-z0-9._/-]+\.(md|sh|js|py|mjs|json)`' \
+    | tr -d '`' | while read -r p; do
+        [ -e "$p" ] || [ -e "$(dirname "$src")/$p" ] || echo "  dangling: $p  (in $src)"
+      done
+done | sort -u
 ```
+
+The dangling sweep is deliberately built this way; the earlier version missed a real outage.
+It only looked at `CLAUDE.md` and `skills/*/SKILL.md`, and only for absent `docs/*.md` — so it
+never read `SHIP.md`, and could not see references to deleted **skills, hooks or scripts**. On
+2026-08-05 that blind spot had let `SHIP.md` accumulate five dead references, two inside HARD
+BLOCK steps, which would have stopped every release. Three details carry their weight:
+
+| Detail | Why |
+|---|---|
+| `git ls-files`, not a directory walk | only tracked files can break a release for someone else, and walking drags in gitignored vendor folders nobody edits here |
+| backtick-quoted paths only | this repo cites real files in backticks; bare text floods on substrings — the tail of `ingest-docs/SKILL.md` looks like a docs path |
+| marker filtered per line, before extraction | `grep -o` prints only the match and discards its line, so filtering afterwards can never see the marker |
+
+Prose that names a deleted file on purpose carries `<!-- gone-on-purpose -->` on that line. That
+marker is for history and rationale only — never to silence a reference something still follows.
 
 **Drift.** A skill's `description` frontmatter is its contract. Report any skill whose
 description names a mode, flag or file that its own body no longer contains.
