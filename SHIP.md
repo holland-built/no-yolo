@@ -11,12 +11,22 @@ the thing it runs is on disk right now** — check before adding one.
 ## Environments
 | Env | Branch | Default | Notes |
 |-----|--------|---------|-------|
-| main | `fresh-start` | * | the rebuilt setup; publishes to no-yolo |
+| main | `main` | * | the only branch; publishes to no-yolo |
 
-`main` holds the pre-rebuild setup and is the undo button — the rebuild plan says it stays
-forever. Whether `fresh-start` gets fast-forwarded onto `main` at the end of the rebuild is
-still an open decision (`docs/FRESH_START_PLAN.md`, "Still open"); until it is made, `/release`
-pushes the current branch and never retargets `main` on its own.
+`main` became the rebuilt setup on 2026-08-05. The two histories were unrelated — the rebuild
+started from an empty room — so this was a force-push, not a merge. The pre-rebuild setup is
+kept in two places, per the plan's promise that nothing is destroyed:
+
+| Where | What |
+|---|---|
+| tag `pre-rebuild-2026-08-05` | `main` exactly as it stood before the swap |
+| branch `migrate-wshobson-agents` | the same, plus three commits of in-flight work |
+
+**This repo's remote pointed at its own working directory** until 2026-08-05, so every push from
+it silently went nowhere and the rebuilt setup sat unpublished while looking pushed. A
+self-referencing remote still resolves `origin/*`, still reports "up to date", and still exits 0
+— nothing about it looks wrong. If a branch claims to be in sync but GitHub disagrees, check
+`git remote -v` before anything else.
 
 ## Steps
 
