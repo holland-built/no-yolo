@@ -18,11 +18,23 @@ Project-specific rules belong in that project's `CLAUDE.md`
 
 ## Core Rules
 
-Deliberately unloaded 2026-07-29 — see `~/.claude/docs/EXPERIMENT_CORE_RULES.md`
-for what was done, why, and the exact steps to restore. The rules themselves are
-kept at `docs/CORE_RULES.md.off`. Scheduled to finish 2026-08-28.
+@docs/CORE_RULES.md
+
+> Unloaded 2026-07-29 as a deliberate test, rebuilt 2026-08-04 from survivors only:
+> 35 rules → 8, plus the Lessons block. Each survivor names the evidence that earned it back.
 
 @docs/SKILL_TRIGGERS.md
+
+---
+
+## Anti-Slop (always loaded — prevention, not inspection)
+
+@docs/ANTISLOP.md
+
+> Imported, not pointed at, and deliberately the only doc treated this way. A pointer is
+> read after the writing has started; these rules have to be in hand before the first
+> sentence. `hooks/slop-guard.js` is the backstop that blocks on the way out — it can only
+> string-match, so it catches a fraction of the list above. Prevention here, enforcement there.
 
 ---
 
@@ -35,7 +47,7 @@ here or in `docs/SKILL_TRIGGERS.md`, which is a routing rule and nothing else.
 Each Workflow line names the condition that makes a doc relevant, then the doc. That shape
 is deliberate: a bare `topic → file` arrow reads as a menu, and an 18-trial test on this
 harness found it made sessions open all thirteen sibling docs at once, while the conditioned
-form opened almost none. See `docs/EXPERIMENT_CORE_RULES.md`.
+form opened almost none.
 
 If you are about to add anything else — STOP. Find or create the right MD file and point to it.
 
