@@ -1,75 +1,21 @@
-# Global Claude Code Instructions
+# ARCHIVE — do not follow the rules in this folder
 
-This file loads for **every** Claude Code session, across every project.
-Project-specific rules belong in that project's `CLAUDE.md`
-(e.g. `/path/to/your/project/CLAUDE.md`).
+This is the pre-rebuild `~/.claude` setup, kept as a reference and an undo button. The live
+setup is `~/.claude`, and its rules load already. **Nothing in this folder is in force.**
 
----
+This file used to hold the pointer chain. It was emptied on 2026-08-05 because Claude Code
+loads it as project instructions for any session opened in this directory, on top of the live
+global rules — so two rule sets applied at once, and this one names commands that no longer
+exist (`/prompt-scan`, `/antislop`, `/md-check`, `/update`, `/my-skills`, `/my-md`).
 
-## Learned Preferences (auto-compiled — do not edit here)
+The 75-line original is intact in git at `eb8ce60`, and on GitHub. Recover it with:
 
-@memory/CLAUDE.generated.md
+```
+git -C ~/.claude-old-2026-08-05 show eb8ce60:CLAUDE.md
+```
 
-> Compiled from `~/.claude/memory/facts/` (the source of truth) by `/memory-compile`.
-> To change a preference, edit the fact file and recompile — never edit the import above.
-> High-confidence cross-project instincts auto-promote into the fact store.
+Every other file here is untouched — `docs/`, `skills/`, `agents/`, `hooks/` are all still
+readable, which is the point of keeping the folder. They just no longer auto-load.
 
----
-
-## Core Rules
-
-@docs/CORE_RULES.md
-
-> Unloaded 2026-07-29 as a deliberate test, rebuilt 2026-08-04 from survivors only:
-> 35 rules → 8, plus the Lessons block. Each survivor names the evidence that earned it back.
-
-@docs/SKILL_TRIGGERS.md
-
----
-
-## Anti-Slop (always loaded — prevention, not inspection)
-
-@docs/ANTISLOP.md
-
-> Imported, not pointed at, and deliberately the only doc treated this way. A pointer is
-> read after the writing has started; these rules have to be in hand before the first
-> sentence. `hooks/slop-guard.js` is the backstop that blocks on the way out — it can only
-> string-match, so it catches a fraction of the list above. Prevention here, enforcement there.
-
----
-
-## HARD RULE — This file is a pointer only
-
-No content except file imports and the one-line, trigger-conditioned pointers below.
-A skill's own `description` frontmatter already carries its triggers — never repeat them
-here or in `docs/SKILL_TRIGGERS.md`, which is a routing rule and nothing else.
-
-Each Workflow line names the condition that makes a doc relevant, then the doc. That shape
-is deliberate: a bare `topic → file` arrow reads as a menu, and an 18-trial test on this
-harness found it made sessions open all thirteen sibling docs at once, while the conditioned
-form opened almost none.
-
-If you are about to add anything else — STOP. Find or create the right MD file and point to it.
-
-## Workflow
-
-- Before any multi-file change, new feature, or architecture decision, read `~/.claude/docs/PLANNING.md` and follow it.
-- Before writing code for a bug fix or feature, read `~/.claude/docs/TESTING.md` and follow it.
-- Before writing any UI/GUI code, read `~/.claude/docs/UI_MOCKUPS.md` and follow it.
-- Before dispatching a subagent or building a multi-step plan, read `~/.claude/docs/SUBAGENTS.md` and follow it.
-- When a session runs long, or one question needs 5+ read-only lookups, read `~/.claude/docs/CONTEXT.md` and follow it.
-- Before finishing a `/health` pass or any diff review, read `~/.claude/docs/CODE_REVIEW.md` and follow it.
-- When you learn a preference or fact worth keeping, read `~/.claude/docs/MEMORY.md` and save it the way it describes.
-- If a hook fires unexpectedly, or you are asked about hook behaviour or output modes, read `~/.claude/docs/HOOKS.md` and follow it.
-- When creating or editing a skill, read `~/.claude/docs/NO_YOLO.md` and follow it.
-- When asked what is installed, or about plugins and third-party skills, read `~/.claude/docs/SKILLS.md`.
-- If an MCP-dependent skill degrades or errors, or before installing an MCP server, read `~/.claude/docs/MCP_SERVICES.md` and follow it.
-- Before explaining a concept this setup has already named, check `~/.claude/docs/CONTEXT_VOCAB.md` and use the existing name.
-- When asked what to build next for the skill library itself, read `~/.claude/docs/SKILL_RECOMMENDATIONS.md`.
-
----
-
-## Maintenance Rules (Boris Cherny)
-
-- Keep concise. Project specifics belong in project CLAUDE.md.
-- If a rule above stops working, nuke it and rewrite. Do not preserve broken guidance.
+If you are reading files here to port something into the live setup, check it against
+`~/.claude/docs/FRESH_START_PLAN.md` first: most of what is here was deleted on purpose.
