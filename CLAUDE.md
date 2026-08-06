@@ -22,6 +22,7 @@ project's own `CLAUDE.md`.
 - When a session runs long, or one question needs 5+ read-only lookups → `docs/CONTEXT.md`
 - Before finishing a `/health` pass or any diff review → `docs/CODE_REVIEW.md`
 - When you learn a preference or fact worth keeping → `docs/MEMORY.md`
+- Before writing or editing a skill file, `CLAUDE.md`, or a rules doc → `docs/AGENT_WRITING.md`
 - If an outside service degrades, or before installing one → `docs/MCP_SERVICES.md`
 
 The condition comes first, the file second. That shape is deliberate: a bare

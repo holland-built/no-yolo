@@ -19,6 +19,11 @@ Feature: $ARGUMENTS
 **Agent rule:** never write code inline. All planning → Fable agent. All implementation →
 Opus agent(s). The coordinator reads and dispatches only.
 
+**Long-session rule:** at a stage boundary, when the session has already run long, offer
+`/handoff` instead of opening the next stage. Name the stage just finished and the one next,
+then wait. A boundary is the cheapest place to stop, and a handoff written at one survives a
+session that dies mid-stage.
+
 ## Mode select
 
 | Signal | Mode |

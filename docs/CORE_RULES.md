@@ -68,3 +68,7 @@ Added when a mistake is caught, so it doesn't repeat.
   this; only "does anything still depend on this?" can.
 - Creative user-facing prose (README, pitches) is where slop ships. Plain words, one idea
   per sentence, and check it against `ANTISLOP.md` before publishing.
+- A guard you have never watched fail is not a guard, it is a belief. Feed it the bad input
+  and see it refuse before you record it as healthy.
+- A relative path in a skill resolves against the working directory that skill runs in, not
+  against the skill's own folder. Resolve it there before reporting the target missing.

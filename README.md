@@ -249,6 +249,8 @@ It is drawn by `hooks/statusline.sh`. When literal mode is on, a badge for it ap
 
 Anti-slop is imported rather than pointed at, and it is the only doc treated that way: a pointer gets read after the writing has already started.
 
+The reasoning behind the current shape of all of this — what was deleted, what was kept, and the evidence for each call — is `docs/FRESH_START_PLAN.md`. Read it before you undo something here on the grounds that it looks arbitrary.
+
 ## What's excluded
 
 These are kept out of git on purpose.

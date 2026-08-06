@@ -129,7 +129,8 @@ folder. *Otherwise* → the one list.
 | codex | Keep — backs `/xcheck` (30 uses) |
 | caveman | **Gone.** Removed 2026-08-03 in `eb14eb6`, along with its 9 tracked files. This row said "Keep — its agents ran 232 times" until 2026-08-05, two days after the removal, and that stale row caused caveman to be treated as wanted and re-updated. Usage counters record the past; they are not evidence something is still wired in |
 | design-and-refine | Delete — 0 real invocations |
-| superpowers, ecc | 3 real uses each. Leave for now |
+| superpowers | **Gone in practice, confirmed 2026-08-06.** Its four skills — `brainstorming`, `systematic-debugging`, `test-driven-development`, `using-superpowers` — sat in `~/.agents/.skill-lock.json` with no files on disk, no shortcut pointing at them, and the marketplace missing from `enabledPlugins`. The four ghost entries were deleted from the lockfile. The downloaded `plugins/marketplaces/superpowers-marketplace` clone is still on disk and is the last piece to remove. This row read "3 real uses each. Leave for now" until today — the same stale-counter mistake the caveman row above documents |
+| ecc | 3 real uses. Leave for now |
 
 ---
 
