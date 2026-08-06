@@ -68,6 +68,9 @@ memory/compile-manifest.json
 memory/facts/
 
 # ephemeral work
+# /handoff session summaries — local session state, and they can carry conversation
+# detail that was never meant to leave the machine.
+handoffs/
 plans/
 advisor-plans/
 tasks/

@@ -1,6 +1,6 @@
 ---
 name: eli5
-description: Use this skill when the user types /eli5, says 'as a table', 'table that', 'reprint that', 'again in plain words', or 'in a chart', and automatically on every completed-work summary, next-actions list, or question to the user. Explains any skill, command, plan, decision, or finished work in plain English, no jargon, table-shaped. Mode C reprints the answer just given as a table, with no argument and nothing re-researched.
+description: Use this skill when the user types /eli5, says 'as a table', 'table that', 'reprint that', 'again in plain words', 'in plain english', or 'in a chart'; when the user says they are lost — 'I don't understand', 'no clue', 'wait what', 'you lost me', 'huh', 'say that again', 'what does that mean' — about anything you just said; and automatically on every completed-work summary, next-actions list, or question to the user. Explains any skill, command, plan, decision, or finished work in plain English, no jargon, table-shaped. Mode C reprints the answer just given as a table, with no argument and nothing re-researched.
 user-invocable: true
 argument-hint: "[skill name, plan text, command, or file path]"
 model: haiku
@@ -31,6 +31,12 @@ line of context after the table if it genuinely needs one. Then stop.
 
 If the previous answer had only one fact in it, say that one fact in one sentence
 and note there was nothing to tabulate.
+
+**When the trigger was "I don't understand" / "no clue" / "wait what",** the previous answer
+failed, so reprinting its shape repeats the failure. Before re-emitting, find which idea it
+leaned on that had never been introduced — that is almost always the break — and introduce
+that idea first, in its own row. Then reprint the rest. Say which part you are re-explaining
+so the reader can tell you if you picked the wrong one.
 
 ### Step 0 — no argument
 
@@ -113,3 +119,16 @@ These apply in **both** modes, on top of the shape rules above.
 
 **5 and 8 are two different ceilings, not a contradiction.** A table of facts, files
 or states may run to 8 rows. A list of things the reader has to do or choose caps at 5.
+
+## Word and sentence rules
+
+<!-- The working half of ASD-STE100, the controlled-English standard aviation manuals are
+     written in. Its rules are here; its name stays out of the output, because citing a
+     standard to prove you are being plain is the thing it exists to prevent. -->
+
+| Rule | What it means |
+|---|---|
+| **One word, one meaning** | Pick the single everyday word for a thing and use that same word every time. "Skill", then "command", then "tool" for one thing reads as three things. |
+| **Say who does it** | Name the actor and put it in front: "`/checkup` reads your hooks", never "the hooks are read". A sentence with no actor hides who is about to change what. |
+| **One idea per sentence** | Roughly twenty words. A sentence carrying two ideas makes the reader hold the first one while parsing the second, and that is where they drop it. |
+| **Introduce before you use** | Every idea a row leans on is either one the reader already brought, or one an earlier row introduced. When neither is true, add the introducing row first — that gap is what "I don't understand" is pointing at. |

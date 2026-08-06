@@ -10,6 +10,8 @@ allowed-tools:
   - Read
   - Edit
   - Write
+  - TaskList
+  - TaskUpdate
 ---
 
 # whats-next
@@ -20,17 +22,21 @@ allowed-tools:
 
 ## Step 1 — Check session task queue
 
-Read `~/.claude/.pending-tasks.md`. If absent or all items checked → skip to Step 3.
+Run `TaskList`. If it returns nothing, or every task is `completed` → skip to Step 3.
 
-Find the first unchecked line: `- [ ]`
+Otherwise take the first task that is still `pending` and go to Step 2.
 
-If found → go to Step 2.
+The queue is the harness's own task list, not a file. An earlier version of this step read
+`~/.claude/.pending-tasks.md`, which nothing in this setup has ever written — so Steps 1 and 2 <!-- gone-on-purpose -->
+could never fire, and `/whats-next` silently behaved as though the queue were always empty.
+Never reintroduce a hand-maintained queue file; this repo derives state, it does not store it.
 
 ---
 
 ## Step 2 — Run next pending task
 
-Mark the task `- [x]` in `~/.claude/.pending-tasks.md` (Edit the file first so it's not re-run if interrupted).
+Set the task to `in_progress` with `TaskUpdate` before doing anything else, so an interrupted
+run doesn't start it twice. Mark it `completed` when it finishes.
 
 Read the task description and execute it:
 
@@ -38,7 +44,7 @@ Read the task description and execute it:
 - If task is a build task (e.g. "build X", "implement Y") → never code inline: spawn a Fable planning agent, then Opus agents for the implementation
 - If task is mechanical (trim file, rename, move) → do it inline with Read+Edit
 
-After completing: report done, then re-read `~/.claude/.pending-tasks.md` and show remaining unchecked tasks (if any).
+After completing: report done, then run `TaskList` again and show the remaining pending tasks (if any).
 
 Stop here — do not proceed to Step 3.
 
