@@ -72,3 +72,10 @@ Added when a mistake is caught, so it doesn't repeat.
   and see it refuse before you record it as healthy.
 - A relative path in a skill resolves against the working directory that skill runs in, not
   against the skill's own folder. Resolve it there before reporting the target missing.
+- A failed lookup is a fact about your search, not about the system. "I did not find X by
+  method Y" is honest; "X does not exist", "X is unreachable", or "X is never rendered" is
+  not, until you have named the other paths to it and tried them. Before recording any
+  blocker, open the overflow menus, expand the collapsed sections, and check whether the
+  name you searched for is the live one. Never label an obstacle "proven" or "measured"
+  when what you measured was a single attempt — that wording is worse than the miss,
+  because it tells the next reader the search is finished.
