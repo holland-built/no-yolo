@@ -1,6 +1,6 @@
 ---
 name: dep-audit
-description: Use this skill when the user types /dep-audit, says 'audit my dependencies', 'check for vulnerable packages', 'what licences am I using', or 'security scan this app'. npm-only supply-chain pass — leaked keys, npm advisories, licences, dependency inventory and a small Next.js config checklist, merged into one severity-ranked table. This is NOT a Trivy equivalent — it never scans OS or container packages, builds no SBOM, and reads no infrastructure-as-code.
+description: Use this skill when the user types /dep-audit, says 'audit my dependencies', 'check for vulnerable packages', 'what licences am I using', or 'security scan this app'. npm-only supply-chain pass — leaked keys in both tracked files AND git history, npm advisories, licences, dependency inventory and a small Next.js config checklist, merged into one severity-ranked table. This is NOT a Trivy equivalent — it never scans OS or container packages, builds no SBOM, and reads no infrastructure-as-code.
 user-invocable: true
 effort: high
 argument-hint: "[repo path — defaults to the current repo]"
@@ -73,6 +73,73 @@ Resolved from the installed config dir — **never** a repo-relative path. Fail 
 
 Never pipe the file list through `xargs` — it collapses grep's exit 1 ("no match") into 123, destroying the 0/1 contract the table above depends on.
 
+## 1b — Leaked keys in git HISTORY (always runs)
+
+Step 1 scans the files that exist *now*. A key that was committed and later deleted is invisible
+to it and still live in every clone. This step is the only thing that sees those.
+
+```bash
+[ "$(git -C "$ROOT" rev-parse --is-inside-work-tree 2>/dev/null)" = "true" ] \
+  && echo "HIST_REPO|yes" || echo "HIST_REPO|no"
+echo "HIST_SHALLOW|$(git -C "$ROOT" rev-parse --is-shallow-repository 2>/dev/null)"
+GIT_PAGER=cat git -C "$ROOT" --no-pager log --all -p --no-color \
+  --format='%n===COMMIT %h %ad %s' --date=short > "$TMP/history.txt" 2>/dev/null
+echo "HIST_RC|$?"
+echo "HIST_BYTES|$(wc -c < "$TMP/history.txt" | tr -d ' ')"
+echo "HIST_COMMITS|$(git -C "$ROOT" rev-list --all --count 2>/dev/null)"
+```
+
+**Check `HIST_BYTES` before drawing any conclusion.** A dump of 0 bytes is the failure this step
+exists to survive: git pages by default, and a paged `git log -p` into a pipe writes nothing and
+reads exactly like a clean repo. `GIT_PAGER=cat` plus `--no-pager` plus the byte count is a belt
+and two braces — keep all three. Expect roughly 100 KB per commit of source churn; a repo with
+800+ commits produces a dump in the hundreds of MB and takes a minute or two. That is normal, not
+a reason to skip.
+
+Fail closed — any row below that is not the last one produces a CRITICAL and **never** a clean verdict:
+
+| Signal | Action |
+|---|---|
+| `HIST_REPO\|no` | CRITICAL `history key scan DID NOT RUN — not a git repo` |
+| `HIST_SHALLOW\|true` | CRITICAL `history key scan DID NOT RUN — shallow clone, most history absent`. Re-run after `git fetch --unshallow` |
+| `HIST_RC` non-zero | CRITICAL `history key scan DID NOT RUN — git log exited <rc>` |
+| `HIST_BYTES\|0` with `HIST_COMMITS` > 0 | CRITICAL `history key scan DID NOT RUN — empty dump from a non-empty repo` |
+| repo, not shallow, rc 0, bytes > 0 | proceed to the scan below |
+
+Then scan the dump with the same scanner and the same fail-closed contract as step 1 — `--files`,
+not stdin, because only `--files` emits the line numbers the commit lookup needs:
+
+```bash
+# re-resolved here: step 1's no-yolo branch delegates to verify.sh and never sets $SCAN
+SCAN="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/secret-scan.sh"
+"$SCAN" --files "$TMP/history.txt"; echo "HIST_STATUS|$?"
+```
+
+This step runs in the no-yolo repo too. `verify.sh` scans tracked content only, so delegating
+step 1 to it leaves history uncovered — 1b is never skipped for any repo.
+
+| Output | Action |
+|---|---|
+| lines, then `HIST_STATUS\|0` | one CRITICAL row per hit — resolve each to its commit below |
+| `HIST_STATUS\|1` | one INFO row `history key scan clean (N commits, M bytes scanned)` |
+| `HIST_STATUS\|` anything else | CRITICAL `history key scan DID NOT RUN — scanner exited <rc>` |
+
+Each hit is `.../history.txt:<N>:<line>`. That line number means nothing to the reader — turn it
+into a commit before it goes in the table:
+
+```bash
+awk -v n=<N> 'NR<=n && /^===COMMIT /{c=$0} NR==n{print c; exit}' "$TMP/history.txt"
+```
+
+`Where` becomes that commit's short hash and date; `Fix` is **rotate the credential first**,
+rewriting history second. A key that reached any remote is compromised whether or not the commit
+is later removed — never write a fix that only says "rewrite history".
+
+Two hits are expected, not leaks, and belong in the table as INFO with the reason stated: test
+fixtures (a passphrase whose own text says it is test-only), and, in the no-yolo repo, the six
+pattern-documenting files step 1 delegates to `verify.sh`. Judge them by reading the matched line;
+do not add an exclude list here, which would hide a real key that happened to sit in one of them.
+
 ## 2 — Vulnerable packages
 
 ```bash
@@ -117,7 +184,7 @@ Only when `next` is a dependency. Three checks, each an evidence-backed row:
 
 ## Output — ONE table
 
-Merge every source into a single table — `| Severity | Area | Finding | Where | Fix |` — ranked CRITICAL → HIGH → MODERATE → LOW → INFO. Not five tables, not one per phase. `Area` is Keys / Advisory / Licence / Inventory / Next.js; `Where` is `file:line`, a package name, or the config key — never "the codebase"; `Fix` is one action, not a paragraph.
+Merge every source into a single table — `| Severity | Area | Finding | Where | Fix |` — ranked CRITICAL → HIGH → MODERATE → LOW → INFO. Not five tables, not one per phase. `Area` is Keys / History / Advisory / Licence / Inventory / Next.js; `Where` is `file:line`, a package name, or the config key — never "the codebase"; `Fix` is one action, not a paragraph.
 
 ## What this did NOT check
 

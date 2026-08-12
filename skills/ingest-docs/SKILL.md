@@ -1,6 +1,6 @@
 ---
 name: ingest-docs
-description: Use this skill when the user types /ingest-docs, says 'ingest docs', 'process raw docs', or 'update context from docs'. Per-repo document ingestion pipeline that converts raw files (PDF, PPTX, DOCX, images) in docs/raw/ to clean .md context files in docs/context/ that Claude reads at runtime. Tracks changes via .manifest.
+description: Use this skill when the user types /ingest-docs, says 'ingest docs', 'process raw docs', or 'update context from docs'. Per-repo document ingestion pipeline that converts raw files (PDF, Word, PowerPoint, Excel, EPUB, RTF, CSV, images) in docs/raw/ to clean .md context files in docs/context/ that Claude reads at runtime. Tracks changes via .manifest.
 user-invocable: true
 model: sonnet
 argument-hint: "[--force] [filename]"
@@ -14,11 +14,19 @@ Convert docs/raw/ files OR URLs → dense context .md files Claude reads at runt
 ## Preflight
 
 ```bash
-which markitdown 2>/dev/null || pip install markitdown
+# anydoc needs Node 20+; npx fetches the tool itself. `node -v` alone is NOT a check —
+# it prints the version and exits 0 on Node 18, so the pipeline would sail past it.
+node -e 'process.exit(+process.versions.node.split(".")[0] >= 20 ? 0 : 1)' \
+  || { echo "anydoc needs Node 20+, found $(node -v)"; exit 1; }
 python3 -c "import firecrawl" 2>/dev/null || pip3 install firecrawl-py --break-system-packages
 ```
 
-If either fails: STOP. Tell user which package failed and how to install it.
+If either fails: STOP. Tell user which one failed and how to fix it.
+
+Nothing to install for documents: `npx -y @firecrawl/anydoc` downloads on demand and is
+cached after the first run, so a fresh clone of any repo works with no setup step. That is
+why this skill is safe to share — do not vendor anydoc into a repo, and do not add it to
+`package.json`.
 
 Firecrawl self-hosted endpoint: read from the `FIRECRAWL_API_URL` env var (set in settings.json `env`; no API key needed). If it is unset, skip URL inputs and process local files only — tell the user the env var is missing.
 
@@ -37,7 +45,9 @@ If docs/raw/ is empty on first run, stop here.
 ## Pipeline
 
 Inputs accepted:
-- **Local files** in `docs/raw/` (PDF, PPTX, DOCX, images) — new or hash-changed vs .manifest
+- **Documents** in `docs/raw/` — new or hash-changed vs .manifest. `.pdf .doc .docx .docm
+  .odt .rtf .epub .ppt .pps .pot .pptx .pptm .ppsx .ppsm .odp .xls .xlsx .xlsm .xlsb .ods .csv`
+- **Images** in `docs/raw/` (`.png .jpg .jpeg .gif .webp`) — handled differently, see Step 1
 - **URLs** passed directly as argument (e.g. `/ingest-docs https://example.com/page`)
 
 For each input:
@@ -56,10 +66,27 @@ result = app.scrape_url(url, formats=["markdown"])
 # result.markdown → write to /tmp/ingest-<slug>.md
 ```
 
-If input is a local file:
+If input is a document:
 ```bash
-markitdown docs/raw/<file> > /tmp/ingest-<slug>.md
+npx -y @firecrawl/anydoc docs/raw/<file> > /tmp/ingest-<slug>.md
 ```
+Exit 1 = the document could not be converted · exit 2 = usage error. Both print one
+`anydoc: <message>` line to stderr and never prompt, so a failure is safe to surface and
+skip rather than retry. Pass `--format <name>` only when the extension is missing or wrong;
+detection reads the file's content, not its name.
+
+**Scanned PDFs have no text layer, and anydoc reads the text layer only.** A PDF that
+converts to near-empty output is scanned, not broken — say so and stop; do not silently
+write an empty context file.
+
+If input is an image: **do not convert it — read it.**
+Open the file with the Read tool and write your own description to `/tmp/ingest-<slug>.md`.
+No converter is involved. This replaced `markitdown`, which was measured on 2026-08-08
+producing **1 character** from a real PNG — it had never extracted anything from an image,
+so the old pipeline was writing empty context files and calling them converted.
+
+Reading an image costs far more context than reading text. For more than a handful in one
+run, say so and ask which ones actually matter before opening them all.
 
 **Step 2 — Topic-match decision**
 Spawn a subagent (model: sonnet) with:
