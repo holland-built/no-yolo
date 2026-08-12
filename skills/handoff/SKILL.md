@@ -86,12 +86,23 @@ Six sections, in this order. Keep the whole file short enough to read in one scr
 ## Open — needs a call before work continues
 - ...
 
+## Cross-check before resuming
+Codex has NOT seen the remaining plan. The next session runs `/xcheck` on the
+"Open" and "First action" items before writing code — or states in one line why
+it is skipping (plan already settled, one-line fix, codex unavailable).
+
 ## Run these skills next
 - ...
 
 ## First action
 One concrete thing, doable immediately.
 ```
+
+The **Cross-check before resuming** section is not optional and is not a suggestion —
+write it into every handoff. A resumed session inherits a plan nobody argued with: it
+reads the file, trusts it, and starts editing. Measured 2026-08-12: half the sessions
+that edited code without any plan stage began by resuming a handoff, so this file is
+where the gap actually lives (see `docs/CORE_RULES.md` rule 9).
 
 ## 5 — Run these skills next
 

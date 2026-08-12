@@ -46,6 +46,18 @@ Everything else was dropped because Opus 5 does it unprompted.
 8. **Surgical changes.** Every changed line traces to the request. Propose broad, execute
    narrow — never silently touch unrequested code.
 
+9. **Cross-check substantial work with Codex BEFORE writing it, not after.** Any change that
+   spans several files, alters a config/script/hook, or picks between real approaches: state
+   the approach, run `/xcheck` on it, adjudicate the findings, and only then write code. Do
+   not ask permission to do this and do not offer it as an option — run it. Skip it silently
+   when `command -v codex` fails, and skip it for a one-line fix, a change the user has
+   already specified exactly, or work whose plan was settled earlier in the session.
+   *Evidence, 2026-08-12: across 39 sessions, 503 of 563 edits (89%) were made with no plan
+   stage and no second model. On the same day Codex was finally shown one of those edits it
+   found a real defect in it — a Node-20 guard that checked nothing.* The failure this fixes
+   is a wrong approach written confidently, which a review after the fact only catches once
+   the work is already done.
+
 ## Dropped, deliberately
 
 Simplicity-first, goal-driven phrasing, and the planner/builder model split were dropped:
