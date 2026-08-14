@@ -153,7 +153,7 @@ Nothing to do. Skills make their own folders when they need them, like `brainsto
 
 ## Skills inventory
 
-A skill is a shortcut command you type, like `/health`. There are 17 custom commands, plus 1 utility command (`/memory-compile`, which lives in `commands/`), plus 19 borrowed from other people's repos.
+A skill is a shortcut command you type, like `/health`. There are 18 custom commands, plus 1 utility command (`/memory-compile`, which lives in `commands/`), plus 19 borrowed from other people's repos.
 
 | Skill | What it does | Skill | What it does |
 | --- | --- | --- | --- |
@@ -167,7 +167,7 @@ A skill is a shortcut command you type, like `/health`. There are 17 custom comm
 | last-30 | What gained traction this month | dep-audit | npm supply-chain risk audit |
 | route-map | Proves every page's content | — | — |
 
-The borrowed 19 are not commands you type — they are reference text and behaviours the 17 read. `/design` reads the eight design and animation ones; `/health` invokes the ponytail set and `improve`; `archify`, `resolving-merge-conflicts`, `computer-use` and `orca-cli` stand alone. They live in `~/.agents/skills/`, installed by `npx skills`, so removing them is that tool's job and not a matter of deleting a file here.
+The borrowed 19 are not commands you type — they are reference text and behaviours the 18 read. `/design` reads the eight design and animation ones; `/health` invokes the ponytail set and `improve`; `archify`, `resolving-merge-conflicts`, `computer-use` and `orca-cli` stand alone. They live in `~/.agents/skills/`, installed by `npx skills`, so removing them is that tool's job and not a matter of deleting a file here.
 
 
 ## Model guidance
