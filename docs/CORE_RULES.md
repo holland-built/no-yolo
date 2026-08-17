@@ -43,6 +43,14 @@ Everything else was dropped because Opus 5 does it unprompted.
    If the newest major just landed and a core dep can't support it, pin the highest version
    everything supports and say why.
 
+   The lag hits the API as much as the version number. Before writing code against an outside
+   library — its config shape, its hooks, its function signatures — fetch that library's
+   current docs through the `context7` tools (`resolve-library-id`, then `query-docs`) and
+   write from what comes back, naming the library ID you fetched. Recall produces code that
+   compiles against a version nobody is running, and it looks correct until it runs. Skip the
+   fetch when the library is already vendored in the repo and reading its source answers the
+   question faster, or when the change doesn't touch a library surface at all.
+
 8. **Surgical changes.** Every changed line traces to the request. Propose broad, execute
    narrow — never silently touch unrequested code.
 
