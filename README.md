@@ -182,6 +182,8 @@ Claude comes in three sizes and they cost different amounts. This setup picks on
 
 The rule: a planning model writes the plan, then separate agents do the building — never the same breath. Today that is Fable planning and Opus building; swapping in a newer, better planner is expected. Never start coding without a plan.
 
+Four borrowed skills are pinned to Haiku by hand: `animation-vocabulary`, `ponytail-help`, `ponytail-gain`, `ponytail-debt`. Each carries one added line, `model: haiku`, in its frontmatter. They live in `~/.agents/skills/`, which `npx skills` overwrites, so those four lines are wiped whenever the borrowed skills are reinstalled — including by a plain re-run of `setup.sh`. Nothing breaks when that happens; the four just go back to the session model. Re-add the line to restore it.
+
 ## Keeping your setup up to date
 
 Type `/checkup` in this folder. You don't need to know git. It checks GitHub without changing anything, tells you in plain words what is different, then you pick what to act on:
