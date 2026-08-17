@@ -378,7 +378,10 @@ State the resolved goal in one line, then go quiet.
 
 ## The loop
 
-1. **HUNT.** Pick the highest-severity unfixed defect. Strict priority order:
+1. **HUNT.** Pick the highest-severity unfixed defect that is not parked. A parked defect is
+   out of the running for the rest of the run — never re-select one, and match against its
+   step-2 reproduction rather than its description, so the same defect cannot return wearing a
+   new symptom. Strict priority order:
    1. wrong data presented as fact
    2. missing or blind alerting
    3. silently truncated or capped data with no label
@@ -390,12 +393,30 @@ State the resolved goal in one line, then go quiet.
 2. **PROVE IT.** Reproduce against live data. A green test suite is not evidence. State the
    defect as observed-value vs true-value before touching code. If you can't state it that
    way, you haven't found it yet.
+
+   Then run the step-5 gate set once, before touching code. A gate already red at this
+   baseline is a broken gate, not a failed fix: repair it once, and if it is not green after
+   that one repair, stop and say so. Never charge a pre-broken gate against the defect, and
+   never start FIX on top of a red baseline.
 3. **FIX at the source, surgically.** Two close options → smaller blast radius, note the
    alternative in the commit body.
 4. **VERIFY live.** Same reproduction, now showing the correct value. Add a regression test
    that fails on the pre-fix code.
 5. **GATE.** Full gate set — tests, typecheck, build, any repo-specific spec. All green or
    you are not done.
+
+   **Max 3 attempts per defect — hard cap, never a fourth.** An attempt starts the moment you
+   enter step 3 and ends green at step 5 or not at all: a failure at VERIFY, a gate that stays
+   red, and a fix abandoned part-way all count the same. The count resets to zero for each new
+   defect and carries nothing between them. A failed attempt goes back to step 3.
+
+   On the third failure, **park the defect** and go to step 1. Parking means: undo only the
+   lines these attempts wrote, leaving every other change in the tree untouched — and if you
+   cannot bound that undo, stop and ask, because that is the "blast radius you cannot bound"
+   hard stop below. Then record the defect, its step-2 reproduction, its attempt count and the
+   last failing gate output for the final report. The release counter advances only at step 6,
+   so without this cap a defect that never passes its gate loops forever and the `--releases`
+   ceiling never fires.
 6. **SHIP.** Invoke `release`, bumping the patch version. Release notes state plainly any
    number that will visibly jump, and why.
 7. Back to 1.
@@ -433,8 +454,13 @@ Stop when a full hunt pass finds nothing above cosmetic, or N releases ship (def
 override `--releases N`), or a hard stop fires. `--dry` runs hunt and prove only, ships
 nothing, reports what it would have fixed.
 
+Parked defects are invisible to HUNT, so a run where every remaining defect is parked ends on
+the first clause. Hitting the 3-attempt cap is a report, never a silent give-up: a parked
+defect missing from the final output is the failure this cap exists to prevent.
+
 ## Final output — once, at the end
 
 `| version | defect | observed before | observed after | verified how |`
 
-Then a short list of what was left undone and why. Nothing else.
+Then one line per parked defect — `<defect> — parked after 3 attempts: <last failing gate>` —
+then a short list of anything else left undone and why. Nothing else.
