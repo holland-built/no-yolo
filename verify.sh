@@ -83,12 +83,13 @@ if [ -f "$IMPROVE_SKILL" ]; then
   fi
 fi
 
-# 5d. the four animation skills are demoted to reference-only (docs/DESIGN_SURFACES.md).
+# 5d. the demoted design skills are still reference-only (docs/DESIGN_SURFACES.md).
 #     `npx skills add/update` restores upstream frontmatter with no warning, and the symptom
 #     is invisible: a rival design door is simply back in the model's skill list. Same
 #     local-install caveat as 5c — skip where the path doesn't exist.
 demoted_lost=""
-for s in animation-vocabulary find-animation-opportunities improve-animations review-animations; do
+for s in animation-vocabulary find-animation-opportunities improve-animations review-animations \
+         apple-design emil-design-eng; do
   SK="$HOME/.claude/.agents/skills/$s/SKILL.md"
   [ -f "$SK" ] || continue
   grep -q '^disable-model-invocation: true' "$SK" || demoted_lost="$demoted_lost $s"
@@ -96,7 +97,7 @@ done
 if [ -n "$demoted_lost" ]; then
   record WARN "rival design door(s) reappeared —$demoted_lost lost disable-model-invocation; re-run setup.sh"
 elif [ -d "$HOME/.claude/.agents/skills" ]; then
-  record PASS "animation skills still demoted to reference-only"
+  record PASS "demoted design skills still reference-only"
 fi
 
 # 6. README format: every '## ' heading in docs/README_FORMAT.md exists in README.md

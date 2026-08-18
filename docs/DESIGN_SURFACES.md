@@ -89,16 +89,18 @@ separation, so that flag is the lever.
 | `find-animation-opportunities` | 2026-08-18 | `skills/find-animation-opportunities/SKILL.md` |
 | `improve-animations` | 2026-08-18 | `skills/improve-animations/SKILL.md` |
 | `review-animations` | already shipped demoted upstream | `skills/review-animations/SKILL.md` |
+| `apple-design` | 2026-08-18 (cohort B) | `skills/apple-design/SKILL.md` |
+| `emil-design-eng` | 2026-08-18 (cohort B) | `skills/emil-design-eng/SKILL.md` |
 
-All four are listed in `skills/design/DESIGN_REFS.md` with what to read them for. Demotion is
-not deletion: every word of them is still reachable, through the one door.
+All six are listed in `skills/design/DESIGN_REFS.md` with what to read them for, exactly once
+each. Demotion is not deletion: every word of them is still reachable, through the one door.
 
 **Undo, exactly.** These files are gitignored, so `git revert` does not restore them — reverting
 the tracked commit only removes the policy, not the flag. The local undo is one command:
 
 ```sh
 perl -ni -e 'print unless /^disable-model-invocation: true$/' \
-  ~/.claude/.agents/skills/{animation-vocabulary,find-animation-opportunities,improve-animations}/SKILL.md
+  ~/.claude/.agents/skills/{animation-vocabulary,find-animation-opportunities,improve-animations,apple-design,emil-design-eng}/SKILL.md
 ```
 
 `review-animations` is deliberately not in that list — upstream ships it demoted, so removing
@@ -106,9 +108,10 @@ the line would be a change, not a revert. Re-running `npx skills add` also erase
 as a side effect of a full reinstall that overwrites unrelated local metadata too (the four
 `model: haiku` pins in `README.md`); it is not the controlled undo.
 
-**Still reference, not yet demoted:** `interface-design`, `emil-design-eng`, `apple-design`,
-`pick-ui-library`, `archify`. `pick-ui-library` already carries the flag. The rest are cohorts B
-and C of the plan's step 4b.
+**Still reference, not yet demoted:** `interface-design` and `archify`. `pick-ui-library`
+already carries the flag. `interface-design` is cohort C — the largest overlap with `/design`,
+so it goes last and alone. `archify` is not a design surface by the test at the top of this
+file: it draws architecture diagrams, and nothing about "redesign this page" should reach it.
 
 **Out of this repo's reach:** `dataviz`, via route 7. It is a genuine design surface and it
 cannot be demoted from here at all. Recorded as a permanent exception rather than left to look

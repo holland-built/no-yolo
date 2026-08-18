@@ -274,13 +274,15 @@ else
   if npx skills@latest add emilkowalski/skills; then RESULTS+=("emilkowalski/skills: OK"); else echo "    ! emilkowalski/skills install failed"; RESULTS+=("emilkowalski/skills: FAILED"); fi
   echo "    Installing archify (zero-dep diagrams)..."
   if npx skills@latest add tt-a1i/archify; then RESULTS+=("archify: OK"); else echo "    ! archify install failed"; RESULTS+=("archify: FAILED"); fi
-  # The four animation skills are reference material read by /design, not doors of their
-  # own (docs/DESIGN_SURFACES.md). `disable-model-invocation: true` keeps the file readable
+  # These skills are reference material read by /design, not doors of their own
+  # (docs/DESIGN_SURFACES.md). `disable-model-invocation: true` keeps the file readable
   # while stopping the model auto-selecting it. Upstream ships without the line, so it has
-  # to be re-applied here — and AFTER the emilkowalski install above, which owns three of
-  # these directories and would overwrite an earlier patch. Idempotent; see
-  # docs/THIRD_PARTY_SKILLS.md.
-  for s in animation-vocabulary find-animation-opportunities improve-animations review-animations; do
+  # to be re-applied here — and AFTER the emilkowalski install above, which owns four of
+  # these directories and would overwrite an earlier patch. apple-design is installed by
+  # hand rather than by this script, so the loop skips it when absent instead of failing.
+  # Idempotent; see docs/THIRD_PARTY_SKILLS.md.
+  for s in animation-vocabulary find-animation-opportunities improve-animations review-animations \
+           apple-design emil-design-eng; do
     SK="$HOME/.claude/.agents/skills/$s/SKILL.md"
     [ -f "$SK" ] || continue
     grep -q '^disable-model-invocation: true' "$SK" && continue
