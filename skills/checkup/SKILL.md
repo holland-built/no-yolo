@@ -343,6 +343,32 @@ done
 **5. Close with this.** This step installs nothing and changes nothing. The owner picks what
 is worth acting on at Step 10.
 
+## Step 5.55 — Has a second design door appeared?
+
+`docs/DESIGN_SURFACES.md` records the decision that `/design` is the entry point for design
+work and everything else is reference material it reads. That decision decays in silence: an
+installer adds a skill, a plugin gets switched on, a CLI upgrade ships a new bundled one. Five
+design skills accumulated here that way, and not one of them was ever deliberately used.
+
+```bash
+python3 skills/checkup/scripts/design_doors.py
+```
+
+Two findings, and everything healthy is silent — a check that prints twenty green rows buries
+the one row that matters.
+
+| Row says | What it means |
+|---|---|
+| `RIVAL REAPPEARED` | The roster says this is reference material, but it is model-invocable again — usually `npx skills` reinstalling over the local patch |
+| `UNCLASSIFIED` | Something invocable that touches design, which nobody has ruled on. Add a verdict to the roster; it then goes quiet forever |
+| `CANNOT CHECK` | A route that could not be enumerated. Never counted as zero rivals |
+
+**Never classify a surface yourself in this step.** The verdict is the owner's judgement,
+recorded once in the roster. The first version of this check decided by keyword instead and
+reported nine rivals, every one of them wrong — `eli5`, `xcheck`, `build` and `debate` all
+discuss interfaces without being one. The machine's only job is noticing what is new and what
+changed underneath the roster.
+
 ## Step 5.6 — What every session pays before it starts
 
 `CLAUDE.md`'s `@import` lines load unconditionally — on a backend task as much as a design one.

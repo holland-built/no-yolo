@@ -46,21 +46,56 @@ it exists.
 
 **Route 7 is not this repo's to control.** `dataviz` is a design surface that appears in every
 session's skill list, and it is not a file in `~/.claude` or `~/.agents` at all; it is compiled
-into `claude` v2.1.234 along with `simplify`, `run`, `init`, `claude-api`, `security-review`,
+into the `claude` binary (2.1.234 when this was written; the check reports the live version) along with `simplify`, `run`, `init`, `claude-api`, `security-review`,
 `update-config`, `keybindings-help`, `loop` and `fewer-permission-prompts`. Editing this repo
 cannot demote it. The only lever found in the binary is a `disableBundledSkills` setting, which
 is all-or-nothing and would take every one of those built-ins with it — a blunt instrument, not
 a demotion. A `skillOverrides` key also exists in the binary; its shape was not determined, so
 nothing here claims it works.
 
-## The allowlist
+## The roster — every invocable thing that touches design, and its verdict
 
-**Allowed to be a design entry point:**
+`/checkup` reads this table. Anything it finds that is not listed here is reported as
+**UNCLASSIFIED**, and anything listed as `reference` that turns out to be model-invocable is
+reported as **RIVAL REAPPEARED**. Those two findings are the entire check.
 
-| Surface | Route | Standing |
-|---|---|---|
-| `design` | 1 — own skill | The door. Fresh generation, audit, quick sketch, conform, component pull, mockup port |
-| `impeccable:impeccable` | 3 — enabled plugin | **Allowed by observation, not by design.** See the honest note below |
+The first draft of the check tried to decide by keyword instead — does the name or description
+mention design, UI, layout, colour. It flagged nine surfaces and all nine were wrong: `eli5`,
+`xcheck`, `build` and `debate` all discuss interfaces without being one. A check that is wrong
+every run teaches the reader to skip it. So the judgement is made once, by a person, and
+written here; the machine only notices what is new or what has changed underneath it.
+
+**Verdicts:** `door` — allowed entry point. `reference` — content `/design` reads, must carry
+`disable-model-invocation: true`. `not a surface` — invocable, mentions design, is not one.
+
+| Surface | Route | Verdict | Why |
+|---|---|---|---|
+| `design` | 1 — own skill | **door** | Fresh generation, audit, quick sketch, conform, component pull, mockup port |
+| `impeccable:impeccable` | 3 — enabled plugin | **door** | Allowed by observation, not by design — see the honest note below |
+| `animation-vocabulary` | 2 | reference | Naming effects |
+| `find-animation-opportunities` | 2 | reference | Whether something should animate at all |
+| `improve-animations` | 2 | reference | Whole-codebase motion audit |
+| `review-animations` | 2 | reference | Reviewing motion already written |
+| `apple-design` | 2 | reference | Gesture and physical-motion values |
+| `emil-design-eng` | 2 | reference | Easing, duration, implementation detail |
+| `interface-design` | 2 | reference | Craft, hierarchy, tokens, design-system consistency |
+| `pick-ui-library` | 2 | reference | Library selection table |
+| `archify` | 2 | not a surface | Draws architecture diagrams. "Redesign this page" must never reach it |
+| `build` | 1 | not a surface | Ships features end to end; it *calls* `/design`, it is not a design door |
+| `debate` | 1 | not a surface | Argues decisions, including UI ones, and produces no interface |
+| `eli5` | 1 | not a surface | Explains things in plain words |
+| `xcheck` | 1 | not a surface | Sends work to a second model |
+| `computer-use` | 2 | not a surface | Drives desktop windows; reads UI, never designs it |
+| `orca-cli` | 2 | not a surface | Operates worktrees and terminals |
+| `react-specialist` | 6 — agent | not a surface | Builds React components to a given design; it implements, it does not decide the design |
+| `accessibility-tester` | 6 — agent | not a surface | Audits WCAG compliance. Genuinely adjacent, deliberately kept — `/design`'s AUDIT.md runs its own contrast and axe-core checks at runtime, and a second opinion on a11y is worth more than one-door tidiness |
+| `dataviz` | 7 — bundled | **door, unavoidable** | Compiled into the CLI. Cannot be demoted from here at all |
+| `design-plugins/design-lab` | 4 — dormant | reference | Cloned, not enabled. Enabling it is a decision to have a second door |
+| `claude-plugins-official/frontend-design` | 4 — dormant | reference | Same |
+| `claude-plugins-official/build-mcp-app` | 4 — dormant | not a surface | Builds MCP apps. Caught by the keyword net; it is not a design surface |
+| `claude-plugins-official/build-mcp-server` | 4 — dormant | not a surface | Same |
+| `claude-plugins-official/plugin-structure` | 4 — dormant | not a surface | Same |
+| `claude-plugins-official/example-command` | 4 — dormant | not a surface | A template for writing commands |
 
 ### Two different switches, and only one of them was being checked
 
