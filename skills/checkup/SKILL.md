@@ -80,9 +80,10 @@ as only half the answer** — a suite that runs and asserts nothing exits 0 and 
 like a suite that proved something. `verify.sh` check 1b has that shape today: with zero
 shell suites on disk it records PASS.
 
-Two rows come from the route-map skill's driver (`route-check`, `route-check-units`), not
-from a hook. Keep them — they run here because they share the folder — and label them as
-such so the count is honest.
+Three rows come from something that is not a hook: the route-map skill's driver
+(`route-check`, `route-check-units`) and this skill's own borrowed-code checker
+(`borrowed-check`). Keep them — they run here because they share the folder, which is also what
+`verify.sh` checks 1 and 1b glob — and label them as such so the count is honest.
 
 What each hook can be asked to prove, and what it cannot:
 
@@ -207,13 +208,39 @@ git status --short
 Ahead or dirty → the finding is "unpublished work", and it points at `/release`, never at an
 automatic push.
 
-**Borrowed third-party code.** For each vendored directory and each cloned marketplace,
-compare the pinned commit against upstream. Report drift; never pull it automatically.
+**Borrowed third-party code.** Report drift; never pull it automatically.
+
 ```bash
-for d in plugins/marketplaces/*/; do
-  [ -d "$d/.git" ] && echo "  $(basename $d): $(git -C "$d" rev-parse --short HEAD 2>/dev/null) $(git -C "$d" fetch -q 2>/dev/null; git -C "$d" rev-list --count HEAD..@{u} 2>/dev/null) behind"
-done
+python3 skills/checkup/scripts/borrowed_check.py
 ```
+
+It prints a finished table — `| Source | Method | Local state | Upstream state |` — with one
+row per source registered in `docs/BORROWED.md`, plus a row for anything found on disk under a
+declared root that nobody registered. Paste the rows into the report as they come.
+
+`docs/BORROWED.md` is the manifest, and registering a source there is what makes it watched.
+When a later change vendors something, deletes something, or adds a reference, that change
+updates the manifest in the same commit — otherwise the check either goes quiet about real code
+or nags forever about code that is gone.
+
+Three states are findings, not noise:
+
+| Row says | What it means |
+|---|---|
+| `UNREGISTERED` | Borrowed code on disk that nothing is watching. The highest-value row in the table |
+| `MISSING` | The manifest believes in a directory that is not there — a stale entry, or a broken install |
+| `CANNOT CHECK — <reason>` | The check genuinely could not run. Report the reason verbatim; never round it up to "fine" |
+
+**Why this is a script and not four lines of inline bash like everything else here.** The four
+lines it replaced had four defects and every one was invisible in the output: the loop covered
+only `plugins/marketplaces/`, so the 144K vendored `taste-skill/` was never looked at;
+`[ -d "$d/.git" ] && echo` printed *nothing* for the one marketplace with no `.git`, so a silent
+skip read as healthy; `git rev-list --count HEAD..@{u}` printed empty with no tracking branch,
+rendering `<sha>  behind` with a blank where the number goes; and no git-based method could ever
+work on a directory that was never a git checkout. Logic with that many failure modes has to be
+provable, and `hooks/tests/borrowed-check.test.js` drives each one against a throwaway fixture —
+including watching a directory with no upstream say so out loud. Uniformity with the rest of this
+file is exactly how those four bugs survived.
 
 **Borrowed skills.** Read `~/.agents/.skill-lock.json` and report anything installed but no
 longer read by any surviving skill — a candidate for `npx skills` removal, your call.
@@ -315,6 +342,27 @@ done
 
 **5. Close with this.** This step installs nothing and changes nothing. The owner picks what
 is worth acting on at Step 10.
+
+## Step 5.6 — What every session pays before it starts
+
+`CLAUDE.md`'s `@import` lines load unconditionally — on a backend task as much as a design one.
+Nothing measured that until 2026-08-18, when the screen-design half of the slop list turned out
+to be 10,120 bytes that most sessions never consult.
+
+```bash
+python3 skills/checkup/scripts/context_budget.py
+```
+
+Paste the table it prints. Two things earn a finding:
+
+| Row | Finding |
+|---|---|
+| `BROKEN IMPORT` | An `@import` naming a file that is not on disk. It loads nothing and says nothing, so the rules inside it are simply absent — and the session looks normal |
+| A large file whose subject is conditional | Bytes that only matter sometimes, being paid always. The fix is a pointer in the conditional read list, not a smaller file |
+
+**There is no pass/fail threshold and adding one would be a finding of its own.** Report the
+number and the breakdown; the owner judges. An invented ceiling is the unmeasured number this
+setup's first rule bans.
 
 ## Step 6 — Prose slop
 
