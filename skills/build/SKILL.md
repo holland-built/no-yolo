@@ -279,7 +279,7 @@ ONE parallel call:
 
 Spawn ONE adversarial judge agent with all 8 files. It rejects any variant matching ANY
 pattern in the canonical lists, read fresh at run time and never inlined here:
-`~/.claude/docs/ANTISLOP.md` → `## GUI Slop`, plus `~/.claude/docs/UI_MOCKUPS.md` kill rules.
+`~/.claude/docs/GUI_SLOP.md` — every section, including its `### Mockup-only kill rules`.
 It also deduplicates functionally identical layouts, returning survivors with a one-line
 reason each.
 
