@@ -21,7 +21,7 @@ original bug wearing a different hat.
 | design-plugins | marketplace | plugins/marketplaces/design-plugins | https://github.com/0xdesign/design-plugin | tracked branch | n/a | git | unknown — no LICENSE file |
 | impeccable | marketplace | plugins/marketplaces/impeccable | https://github.com/pbakaus/impeccable | tracked branch | n/a | git | see LICENSE in tree |
 | openai-codex | marketplace | plugins/marketplaces/openai-codex | https://github.com/openai/codex-plugin-cc | tracked branch | n/a | git | see LICENSE in tree |
-| claude-plugins-official | marketplace | plugins/marketplaces/claude-plugins-official | unknown | 8aa2f06489538f7b4eb660f47731f84edacf006f | f5a1900758716d268763b7092c1020960392d32c63a3834fd5d5f5d44525649f | hash | see LICENSE in tree |
+| claude-plugins-official | marketplace | plugins/marketplaces/claude-plugins-official | https://github.com/anthropics/claude-plugins-official | 8aa2f06489538f7b4eb660f47731f84edacf006f | f5a1900758716d268763b7092c1020960392d32c63a3834fd5d5f5d44525649f | hash | see LICENSE in tree |
 | taste-skill | vendored | skills/design/vendor/taste-skill | https://github.com/Leonxlnx/taste-skill | e988add20dab0fa97d7a76781c48961c8184288e | a9e222741a8cd9e73e70cc3d9c36aff2885ed43eb1916a9543f5b9b882eb5e38 | hash | MIT |
 | npx-skills-installer | installer | — | https://github.com/obra/skills | n/a | n/a | installer | per package |
 
@@ -72,10 +72,10 @@ python3 -c "import sys; sys.path.insert(0,'skills/checkup/scripts'); from borrow
 
 and paste the result into the `Content hash` cell above.
 
-## Known gap, recorded rather than hidden
+## A note on `claude-plugins-official`
 
-`claude-plugins-official/` arrived as a tarball with a `.gcs-sha` and no git remote, so its
-upstream repository URL is genuinely unrecorded. Its content hash still catches local edits;
-its upstream cannot be checked until somebody writes down where it came from. `/checkup`
-prints `CANNOT CHECK — no upstream recorded` for it every run, which is the correct amount
-of nagging.
+It arrived as a tarball with a `.gcs-sha` and no git remote, so nothing inside the directory
+says where it came from. The URL above was recovered from `settings.json`'s
+`extraKnownMarketplaces`, which is where Claude Code records a marketplace's origin — that is
+the place to look when a borrowed directory has no `.git`. Its `.gcs-sha` is the pinned
+revision; the content hash still catches local edits independently.
