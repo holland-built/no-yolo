@@ -158,7 +158,7 @@ bash ~/.claude/skills/design/scripts/mockup-dir.sh "design-$SLUG"
 head -20 CLAUDE.md 2>/dev/null
 cat package.json 2>/dev/null | python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('name','?'), d.get('description',''))" 2>/dev/null
 ```
-1. Check for a matching brand in the Awesome DESIGN.md library (voltagent/Awesome-DESIGN.md, 9-section DESIGN.md format). If a brand DESIGN.md exists in-repo or matches the product: pull the FULL system — agent prompt guide + layout principles + type hierarchy + component states + do's/don'ts.
+1. Check for a matching brand in the vendored brand library — 74 real brand specs at `~/.claude/skills/design/vendor/awesome-design-md/`, indexed in its `INDEX.md` with each brand's first colours and typeface so you can scan for a match without opening 74 files (from `VoltAgent/awesome-design-md`, MIT, pinned; gitignored, so on a machine that never vendored it the folder is absent — skip silently and fall through to step 2). **Never auto-pick a brand.** Offer the two or three closest matches with what each would give, and let the owner choose; a brand spec describes a real company's identity and adopting one silently is passing that identity off as the product's own. If a brand DESIGN.md exists in-repo or matches the product: pull the FULL system — agent prompt guide + layout principles + type hierarchy + component states + do's/don'ts.
 2. If no brand match: local CSS token-hunt extraction, otherwise seed from Radix Colors (React) or Open Color.
    - **Reference URL**: if `$ARGUMENTS` contains an `http(s)://` URL, FIRST check the saved-spec store — a previous run may already have scraped it:
      ```bash
