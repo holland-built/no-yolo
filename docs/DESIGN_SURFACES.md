@@ -62,11 +62,53 @@ nothing here claims it works.
 | `design` | 1 — own skill | The door. Fresh generation, audit, quick sketch, conform, component pull, mockup port |
 | `impeccable:impeccable` | 3 — enabled plugin | **Allowed by observation, not by design.** See the honest note below |
 
-**Reference, and must not be invocable.** As of 2026-08-18: `interface-design`,
-`emil-design-eng`, `apple-design`, `animation-vocabulary`, `find-animation-opportunities`,
-`improve-animations`, `review-animations`, `pick-ui-library`, `archify`. Verified — none of
-these carries `user-invocable: true` today. The plan's step 4b converts them from ambient
-competitors into files `/design` reads.
+### Two different switches, and only one of them was being checked
+
+A skill can be reached two independent ways, and closing one does nothing to the other. An
+earlier draft of this file treated them as the same thing and was wrong.
+
+| Frontmatter | Controls | Absent means |
+|---|---|---|
+| `user-invocable: true` | Whether the **user** can type `/name` | The user cannot type it |
+| `disable-model-invocation: true` | Whether the **model** may auto-select it | The model may pick it at any time — it is a live door |
+
+Only the second one makes something stop competing with `/design`. Nine skills here have no
+`user-invocable: true` and were therefore described as "not invocable"; every one of them was
+still model-invocable, which is how five design skills sat in every session's skill list for
+weeks without ever being deliberately used.
+
+Verified 2026-08-18 across all 37 skills on disk: the only two carrying
+`disable-model-invocation: true` were the only two absent from the session's skill list. Clean
+separation, so that flag is the lever.
+
+### Demoted — reference material, read by `/design`, not doors
+
+| Skill | Demoted | Content still at |
+|---|---|---|
+| `animation-vocabulary` | 2026-08-18 | `skills/animation-vocabulary/SKILL.md` |
+| `find-animation-opportunities` | 2026-08-18 | `skills/find-animation-opportunities/SKILL.md` |
+| `improve-animations` | 2026-08-18 | `skills/improve-animations/SKILL.md` |
+| `review-animations` | already shipped demoted upstream | `skills/review-animations/SKILL.md` |
+
+All four are listed in `skills/design/DESIGN_REFS.md` with what to read them for. Demotion is
+not deletion: every word of them is still reachable, through the one door.
+
+**Undo, exactly.** These files are gitignored, so `git revert` does not restore them — reverting
+the tracked commit only removes the policy, not the flag. The local undo is one command:
+
+```sh
+perl -ni -e 'print unless /^disable-model-invocation: true$/' \
+  ~/.claude/.agents/skills/{animation-vocabulary,find-animation-opportunities,improve-animations}/SKILL.md
+```
+
+`review-animations` is deliberately not in that list — upstream ships it demoted, so removing
+the line would be a change, not a revert. Re-running `npx skills add` also erases the flag, but
+as a side effect of a full reinstall that overwrites unrelated local metadata too (the four
+`model: haiku` pins in `README.md`); it is not the controlled undo.
+
+**Still reference, not yet demoted:** `interface-design`, `emil-design-eng`, `apple-design`,
+`pick-ui-library`, `archify`. `pick-ui-library` already carries the flag. The rest are cohorts B
+and C of the plan's step 4b.
 
 **Out of this repo's reach:** `dataviz`, via route 7. It is a genuine design surface and it
 cannot be demoted from here at all. Recorded as a permanent exception rather than left to look
