@@ -337,6 +337,38 @@ Check whether `learnings.md` has a section for the current model ID. Stale → s
 recommending `/better-prompt --refresh`. **Never auto-run it** — it fetches the web and
 rewrites the file. Opt-in only.
 
+## Step 8.5 — Outside grade (Codex)
+
+Every step above is this setup grading itself. This one hands the repo to a second model that
+has never seen it. Checkup is read-only, so nothing is written for Codex to read — it reads the
+repo directly in a read-only sandbox, from the working directory Step 0's repo guard has already
+confirmed. A run typically takes 2–4 minutes; the timeout below caps it at 8, which leaves the
+harness its own headroom above the runner's wall clock.
+
+```bash
+bash ~/.claude/skills/xcheck/scripts/codex-run.sh -m gpt-5.6-sol -s read-only -t 480 \
+  "You are inside ~/.claude, a Claude Code configuration repository (your working directory; you are read-only): global rules in CLAUDE.md and docs/, skills in skills/*/SKILL.md, hooks in hooks/. Grade it as an outside reviewer who has never seen it. Look for: rules that contradict each other, skill descriptions that would misfire or never fire, and always-loaded text that earns nothing. First line: GRADE <A-F>. Then one line per finding, at most 8: FINDING <n> | <file:line> | <one-sentence issue>. Order them so your LAST finding line is the one change you would make first. Every finding must cite a real file and line you read. A grade below A requires at least one finding; a clean pass returns exactly GRADE A and no finding lines. No preamble."
+```
+
+**Read the answer, not the transcript.** The runner returns codex's whole session — a
+`Reading additional input from stdin...` banner, then the reasoning, then the final message,
+which codex prints TWICE (once inline, once as the tail block). Parse the LAST block only.
+Counting matches across the raw output double-counts every line.
+
+**Adjudicate every finding.** Open the `file:line` it cites and read it. A finding whose
+citation holds joins the Step 9 summary tagged `[codex]`; a finding whose citation does not hold
+gets a one-line dissent and does not enter the summary. Print the letter grade labelled as
+advisory — it is one outsider's read of a repo it met a minute ago, and Claude's own findings
+remain the report.
+
+**When it doesn't run.** Codex absent is already governed by Step 0's graceful degrade: SKIP
+with the reason, disclosed in Step 9. Installed but failing is the case that hides — a non-zero
+exit, a timeout (exit 124), or a final block whose first line does not match `GRADE <A-F>` earns
+its own Step 9 row reading `Codex grade DID NOT RUN — <reason>`. A gate that could not run is a
+flag, never a pass.
+
+This step reads the repo and writes nothing, so Step 0's read-only contract still holds.
+
 ## Step 9 — One plain summary, then STOP
 
 Plain English, table-shaped, no jargon. Disclose:

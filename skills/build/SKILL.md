@@ -408,6 +408,60 @@ working branch, confirm with `git merge-base --is-ancestor <sha> HEAD`, then `gi
 remove` each dir and `git branch -D` its branch. Run the build/typecheck command to catch
 errors before testing. Hotpatch if containerized.
 
+### Rival implementation (Codex; skip silently without codex)
+
+Fires ONLY when the plan's target file list names 3 or more files, or phase 2.5 accepted at
+least one blocking or major finding — that is what "contested" means. Otherwise skip in
+silence; most builds never see this.
+
+**Launch this before dispatching the agents above** — it authors against the pre-build tree, and
+sits down here only because its verdict lands after the build. Background it and write the
+per-agent specs while it runs. Foreground is not an option: the Bash tool's ceiling is 10
+minutes, so a blocking call is killed before the runner's own 15-minute timeout can fire, and it
+would freeze the coordinator that has specs to write. Codex is not an `Agent` dispatch, so the
+5-agent cap is unaffected. Typical duration 2–5 minutes.
+
+```bash
+bash ~/.claude/skills/xcheck/scripts/codex-run.sh -m gpt-5.6-sol -s read-only -t 900 \
+  "Read brainstorms/<slug>-plan-<date>.md — an approved implementation plan for this repository (your working directory; you are read-only). Author a rival implementation of its ordered steps as ONE unified diff against the current tree — your own approach, not a guess at another author's. Honour the plan's blast-radius do-NOT-touch list and end at its success predicate. Hard caps: at most 3 files and 200 changed lines; if the plan is larger, diff only the steps you would do differently and say which you skipped. Return only the unified diff. If the plan cannot be implemented inside its blast radius, return BLOCKED: <reason>. No preamble." \
+  > brainstorms/<slug>-rival-<date>.md 2>&1 &
+```
+
+Once the build agents have returned, poll that file until it is non-empty. The runner buffers
+its whole session and prints it in ONE write as it exits, so empty means still running and
+non-empty means finished — there is no partial read to guard against:
+
+```bash
+for _ in $(seq 60); do [ -s brainstorms/<slug>-rival-<date>.md ] && break; sleep 15; done
+```
+
+Still empty after that (15 minutes, the runner's own cap) → treat it as the not-run case below.
+
+### Adjudicate the rival diff
+
+Extract the diff first. The runner returns codex's whole session — a stdin banner, the
+reasoning, then the final message printed TWICE (once inline, once as the tail block). Take the
+LAST block and strip everything before its first `diff --git` line — not the first `---`, which
+lands *inside* a hunk header and is absent entirely from a rename-only diff. Feeding raw output
+to `git apply` fails on the banner, not on the diff. The LAST block matters: the runner echoes
+the prompt back too, so on a probe run here the first `diff --git` in the file was the echoed
+prompt at line 14 and the real diff was at line 20.
+
+Validate before reading it: `git apply --check` in a throwaway worktree. It fails to apply,
+isn't a diff, timed out (exit 124), or returned `BLOCKED:` → carry on with Claude's
+implementation and record one advisory line in the phase 7 summary: `rival: not run — <reason>`.
+That is explicitly NOT a 5.6 gate flag. A missing second opinion is not a defect in the diff,
+and 5.6's any-flag-blocks-ship rule would otherwise hold every ship hostage to whether Codex
+answered. Never `git apply` unreviewed output into the working tree.
+
+Applies clean → read it hunk by hunk against the actual implementation diff. For each
+divergence pick Claude's version or the rival's, with a one-line reason. Adopted rival hunks
+land through normal Edits — an Opus agent if 3 or more files.
+
+Append the verdict table to the rival file. Codex is advisory: Claude adjudicates and stays the
+gate, exactly as 3.5 states for the visual judge. The merged result enters 5.5 unchanged, so
+the regression gate and its Codex rescue path test whatever was adopted.
+
 ## 5.5 — Regression gate + fix loop (HARD)
 
 Run the full test suite. Any failure → fix loop, repeat until green:

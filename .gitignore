@@ -82,6 +82,9 @@ brainstorms/
 .pending-audit-*.md
 .audit-*-detail/
 .mockups/
+# Kept mockups from another project, parked here by a session that ran in this
+# directory. Local reference only — the sketches belong to their own repo.
+mockup-archive/
 
 # archives / trash
 _archive_*/

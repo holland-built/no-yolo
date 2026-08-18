@@ -182,9 +182,55 @@ Only when `next` is a dependency. Three checks, each an evidence-backed row:
 - **Headers in `next.config.*`** — read it. No `headers()` block or no `Content-Security-Policy` → HIGH. `Access-Control-Allow-Origin: *` → HIGH. No `X-Frame-Options`/CSP `frame-ancestors` → MODERATE.
 - **Exposed environment** — `git ls-files | grep -E '(^|/)\.env'` (a tracked `.env*` that is not `.env.example` is CRITICAL), and `process.env.` inside any `'use client'` file with no `NEXT_PUBLIC_` prefix → HIGH (undefined at runtime, or leaked if bundled).
 
+## 6 — Codex triage
+
+Runs once every finding is collected and ranked, before the table prints. Typically under two
+minutes; the runner's default timeout caps it at five.
+
+Give every non-INFO row a stable ID (`R1`, `R2`, …) and write the assembled findings into the
+audited repo at `"$ROOT/.xcheck/dep-findings-<date>.md"`, not to `$TMP`: the Codex sandbox is not
+proven to read a `mktemp -d` path outside the repo, and `.xcheck/` is the path `/health`'s Codex
+reviewer and `/build` phase 4.5 both already write to. `Write` is not in this skill's tool grant,
+so the file goes down as a heredoc like every other step here:
+
+```bash
+DATE="$(date +%F)"; FINDINGS="$ROOT/.xcheck/dep-findings-$DATE.md"
+mkdir -p "$ROOT/.xcheck"
+cat > "$FINDINGS" <<'EOF'
+| ID | Severity | Area | Finding | Where | Fix |
+|---|---|---|---|---|---|
+| R1 | <severity> | <area> | <the finding> | <file:line or package> | <one action> |
+EOF
+```
+
+`$ROOT` is what makes that correct on a `/dep-audit ~/AI/salty` run, and the same reason forces
+`cd "$ROOT"` around the runner — codex resolves the path in its prompt against the shell's cwd, so
+a bare `.xcheck/…` sends it reading whatever tree the session happens to be sitting in:
+
+```bash
+(cd "$ROOT" && bash ~/.claude/skills/xcheck/scripts/codex-run.sh -m gpt-5.6-sol -s read-only \
+  "Read .xcheck/dep-findings-$DATE.md — a severity-ranked table of npm supply-chain findings (leaked keys, git history, advisories, licences, inventory, Next.js config), each non-INFO row carrying a stable ID. For every row with an ID, judge: genuinely dangerous for this repository, or noise? Weigh reachability (dev-only or optional dependency, an advisory class not exploitable here), whether a licence matters for an unpublished app, and whether a key row is a documented fixture. Return one line per ID, echoing the ID verbatim: <ID> | danger|noise | <one-sentence reason naming that row's package or file>. Judge every ID and invent none. No preamble.")
+```
+
+Then `rm -f "$FINDINGS"` once adjudication is done, whether the triage returned verdicts, failed,
+or timed out — `.xcheck/` is gitignored in `~/.claude` and the audited repo may never have heard of
+it, so leaving the file behind stages an audit report into someone else's next commit.
+
+The runner returns codex's whole session — a stdin banner, the reasoning, then the final message printed TWICE (once inline, once as the tail block). Parse the LAST block only; counting matches across the raw output double-counts every verdict.
+
+Match each returned line back to its ID. A `noise` verdict **never lowers a severity** — Claude
+assigned it, Claude keeps it. The verdict is shown so the reader can discount a row with both
+models' reasoning in front of them. An ID Codex skipped gets `—`.
+
+Could not run — a non-zero exit, timeout 124, output that does not parse, or no `codex` on the
+machine at all: the table still prints, plus one extra row
+`| INFO | Triage | Codex triage DID NOT RUN — <reason> | — | — | — |`. That row is the whole
+signal when codex is simply absent, so print it there too rather than staying quiet — an
+untriaged table must never read as a triaged one.
+
 ## Output — ONE table
 
-Merge every source into a single table — `| Severity | Area | Finding | Where | Fix |` — ranked CRITICAL → HIGH → MODERATE → LOW → INFO. Not five tables, not one per phase. `Area` is Keys / History / Advisory / Licence / Inventory / Next.js; `Where` is `file:line`, a package name, or the config key — never "the codebase"; `Fix` is one action, not a paragraph.
+Merge every source into a single table — `| Severity | Area | Finding | Where | Fix | Codex |` — ranked CRITICAL → HIGH → MODERATE → LOW → INFO. Not five tables, not one per phase. `Area` is Keys / History / Advisory / Licence / Inventory / Next.js / Triage; `Where` is `file:line`, a package name, or the config key — never "the codebase"; `Fix` is one action, not a paragraph. `Codex` holds `danger` / `noise` / `—` from section 6 and is advisory only — it never changes the severity beside it.
 
 ## What this did NOT check
 
