@@ -164,6 +164,8 @@ findings — so the fix mockups both resolve the audit findings AND match the re
 re-derive the scrape logic here; it is the same mechanism defined in `/design` Step 0. If the
 scrape fails, proceed with findings only.
 
+The saved-spec store applies here too: look the URL up with `python3 ~/.claude/skills/design/scripts/design_spec.py lookup "<url>"` before scraping, and store the result after. Audit-fix and fresh generation share one cache — they are scraping the same pages for the same tokens, and two stores would drift apart.
+
 **v1–v6**: distinct paradigms (same paradigm list as `/design`).
 **v9–v10**: WILD — alien layout paradigm, still must address P0 findings. Codex authors these
 two per `/design` Step 2's wild-slot block (background, stdout-only, Claude writes the files,
