@@ -120,8 +120,8 @@ Missing file → note "(file absent)" and continue. Never abort.
 | `~/.claude/memory/CLAUDE.generated.md` | Compiled working preferences and patterns |
 | `~/.claude/docs/CODE_REVIEW.md` | Scope rules — surgical and simplicity filters |
 | `~/.claude/docs/SUBAGENTS.md` | Planning rules — model split, dispatch scope, when to delegate |
-| `~/.claude/docs/ANTISLOP.md` | **The canonical slop list.** Read its own header for current counts; never assume a number |
-| `~/.claude/docs/UI_MOCKUPS.md` | Only the mockup-specific kill rules that sit *on top of* ANTISLOP.md |
+| `~/.claude/docs/ANTISLOP.md` | **The canonical writing-slop list.** Read its own header for current counts; never assume a number |
+| `~/.claude/docs/GUI_SLOP.md` | **The canonical GUI-slop list**, including the mockup-only kill rules. Same rule on counts |
 
 ## Step 2 — Detect the model, fetch release notes
 
@@ -175,7 +175,7 @@ Skeleton, if the file doesn't exist:
 <    printf '%s\t%s\n' "$(basename $(dirname $f))" "$(grep -m1 '^description:' ~/.claude/$f | cut -d: -f2-)"; done>
 
 ### 5. Slop patterns
-<from ANTISLOP.md — one bullet per writing tell, then one per GUI sub-section. Counts from ANTISLOP.md's own header, never from this template. Then UI_MOCKUPS.md's mockup kill rules as a short trailing group.>
+<from ANTISLOP.md — one bullet per writing tell. Then from GUI_SLOP.md — one bullet per GUI sub-section, with its mockup-only kill rules as a short trailing group. Counts from each file's own header, never from this template.>
 
 ## 6. Model delta — dated log (newest first)
 

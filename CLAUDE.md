@@ -10,13 +10,17 @@ project's own `CLAUDE.md`.
 @docs/ANTISLOP.md
 
 > Three imports and no more. Learned preferences, the 8 rules that survived the
-> 2026-07-29 experiment, and the slop list. Anti-slop is imported rather than pointed
-> at because a pointer gets read after the writing has already started.
+> 2026-07-29 experiment, and the writing-slop list. Anti-slop is imported rather than
+> pointed at because a pointer gets read after the writing has already started.
+> Its GUI half was split into `docs/GUI_SLOP.md` on 2026-08-18 and is pointed at
+> below — 10,249 bytes that only matter when there is a screen do not belong in
+> every backend session.
 
 ## Read these when the condition fires
 
 - Before any multi-file change, new feature, or architecture decision → `docs/PLANNING.md`
 - Before writing code for a bug fix or feature → `docs/TESTING.md`
+- Before writing, reviewing, or judging any UI, GUI, mockup, or generated image → `docs/GUI_SLOP.md`
 - Before writing any UI or GUI code → `docs/UI_MOCKUPS.md`
 - Before dispatching a subagent or building a multi-step plan → `docs/SUBAGENTS.md`
 - When a session runs long, or one question needs 5+ read-only lookups → `docs/CONTEXT.md`

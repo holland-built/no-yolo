@@ -169,12 +169,14 @@ test('warning is modest — it disclaims being a verdict', () => {
 
 // --- negative controls ------------------------------------------------------
 
-test("negative control: this repo's own docs/ANTISLOP.md trips nothing", () => {
-  const antislop = fs.readFileSync(path.join(__dirname, '..', '..', 'docs', 'ANTISLOP.md'), 'utf8');
-  const result = runOnText(antislop);
-  assert.strictEqual(result.status, 0);
-  assert.strictEqual(result.stderr, '', 'the rulebook that names these tells must not trip them');
-});
+for (const rulebook of ['ANTISLOP.md', 'GUI_SLOP.md']) {
+  test(`negative control: this repo's own docs/${rulebook} trips nothing`, () => {
+    const text = fs.readFileSync(path.join(__dirname, '..', '..', 'docs', rulebook), 'utf8');
+    const result = runOnText(text);
+    assert.strictEqual(result.status, 0);
+    assert.strictEqual(result.stderr, '', 'the rulebook that names these tells must not trip them');
+  });
+}
 
 test('negative control: a normal engineering reply trips nothing', () => {
   const result = runOnText(CLEAN_REPLY);

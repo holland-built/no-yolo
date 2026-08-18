@@ -10,11 +10,12 @@ No exceptions for new components, redesigns, layout changes, or visual refactors
 
 ## Slop prohibition (applies to every mockup, every skill)
 
-**Moved 2026-08-05.** The mockup kill rules, the survivor quota, and the "not slop" paradigm list
-now live in `~/.claude/docs/ANTISLOP.md` → `### Mockup-only kill rules`, under `## GUI Slop`.
-Read them there. Nothing about them changed except the address.
+**Moved 2026-08-05, re-addressed 2026-08-18.** The mockup kill rules, the survivor quota, and the
+"not slop" paradigm list live in `~/.claude/docs/GUI_SLOP.md` → `### Mockup-only kill rules`.
+Read them there. Nothing about them changed except the address. (They were in `ANTISLOP.md` until
+2026-08-18, when the GUI half was split into its own read-on-demand file.)
 
-Why the move: ANTISLOP.md's own header says patterns are added "HERE and nowhere else", and this
+Why the move: the canonical GUI list says patterns are added "HERE and nowhere else", and this
 file held six of them, so the canonical list had two homes. That is the exact duplication the
 rebuild's deciding rule forbids — a rule lives in exactly one file; everything else points at it.
 
