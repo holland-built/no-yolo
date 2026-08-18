@@ -94,6 +94,21 @@ says so out loud, while the upstream check still means something.
 Use `machine-managed` only for a directory something else owns. For a directory a person is
 responsible for, an unexplained hash change is the finding.
 
+## What is deliberately NOT in the table
+
+`refs/design-specs/` — the saved design specs `/design` writes when it scrapes a reference URL.
+Third-party values do land on this machine there, so registering it looks right, and it was
+registered for about ten minutes. It reported `MISSING — in manifest, not on disk` on a machine
+where nobody had scraped anything yet, and it would have kept saying so until someone did.
+
+A cache that has not been filled is not a finding. This manifest exists to notice borrowed code
+going stale or unwatched; a directory rebuilt by re-running a command, never restored from
+anywhere, has no upstream to drift from. It is described in `skills/design/scripts/design_spec.py`
+instead, which is where somebody looking for it would actually be.
+
+The general rule, learned the hard way three times in one day: a row that is red on a healthy
+machine trains the reader to skim the whole table.
+
 Its origin URL, incidentally, is not recorded anywhere inside the directory — it was recovered
 from `settings.json`'s `extraKnownMarketplaces`, which is where Claude Code records a
 marketplace's source. That is the place to look when a borrowed directory has no `.git`.

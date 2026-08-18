@@ -17,6 +17,10 @@ remote-settings.json
 # third-party plugins (own repos)
 plugins/
 
+# saved design specs — palette/type/spacing scraped from third-party websites by /design.
+# Derived third-party content, and a cache: it is rebuilt by re-scraping, never by a clone.
+refs/design-specs/
+
 # vendored third-party skill content (own repos) — stays local, never committed.
 # /checkup reports how far behind upstream it is; pulling it is always manual.
 skills/design/vendor/
