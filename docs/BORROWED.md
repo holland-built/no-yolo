@@ -24,6 +24,7 @@ original bug wearing a different hat.
 | claude-plugins-official | marketplace | plugins/marketplaces/claude-plugins-official | https://github.com/anthropics/claude-plugins-official | .gcs-sha | machine-managed | hash | see LICENSE in tree |
 | taste-skill | vendored | skills/design/vendor/taste-skill | https://github.com/Leonxlnx/taste-skill | e988add20dab0fa97d7a76781c48961c8184288e | a9e222741a8cd9e73e70cc3d9c36aff2885ed43eb1916a9543f5b9b882eb5e38 | hash | MIT |
 | paper-shaders | reference | — | https://github.com/paper-design/shaders | 7002061d8389781a45e479584deeca0cf538474e | n/a | url-only | Apache-2.0 |
+| shape-of-ai | reference | — | https://www.shapeof.ai/ | read 2026-08-18 | n/a | url-only | unknown — site, no licence stated |
 | npx-skills-installer | installer | — | https://github.com/obra/skills | n/a | n/a | installer | per package |
 
 ## What each check method actually proves
