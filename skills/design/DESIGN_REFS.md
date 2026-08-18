@@ -22,7 +22,9 @@ Every path below is **reference text, never invoked as a skill**. Rules:
 ## Deciding whether and how something animates
 | Path | Read it for | Ignore |
 |---|---|---|
-| `~/.claude/skills/find-animation-opportunities/SKILL.md` | Read FIRST when the question is *should this animate at all* — formal 4-question gate, required rejected-candidates list | — |
+| `~/.claude/skills/find-animation-opportunities/SKILL.md` | Read FIRST when the question is *should this animate at all* — formal 4-question gate, required rejected-candidates list | READ only — `disable-model-invocation: true` |
+| `~/.claude/skills/improve-animations/SKILL.md` | A whole codebase's motion, not one diff: prioritized audit plus self-contained implementation plans | READ only — `disable-model-invocation: true` |
+| `~/.claude/skills/animation-vocabulary/SKILL.md` | Naming an effect the user described but couldn't name ("the bouncy thing when a popover opens" → Pop in) | READ only — `disable-model-invocation: true`. Names effects; never designs or builds one |
 | `~/.claude/skills/apple-design/SKILL.md` | Gesture/physical motion: momentum-projection and rubber-band formulas, velocity handoff, materials & depth, haptics, `prefers-reduced-transparency` / `prefers-reduced-contrast` | Static surfaces (tables, forms, settings) — skip the read entirely |
 | `~/.claude/skills/emil-design-eng/SKILL.md` | Implementation values: per-element easing/duration table, `clip-path` techniques, Sonner principles, blur-masked crossfades, `@starting-style`, never animate from `scale(0)`, stagger 30–80ms | — |
 | `~/.claude/skills/review-animations/SKILL.md` | Reviewing motion already written: diff-scoped review, remedial preference hierarchy | READ only — `disable-model-invocation: true` |

@@ -204,11 +204,12 @@ Mark * winner in `all.html`. Show variant table with scores.
 - **Do not write a single line of production code until you name a variant.**
 
 ### F7.5 — Motion roadmap (only if the Motion lens produced findings)
-Invoke the `improve-animations` skill (Skill tool, `skill: "improve-animations"`) with the
-Motion lens findings and the target files. It is auto-invokable and read-only: it returns a
-prioritized motion audit plus self-contained implementation plans. Fold its plans into the F8
-plan rather than treating them as a separate track. Skip this step entirely when the Motion
-lens did not run or found nothing.
+READ `~/.claude/skills/improve-animations/SKILL.md` and run its method over the Motion lens
+findings and the target files yourself. It is reference material, not a skill to invoke — it
+carries `disable-model-invocation: true` (see `~/.claude/docs/DESIGN_SURFACES.md`), so a
+Skill-tool call on it will not resolve. What it gives you is a prioritized motion audit plus
+self-contained implementation plans; fold those into the F8 plan rather than treating them as a
+separate track. Skip this step entirely when the Motion lens did not run or found nothing.
 
 ### F8 — Opus plan
 Spawn Opus agent to write `brainstorms/design-audit-<slug>-plan-<date>.md`. Plan must:
