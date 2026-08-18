@@ -37,3 +37,19 @@ Every path below is **reference text, never invoked as a skill**. Rules:
 | Path | Read it for | Ignore |
 |---|---|---|
 | `~/.claude/skills/animation-vocabulary/SKILL.md` | Reverse lookup only — describe an effect, get its name | Not a design reference. Use when naming a motion, never when deciding one READ only — `disable-model-invocation: true` |
+
+## Reaching for a shader or generative background
+| Source | Read it for | Ignore |
+|---|---|---|
+| [`paper-design/shaders`](https://github.com/paper-design/shaders) | Zero-dependency canvas shaders installable from npm — mesh gradients, grain, warp, dithering. Reach for it when a surface wants a living background and the alternative is a static gradient image. Apache-2.0 | Anything static. A shader is a running program on the page; a flat colour or an SVG gradient is the correct answer far more often than not |
+
+**External URL, not vendored.** Nothing is on disk, so there is no content hash. It is registered
+in `docs/BORROWED.md` as `url-only` with the revision below pinned, and `/checkup` compares that
+pin against upstream on every run — GitHub URLs are checkable, so this is a real drift check
+rather than a documentation note.
+
+| | |
+|---|---|
+| Pinned revision | `7002061d8389781a45e479584deeca0cf538474e` |
+| Licence | Apache-2.0 |
+| Recorded | 2026-08-18 |

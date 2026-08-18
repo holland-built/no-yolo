@@ -21,8 +21,9 @@ original bug wearing a different hat.
 | design-plugins | marketplace | plugins/marketplaces/design-plugins | https://github.com/0xdesign/design-plugin | tracked branch | n/a | git | unknown — no LICENSE file |
 | impeccable | marketplace | plugins/marketplaces/impeccable | https://github.com/pbakaus/impeccable | tracked branch | n/a | git | see LICENSE in tree |
 | openai-codex | marketplace | plugins/marketplaces/openai-codex | https://github.com/openai/codex-plugin-cc | tracked branch | n/a | git | see LICENSE in tree |
-| claude-plugins-official | marketplace | plugins/marketplaces/claude-plugins-official | https://github.com/anthropics/claude-plugins-official | 8aa2f06489538f7b4eb660f47731f84edacf006f | f5a1900758716d268763b7092c1020960392d32c63a3834fd5d5f5d44525649f | hash | see LICENSE in tree |
+| claude-plugins-official | marketplace | plugins/marketplaces/claude-plugins-official | https://github.com/anthropics/claude-plugins-official | .gcs-sha | machine-managed | hash | see LICENSE in tree |
 | taste-skill | vendored | skills/design/vendor/taste-skill | https://github.com/Leonxlnx/taste-skill | e988add20dab0fa97d7a76781c48961c8184288e | a9e222741a8cd9e73e70cc3d9c36aff2885ed43eb1916a9543f5b9b882eb5e38 | hash | MIT |
+| paper-shaders | reference | — | https://github.com/paper-design/shaders | 7002061d8389781a45e479584deeca0cf538474e | n/a | url-only | Apache-2.0 |
 | npx-skills-installer | installer | — | https://github.com/obra/skills | n/a | n/a | installer | per package |
 
 ## What each check method actually proves
@@ -72,10 +73,26 @@ python3 -c "import sys; sys.path.insert(0,'skills/checkup/scripts'); from borrow
 
 and paste the result into the `Content hash` cell above.
 
-## A note on `claude-plugins-official`
+## Two special cells, and why they exist
 
-It arrived as a tarball with a `.gcs-sha` and no git remote, so nothing inside the directory
-says where it came from. The URL above was recovered from `settings.json`'s
-`extraKnownMarketplaces`, which is where Claude Code records a marketplace's origin — that is
-the place to look when a borrowed directory has no `.git`. Its `.gcs-sha` is the pinned
-revision; the content hash still catches local edits independently.
+`claude-plugins-official` broke both of the obvious assumptions, and the fixes generalise.
+
+**`Pinned` may name a file instead of holding a revision.** A cell starting with `.` is read as
+a path inside the directory — here `.gcs-sha`, which Claude Code writes. Claude Code refreshes
+that marketplace on its own schedule, so a revision typed into this table is stale the moment
+it updates. Pointing at the file it maintains means the check keeps working without anybody
+re-editing the manifest.
+
+**`Content hash` may be the literal `machine-managed`.** Same cause: hashing a directory a tool
+rewrites compares a person's baseline against a machine's output, and it was wrong within
+minutes of being recorded — observed 2026-08-18, the directory refreshed between two runs of
+this check twelve minutes apart. A row that fails forever teaches the reader to ignore it,
+which is worse than not checking. So local-edit detection is switched off for that entry and
+says so out loud, while the upstream check still means something.
+
+Use `machine-managed` only for a directory something else owns. For a directory a person is
+responsible for, an unexplained hash change is the finding.
+
+Its origin URL, incidentally, is not recorded anywhere inside the directory — it was recovered
+from `settings.json`'s `extraKnownMarketplaces`, which is where Claude Code records a
+marketplace's source. That is the place to look when a borrowed directory has no `.git`.

@@ -119,6 +119,28 @@ test('no output row ever contains a blank cell', () => {
   }
 });
 
+test('a machine-managed directory is not hashed, and says why', () => {
+  const root = fixture(
+    ['| auto | marketplace | vendor/auto | unknown | unknown | machine-managed | hash | MIT |'],
+    ['vendor/auto']
+  );
+  fs.writeFileSync(path.join(root, 'vendor', 'auto', 'a.md'), 'whatever a tool wrote');
+  const r = run(root);
+  assert.strictEqual(r.status, 0, r.stderr);
+  assert.match(r.stdout, /not checked — directory is machine-managed/);
+  assert.doesNotMatch(r.stdout, /EDITED LOCALLY/, 'a tool rewriting its own files is not a local edit');
+});
+
+test('an unreadable pin file is named, not silently treated as unpinned', () => {
+  const root = fixture(
+    ['| pinfile | marketplace | vendor/pinfile | https://github.com/o/r | .missing-sha | machine-managed | hash | MIT |'],
+    ['vendor/pinfile']
+  );
+  const r = run(root);
+  assert.strictEqual(r.status, 0, r.stderr);
+  assert.match(r.stdout, /CANNOT CHECK — pin file \.missing-sha unreadable/);
+});
+
 // --- a manifest it cannot trust is a hard error, not a shrug ----------------
 
 test('a malformed row aborts instead of silently dropping the sources it could not read', () => {

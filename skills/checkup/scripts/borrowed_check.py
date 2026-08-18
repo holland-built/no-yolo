@@ -159,17 +159,39 @@ def check_git(row, path):
 
 def check_hash(row, path):
     recorded = row.get("Content hash", "").strip().strip("`")
-    actual = dir_hash(path)
-    if not recorded or recorded == "unknown":
-        local = f"CANNOT CHECK — no content hash recorded (actual is {actual[:12]})"
-    elif actual.startswith(recorded) or recorded.startswith(actual[:12]):
-        local = f"matches pin ({actual[:12]})"
+    if recorded == "machine-managed":
+        # Some directories are rewritten by a tool rather than by a person — Claude Code
+        # refreshes plugins/marketplaces/ on its own schedule. Hashing one of those compares
+        # a person's baseline against a machine's output and is wrong within minutes, so the
+        # row would fail forever and teach the reader to ignore it. Recording that it cannot
+        # be a baseline is the honest answer; the upstream check below still means something.
+        local = "not checked — directory is machine-managed, contents change without a person"
     else:
-        local = f"EDITED LOCALLY — recorded {recorded[:12]}, actual {actual[:12]}"
+        actual = dir_hash(path)
+        if not recorded or recorded == "unknown":
+            local = f"CANNOT CHECK — no content hash recorded (actual is {actual[:12]})"
+        elif actual.startswith(recorded) or recorded.startswith(actual[:12]):
+            local = f"matches pin ({actual[:12]})"
+        else:
+            local = f"EDITED LOCALLY — recorded {recorded[:12]}, actual {actual[:12]}"
+
     upstream = row.get("Upstream", "").strip()
     if not upstream or upstream == "unknown":
         return local, "CANNOT CHECK — no upstream recorded"
-    return local, github_head(upstream, row.get("Pinned", "").strip().strip("`"))
+
+    pinned = row.get("Pinned", "").strip().strip("`")
+    if pinned.startswith("."):
+        # The pin lives in a file inside the directory rather than in this table — the only
+        # way to track a self-updating checkout without re-editing the manifest every run.
+        pinfile = os.path.join(path, pinned)
+        try:
+            with open(pinfile) as fh:
+                pinned = fh.read().strip()
+        except OSError as e:
+            return local, f"CANNOT CHECK — pin file {pinned} unreadable ({e.strerror})"
+        if not pinned:
+            return local, f"CANNOT CHECK — pin file {row['Pinned']} is empty"
+    return local, github_head(upstream, pinned)
 
 
 def check_installer(row):
