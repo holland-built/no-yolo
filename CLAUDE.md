@@ -22,6 +22,7 @@ project's own `CLAUDE.md`.
 - Before writing code for a bug fix or feature → `docs/TESTING.md`
 - Before writing, reviewing, or judging any UI, GUI, mockup, or generated image → `docs/GUI_SLOP.md`
 - Before adding, enabling, or demoting anything that does design work → `docs/DESIGN_SURFACES.md`
+- Before designing or reviewing a surface where a model does the work → `docs/AI_UI_PATTERNS.md`
 - Before writing any UI or GUI code → `docs/UI_MOCKUPS.md`
 - Before dispatching a subagent or building a multi-step plan → `docs/SUBAGENTS.md`
 - When a session runs long, or one question needs 5+ read-only lookups → `docs/CONTEXT.md`
