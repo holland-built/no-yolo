@@ -87,17 +87,24 @@ fi
 #     `npx skills add/update` restores upstream frontmatter with no warning, and the symptom
 #     is invisible: a rival design door is simply back in the model's skill list. Same
 #     local-install caveat as 5c — skip where the path doesn't exist.
+#     Paths go through skills/<name>/, not an installer root: there are two roots in play
+#     (~/.claude/.agents/skills/ and ~/.agents/skills/) and interface-design lives in the
+#     second, so a hardcoded root skipped it in silence — the exact failure this row exists
+#     to catch. PASS is conditional on having actually checked something, not on a directory
+#     existing, so "checked nothing" can never render as "all clear".
 demoted_lost=""
+demoted_seen=0
 for s in animation-vocabulary find-animation-opportunities improve-animations review-animations \
-         apple-design emil-design-eng; do
-  SK="$HOME/.claude/.agents/skills/$s/SKILL.md"
+         apple-design emil-design-eng interface-design; do
+  SK="$ROOT/skills/$s/SKILL.md"
   [ -f "$SK" ] || continue
+  demoted_seen=$((demoted_seen + 1))
   grep -q '^disable-model-invocation: true' "$SK" || demoted_lost="$demoted_lost $s"
 done
 if [ -n "$demoted_lost" ]; then
   record WARN "rival design door(s) reappeared —$demoted_lost lost disable-model-invocation; re-run setup.sh"
-elif [ -d "$HOME/.claude/.agents/skills" ]; then
-  record PASS "demoted design skills still reference-only"
+elif [ "$demoted_seen" -gt 0 ]; then
+  record PASS "demoted design skills still reference-only ($demoted_seen checked)"
 fi
 
 # 6. README format: every '## ' heading in docs/README_FORMAT.md exists in README.md

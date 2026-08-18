@@ -1,9 +1,15 @@
 # Third-party skills, and the lines we add to them
 
-Borrowed skills are installed by `npx skills` into `~/.claude/.agents/skills/` and symlinked
-into `skills/`. Both are gitignored: the code belongs to whoever wrote it, and this repo
-publishes the pointer, never the copy. `docs/BORROWED.md` is the tracked record of what was
-borrowed.
+Borrowed skills are installed by `npx skills` and symlinked into `skills/`. Both the targets
+and the symlinks are gitignored: the code belongs to whoever wrote it, and this repo publishes
+the pointer, never the copy. `docs/BORROWED.md` is the tracked record of what was borrowed.
+
+**There are two installer roots, not one.** Most borrowed skills land in
+`~/.claude/.agents/skills/`; `improve`, `interface-design`, `computer-use`, `orca-cli` and
+`resolving-merge-conflicts` land in `~/.agents/skills/`. Nothing here chooses between them —
+the installer does. So **never hardcode a root**: address a borrowed skill as
+`skills/<name>/SKILL.md` and let the symlink resolve it. Both `setup.sh` and `verify.sh` got
+this wrong first and would have skipped `interface-design` without saying anything.
 
 This file covers the exception: the handful of lines this setup adds to files it does not own.
 
@@ -32,6 +38,7 @@ honest than a rule the repo breaks in its own installer.
 | `review-animations` | same | Upstream already ships it demoted; the check covers it so a future upstream change is caught | n/a | `verify.sh` 5d |
 | `apple-design` | same | same | `setup.sh` (skipped when absent — nothing here installs it) | `verify.sh` 5d |
 | `emil-design-eng` | same | same | `setup.sh` | `verify.sh` 5d |
+| `interface-design` | same | same | `setup.sh` | `verify.sh` 5d |
 | `animation-vocabulary`, `ponytail-help`, `ponytail-gain`, `ponytail-debt` | `model: haiku` | Cheap skills pinned to a cheap model | **nothing** — see below | nothing |
 
 ## Why every overlay needs both halves
@@ -59,9 +66,11 @@ skips it when the path is absent rather than reporting a failure.
 
 ## Adding a new overlay
 
-1. Add the line to `~/.claude/.agents/skills/<name>/SKILL.md`.
+1. Add the line to `~/.claude/skills/<name>/SKILL.md` — through the symlink, never through an
+   installer root. See the two-roots note at the top.
 2. Add an idempotent re-apply block to `setup.sh`, after the install that owns the directory.
 3. Add a `verify.sh` row that WARNs when the line is missing, skipping cleanly when the path
-   does not exist — CI and a fresh clone have no `~/.claude/.agents/`.
+   does not exist — CI and a fresh clone have no borrowed skills at all. Make PASS conditional
+   on having actually checked something, so "checked nothing" cannot render as "all clear".
 4. Add a row to the table above.
 5. If it changes what can be invoked, update `docs/DESIGN_SURFACES.md` in the same commit.

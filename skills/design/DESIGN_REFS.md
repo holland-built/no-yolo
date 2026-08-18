@@ -11,7 +11,7 @@ Every path below is **reference text, never invoked as a skill**. Rules:
 ## Picking a visual direction
 | Path | Read it for | Ignore |
 |---|---|---|
-| `~/.claude/skills/interface-design/SKILL.md` | Domain / colour-world / signature exploration; squint, swap, signature and token tests; concentric corner radius; surface-elevation percentages | Marketing pages, landing pages, campaigns — product UI only (dashboards, admin, settings) |
+| `~/.claude/skills/interface-design/SKILL.md` | Domain / colour-world / signature exploration; squint, swap, signature and token tests; concentric corner radius; surface-elevation percentages | Marketing pages, landing pages, campaigns — product UI only (dashboards, admin, settings) READ only — `disable-model-invocation: true` |
 | `~/.claude/skills/design/TASTE_CORE.md` | The three dials (`DESIGN_VARIANCE` / `MOTION_INTENSITY` / `VISUAL_DENSITY`); brief → real-design-system map | — |
 
 ## Structuring component rules and QA criteria
