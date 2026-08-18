@@ -30,6 +30,8 @@ honest than a rule the repo breaks in its own installer.
 | `find-animation-opportunities` | same | same | `setup.sh` | `verify.sh` 5d |
 | `improve-animations` | same | same | `setup.sh` | `verify.sh` 5d |
 | `review-animations` | same | Upstream already ships it demoted; the check covers it so a future upstream change is caught | n/a | `verify.sh` 5d |
+| `apple-design` | same | same | `setup.sh` (skipped when absent — nothing here installs it) | `verify.sh` 5d |
+| `emil-design-eng` | same | same | `setup.sh` | `verify.sh` 5d |
 | `animation-vocabulary`, `ponytail-help`, `ponytail-gain`, `ponytail-debt` | `model: haiku` | Cheap skills pinned to a cheap model | **nothing** — see below | nothing |
 
 ## Why every overlay needs both halves
@@ -49,10 +51,11 @@ rest.
 
 ## Ordering matters in `setup.sh`
 
-A patch must be applied **after** the install that owns the directory. Three of the four
-animation skills come from `emilkowalski/skills`, so their block sits after that install line —
-placing it next to the earlier `improve` patch would have it overwritten seconds later by the
-installer running below it.
+A patch must be applied **after** the install that owns the directory. Four of the six demoted
+skills come from `emilkowalski/skills`, so their block sits after that install line — placing it
+next to the earlier `improve` patch would have it overwritten seconds later by the installer
+running below it. `apple-design` is installed by hand and by nothing in this repo, so the loop
+skips it when the path is absent rather than reporting a failure.
 
 ## Adding a new overlay
 
