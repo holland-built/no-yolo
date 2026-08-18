@@ -281,9 +281,14 @@ else
   # these directories and would overwrite an earlier patch. apple-design is installed by
   # hand rather than by this script, so the loop skips it when absent instead of failing.
   # Idempotent; see docs/THIRD_PARTY_SKILLS.md.
+  #
+  # Path goes through skills/<name>/, NOT an installer root. There are two roots in play —
+  # ~/.claude/.agents/skills/ and ~/.agents/skills/ — and interface-design is in the second
+  # one, so a hardcoded root silently skipped it. The symlink in skills/ is followed by
+  # normal file operations and does not care which root the installer chose.
   for s in animation-vocabulary find-animation-opportunities improve-animations review-animations \
-           apple-design emil-design-eng; do
-    SK="$HOME/.claude/.agents/skills/$s/SKILL.md"
+           apple-design emil-design-eng interface-design; do
+    SK="$CLAUDE_DIR/skills/$s/SKILL.md"
     [ -f "$SK" ] || continue
     grep -q '^disable-model-invocation: true' "$SK" && continue
     head -1 "$SK" | grep -qx -- '---' || { echo "    ! $s: no frontmatter, not patched"; continue; }

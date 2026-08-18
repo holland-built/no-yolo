@@ -91,8 +91,9 @@ separation, so that flag is the lever.
 | `review-animations` | already shipped demoted upstream | `skills/review-animations/SKILL.md` |
 | `apple-design` | 2026-08-18 (cohort B) | `skills/apple-design/SKILL.md` |
 | `emil-design-eng` | 2026-08-18 (cohort B) | `skills/emil-design-eng/SKILL.md` |
+| `interface-design` | 2026-08-18 (cohort C) | `skills/interface-design/SKILL.md` |
 
-All six are listed in `skills/design/DESIGN_REFS.md` with what to read them for, exactly once
+All seven are listed in `skills/design/DESIGN_REFS.md` with what to read them for, exactly once
 each. Demotion is not deletion: every word of them is still reachable, through the one door.
 
 **Undo, exactly.** These files are gitignored, so `git revert` does not restore them — reverting
@@ -100,18 +101,43 @@ the tracked commit only removes the policy, not the flag. The local undo is one 
 
 ```sh
 perl -ni -e 'print unless /^disable-model-invocation: true$/' \
-  ~/.claude/.agents/skills/{animation-vocabulary,find-animation-opportunities,improve-animations,apple-design,emil-design-eng}/SKILL.md
+  ~/.claude/skills/{animation-vocabulary,find-animation-opportunities,improve-animations,apple-design,emil-design-eng,interface-design}/SKILL.md
 ```
+
+That path goes through `skills/`, not an installer root, and it has to. There are **two**
+installer roots on this machine — `~/.claude/.agents/skills/` and `~/.agents/skills/` — and
+`interface-design` is the only demoted skill in the second one. An earlier version of this
+command, and of both the `setup.sh` and `verify.sh` loops, hardcoded the first root and would
+have skipped it in silence. The symlinks in `skills/` are followed by ordinary file operations
+and do not care which root the installer picked.
 
 `review-animations` is deliberately not in that list — upstream ships it demoted, so removing
 the line would be a change, not a revert. Re-running `npx skills add` also erases the flag, but
 as a side effect of a full reinstall that overwrites unrelated local metadata too (the four
 `model: haiku` pins in `README.md`); it is not the controlled undo.
 
-**Still reference, not yet demoted:** `interface-design` and `archify`. `pick-ui-library`
-already carries the flag. `interface-design` is cohort C — the largest overlap with `/design`,
-so it goes last and alone. `archify` is not a design surface by the test at the top of this
-file: it draws architecture diagrams, and nothing about "redesign this page" should reach it.
+**Not demoted, deliberately:** `archify`. It fails the design-surface test at the top of this
+file — it draws architecture diagrams, and nothing about "redesign this page" should reach it.
+`pick-ui-library` needed nothing; upstream already ships it demoted.
+
+### The door's own description was the loudest rival
+
+Found during cohort C, and bigger than the cohort. `skills/design/SKILL.md`'s `description` is
+loaded into **every** session, and it read: *"it is NOT the entry point for all UI work and
+routes to no other skill. Craft review and design-system work is `interface-design`; charts are
+`dataviz`; motion is the animation skills."*
+
+Three things wrong at once. It contradicted itself in one sentence — "routes to no other skill"
+followed by three routes. Two of those three destinations had just been closed, so it was
+handing work to doors that no longer answer. And it disclaimed the territory the whole plan
+exists to give it, in the one piece of text the model always reads.
+
+Rewritten to claim the territory and drop all three hand-offs. Every trigger phrase after
+`Fires on` was preserved byte for byte — this changes what `/design` says it is FOR, never what
+makes it fire. The wording is "the entry point for visual design of UI surfaces", not "the one
+door for UI work": the narrower phrase keeps backend work that merely mentions a page from
+landing here, and it does not assert an inventory fact that `dataviz` and `impeccable` make
+untrue.
 
 **Out of this repo's reach:** `dataviz`, via route 7. It is a genuine design surface and it
 cannot be demoted from here at all. Recorded as a permanent exception rather than left to look
