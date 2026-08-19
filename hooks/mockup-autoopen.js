@@ -6,8 +6,8 @@
 // the new mockup in the browser. See docs/UI_MOCKUPS.md "ALWAYS: pop it in Chrome
 // + keep a master index".
 //
-// Debounce: a /design run writes 8 mockups in one burst. Eight Chrome tabs is a
-// bug, not a feature — so the `open` fires at most once per OPEN_WINDOW_MS, marked
+// Debounce: a /design run writes 4 mockups in one burst (8 before 2026-08-18).
+// Four Chrome tabs is a bug, not a feature — so the `open` fires at most once per OPEN_WINDOW_MS, marked
 // by a stamp file in the .mockups dir. The index is regenerated on EVERY write,
 // because that is cheap and always wanted.
 //

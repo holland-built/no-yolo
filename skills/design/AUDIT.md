@@ -4,7 +4,7 @@
 Target: $ARGUMENTS
 
 Audits your existing UI and optionally fixes it. Audit phase is always read-only. Fix phase
-generates 8 mockups, you pick one, then builds against your confirmed choice.
+generates 4 mockups, you pick one, then builds against your confirmed choice.
 
 ## Step 0 — Detect project
 ```bash
@@ -129,7 +129,7 @@ Then run `/eli5` on the summary.
 ### Fix gate
 After the eli5 summary, ask exactly:
 
-**"Fix Critical + High? Generates 8 mockups, you pick one, then builds. (y/n)"**
+**"Fix Critical + High? Generates 4 mockups, you pick one, then builds. (y/n)"**
 - **n** -> done. Hand the P0/P1 plan to `/design` if you want a clean-sheet redesign instead.
 - **y** -> proceed to Fix Flow below.
 
@@ -147,7 +147,7 @@ The seed tells agents which audit findings are token-level (fixable by swap) vs 
 ### F2 — Taste direction
 Same as `/design` Step 1. Read `TASTE_CORE.md` sections 3 and 4 for direction — the six redesign categories, then the upgrade-technique vocabulary and fix-priority order. (These replaced the vendored `redesign-skill.md`, deleted 2026-08-18 as a shallower duplicate of `taste-skill.md`.) Use FALLBACKS if absent.
 
-### F3 — 8 mockups
+### F3 — 4 mockups
 ONE parallel Agent call, `model: "opus"`. Same spec as `/design` Step 2 with one addition:
 
 Each agent brief carries the full P0 findings list from Step 3:
@@ -175,7 +175,7 @@ Every variant includes: light + dark sections, states strip (hover/focus/empty/e
 2–3 annotation callouts at key decisions.
 
 ### F4 — Slop validate
-Same as `/design` Step 3 validator. Minimum 6 survivors.
+Same as `/design` Step 3 validator. Minimum 3 survivors of 4.
 
 ### F5 — Combined view + Chrome auto-open
 Same as `/design` Step 3 combined view. 4 rows x 2 columns (light | dark).
