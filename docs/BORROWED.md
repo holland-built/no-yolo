@@ -24,6 +24,7 @@ original bug wearing a different hat.
 | claude-plugins-official | marketplace | plugins/marketplaces/claude-plugins-official | https://github.com/anthropics/claude-plugins-official | .gcs-sha | machine-managed | hash | see LICENSE in tree |
 | taste-skill | vendored | skills/design/vendor/taste-skill | https://github.com/Leonxlnx/taste-skill | e988add20dab0fa97d7a76781c48961c8184288e | 27a3138124617ec3b787d66586e0933cb166a4a12584a00911af522638eebb75 | hash | MIT |
 | awesome-design-md | vendored | skills/design/vendor/awesome-design-md | https://github.com/VoltAgent/awesome-design-md | 8147538b4226ae41e2487a9179e3bcc1f68e8554 | f72a1c759759ec19b9d89573a63abb04989859d803bd0a3c35ca5f8afcb579e5 | hash | MIT |
+| hallmark | vendored | skills/design/vendor/hallmark | https://github.com/Nutlope/hallmark | 13ac0ec7e148655948100b6396439e481361d690 | ecbaf8564893f3f92d2233a6941e4323064ed87e745176433ae815791f58fca4 | hash | MIT |
 | paper-shaders | reference | — | https://github.com/paper-design/shaders | 7002061d8389781a45e479584deeca0cf538474e | n/a | url-only | Apache-2.0 |
 | shape-of-ai | reference | — | https://www.shapeof.ai/ | read 2026-08-18 | n/a | url-only | unknown — site, no licence stated |
 | npx-skills-installer | installer | — | https://github.com/obra/skills | n/a | n/a | installer | per package |
