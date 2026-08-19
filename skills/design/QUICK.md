@@ -5,30 +5,30 @@ Target: $ARGUMENTS
 
 Disposable layout mockup. Build fast, open in browser, throw away once the layout decision is locked.
 
-**NOT /design** — no brand-seed, no taste generators, no slop-judge, no 10-variant pipeline. Style
-matching here is limited to reading the project's own existing CSS tokens (colors, font, radius) —
+**NOT /design**, no brand-seed, no taste generators, no slop-judge, no 10-variant pipeline. Style
+matching here is limited to reading the project's own existing CSS tokens (colors, font, radius):
 never invents a brand. Polished multi-variant visual design with new brand tokens → redirect to `/design`.
 
 ---
 
 ## Hard rules (never violate)
 
-1. **Always serve over http://** — never `file://`. Browsers block some APIs on bare file paths.
+1. **Always serve over http://:** never `file://`. Browsers block some APIs on bare file paths.
 2. **Always auto-open the real browser** after building or updating. Never describe the layout in
    prose, never render a text or ASCII preview, never use AskUserQuestion preview fields for visual
    choices. Build first, show second.
-3. **Generic labels, style-matched chrome** — content labels stay generic ("Card 1", "Section A",
+3. **Generic labels, style-matched chrome:** content labels stay generic ("Card 1", "Section A",
    "Label"), never real copy. But colors, font, and corner radius match the PROJECT's own CSS
-   tokens where found (Step 1.5) — this is style-match, not content-match. No invented brand tokens.
-4. **Self-contained HTML, real interaction** — single file, inline `<style>`, no build step, no
+   tokens where found (Step 1.5). This is style-match, not content-match. No invented brand tokens.
+4. **Self-contained HTML, real interaction:** single file, inline `<style>`, no build step, no
    framework, no external CDN links, no JS component libraries. Use native HTML controls (`<select>`,
    `<input>`, `<details>/<summary>`, `<button>`) so the mockup is lightly functional out of the box.
-5. **Responsive by default** — the file must respond to window resize in real-time (CSS flexbox/
+5. **Responsive by default:** the file must respond to window resize in real-time (CSS flexbox/
    grid, not fixed-px widths for content areas). The user drags their own browser window.
 
 ---
 
-## Step 0 — Detect project mockup convention
+## Step 0: Detect project mockup convention
 
 ```bash
 ls scripts/mockup.sh 2>/dev/null && echo "CONVENTION:script" || true
@@ -41,7 +41,7 @@ ls MOCKUPS.md 2>/dev/null && echo "CONVENTION:docs" || true
 
 ---
 
-## Step 1 — Determine variant count
+## Step 1: Determine variant count
 
 Parse `$ARGUMENTS`:
 - Default: **5 variants**.
@@ -53,9 +53,9 @@ Parse `$ARGUMENTS`:
 
 ---
 
-## Step 1.5 — Read the project's style tokens (cheap, bounded)
+## Step 1.5: Read the project's style tokens (cheap, bounded)
 
-Look ONLY at these entrypoints, and ONLY at the project root / conventional locations — never
+Look ONLY at these entrypoints, and ONLY at the project root / conventional locations. Never
 `node_modules`, `dist`, `build`, or `.next`:
 
 ```bash
@@ -82,11 +82,11 @@ Apply per-token, with fallback for anything NOT found:
 - **Nothing found at all** (fresh/no-CSS project) → clean neutral + square-ish + `system-ui`,
   still fully functional. This is a normal outcome, not a failure.
 
-Labels stay generic regardless of what's found — this step matches STYLE, never real content.
+Labels stay generic regardless of what's found. This step matches STYLE, never real content.
 
 ---
 
-## Step 2 — Pick output path and port
+## Step 2: Pick output path and port
 
 ```bash
 SLUG=$(python3 -c "
@@ -106,7 +106,7 @@ Multiple variants → `$OUTDIR/$SLUG-1.html`, `$OUTDIR/$SLUG-2.html`, ... plus o
 
 ---
 
-## Step 3 — Build the variant files + the combined page (pass 1, unranked)
+## Step 3: Build the variant files + the combined page (pass 1, unranked)
 
 For each variant, use this template as the baseline, substituting the tokens found (or the
 fallbacks) from Step 1.5:
@@ -133,7 +133,7 @@ fallbacks) from Step 1.5:
 </html>
 ```
 
-Adapt the layout to `$ARGUMENTS`. Use `flex` or `grid` for all layout — no hardcoded pixel widths
+Adapt the layout to `$ARGUMENTS`. Use `flex` or `grid` for all layout, no hardcoded pixel widths
 on content areas. Prefer real native controls over `.ph` boxes wherever the layout implies
 interaction (a filter → `<select>`, a search box → `<input>`, a collapsible → `<details>`).
 No JS frameworks, no component libraries; a small inline `<script>` is fine only if truly needed.
@@ -141,12 +141,12 @@ No JS frameworks, no component libraries; a small inline `<script>` is fine only
 **Combined page** `$OUTDIR/$SLUG-all.html`: one file that stacks all variants top-to-bottom (or in
 a simple grid), each in its own `<section>` with a header `v1`..`v5` and a one-line style note
 (font/color/radius used, and any font degrade from Step 1.5). Mirror `/design`'s `all.html`
-pattern conceptually (labeled sections, sticky jump nav is fine, no separate tabs) — but skip its
-light/dark pairing and validator machinery. Leave the pick UNRANKED at this point — no ★ yet.
+pattern conceptually (labeled sections, sticky jump nav is fine, no separate tabs), but skip its
+light/dark pairing and validator machinery. Leave the pick UNRANKED at this point, no ★ yet.
 
 ---
 
-## Step 4 — Start server (if not already running on PORT)
+## Step 4: Start server (if not already running on PORT)
 
 ```bash
 # Kill any stale process on PORT first
@@ -165,7 +165,7 @@ sleep 0.8
 
 ---
 
-## Step 5 — Screenshot + AI pick (pass 2)
+## Step 5: Screenshot + AI pick (pass 2)
 
 ```bash
 "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" \
@@ -174,28 +174,28 @@ sleep 0.8
   "file://$PWD/.mockups/quick-$SLUG/$SLUG-all.html"
 ```
 
-If that Chrome binary is absent, skip the screenshot and just `open` the combined page in Step 6 —
+If that Chrome binary is absent, skip the screenshot and just `open` the combined page in Step 6:
 never block on the screenshot.
 
 If the screenshot succeeded: inspect it, then edit `$OUTDIR/$SLUG-all.html` to add, in every
 variant's section header, a compact one-line rationale (what layout/style choice it represents),
 and mark exactly ONE winner with a `★` plus a short "why picked" sentence. This is a quick eyeball
-pick — no slop-judge, no adversarial judge agent, no scoring rubric.
+pick, no slop-judge, no adversarial judge agent, no scoring rubric.
 
 ---
 
-## Step 6 — Open in browser
+## Step 6: Open in browser
 
 ```bash
 open "http://localhost:$PORT/.mockups/quick-$SLUG/$SLUG-all.html"
 ```
 
-(Individual variant files also exist on disk/served if the user wants to open one directly —
+(Individual variant files also exist on disk/served if the user wants to open one directly:
 no need to open each in its own tab.)
 
 ---
 
-## Step 7 — Reply
+## Step 7: Reply
 
 After opening, output **exactly this** (adapt paths/port/count):
 
@@ -219,7 +219,7 @@ Do **not** paste an ASCII or text layout after this. The browser tab is the deli
 
 If the user says "update the mockup" / "change the layout" / "move X to Y":
 1. Edit the existing variant file(s) in-place, and the corresponding section in `-all.html`.
-2. Re-open the combined page URL in the browser (browser reloads automatically if already open —
+2. Re-open the combined page URL in the browser (browser reloads automatically if already open:
    no new tab needed unless the user asks).
 3. Skip Steps 0–4 (server is already running). Re-run Step 5's screenshot+pick only if the change
    could shift which variant is best; otherwise leave the existing ★ as-is.

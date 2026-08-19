@@ -13,7 +13,7 @@ project's own `CLAUDE.md`.
 > 2026-07-29 experiment, and the writing-slop list. Anti-slop is imported rather than
 > pointed at because a pointer gets read after the writing has already started.
 > Its GUI half was split into `docs/GUI_SLOP.md` on 2026-08-18 and is pointed at
-> below — 10,249 bytes that only matter when there is a screen do not belong in
+> below. 10,249 bytes that only matter when there is a screen do not belong in
 > every backend session.
 
 ## Read these when the condition fires

@@ -1,6 +1,6 @@
 ---
 name: release
-description: Use this skill when the user types /release, says 'release', 'push this', 'commit and push', or 'get this to github'. ONE context-aware publish command for ANY repo — reads the repo-root SHIP.md playbook and runs it, environment-aware (dev/staging/prod). If no SHIP.md exists, it STOPS (lockstep) and guides you to build one before anything is committed or pushed.
+description: Use this skill when the user types /release, says 'release', 'push this', 'commit and push', or 'get this to github'. ONE context-aware publish command for ANY repo. Reads the repo-root SHIP.md playbook and runs it, environment-aware (dev/staging/prod). If no SHIP.md exists, it STOPS (lockstep) and guides you to build one before anything is committed or pushed.
 user-invocable: true
 model: sonnet
 effort: low
@@ -14,7 +14,7 @@ allowed-tools:
 
 # release
 
-## Step 0 — Locate repo + playbook
+## Step 0: Locate repo + playbook
 
 ```bash
 REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null)
@@ -23,9 +23,9 @@ SHIP="$REPO_ROOT/SHIP.md"
 echo "Repo: $REPO_ROOT"; [ -f "$SHIP" ] && echo "Playbook: found" || echo "Playbook: MISSING"
 ```
 
-## Step 0.5 — Active worktree teardown
+## Step 0.5: Active worktree teardown
 
-A worktree is "active" for this repo if a guard flag names it (flags are written by the `worktree-autoarm.js` SessionStart hook whenever a session runs inside a linked worktree — Orca sidebar, `git worktree add`, etc.). Tear every one of them down: merge each branch into its recorded base, remove each worktree, delete each branch, delete each flag. Self-push only when this repo has **no** `SHIP.md` (with a SHIP.md the playbook below owns the push).
+A worktree is "active" for this repo if a guard flag names it (flags are written by the `worktree-autoarm.js` SessionStart hook whenever a session runs inside a linked worktree (Orca sidebar, `git worktree add`, etc.). Tear every one of them down: merge each branch into its recorded base, remove each worktree, delete each branch, delete each flag. Self-push only when this repo has **no** `SHIP.md` (with a SHIP.md the playbook below owns the push).
 
 ```bash
 FLAGDIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/.worktree-active"
@@ -64,36 +64,36 @@ done < <(grep -l "\"repoRoot\": \"$REPO_ROOT\"" "$FLAGDIR"/*.json 2>/dev/null)
 ```
 
 If `$FOUND` was 1 (at least one worktree torn down):
-- **`SHIP.md` exists**: the teardown deliberately did not push. Continue to Step 2 on the now-current base branch — the rest of this skill pushes it via the playbook.
-- **`SHIP.md` missing**: the teardown already merged, pushed (if a remote exists), and released the work — there is nothing left for `/release` to do. Report what was released and finish here; do NOT hard-stop into Step 1. Optionally offer to author a `SHIP.md` for next time, but that offer is optional, not a gate.
+- **`SHIP.md` exists**: the teardown deliberately did not push. Continue to Step 2 on the now-current base branch, the rest of this skill pushes it via the playbook.
+- **`SHIP.md` missing**: the teardown already merged, pushed (if a remote exists), and released the work. There is nothing left for `/release` to do. Report what was released and finish here; do NOT hard-stop into Step 1. Optionally offer to author a `SHIP.md` for next time, but that offer is optional, not a gate.
 
-If a merge conflict occurred during teardown, it already stopped and left that flag armed — report it and finish; do not continue into Step 1/2.
+If a merge conflict occurred during teardown, it already stopped and left that flag armed, report it and finish; do not continue into Step 1/2.
 
-## Step 1 — Missing playbook → LOCKSTEP (never push blind)
+## Step 1: Missing playbook → LOCKSTEP (never push blind)
 
 If `SHIP.md` does NOT exist at the repo root AND no worktree teardown just released the work:
-- **STOP. Do not commit, do not push, do not stage.** Announce: *"No SHIP.md in this repo — I won't push blind. Let's build the playbook first."*
-- (Adopt the lockstep posture — do not toggle the lockstep hook, which would block writing the file.)
+- **STOP. Do not commit, do not push, do not stage.** Announce: *"No SHIP.md in this repo, so I won't push blind. Let's build the playbook first."*
+- (Adopt the lockstep posture, do not toggle the lockstep hook, which would block writing the file.)
 - Interview one question at a time (use AskUserQuestion). Collect:
   1. GitHub remote (confirm `git remote -v`)
-  2. Environments and their branches — e.g. dev→`dev`, staging→`staging`, prod→`prod`/`main`. Which is the default?
-  3. Per-environment pre-steps — version bump? changelog file + path? "What's New" entry? menu/asset regen?
-  4. Hard guards — path patterns that must NEVER be committed here (secrets, personal dirs)
-  5. Post-push — GitHub release/tag? none?
+  2. Environments and their branches, e.g. dev→`dev`, staging→`staging`, prod→`prod`/`main`. Which is the default?
+  3. Per-environment pre-steps: version bump? changelog file + path? "What's New" entry? menu/asset regen?
+  4. Hard guards, path patterns that must NEVER be committed here (secrets, personal dirs)
+  5. Post-push, GitHub release/tag? none?
 - Draft `SHIP.md` from the answers using the template at the bottom. Show it. On explicit approval, Write it to `<repo-root>/SHIP.md`.
-- Then continue to Step 2. **Nothing ships until the playbook is authored AND you approve it** — never invent a playbook and push in the same breath.
+- Then continue to Step 2. **Nothing ships until the playbook is authored AND you approve it**. Never invent a playbook and push in the same breath.
 
-## Step 2 — Parse the playbook
+## Step 2: Parse the playbook
 
 Read `SHIP.md`. Extract:
-- **`## Environments`** — table `env | branch | notes`. Target env = the env in `$ARGUMENTS` if given, else the row marked default (`*`).
-- **`## Steps`** — ordered pre-commit actions to run (changelog, version bump, regen, etc.).
-- **`## Guards`** — hard-block path/content patterns.
-- **`## Release`** — optional post-push tag/release recipe.
+- **`## Environments`:** table `env | branch | notes`. Target env = the env in `$ARGUMENTS` if given, else the row marked default (`*`).
+- **`## Steps`:** ordered pre-commit actions to run (changelog, version bump, regen, etc.).
+- **`## Guards`:** hard-block path/content patterns.
+- **`## Release`:** optional post-push tag/release recipe.
 
 Echo the resolved target: `env=<x> → branch=<y>`.
 
-## Step 3 — Hard gates (block on hit)
+## Step 3: Hard gates (block on hit)
 
 - **Personal-file guard:** if any staged/changed path matches a `## Guards` pattern → STOP, list them.
 - **Leak scan:**
@@ -103,43 +103,43 @@ Echo the resolved target: `env=<x> → branch=<y>`.
   ```
   Any match → STOP: `BLOCKED — secret/personal data in diff`.
 
-## Step 3.5 — Sync check (never push blind against a moved remote)
+## Step 3.5: Sync check (never push blind against a moved remote)
 
 ```bash
 git -C "$REPO_ROOT" fetch origin "<target-branch>" 2>/dev/null
 BEHIND=$(git -C "$REPO_ROOT" rev-list HEAD.."origin/<target-branch>" --count 2>/dev/null || echo 0)
 ```
 
-If `BEHIND > 0`: **STOP.** GitHub has commits this machine doesn't — pushing now risks a
+If `BEHIND > 0`: **STOP.** GitHub has commits this machine doesn't, so pushing now risks a
 rejected push or overwriting work. Tell user: "GitHub has N commit(s) you don't have locally.
 Run `/checkup` to see what changed, then pull/rebase before I push." Do not merge or rebase
-here — that is `/checkup`’s job, not `/release`'s.
+here. That is `/checkup`’s job, not `/release`'s.
 
 If `BEHIND = 0`: continue.
 
-## Step 4 — Run the playbook
+## Step 4: Run the playbook
 
 Execute each `## Steps` action in order for the target env.
 
-**Prune stale mockups — run this in EVERY repo, whether or not its `SHIP.md` lists it:**
+**Prune stale mockups. Run this in EVERY repo, whether or not its `SHIP.md` lists it:**
 ```bash
 bash ~/.claude/skills/design/scripts/mockup-dir.sh --prune
 ```
-Removes `.mockups/` folders untouched for 30+ days; hard floor of 7 days regardless of argument; no-ops silently where there is no `.mockups/`. These are gitignored, so nothing else ever deletes them and they pile up unseen. Report what went in one line. **Never block a release on it** — a failed prune is a tidiness problem, not a shipping problem.
+Removes `.mockups/` folders untouched for 30+ days; hard floor of 7 days regardless of argument; no-ops silently where there is no `.mockups/`. These are gitignored, so nothing else ever deletes them and they pile up unseen. Report what went in one line. **Never block a release on it**, a failed prune is a tidiness problem, not a shipping problem.
 
-**Approval gate (HARD):** before staging anything, show what will ship — the target `env → branch`, the file list, and any `## Steps` action that mutates the repo. Then stop and ask exactly: **"Ship this? (go / redirect)"** Wait for the reply. Nothing is staged, committed, or pushed before it.
+**Approval gate (HARD):** before staging anything, show what will ship: the target `env → branch`, the file list, and any `## Steps` action that mutates the repo. Then stop and ask exactly: **"Ship this? (go / redirect)"** Wait for the reply. Nothing is staged, committed, or pushed before it.
 
 Then:
 - Stage per SHIP.md (`git add -A` by default, or the file's stated scope).
-- Commit — message from `$ARGUMENTS` or auto-generated; footer = the `Co-Authored-By:` line the harness specifies for the running model. Do NOT pin a version here — a hardcoded model name silently misattributes every commit after the next release.
+- Commit: message from `$ARGUMENTS` or auto-generated; footer = the `Co-Authored-By:` line the harness specifies for the running model. Do NOT pin a version here, because a hardcoded model name silently misattributes every commit after the next release.
 - Push: `git -C "$REPO_ROOT" push origin <target-branch>`.
 - If `## Release` defined and the user's intent includes publishing (not just pushing), run it; otherwise report it as skipped/optional.
 
 Skip the approval gate only if `$ARGUMENTS` contains `--auto`.
 
-## Step 5 — Confirm
+## Step 5: Confirm
 
-Print: repo, target env → branch, commit hash, push result, and any tag/release (or "release skipped — optional").
+Print: repo, target env → branch, commit hash, push result, and any tag/release (or "release skipped, optional").
 
 ---
 

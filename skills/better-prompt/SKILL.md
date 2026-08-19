@@ -1,6 +1,6 @@
 ---
 name: better-prompt
-description: Use this skill when the user types /better-prompt, says 'sharpen this prompt', or 'improve my prompt'. Rewrites a rough prompt against learned conventions in learnings.md. Second mode — refresh — fires on /better-prompt --refresh, 'refresh learnings', 'scan my prompts', or 'a new model shipped'; it rebuilds learnings.md from the rule files plus current release notes.
+description: Use this skill when the user types /better-prompt, says 'sharpen this prompt', or 'improve my prompt'. Rewrites a rough prompt against learned conventions in learnings.md. Second mode, refresh, fires on /better-prompt --refresh, 'refresh learnings', 'scan my prompts', or 'a new model shipped'; it rebuilds learnings.md from the rule files plus current release notes.
 user-invocable: true
 argument-hint: "[rough prompt text to sharpen] | --refresh"
 allowed-tools:
@@ -17,15 +17,15 @@ Input: $ARGUMENTS
 
 | Argument | Mode |
 |---|---|
-| `--refresh`, or the user says "refresh learnings" / "scan my prompts" | **Refresh** — rebuild `learnings.md`, then stop |
-| Anything else | **Sharpen** — rewrite the prompt |
+| `--refresh`, or the user says "refresh learnings" / "scan my prompts" | **Refresh:** rebuild `learnings.md`, then stop |
+| Anything else | **Sharpen:** rewrite the prompt |
 | Empty | Stop: `Paste the prompt you want sharpened after /better-prompt, or use --refresh to rebuild the reference.` |
 
 ---
 
 # Sharpen mode
 
-## Step 1 — Load the reference
+## Step 1: Load the reference
 
 Read `~/.claude/learnings.md`. If missing or empty, stop:
 > `⚠️ learnings.md not found — run /better-prompt --refresh first.`
@@ -43,11 +43,11 @@ For §7, detect the session model family from context ("The exact model ID is �
 fable/opus/sonnet/haiku) and load **only** that family's `### <family>` subsection. The
 rewrite must follow the rules for the model actually running; ignore the other three.
 
-## Step 2 — Well-formed check
+## Step 2: Well-formed check
 
 Skip the rewrite if ALL are true:
 
-- Names a concrete target — file, component, function or path, not "the thing" or "it"
+- Names a concrete target: file, component, function or path, not "the thing" or "it"
 - States a success criterion or expected output
 - Has an explicit scope boundary, or is trivially single-file
 - Specifies an output format, if it asks for analysis or a report
@@ -56,7 +56,7 @@ Skip the rewrite if ALL are true:
 If all pass, output `Prompt is already well-formed — no rewrite needed.` plus one line
 naming the criterion that carried it.
 
-## Step 3 — Diagnose
+## Step 3: Diagnose
 
 Check all, report only what applies:
 
@@ -70,19 +70,19 @@ Check all, report only what applies:
 | Missing skill | A relevant skill exists in §4 but isn't mentioned |
 | Slop risk | Would likely produce output matching a §5 pattern |
 
-## Step 4 — Rewrite
+## Step 4: Rewrite
 
 ONE copy-pasteable block, no numbered steps inside it. It must carry:
 
 - Concrete target (`file:line` or component name)
-- Explicit scope boundary — "only touch X, do not modify Y"
-- Success criterion — "done when Z"
-- Output format — "respond as a markdown table", "bullets only"
+- Explicit scope boundary: "only touch X, do not modify Y"
+- Success criterion: "done when Z"
+- Output format: "respond as a markdown table", "bullets only"
 - The correct skill route, if one applies
 
 If the rough prompt names `/X` but §4 says `/Y` fits better, silently swap it.
 
-## Step 5 — Verify
+## Step 5: Verify
 
 **(a) Structure.** Any failure → fix, re-check once, continue.
 
@@ -91,13 +91,13 @@ If the rough prompt names `/X` but §4 says `/Y` fits better, silently swap it.
 - Explicit scope boundary present
 - Success criterion present
 - Output-format clause present when the ask is analytical
-- No unresolved placeholders — scan for `<…>`, `TODO`, `TBD`, `FIXME`, `XXX`, `[ ]`, bare `...`
+- No unresolved placeholders, scan for `<…>`, `TODO`, `TBD`, `FIXME`, `XXX`, `[ ]`, bare `...`
 
 **(b) Slop check.** Read `~/.claude/docs/ANTISLOP.md` and check the rewritten block against
 the writing tells. This is a distinct pass over finished text, not a re-read while writing.
 Fix anything it catches, then re-run (a).
 
-## Step 6 — Output
+## Step 6: Output
 
 The rewritten prompt only. A single fenced block, zero surrounding text. No "Before", no
 "Why", no rationale bullets, no "Run with" line.
@@ -109,7 +109,7 @@ The rewritten prompt only. A single fenced block, zero surrounding text. No "Bef
 
 # Refresh mode
 
-## Step 1 — Read the rule files
+## Step 1: Read the rule files
 
 Missing file → note "(file absent)" and continue. Never abort.
 
@@ -118,29 +118,29 @@ Missing file → note "(file absent)" and continue. Never abort.
 | `~/.claude/CLAUDE.md` | Imports and the conditioned pointer list |
 | `~/.claude/docs/CORE_RULES.md` | The core rules and the Lessons block |
 | `~/.claude/memory/CLAUDE.generated.md` | Compiled working preferences and patterns |
-| `~/.claude/docs/CODE_REVIEW.md` | Scope rules — surgical and simplicity filters |
-| `~/.claude/docs/SUBAGENTS.md` | Planning rules — model split, dispatch scope, when to delegate |
+| `~/.claude/docs/CODE_REVIEW.md` | Scope rules, surgical and simplicity filters |
+| `~/.claude/docs/SUBAGENTS.md` | Planning rules, model split, dispatch scope, when to delegate |
 | `~/.claude/docs/ANTISLOP.md` | **The canonical writing-slop list.** Read its own header for current counts; never assume a number |
 | `~/.claude/docs/GUI_SLOP.md` | **The canonical GUI-slop list**, including the mockup-only kill rules. Same rule on counts |
 
-## Step 2 — Detect the model, fetch release notes
+## Step 2: Detect the model, fetch release notes
 
 Parse the model ID from session context. Extract family + version. If unresolvable, write
 `model: unknown` and skip the fetch.
 
 - **Models overview (WebFetch):** `https://platform.claude.com/docs/en/docs/about-claude/models/overview`
-  — extract what changed in `<model-id>` vs the prior model: behavior, context window, max
+ , extract what changed in `<model-id>` vs the prior model: behavior, context window, max
   output, thinking mode, pricing tier, knowledge cutoff.
-- **Claude Code changelog (Bash curl, not WebFetch)** — the release-notes doc redirects to a
+- **Claude Code changelog (Bash curl, not WebFetch):** the release-notes doc redirects to a
   GitHub HTML view that renders no content, so pull the raw file:
   ```bash
   curl -sL --max-time 15 https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md | head -150
   ```
 - A failed fetch writes "(release notes unavailable)" and continues. Do **not** retry
-  `docs.anthropic.com/*` or `platform.claude.com/docs/en/release-notes/claude-code` — both
+  `docs.anthropic.com/*` or `platform.claude.com/docs/en/release-notes/claude-code`, both
   redirect and burn retries.
 
-## Step 3 — Write learnings.md
+## Step 3: Write learnings.md
 
 Three parts, each with its own update rule. Getting this wrong is what bloats the file.
 
@@ -190,7 +190,7 @@ Skeleton, if the file doesn't exist:
 ### haiku
 ```
 
-## Step 4 — Verify the write
+## Step 4: Verify the write
 
 Sharpen mode parses §1–7. Confirm the headers survived:
 ```bash
@@ -199,7 +199,7 @@ grep -cE "^### (fable|opus|sonnet|haiku)$" ~/.claude/learnings.md               
 ```
 Either count off means the write is malformed. Fix it before confirming.
 
-## Step 5 — Confirm
+## Step 5: Confirm
 
 > **learnings.md updated.** Run `/better-prompt "[rough prompt]"` to use it.
 > Refresh again when a new Claude model ships.

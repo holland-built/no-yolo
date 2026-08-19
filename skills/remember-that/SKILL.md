@@ -1,6 +1,6 @@
 ---
 name: remember-that
-description: Use this skill when the user types /remember-that, says 'remember that', 'save this to memory', or 'forget that'. Unified memory manager — add facts, extract from context, delete, move, audit, compile.
+description: Use this skill when the user types /remember-that, says 'remember that', 'save this to memory', or 'forget that'. Unified memory manager: add facts, extract from context, delete, move, audit, compile.
 user-invocable: true
 argument-hint: "<fact> | d <id> | m <id> | audit | compile | (empty=extract from context)"
 model: haiku
@@ -16,7 +16,7 @@ Argument: **$ARGUMENTS**
 
 ---
 
-## Step 1 — Establish context (always run first)
+## Step 1: Establish context (always run first)
 
 ```bash
 CWD=$(pwd)
@@ -33,7 +33,7 @@ ls ~/.claude-work/projects/$SLUG/memory/*.md 2>/dev/null | grep -v "MEMORY.md\|S
 
 ---
 
-## Step 2 — Route on argument
+## Step 2: Route on argument
 
 Match **first token** in this order:
 
@@ -54,7 +54,7 @@ Match **first token** in this order:
 
 1. **Infer tier**: `HAS_GIT=true` → `tier=project`; else `tier=user`
 
-2. **Confirm (REQUIRED — never skip)**:
+2. **Confirm (REQUIRED. Never skip)**:
    - `tier=project` → output: `Saving to project memory for '<slug>' — confirm? (Y / g=save globally instead)`
    - `tier=user` → output: `Saving to global memory — confirm? (Y / p=save to project '<slug>' instead)`
    - Wait. Honor `g` or `p` override to flip tier.
@@ -64,7 +64,7 @@ Match **first token** in this order:
    - Refines existing → update that file: append to body, bump `updated:`.
    - Contradicts active → write new fact with `status: needs-review` + `conflicts-with: <id>`. Stop and ask user to resolve.
 
-3b. **Canon-duplication guard** (global `user`/`feedback` facts): before writing, read the two files that actually load in **every** session — `~/.claude/CLAUDE.md` and its compiled import `~/.claude/memory/CLAUDE.generated.md` — and judge whether the fact's rule is already stated in either. If it is, **do NOT save**: it already loads every session, so a fact restating it is pure always-loaded waste. Tell the user: `Already covered by <CLAUDE.md HARD RULE | CLAUDE.generated.md — "<fact name>"> — not saving a duplicate. Edit that source instead if you want to change it.` (A `CLAUDE.generated.md` line's source is its linked fact file in `memory/facts/`, not the compiled file — never edit the compiled file.) Only save when the fact adds something those two do not already say.
+3b. **Canon-duplication guard** (global `user`/`feedback` facts): before writing, read the two files that actually load in **every** session (`~/.claude/CLAUDE.md` and its compiled import `~/.claude/memory/CLAUDE.generated.md`) and judge whether the fact's rule is already stated in either. If it is, **do NOT save**: it already loads every session, so a fact restating it is pure always-loaded waste. Tell the user: `Already covered by <CLAUDE.md HARD RULE | CLAUDE.generated.md — "<fact name>"> — not saving a duplicate. Edit that source instead if you want to change it.` (A `CLAUDE.generated.md` line's source is its linked fact file in `memory/facts/`, not the compiled file. Never edit the compiled file.) Only save when the fact adds something those two do not already say.
 
 4. **Classify** `type`: `user` | `feedback` | `pattern` | `reference`
 
@@ -80,7 +80,7 @@ Match **first token** in this order:
 
 ## EXTRACT (no-args default)
 
-1. **Scan recent conversation context** — identify facts worth saving: decisions made, preferences stated, patterns discovered, architecture choices, constraints established. Ignore ephemeral task detail.
+1. **Scan recent conversation context:** identify facts worth saving: decisions made, preferences stated, patterns discovered, architecture choices, constraints established. Ignore ephemeral task detail.
 
 2. **Propose each candidate** one at a time:
    - Infer tier: inside a project repo (`HAS_GIT=true`) → `project`; else `global`
@@ -105,7 +105,7 @@ Match **first token** in this order:
 ## DELETE
 
 1. Find fact file by id (search global + project stores).
-2. Confirm: `Mark <id> as superseded? Removes from compiled views. (Y/n)` — wait.
+2. Confirm: `Mark <id> as superseded? Removes from compiled views. (Y/n)`, wait.
 3. On Y: set `status: superseded`, `updated: <today>` in frontmatter. Do NOT delete the file.
 4. Compile.
 5. Confirm: `<id> marked superseded — removed from next session.`
@@ -116,7 +116,7 @@ Match **first token** in this order:
 
 1. Find fact by id. Note current tier.
 2. Target = opposite tier.
-3. Confirm: `Move <id> from <current-tier> → <target-tier>? (Y/n)` — wait.
+3. Confirm: `Move <id> from <current-tier> → <target-tier>? (Y/n)`, wait.
 4. On Y:
    - Write fact to new location with `tier` updated.
    - Mark old file `status: superseded`, `superseded-by: <id>`.
@@ -134,12 +134,12 @@ Read all facts (global + all project stores). Output table:
 | … | stale-path | references path that no longer exists |
 | … | possible-duplicate | near-identical name+type as `<other-id>` |
 | … | superseded | file still on disk, safe to archive |
-| … | old | captured >180 days ago — still relevant? |
-| … | needs-review | unresolved conflict — blocks compile |
+| … | old | captured >180 days ago, still relevant? |
+| … | needs-review | unresolved conflict, blocks compile |
 
 Footer: `Use /remember-that d <id> to suppress, m <id> to relocate.`
 
-Read-only — no writes.
+Read-only, no writes.
 
 ---
 
@@ -155,6 +155,6 @@ Show output. Done.
 
 ## Rules (always apply)
 
-- Never edit `CLAUDE.generated.md` directly — it is rebuilt by compile.
-- Auto-memory files (`~/.claude-work/projects/*/memory/`) are read-only — show in table only. To promote to formal store, use ADD.
+- Never edit `CLAUDE.generated.md` directly. It is rebuilt by compile.
+- Auto-memory files (`~/.claude-work/projects/*/memory/`) are read-only. Show in table only. To promote to formal store, use ADD.
 - If compile aborts on `needs-review`, surface the conflict and STOP.

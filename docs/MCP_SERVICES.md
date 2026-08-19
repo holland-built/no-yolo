@@ -13,16 +13,16 @@ Some skills prefer Firecrawl over the built-in `WebSearch`/`WebFetch` because it
 returns full page content and defeats crawl/login walls.
 
 **If you don't have Firecrawl configured, nothing breaks.** The skills fall back
-to built-in `WebSearch`/`WebFetch` — snippet-depth with soft date filters
+to built-in `WebSearch`/`WebFetch`, snippet-depth with soft date filters
 instead of full content with a hard recency gate. Degraded, not broken. Firecrawl
 is an optional upgrade, not a requirement to install this repo.
 
 ### Installing it (optional)
 
-**1. Get a Firecrawl endpoint** — pick one:
+**1. Get a Firecrawl endpoint.** Pick one:
 - **Hosted:** sign up at firecrawl.dev, get an `fc-...` API key. Simplest.
 - **Self-hosted:** run the open-source server (Docker). It exposes an HTTP API
-  on a port you choose and typically runs keyless — no `FIRECRAWL_API_KEY`
+  on a port you choose and typically runs keyless, with no `FIRECRAWL_API_KEY`
   needed. Good for zero per-call cost or internal/large-volume crawling. Making
   it reachable from wherever you run sessions is your own networking concern.
 
@@ -31,7 +31,7 @@ is an optional upgrade, not a requirement to install this repo.
 claude mcp add firecrawl -- npx -y firecrawl-mcp
 ```
 
-**3. Point it at your endpoint** — set ONE of these in your `settings.json`
+**3. Point it at your endpoint.** Set ONE of these in your `settings.json`
 `env` block (or the server's env), matching step 1:
 ```
 # hosted:
@@ -46,16 +46,16 @@ Skills that prefer Firecrawl then use it automatically and fall back to
 
 ### The fallback pattern (reference: `skills/last-30/SKILL.md`)
 
-Any skill that reaches for an optional MCP provider must degrade gracefully —
+Any skill that reaches for an optional MCP provider must degrade gracefully:
 the server may be unconfigured, or self-hosted and offline. The pattern:
 
-1. **One preflight probe** — a single cheap call up front to decide if the
+1. **One preflight probe:** a single cheap call up front to decide if the
    provider is live. Never discover it's down once per source; each dead call
    can stall several seconds.
-2. **Pick the mode once** — probe succeeds → provider mode; probe fails →
+2. **Pick the mode once:** probe succeeds → provider mode; probe fails →
    built-in mode for the whole run, announced in one line.
-3. **Every source lists both forms** — the MCP call and the built-in
-   equivalent — so the fallback mode is fully usable and never worse than not
+3. **Every source lists both forms:** the MCP call and the built-in
+   equivalent, so the fallback mode is fully usable and never worse than not
    having the provider at all.
 
 Copy this shape into any new skill that depends on an optional MCP server.

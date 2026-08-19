@@ -1,7 +1,7 @@
-# AI interface patterns — the names for things you already recognise
+# AI interface patterns: the names for things you already recognise
 
 A naming vocabulary for AI product interfaces. Nothing here is a rule; it is words. The value
-is that "we should show what it's about to do before it does it" has a name — **Action plan** —
+is that "we should show what it's about to do before it does it" has a name, **Action plan**,
 and once it does, you can ask whether the product has one, compare yours to five others, and
 say what is missing in two words instead of a paragraph.
 
@@ -9,7 +9,7 @@ say what is missing in two words instead of a paragraph.
 `docs/BORROWED.md`.
 
 **An honest count.** 57 named patterns were extracted. The site's own section headers sum to
-60, so three names were not captured — probably in Wayfinders, Tuners and Trust builders, where
+60, so three names were not captured, probably in Wayfinders, Tuners and Trust builders, where
 the header count exceeds the rows below by one each. Treat this as most of the vocabulary, not
 all of it, and go to the source when a pattern you need is not here.
 
@@ -17,19 +17,19 @@ all of it, and go to the source when a pattern you need is not here.
 
 Designing, reviewing, or naming any surface where a model does the work: a chat, an assistant
 panel, a generate button, an agent that acts on its own. Use it to name what you are building
-before you build it, and to find the gap — the categories below are a checklist of the things
+before you build it, and to find the gap. The categories below are a checklist of the things
 AI products usually forget.
 
 ---
 
-## Wayfinders — getting someone past the empty box
+## Wayfinders: getting someone past the empty box
 
 The blank input is the hardest screen in AI. These are the ways out of it.
 
 | Pattern | What it is |
 |---|---|
 | **Initial CTA** | The large open-ended input inviting a first interaction |
-| **Suggestions** | Clues for how to prompt — the standard answer to the blank canvas |
+| **Suggestions** | Clues for how to prompt, the standard answer to the blank canvas |
 | **Templates** | Structured forms the user fills or the AI pre-fills |
 | **Gallery** | Sample generations shown with their prompts and parameters, to teach by example |
 | **Nudges** | Pointing out an AI action the user could take, especially early on |
@@ -37,7 +37,7 @@ The blank input is the hardest screen in AI. These are the ways out of it.
 | **Follow up** | Asking for more when the first prompt was not clear enough |
 | **Prompt details** | Showing what is actually happening behind the scenes |
 
-## Prompt actions — what the user can ask for
+## Prompt actions: what the user can ask for
 
 The verbs. Most AI features are one of these wearing a product name.
 
@@ -49,7 +49,7 @@ The verbs. Most AI features are one of these wearing a product name.
 | **Expand** | Lengthen or add depth to existing content |
 | **Summary** | Distil a topic or resource to its essence |
 | **Synthesis** | Reorganise complicated information into simple structure |
-| **Transform** | Change the modality — text to image, doc to slides |
+| **Transform** | Change the modality: text to image, doc to slides |
 | **Restructure** | Use existing content as the starting point for the prompt |
 | **Restyle** | Change style while keeping the underlying structure |
 | **Inpainting** | Regenerate one targeted region of a result |
@@ -58,7 +58,7 @@ The verbs. Most AI features are one of these wearing a product name.
 | **Madlibs** | Repeat a generative task without losing format or accuracy |
 | **Chained action** | One action feeding the next |
 
-## Tuners — narrowing what the model does
+## Tuners: narrowing what the model does
 
 | Pattern | What it is |
 |---|---|
@@ -73,7 +73,7 @@ The verbs. Most AI features are one of these wearing a product name.
 | **Voice and tone** | Keep output consistent with a defined voice |
 | **Prompt enhancer** | Improve the prompt before it runs |
 
-## Governors — oversight, and the brakes
+## Governors: oversight, and the brakes
 
 The category most often missing, and the one that decides whether people trust an agent that
 acts on its own.
@@ -94,7 +94,7 @@ acts on its own.
 | **Memory** | Control what the AI knows about you |
 | **Shared vision** | Live visibility into the AI's work in a shared space |
 
-## Trust builders — being straight with people
+## Trust builders: being straight with people
 
 | Pattern | What it is |
 |---|---|
@@ -106,7 +106,7 @@ acts on its own.
 | **Incognito mode** | Interact outside the AI's memory |
 | **Watermark** | Machine-readable identifiers on generated content |
 
-## Identifiers — how the AI shows up
+## Identifiers: how the AI shows up
 
 | Pattern | What it is |
 |---|---|
@@ -129,7 +129,7 @@ Two failure modes worth knowing:
 - **Reaching for every pattern.** This is a vocabulary, not a checklist to complete. A product
   with all 57 would be unusable. The categories are for finding the one gap that matters.
 - **Naming without building.** A **Caveat** that nobody reads, or a **Stream of thought** that
-  shows fake reasoning, is worse than neither — it buys trust the product has not earned.
+  shows fake reasoning, is worse than neither: it buys trust the product has not earned.
 
 For visual craft on these surfaces, the rules live elsewhere: `docs/GUI_SLOP.md` for what not
 to ship, and `/design` for building it.
@@ -147,14 +147,14 @@ first.
 
 | Without this file | With it |
 |---|---|
-| Undo/restore original and confirm before overwrite | **Verification** — confirm before replacing the body |
-| Save behaviour: automatic vs explicit; version history | **Draft mode** — preview before committing |
-| Error, timeout, retry, cancellation, offline states | **Branches** — preserve and restore the original |
-| Summary controls: length, format, language, regeneration | **Controls** — cancel while summarising |
-| Eligibility: empty, short, large, read-only documents | **Disclosure** — mark the replacement as AI-generated |
-| Privacy, data handling, permissions, rate limits, cost | **Footprints** — retain the prompt-to-result history |
+| Undo/restore original and confirm before overwrite | **Verification**: confirm before replacing the body |
+| Save behaviour: automatic vs explicit; version history | **Draft mode**: preview before committing |
+| Error, timeout, retry, cancellation, offline states | **Branches**: preserve and restore the original |
+| Summary controls: length, format, language, regeneration | **Controls**: cancel while summarising |
+| Eligibility: empty, short, large, read-only documents | **Disclosure**: mark the replacement as AI-generated |
+| Privacy, data handling, permissions, rate limits, cost | **Footprints**: retain the prompt-to-result history |
 
-Both are competent. The difference that matters is not the naming — it is that **Disclosure**
+Both are competent. The difference that matters is not the naming. It is that **Disclosure**
 and **Footprints** have no counterpart on the left at all. The unaided review reached "privacy
 and data handling" as a category and stopped; it never arrived at *mark the output as
 AI-generated* or *let the user trace how this was produced*. Two real findings surfaced,

@@ -11,8 +11,8 @@ allowed-tools:
 
 # handoff
 
-A session dies for boring reasons — a spend limit, a closed laptop, a context that got too
-big — and the work in it dies too. This week that cost a resume by hunting for a raw session
+A session dies for boring reasons, a spend limit, a closed laptop, a context that got too
+big, and the work in it dies too. This week that cost a resume by hunting for a raw session
 id. This skill turns the live session into a file another session can read.
 
 Next session is for: $ARGUMENTS
@@ -20,7 +20,7 @@ Next session is for: $ARGUMENTS
 If an argument is given, slant the whole summary toward it: what matters for *that* job goes
 first, and anything the next session does not need for it gets one line or gets cut.
 
-## 1 — Write the file first, then offer the launch command
+## 1: Write the file first, then offer the launch command
 
 Write to disk **before** you print anything. This is the one place this skill deliberately
 differs from the design it was borrowed from, which only prints a summary and never saves it.
@@ -32,36 +32,36 @@ mkdir -p ~/.claude/handoffs && date +%F
 ```
 
 Path: `~/.claude/handoffs/<YYYY-MM-DD>-<short-slug>.md`. The slug is two to four lowercase
-hyphenated words naming the work, not the date restated — `auth-rewrite`, `route-map-red`.
+hyphenated words naming the work, not the date restated, `auth-rewrite`, `route-map-red`.
 If that filename already exists, add `-2`. `handoffs/` is in `~/.claude/.gitignore`, so these
 stay on the machine.
 
-## 2 — Reference every artifact by path, never restate it
+## 2: Reference every artifact by path, never restate it
 
 Plans, diffs, specs, mockups, test output and source files get a path or a URL and one line
 saying what it is. Copying their contents in is what makes a handoff too big to be worth
-reading — the next session can open a file, and it has the same tools this one does.
+reading, the next session can open a file, and it has the same tools this one does.
 
 | Instead of | Write |
 |---|---|
-| pasting the plan | `~/.claude/plans/auth-rewrite.md` — the agreed plan, steps 1–3 done <!-- gone-on-purpose --> |
-| pasting the failing test output | `npm test -- auth.spec.ts` — 2 failing, names in the file |
+| pasting the plan | `~/.claude/plans/auth-rewrite.md`, the agreed plan, steps 1–3 done <!-- gone-on-purpose --> |
+| pasting the failing test output | `npm test -- auth.spec.ts`, 2 failing, names in the file |
 | pasting the diff | `git diff main...HEAD` on branch `auth-rewrite` |
 
 The one thing you DO restate is anything that exists only in this conversation: a decision the
 user made out loud, a constraint they gave, a dead end you already ruled out. None of that is
 on disk anywhere, so it dies unless the file carries it.
 
-## 3 — Strip secrets before writing
+## 3: Strip secrets before writing
 
-This file becomes the prompt for another agent — it gets read straight into a fresh context,
+This file becomes the prompt for another agent. It gets read straight into a fresh context,
 and it may be read by an agent running in a different directory. Treat everything in it as
 published. Before writing, replace API keys, tokens, passwords, connection strings, private
 hostnames and personal data with a pointer to where the real value lives: `key is in
 ~/.claude/settings.json under env`. Say in the file that you did this, so the next session
 knows to go get it rather than assuming it was never needed.
 
-## 4 — File shape
+## 4: File shape
 
 Six sections, in this order. Keep the whole file short enough to read in one screen-and-a-bit.
 
@@ -98,16 +98,16 @@ it is skipping (plan already settled, one-line fix, codex unavailable).
 One concrete thing, doable immediately.
 ```
 
-The **Cross-check before resuming** section is not optional and is not a suggestion —
+The **Cross-check before resuming** section is not optional and is not a suggestion:
 write it into every handoff. A resumed session inherits a plan nobody argued with: it
 reads the file, trusts it, and starts editing. Measured 2026-08-12: half the sessions
 that edited code without any plan stage began by resuming a handoff, so this file is
 where the gap actually lives (see `docs/CORE_RULES.md` rule 9).
 
-## 5 — Run these skills next
+## 5: Run these skills next
 
 Name the specific skills the next session should invoke, and why each one. Pick from the
-user's own set — do not send the next session to a skill that does not exist here:
+user's own set. Do not send the next session to a skill that does not exist here:
 
 | Situation the file describes | Name this skill |
 |---|---|
@@ -123,22 +123,22 @@ user's own set — do not send the next session to a skill that does not exist h
 | Something learned this session worth keeping | `/remember-that` |
 | Genuinely unsure what to do first | `/whats-next` |
 
-The rest of the set — `better-prompt`, `eli5`, `ingest-docs`, `last-30`, `lockstep`, `watch` —
+The rest of the set (`better-prompt`, `eli5`, `ingest-docs`, `last-30`, `lockstep`, `watch`)
 are worth naming only when the handoff is actually about one of them.
 
-## 6 — Print one paste block, last
+## 6: Print one paste block, last
 
 Print a short table: where the file was saved, and the one thing the next session does first.
-Then the block. Nothing after it — no options list, no second command, no sign-off.
+Then the block. Nothing after it, no options list, no second command, no sign-off.
 
 ```
 claude "Read ~/.claude/handoffs/<the-file-you-just-wrote>.md and continue that work. Start with the First action section."
 ```
 
-Substitute the real filename before printing — the user must be able to paste it as-is.
+Substitute the real filename before printing, the user must be able to paste it as-is.
 
 **Flags confirmed on this install** (`claude --help`, 2026-08-06): a positional prompt
 argument, `--bg`/`--background` to start it as a background agent, `--model`, `-c`/`--continue`,
 `-r`/`--resume`. The interactive form above is the default and the right one here. Use `--bg`
 only if the user asked for it to run unattended. If you need a flag that is not in this list,
-run `claude --help` and read it — do not write a flag from memory.
+run `claude --help` and read it, do not write a flag from memory.
