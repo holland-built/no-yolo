@@ -4,12 +4,25 @@ Borrowed skills are installed by `npx skills` and symlinked into `skills/`. Both
 and the symlinks are gitignored: the code belongs to whoever wrote it, and this repo publishes
 the pointer, never the copy. `docs/BORROWED.md` is the tracked record of what was borrowed.
 
-**There are two installer roots, not one.** Most borrowed skills land in
-`~/.claude/.agents/skills/`; `improve`, `interface-design`, `computer-use`, `orca-cli` and
-`resolving-merge-conflicts` land in `~/.agents/skills/`. Nothing here chooses between them —
-the installer does. So **never hardcode a root**: address a borrowed skill as
+**There are two installer roots, not one.** Nothing here chooses between them — the
+installer does. So **never hardcode a root**: address a borrowed skill as
 `skills/<name>/SKILL.md` and let the symlink resolve it. Both `setup.sh` and `verify.sh` got
 this wrong first and would have skipped `interface-design` without saying anything.
+
+Measured 2026-08-18 by resolving all 19 symlinks with `os.path.realpath` — 0 broken:
+
+| Root | Holds |
+|---|---|
+| `~/.agents/skills/` | `computer-use`, `improve`, `interface-design`, `orca-cli` — plus `impeccable`, which nothing symlinks to |
+| `~/.claude/.agents/skills/` | the other 15, including `resolving-merge-conflicts` |
+
+This paragraph previously placed `resolving-merge-conflicts` in `~/.agents/skills/`. It is in
+`~/.claude/.agents/skills/`. A doc that names a hardcoded root, and names it wrongly, is the
+exact trap the paragraph above warns about — hence the measured table rather than a list.
+
+**There is only one lock file**, always `~/.agents/.skill-lock.json` (or under
+`$XDG_STATE_HOME`), never one per root — read from the installer's own `getSkillLockPath()`
+in `skills@1.5.22`. Which root a skill lives in says nothing about whether it is locked.
 
 This file covers the exception: the handful of lines this setup adds to files it does not own.
 
@@ -63,6 +76,37 @@ skills come from `emilkowalski/skills`, so their block sits after that install l
 next to the earlier `improve` patch would have it overwritten seconds later by the installer
 running below it. `apple-design` is installed by hand and by nothing in this repo, so the loop
 skips it when the path is absent rather than reporting a failure.
+
+## Why 16 of the 19 borrowed skills are deliberately not in the lock file
+
+Decided 2026-08-18. Only 3 symlinks are locked (`computer-use`, `interface-design`,
+`orca-cli`); a 4th entry, `impeccable`, is locked with nothing symlinked to it, and it is a
+*different project* from the enabled `impeccable` plugin — `bergside/awesome-design-md-skills`
+against `pbakaus/impeccable`. Same name, different upstream.
+
+**What being unlocked costs.** `npx skills update` builds its work list from
+`Object.keys(lock.skills)` and nothing else (its `updateGlobalSkills`). An unlocked skill is
+not updated and is not mentioned — the run reports success having touched none of them. So 16
+borrowed skills sit frozen, silently. `/checkup` now prints both numbers and names, so the
+silence is at least visible here.
+
+**Why re-locking is worse today.** `npx skills add`/`update` rewrite a skill from upstream and
+say nothing, which wipes the frontmatter overlays in the table above. **Nine** of the unlocked
+skills carry one: `animation-vocabulary`, `find-animation-opportunities`, `improve-animations`,
+`review-animations`, `apple-design`, `emil-design-eng` (demotions), `improve`
+(`user-invocable`), and the `model: haiku` pins on `ponytail-help`, `ponytail-gain`,
+`ponytail-debt`. Losing a demotion turns reference material back into a competing design
+door — the thing `skills/checkup/scripts/design_doors.py` exists to catch. The four haiku pins
+have neither a `setup.sh` re-apply nor a `verify.sh` row, so they would go without a trace.
+
+Trading a silent non-update for a silent demotion-reversal is a bad trade, so nothing was
+re-installed. Hand-writing lock entries was also rejected: their hashes would be invented, and
+a fabricated record of an install that never happened is what rule 1 in `docs/CORE_RULES.md`
+bans.
+
+**The prerequisite for revisiting this**: every overlay has both halves — a `setup.sh` block
+and a `verify.sh` row. Four do not. Give the haiku pins those two halves first, then re-locking
+becomes a safe, boring operation.
 
 ## Adding a new overlay
 
