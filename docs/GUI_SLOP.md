@@ -12,7 +12,7 @@
 ## GUI Slop
 > **This list is canonical.** `/design`, `/build`, `/health` and `/debate --ui` all read it — add new patterns HERE and nowhere else.
 > The mockup-only kill rules moved in from `UI_MOCKUPS.md` on 2026-08-05 and are now the `### Mockup-only kill rules` subsection below, so this file is the single home. `UI_MOCKUPS.md` keeps mockup *workflow* only — counts, paths, output format — and holds no tells. Do not copy this list into a skill.
-> For deep landing-page-specific rules (100+), read `skills/design/vendor/taste-skill/taste-skill.md` §9 and its `redesign-skill.md` on demand — deliberately not merged here (third-party, never edited). That folder is gitignored, so on a fresh clone it is absent; `skills/design/TASTE_CORE.md` is the tracked distillation that always works.
+> For deep landing-page-specific rules (100+), read `skills/design/vendor/taste-skill/taste-skill.md` §9 on demand — deliberately not merged here (third-party, never edited). That folder is gitignored, so on a fresh clone it is absent; `skills/design/TASTE_CORE.md` is the tracked distillation that always works.
 
 - **Gradient hero banner** — purple→blue full-bleed top section as the default page header
 - **Uniform card grid** — rounded cards with drop shadows as the default layout for any list

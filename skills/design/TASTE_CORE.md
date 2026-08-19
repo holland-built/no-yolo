@@ -1,4 +1,5 @@
-> Distilled from `vendor/taste-skill/taste-skill.md` + `redesign-skill.md`. This is the
+> Distilled from `vendor/taste-skill/taste-skill.md`, plus section 4 salvaged from
+> `redesign-skill.md` before that file was deleted on 2026-08-18. This is the
 > load-bearing subset for text/copy-brief mockup generation. The vendor dir remains the
 > source of truth — and is still read directly for the screenshot/image-to-code path
 > (`image-to-code-skill.md`) and for anything not covered here.
@@ -119,3 +120,44 @@ CSS if an official package exists. One system per project — never mix two comp
   sentence case, no Lorem Ipsum.
 - **Components** — card elevation only when it communicates hierarchy, button/badge variety,
   non-carousel testimonial patterns, non-tower pricing emphasis, non-modal-default interactions.
+
+## 4. Salvaged 2026-08-18, when `redesign-skill.md` was dropped
+
+That vendored file was judged a shallower duplicate of `taste-skill.md` and deleted. Three
+things in it existed nowhere else in this setup, so they are carried here rather than lost.
+Names and ordering only — the upstream prose is not reproduced, and the file is recoverable
+from the pinned commit in `docs/BORROWED.md` if the detail is ever wanted.
+
+### Three audit categories Section 3 does not cover
+- **Iconography** — one icon family, consistent stroke weight and optical size, never mixed sets.
+- **Code quality** — as a *visual* signal: hardcoded values, magic numbers, and token drift show
+  up on screen as inconsistency before they show up in review.
+- **Strategic omissions** — what AI typically forgets rather than gets wrong: the empty state,
+  the error state, the long-name case, the zero case, the loading case.
+
+### Upgrade techniques — a vocabulary for "make it feel less flat"
+Names only; each is a known industry technique you can look up or brief someone with.
+
+| Area | Techniques |
+|---|---|
+| Typography | Variable font animation · outlined-to-fill transitions · text mask reveals |
+| Layout | Broken grid / asymmetry · whitespace maximization · parallax card stacks · split-screen scroll |
+| Motion | Staggered entry · spring physics · scroll-driven reveals |
+| Surface | True glassmorphism · spotlight borders · grain and noise overlays · coloured, tinted shadows |
+
+Two upstream suggestions are **deliberately not carried**: smooth scroll with inertia, which
+hijacks the browser's own scrolling and is an accessibility and performance problem, and
+"add texture to every flat design", which is taste stated as a rule. Both were flagged in the
+2026-08-18 comparison as the weakest advice in that file.
+
+Check any of these against `~/.claude/docs/GUI_SLOP.md` before using one — several sit close to
+a tell, and the difference is always whether the effect carries information.
+
+### Fix priority — cheapest visible win first
+1. Font swap — biggest instant improvement, lowest risk
+2. Colour palette cleanup — remove clashing and oversaturated colours
+3. Hover, active and focus states — makes it feel alive
+4. Layout and spacing — grid, max-width, consistent padding
+5. Replace generic components — swap cliché patterns
+6. Add loading, empty and error states — makes it feel finished
+7. Typography scale and rhythm — the last 10%
