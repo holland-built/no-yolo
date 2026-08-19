@@ -22,7 +22,7 @@ original bug wearing a different hat.
 | impeccable | marketplace | plugins/marketplaces/impeccable | https://github.com/pbakaus/impeccable | tracked branch | n/a | git | see LICENSE in tree |
 | openai-codex | marketplace | plugins/marketplaces/openai-codex | https://github.com/openai/codex-plugin-cc | tracked branch | n/a | git | see LICENSE in tree |
 | claude-plugins-official | marketplace | plugins/marketplaces/claude-plugins-official | https://github.com/anthropics/claude-plugins-official | .gcs-sha | machine-managed | hash | see LICENSE in tree |
-| taste-skill | vendored | skills/design/vendor/taste-skill | https://github.com/Leonxlnx/taste-skill | e988add20dab0fa97d7a76781c48961c8184288e | a9e222741a8cd9e73e70cc3d9c36aff2885ed43eb1916a9543f5b9b882eb5e38 | hash | MIT |
+| taste-skill | vendored | skills/design/vendor/taste-skill | https://github.com/Leonxlnx/taste-skill | e988add20dab0fa97d7a76781c48961c8184288e | 27a3138124617ec3b787d66586e0933cb166a4a12584a00911af522638eebb75 | hash | MIT |
 | awesome-design-md | vendored | skills/design/vendor/awesome-design-md | https://github.com/VoltAgent/awesome-design-md | 8147538b4226ae41e2487a9179e3bcc1f68e8554 | f72a1c759759ec19b9d89573a63abb04989859d803bd0a3c35ca5f8afcb579e5 | hash | MIT |
 | paper-shaders | reference | — | https://github.com/paper-design/shaders | 7002061d8389781a45e479584deeca0cf538474e | n/a | url-only | Apache-2.0 |
 | shape-of-ai | reference | — | https://www.shapeof.ai/ | read 2026-08-18 | n/a | url-only | unknown — site, no licence stated |

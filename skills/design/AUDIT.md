@@ -145,7 +145,7 @@ The seed tells agents which audit findings are token-level (fixable by swap) vs 
 (require layout change). Note this distinction in the seed file.
 
 ### F2 — Taste direction
-Same as `/design` Step 1. Invoke redesign-skill for direction. Use FALLBACKS if absent.
+Same as `/design` Step 1. Read `TASTE_CORE.md` sections 3 and 4 for direction — the six redesign categories, then the upgrade-technique vocabulary and fix-priority order. (These replaced the vendored `redesign-skill.md`, deleted 2026-08-18 as a shallower duplicate of `taste-skill.md`.) Use FALLBACKS if absent.
 
 ### F3 — 8 mockups
 ONE parallel Agent call, `model: "opus"`. Same spec as `/design` Step 2 with one addition:
