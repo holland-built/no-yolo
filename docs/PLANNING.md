@@ -13,7 +13,7 @@ Trigger: user says "plan X" or task is non-trivial → auto-spawn a Fable planne
 
 ## Good Plan Structure
 
-Every Opus plan must contain:
+Every plan must contain (written by the Fable planner, per `SUBAGENTS.md`; this line said "Opus plan" until 2026-08-19, left over from the pre-2026-07-31 split):
 
 | Section | What it says |
 |---|---|

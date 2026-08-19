@@ -28,7 +28,7 @@ Every dispatch prompt must bound how much other code the change could break.
 
 - **Independent searches** across 2+ areas of the codebase → parallel `Explore` agents (max 3).
 - **Tasks that bloat main context** with tool output → delegate (subagent returns a summary, not raw output).
-- **Multi-perspective design decisions** → 2–3 `Plan` agents in parallel (model: "opus").
+- **Multi-perspective design decisions** → 2-3 `Plan` agents in parallel (model: `fable`). This line said `opus` until 2026-08-19, contradicting the split stated at the top of this file. Planning is Fable; only agents that write code are Opus.
 - **Implementation of approved plans** → Opus subagents.
 
 ## When NOT to delegate
