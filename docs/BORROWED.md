@@ -96,6 +96,19 @@ says so out loud, while the upstream check still means something.
 Use `machine-managed` only for a directory something else owns. For a directory a person is
 responsible for, an unexplained hash change is the finding.
 
+## Rows that report drift on purpose
+
+`UPSTREAM MOVED` is a prompt to decide, not a defect. Three rows are expected to show it, and
+each decision is recorded so nobody re-litigates it from scratch. The reasoning for the vendored
+ones lives in their `SOURCE.md`, which is gitignored — so the decision is summarised here, where
+it is tracked.
+
+| Row | Reported | Decision, 2026-08-18 |
+|---|---|---|
+| `claude-plugins-official` | every run | Expected forever. Claude Code refreshes that directory itself; see the two special cells above |
+| `taste-skill` | `e988add2` → `dfb6f9f9` | **Hold the pin.** Upstream's default is now v2, its own changelog calling it experimental, pre-release and still iterating. Two blockers: `TASTE_CORE.md` cites v1 section numbers that v2 renumbers, and this vendor dir is no longer upstream-verbatim (`redesign-skill.md` was dropped after salvage). Revisit at v2.0.0 stable, re-deriving `TASTE_CORE.md` in the same change. Worth harvesting separately: v2's hardened AI-tells list belongs in `docs/GUI_SLOP.md` on its own merits, no pin move needed |
+| `impeccable` | was 77 behind | **Pulled** to `f88b283`. Two point releases, bug fixes and tests, no local patches to lose |
+
 ## What is deliberately NOT in the table
 
 `refs/design-specs/` — the saved design specs `/design` writes when it scrapes a reference URL.
