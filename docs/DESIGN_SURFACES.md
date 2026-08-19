@@ -80,6 +80,7 @@ written here; the machine only notices what is new or what has changed underneat
 | `emil-design-eng` | 2 | reference | Easing, duration, implementation detail |
 | `interface-design` | 2 | reference | Craft, hierarchy, tokens, design-system consistency |
 | `pick-ui-library` | 2 | reference | Library selection table |
+| `hallmark` | — vendored, not installed | reference | 21 macrostructures, a six-axis pre-emit critique and a variety rule, read by `/design` from `skills/design/vendor/hallmark/`. It ships upstream as a four-verb door; the row exists so that if it is ever installed at `skills/hallmark/` the door check reports RIVAL REAPPEARED instead of going quiet |
 | `archify` | 2 | not a surface | Draws architecture diagrams. "Redesign this page" must never reach it |
 | `build` | 1 | not a surface | Ships features end to end; it *calls* `/design`, it is not a design door |
 | `debate` | 1 | not a surface | Argues decisions, including UI ones, and produces no interface |
