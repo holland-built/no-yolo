@@ -22,7 +22,7 @@ original bug wearing a different hat.
 | impeccable | marketplace | plugins/marketplaces/impeccable | https://github.com/pbakaus/impeccable | tracked branch | n/a | git | see LICENSE in tree |
 | openai-codex | marketplace | plugins/marketplaces/openai-codex | https://github.com/openai/codex-plugin-cc | tracked branch | n/a | git | see LICENSE in tree |
 | claude-plugins-official | marketplace | plugins/marketplaces/claude-plugins-official | https://github.com/anthropics/claude-plugins-official | .gcs-sha | machine-managed | hash | see LICENSE in tree |
-| taste-skill | vendored | skills/design/vendor/taste-skill | https://github.com/Leonxlnx/taste-skill | e988add20dab0fa97d7a76781c48961c8184288e | 27a3138124617ec3b787d66586e0933cb166a4a12584a00911af522638eebb75 | hash | MIT |
+| taste-skill | vendored | skills/design/vendor/taste-skill | https://github.com/Leonxlnx/taste-skill | dfb6f9f9e93a39f673b1827c0889cc28326d1800 | 27a3138124617ec3b787d66586e0933cb166a4a12584a00911af522638eebb75 | hash | MIT |
 | awesome-design-md | vendored | skills/design/vendor/awesome-design-md | https://github.com/VoltAgent/awesome-design-md | 8147538b4226ae41e2487a9179e3bcc1f68e8554 | f72a1c759759ec19b9d89573a63abb04989859d803bd0a3c35ca5f8afcb579e5 | hash | MIT |
 | hallmark | vendored | skills/design/vendor/hallmark | https://github.com/Nutlope/hallmark | 13ac0ec7e148655948100b6396439e481361d690 | ecbaf8564893f3f92d2233a6941e4323064ed87e745176433ae815791f58fca4 | hash | MIT |
 | paper-shaders | reference | — | https://github.com/paper-design/shaders | 7002061d8389781a45e479584deeca0cf538474e | n/a | url-only | Apache-2.0 |
@@ -98,15 +98,19 @@ responsible for, an unexplained hash change is the finding.
 
 ## Rows that report drift on purpose
 
-`UPSTREAM MOVED` is a prompt to decide, not a defect. Three rows are expected to show it, and
-each decision is recorded so nobody re-litigates it from scratch. The reasoning for the vendored
-ones lives in their `SOURCE.md`, which is gitignored — so the decision is summarised here, where
-it is tracked.
+`UPSTREAM MOVED` is a prompt to decide, not a defect. Only one row is expected to show it now;
+the other two below were decided and are recorded so nobody re-litigates them from scratch. The
+reasoning for the vendored ones lives in their `SOURCE.md`, which is gitignored — so the decision
+is summarised here, where it is tracked.
 
-| Row | Reported | Decision, 2026-08-18 |
+**Diff before deciding.** The `taste-skill` row below is a worked example of getting this wrong:
+a release note was read, believed, and turned into a recorded decision without anyone comparing
+the actual files. `git diff <pin> <upstream>` costs one command and would have ended it.
+
+| Row | Reported | Decision |
 |---|---|---|
 | `claude-plugins-official` | every run | Expected forever. Claude Code refreshes that directory itself; see the two special cells above |
-| `taste-skill` | `e988add2` → `dfb6f9f9` | **Hold the pin.** Upstream's default is now v2, its own changelog calling it experimental, pre-release and still iterating. Two blockers: `TASTE_CORE.md` cites v1 section numbers that v2 renumbers, and this vendor dir is no longer upstream-verbatim (`redesign-skill.md` was dropped after salvage). Revisit at v2.0.0 stable, re-deriving `TASTE_CORE.md` in the same change. Worth harvesting separately: v2's hardened AI-tells list belongs in `docs/GUI_SLOP.md` on its own merits, no pin move needed |
+| `taste-skill` | was `e988add2` → `dfb6f9f9` | **Re-pinned to `dfb6f9f9`, 2026-08-19.** The row is now quiet. An earlier entry here held the pin on the grounds that upstream had moved to an experimental v2 rewrite that would break `TASTE_CORE.md`'s section numbering. That was wrong, and it was wrong because it reasoned from upstream's changelog instead of diffing: `git diff e988add2 dfb6f9f9` is three files — `README.md` plus two sponsor SVGs — and the vendored `taste-skill.md` is byte-identical to upstream's current `skills/taste-skill/SKILL.md` (87,253 bytes, sha256 `aa194351b246b8b4…`). The pin already contained v2; upstream's real v1 is the 21 KB `skills/taste-skill-v1/SKILL.md`, which this repo never vendored. Moving the pin changed no vendored file, so the content hash is unchanged |
 | `impeccable` | was 77 behind | **Pulled** to `f88b283`. Two point releases, bug fixes and tests, no local patches to lose |
 
 ## What is deliberately NOT in the table

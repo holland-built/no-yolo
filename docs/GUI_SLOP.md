@@ -2,8 +2,8 @@
 > Split out of `docs/ANTISLOP.md` on 2026-08-18. That file is imported into every session; this
 > one is not — it is read on demand, only when there is a screen involved. `docs/ANTISLOP.md`
 > keeps the writing tells and points here.
-> 42 GUI tells (12 default patterns + 7 template & framing + 8 marketing-page + 7 component + 8 media),
-> plus the mockup-only kill rules.
+> 65 GUI tells (12 default patterns + 7 template & framing + 8 marketing-page + 23 landing-page
+> + 7 component + 8 media), plus the mockup-only kill rules.
 > Every rule states the TELL — what makes the pattern suspicious — so a borderline case can be judged
 > instead of pattern-matched.
 
@@ -12,7 +12,7 @@
 ## GUI Slop
 > **This list is canonical.** `/design`, `/build`, `/health` and `/debate --ui` all read it — add new patterns HERE and nowhere else.
 > The mockup-only kill rules moved in from `UI_MOCKUPS.md` on 2026-08-05 and are now the `### Mockup-only kill rules` subsection below, so this file is the single home. `UI_MOCKUPS.md` keeps mockup *workflow* only — counts, paths, output format — and holds no tells. Do not copy this list into a skill.
-> For deep landing-page-specific rules (100+), read `skills/design/vendor/taste-skill/taste-skill.md` §9 on demand — deliberately not merged here (third-party, never edited). That folder is gitignored, so on a fresh clone it is absent; `skills/design/TASTE_CORE.md` is the tracked distillation that always works.
+> The 23 rules under `### Landing-page tells` were harvested from `taste-skill` §9 on 2026-08-19. Until then this line said they were "deliberately not merged (third-party, never edited)", which left the hardest anti-slop list in the setup reachable only on a machine that had vendored an 87 KB third-party file — `TASTE_CORE.md` never carried §9. Harvesting derives rules in this file's words rather than copying a body, so the never-edit rule still holds. The fuller upstream list stays worth opening for a landing page specifically: `skills/design/vendor/taste-skill/taste-skill.md` §9, gitignored, so absent on a fresh clone.
 
 - **Gradient hero banner** — purple→blue full-bleed top section as the default page header
 - **Uniform card grid** — rounded cards with drop shadows as the default layout for any list
@@ -46,6 +46,50 @@
 - **"How it works"** — numbered circle steps
 - **Four-column link footer**
 - **Full-bleed image banner** — dark overlay + white centered headline
+
+### Landing-page tells
+> Derived 2026-08-19 from `Leonxlnx/taste-skill` §9 (MIT), which came out of real LLM-generated
+> landing-page tests. Written in this file's own words, not copied: the vendored source is
+> gitignored and third-party bodies are never edited or committed. Upstream states most of these
+> as flat bans; every one below is restated as a TELL with the case where the pattern is right,
+> because a rule that cannot be argued with gets pattern-matched instead of judged.
+> Deliberately absent because they already exist above: three-equal-feature-cards, shadcn in its
+> default state, oversized H1s, numbered step labels, fake review counts, and serif misuse.
+
+**Fake product previews**
+- **Div-built product preview** — a dashboard, terminal, task list, or chat window assembled out of styled `<div>`s to fill a hero. Upstream calls this the single most common LLM-design tell. The tell is that the interface depicted does not exist: nothing in it can be clicked, and no screenshot of it could ever be taken. A real rendered component, a real screenshot, or an openly illustrative drawing are all fine
+- **Fabricated build stamps** — `v0.6.2-rc.1`, `last sync 4s ago · main`, a fake commit hash inside the fake preview. Sibling of **Fabricated trust chrome** above, which covers invented social proof; this one covers invented engineering detail. The tell is invented status detail added for texture. Real build or status information on a page that genuinely reports it is not this
+
+**Agency-portfolio costume**
+- **Ornamental section numbers** — `001 · Capabilities`, `00 / INDEX`, `002 · Featured commission` on sections that are not a sequence. The tell is enumeration standing in for naming: the number tells the reader nothing the heading did not, and there is no order to follow. Genuinely ordered content — steps taken in order, chapters, a ranked list — is numbered for a reason, and the existing **"How it works"** tell already covers stock numbered-step rows
+- **Vertical rotated text** — a label turned 90° down the side of a section. The tell is rotation chosen because it reads as "designed", on a page whose composition does not need it. An experimental or agency brief where the rotated element carries real composition is the exception, not the default
+- **Hero-bottom decoration strip** — a small mono-caps row across the bottom of the hero: `BRAND. MOTION. SPATIAL.`, `TYPE / FORM / MOTION`. The tell is a strip that neither navigates nor informs. A sticky bottom nav with real links, or a real status/cookie bar, is a different thing wearing the same shape
+- **Locale, time and weather strips** — `Lisbon 14:23 · 18°C` in the nav, "working with founders in Lisbon" in the hero. The tell is atmosphere formatted to look like data. Allowed when the brief is genuinely about place or timezone — a distributed studio, a travel brand, a physical venue. A plain contact address in the footer is not this
+- **Poetic section labels** — "Field notes", "From the field", "On our desks" heading a quotes or blog block. The tell is a label reaching for craftsman atmosphere while telling the reader less than a plain one would. A distinctive label is fine when it is comprehensible in place and backed by something real: an established brand voice, a recurring series that is actually called that, or a genuine content category
+- **Photo-credit caption as decoration** — `Field study no. 12 · Ines Caetano`, `Frame XII · 35mm` under a stock or placeholder image. The tell is credit for a photographer who does not exist, which is fabricated provenance, not styling. Real attribution for a real photo is correct and should stay
+- **Pills overlaid on images** — a `<span>` tag floating on a photo: `Brand · 02`, `PLATE · BRAND`. The tell is a label placed on the image for editorial texture rather than to say anything. A caption below the image works; so does a badge carrying real information, like a video duration or a live flag
+- **Crosshair and hairline grids as decoration** — thin rules and corner ticks drawn across the layout. The tell is lines that organise nothing: remove them and no relationship is lost. Rules that separate real columns or rows are structure, not decoration
+
+**Micro-typography tics**
+- **Middle-dot as the universal separator** — `foo · bar · baz · qux` repeated down the page. The tell is one separator doing every job, so nothing is grouped by anything else. One `·` in a metadata line is normal; a page that separates everything this way needs line breaks, hairlines, or columns instead
+- **Decorative status dots** — a small coloured dot before nav items, list rows, or badges. The tell is a dot where there is no state to report, not the number of them. Judge each one by whether it stands for a real state a reader needs to scan: a monitoring table, a service list, or a presence roster may legitimately carry one on every single row
+- **Scroll cues** — `Scroll`, `↓ scroll to explore`, an animated mouse wheel at the fold. The tell is labelling an affordance every reader already has. Genuinely non-obvious movement — horizontal scroll, a scroll-driven narrative — can be worth signalling
+- **`<br>`-split italicised headline** — `for thirty<br><em>years.</em>`. The tell is that both the break and the italic are decoration rather than emphasis; the headline reads the same without them. A break that fixes a genuinely bad line rag is typesetting
+- **Version label in the hero** — `V0.6`, `BETA`, `EARLY ACCESS`, `INVITE-ONLY PREVIEW` as the eyebrow. The tell is launch-status chrome on a page whose brief is not about launch status. When the brief *is* the launch or the preview, it is the headline, not a tell
+- **Micro-meta sentence under an eyebrow** — an extra explanatory line sitting between the eyebrow and the headline, usually explaining the section's own restraint. The tell is that the headline already said it. Eyebrow, headline, body is enough
+- **Floating corner paragraph** — a giant left-aligned section headline with a small explainer paragraph in the top-right corner, aligned to nothing. The tell is the non-alignment. Put the sub-text under the headline, or build a real two-column header where both sides line up
+
+**Lazy list and table structure**
+- **Hairline on every row** — `border-top` *and* `border-bottom` down every row of a long list or spec table. The tell is that boxing every row groups nothing, so a 10-row table reads as 10 unrelated things. Pick one border direction and use it sparsely, or reach for a component built for the content
+- **Progress bars standing in for a chart** — a filled track with a partial fill, used to compare values that are not progress toward anything. The tell is a component whose visual grammar promises completion being pointed at ratings, capacities, or scores. Bars are the correct encoding for quantitative comparison; the fix is usually to drop the track, or to keep it only where every bar shares one meaningful maximum. A real progress indicator for something genuinely running is what the component is for
+
+**Default visual reaches**
+- **Undifferentiated black ground** — `#000000` as the dark base with every surface, card, and border sitting flat on it. The tell is black arriving as the default and flattening the tonal steps the design needed, not the hex value itself. Black works when the design builds hierarchy over it — elevated greys, borders, imagery, type weight — and it is the right call outright for OLED power saving, high-contrast accessibility themes, and brands that genuinely are black
+- **Neon and outer glow** — glow used for emphasis or depth. The tell is light standing in for hierarchy that weight, colour, and spacing should carry. A genuinely neon brand, and a focus ring that has to be seen, are both legitimate
+- **Custom mouse cursor** — replacing the system cursor with a dot, ring, or trailing blob. The tell is a cursor changed for style, at a real cost in accessibility and frame rate. A cursor that conveys a mode in a tool — crosshair, eyedropper, grab — is doing a job
+
+**Em-dashes in interface text**
+- **Em-dash as UI decoration** — the tell is a dash doing decorative work rather than grammatical work: every label, eyebrow, and pill on a page hung off the same connector, or a `—` dropped into a slot with no room for the clause it implies. An em-dash that carries real meaning is fine in any slot, headline and label included — judge the job it is doing, never its presence or its count. **Deliberate departure from upstream:** taste-skill §9.G bans the character outright, everywhere, calling the ban binary and non-negotiable. This file does not adopt that. `docs/ANTISLOP.md` loads in every session and rules the opposite way for prose, saying explicitly not to flag on a raw count; two tracked rules contradicting each other would be settled by whichever is more quotable rather than by which is right. So the scope is narrowed to rendered interface text and the judgement is kept. Prose stays under ANTISLOP, unchanged
 
 ### Component tells
 - **Avatar overlap stack** — "+3 users" member-count pile
