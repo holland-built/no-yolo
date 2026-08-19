@@ -18,7 +18,7 @@ original bug wearing a different hat.
 
 | Name | Kind | Path | Upstream | Pinned | Content hash | How checked | Licence |
 |---|---|---|---|---|---|---|---|
-| design-plugins | marketplace | plugins/marketplaces/design-plugins | https://github.com/0xdesign/design-plugin | tracked branch | n/a | git | unknown — no LICENSE file |
+| design-plugins | marketplace | plugins/marketplaces/design-plugins | https://github.com/0xdesign/design-plugin | tracked branch | n/a | git | MIT — stated in README, no LICENSE file |
 | impeccable | marketplace | plugins/marketplaces/impeccable | https://github.com/pbakaus/impeccable | tracked branch | n/a | git | see LICENSE in tree |
 | openai-codex | marketplace | plugins/marketplaces/openai-codex | https://github.com/openai/codex-plugin-cc | tracked branch | n/a | git | see LICENSE in tree |
 | claude-plugins-official | marketplace | plugins/marketplaces/claude-plugins-official | https://github.com/anthropics/claude-plugins-official | .gcs-sha | machine-managed | hash | see LICENSE in tree |
