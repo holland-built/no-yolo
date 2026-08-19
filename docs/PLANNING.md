@@ -1,6 +1,6 @@
 # Planning Discipline
 
-Plans live in `<project-root>/brainstorms/` — never here. This file defines what a good plan contains.
+Plans live in `<project-root>/brainstorms/`, never here. This file defines what a good plan contains.
 
 ## When to Plan
 
@@ -9,7 +9,7 @@ Plans live in `<project-root>/brainstorms/` — never here. This file defines wh
 - Architecture decisions
 - Anything you'd otherwise guess at
 
-Trigger: user says "plan X" or task is non-trivial → auto-spawn a Fable planner agent before any coding — see `SUBAGENTS.md` for the Fable-plans/Opus-codes split.
+Trigger: user says "plan X" or task is non-trivial → auto-spawn a Fable planner agent before any coding. See `SUBAGENTS.md` for the Fable-plans/Opus-codes split.
 
 ## Good Plan Structure
 
@@ -17,10 +17,10 @@ Every plan must contain (written by the Fable planner, per `SUBAGENTS.md`; this 
 
 | Section | What it says |
 |---|---|
-| **Root cause / goal** | `X breaks because Y = Z (file:line)` — grounded in evidence, never in user's words |
-| **Done looks like** | Something you can actually check — a number, a test result, a screenshot. Not "it should work." |
+| **Root cause / goal** | `X breaks because Y = Z (file:line)`, grounded in evidence, never in user's words |
+| **Done looks like** | Something you can actually check: a number, a test result, a screenshot. Not "it should work." |
 | **Target file list** | Every file the change will touch |
-| **What this change could break** | Explicit "do NOT touch" list — the files and functions that must stay untouched |
+| **What this change could break** | Explicit "do NOT touch" list: the files and functions that must stay untouched |
 | **What this could break** | Name existing tests or behaviors that might be affected before writing a line of code |
 | **Ordered steps** | Start with the smallest step that can be verified on its own, each independently verifiable |
 

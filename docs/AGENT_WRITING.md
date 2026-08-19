@@ -2,7 +2,7 @@
 
 > Rules for the text Claude reads: skill files, `CLAUDE.md`, the docs in this folder,
 > subagent briefs. `ANTISLOP.md` is the twin of this file and covers prose a human reads.
-> Where the two touch — fake precision, hype adjectives, code slop — that file is canonical and
+> Where the two touch (fake precision, hype adjectives, code slop), that file is canonical and
 > this one stays quiet; agent-facing text is still text, so its writing tells still apply.
 > Every rule below says what goes wrong when it is broken, so a borderline line can be judged
 > instead of pattern-matched.
@@ -13,7 +13,7 @@ A prohibition drags the banned behaviour into context, where it becomes more ava
 than less. "Never write a comment that restates the line below it" makes comments the subject
 of the paragraph. Write the behaviour you want in its place: comment the why.
 
-Some rules genuinely only exist as prohibitions — a hard stop with no positive twin. Keep the
+Some rules genuinely only exist as prohibitions: a hard stop with no positive twin. Keep the
 ban, and name the replacement behaviour in the same sentence, so the reader leaves the line
 holding something to do.
 
@@ -59,8 +59,8 @@ conditional form got opened almost never.
 
 ## Completion criteria need clarity and demand
 
-Two separate failures live here. The first is a vague bound, which causes stopping early —
-later steps are visible and pull attention toward being done, so anything short of an
+Two separate failures live here. The first is a vague bound, which causes stopping early.
+Later steps are visible and pull attention toward being done, so anything short of an
 unambiguous finish line gets read as finished.
 
 The second is a criterion that is perfectly clear and costs nothing. "Produce a list of

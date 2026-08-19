@@ -1,13 +1,13 @@
 # Memory System
 
-Learned preferences live as small fact files that compile into one generated file Claude reads at the start of every session — so preferences survive after a conversation ends.
+Learned preferences live as small fact files that compile into one generated file Claude reads at the start of every session, so preferences survive after a conversation ends.
 
 ## The loop
 
-1. **Source of truth:** `memory/facts/<id>.md` — one fact per file.
+1. **Source of truth:** `memory/facts/<id>.md`, one fact per file.
 2. **Compile:** run `/memory-compile` in Claude Code → regenerates `memory/CLAUDE.generated.md`.
-3. **Load:** `CLAUDE.md` imports `@memory/CLAUDE.generated.md` — loads every session automatically.
-4. **Never hand-edit** `CLAUDE.generated.md` — it is overwritten on every compile.
+3. **Load:** `CLAUDE.md` imports `@memory/CLAUDE.generated.md`, which loads every session automatically.
+4. **Never hand-edit** `CLAUDE.generated.md`. It is overwritten on every compile.
 5. **Commit** both the fact file and the regenerated output after any change.
 
 ## The 5 memory types
@@ -22,9 +22,9 @@ Learned preferences live as small fact files that compile into one generated fil
 
 ## 3 ways to add memories
 
-1. **Claude auto-saves** — writes facts to `memory/facts/` when it learns something worth keeping during a session.
-2. **`/remember-that`** — explicit control: add, delete, audit, or compile memories by hand.
-3. **`/memory-compile`** — rebuilds `CLAUDE.generated.md` from all fact files. Run after any manual edit.
+1. **Claude auto-saves:** writes facts to `memory/facts/` when it learns something worth keeping during a session.
+2. **`/remember-that`:** explicit control to add, delete, audit, or compile memories by hand.
+3. **`/memory-compile`:** rebuilds `CLAUDE.generated.md` from all fact files. Run after any manual edit.
 
 ## Fact file format
 
@@ -46,9 +46,9 @@ Body: the preference or rule. For feedback/project types, include **Why:** and *
 
 ## What NOT to save
 
-- Code patterns, architecture, file paths — derivable from the codebase
-- Git history — use `git log` / `git blame`
-- Debugging solutions — the fix is in the code; the commit message has context
+- Code patterns, architecture, file paths: derivable from the codebase
+- Git history: use `git log` / `git blame`
+- Debugging solutions: the fix is in the code; the commit message has context
 - Anything already in a `CLAUDE.md` file
 - Ephemeral task details or current conversation context
 

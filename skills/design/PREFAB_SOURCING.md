@@ -1,4 +1,4 @@
-# Prefab sourcing — the component-library gate for /design and /build
+# Prefab sourcing: the component-library gate for /design and /build
 
 This file is the shared detection + gate logic both `/design` (`skills/design/SKILL.md`) and
 `/build` (`skills/build/SKILL.md`) invoke before any UI is built. It inverts the old
@@ -7,18 +7,18 @@ library the project already has. Astryx is the greenfield fallback, not a univer
 
 ## Default rule
 
-**Prefab-first (DEFAULT).** Every interactive element — button, input, switch, checkbox, radio,
+**Prefab-first (DEFAULT).** Every interactive element, button, input, switch, checkbox, radio,
 select/dropdown, slider, tabs, tooltip, popover, dialog/modal, toast, menu, date picker,
-pagination, accordion/collapsible, table, avatar, badge — is sourced from the project's prefab
+pagination, accordion/collapsible, table, avatar, badge) is sourced from the project's prefab
 component library. Hand-building one of these is the flagged EXCEPTION, never the default.
-"Quicker to hand-write," "it's just a simple button," or silence are NOT valid reasons — an
+"Quicker to hand-write," "it's just a simple button," or silence are NOT valid reasons:
 unflagged hand-built primitive is a gate failure.
 
 ## Auto-detect (deterministic, first match wins)
 
 Read the project's `package.json` `dependencies` + `devDependencies` (also check `frontend/`,
 `web/`, `app/` subdirs for a nested `package.json`) plus marker files. Walk this precedence
-table top to bottom — first match wins:
+table top to bottom, first match wins:
 
 | # | Signal | PREFAB |
 |---|---|---|
@@ -33,9 +33,9 @@ table top to bottom — first match wins:
 | 9 | `react-aria-components` | React Aria |
 | 10 | `daisyui` | DaisyUI |
 | 11 | `@headlessui/react` | Headless UI |
-| — | any other recognizable component library in deps | that lib |
+|, | any other recognizable component library in deps | that lib |
 
-**Tiebreak** when 2+ signals match: grep `src/**` imports — whichever lib the sibling code
+**Tiebreak** when 2+ signals match: grep `src/**` imports, whichever lib the sibling code
 actually imports wins. State the evidence in the sourcing table.
 
 **Outcomes:**
@@ -65,17 +65,17 @@ Prefab library: <lib> — evidence: <what was detected>
 Rules:
 - One row per interactive element in the surface(s) being built.
 - `Source` ∈ `{<PREFAB lib>, hand-build}`.
-- A hand-build row for a primitive the detected library already provides = **gate FAILURE** —
+- A hand-build row for a primitive the detected library already provides = **gate FAILURE**:
   fix the row (swap in the library component), don't build it by hand.
-- Closed list of valid hand-build reasons — no others accepted:
-  1. **"not in `<lib>`"** — verified by a real lookup (shadcn registry, `docs.mjs <Name>` for
-     Astryx, or the library's own docs) — compose from the library's primitives where possible.
-  2. **"no prefab library"** — outcome (c) only.
-  3. **"library component verified insufficient: `<named missing behavior>`"** — only after
+- Closed list of valid hand-build reasons, no others accepted:
+  1. **"not in `<lib>`":** verified by a real lookup (shadcn registry, `docs.mjs <Name>` for
+     Astryx, or the library's own docs). Compose from the library's primitives where possible.
+  2. **"no prefab library":** outcome (c) only.
+  3. **"library component verified insufficient: `<named missing behavior>`":** only after
      checking the library's real API, not a guess.
 
 ## Never-mix rule (strengthened)
 
 The table's `Source` column names **at most one** prefab library per run. Never install a
-second library (including Astryx) into a project that already has one — mismatched twin
+second library (including Astryx) into a project that already has one, mismatched twin
 systems look broken. Always theme sourced components to the project's own tokens.

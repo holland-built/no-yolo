@@ -1,8 +1,8 @@
 ---
 name: checkup
-description: Use this skill when the user types /checkup, says 'checkup', 'is my setup healthy', 'check my skills', 'list my skills', 'what hooks do I have', 'am I out of date', 'check for updates', or 'clean up my docs'. One read-only wellness pass over ~/.claude — inventory of what you actually have, doc duplication and orphans, skill trigger quality, drift against GitHub and against borrowed third-party code, what an outside skill library does better than yours, prose slop, memory lint. Reports in plain English and stops; you pick what to fix.
+description: Use this skill when the user types /checkup, says 'checkup', 'is my setup healthy', 'check my skills', 'list my skills', 'what hooks do I have', 'am I out of date', 'check for updates', or 'clean up my docs'. One read-only wellness pass over ~/.claude: an inventory of what you actually have, doc duplication and orphans, skill trigger quality, drift against GitHub and against borrowed third-party code, what an outside skill library does better than yours, prose slop, memory lint. Reports in plain English and stops; you pick what to fix.
 user-invocable: true
-argument-hint: "(no arguments — one full read-only pass)"
+argument-hint: "(no arguments, one full read-only pass)"
 allowed-tools:
   - Bash
   - Read
@@ -14,17 +14,17 @@ allowed-tools:
 ## What this is
 
 The one maintenance command for your own setup. It reads, it reports, it stops. The only
-thing it ever writes is nothing — every fix goes through the gate at the end.
+thing it ever writes is nothing, every fix goes through the gate at the end.
 
 It replaced five separate skills (`md-check`, `skill-audit`, `update`, `my-skills`, `my-md`),
 each of which was one of these steps. If you find yourself wanting a sixth, add a step here
-rather than a new skill — that sprawl is what this exists to prevent.
+rather than a new skill. That sprawl is what this exists to prevent.
 
-## Step 0 — Preflight (before any check)
+## Step 0: Preflight (before any check)
 
 - **Repo guard.** Confirm you're inside the `~/.claude` repo via `git rev-parse
-  --show-toplevel`. If not, output one line — "Not in the ~/.claude repo — /checkup only runs
-  here" — and stop.
+  --show-toplevel`. If not, output one line, "Not in the ~/.claude repo, /checkup only runs
+  here", and stop.
 - **Dirty worktree.** Run `git status --porcelain` up front, capture the pre-existing dirty
   set, and report it in the summary. Never stage, commit or bury unrelated edits.
 - **Graceful degrade.** A missing dependency or no network SKIPs that check with a noted
@@ -33,7 +33,7 @@ rather than a new skill — that sprawl is what this exists to prevent.
 - **Read-only.** This skill writes nothing. A check that wants to write is a finding, not an
   action.
 
-## Step 1 — Plumbing
+## Step 1: Plumbing
 
 ```bash
 bash verify.sh
@@ -41,17 +41,17 @@ bash verify.sh
 Parse the PASS/FAIL rows. Every FAIL is a finding.
 
 `verify.sh` sits at the repo root, which Step 0 has already confirmed is the working directory.
-Read that path as `~/.claude/verify.sh`, not as a file beside this skill — on 2026-08-05 a pass
+Read that path as `~/.claude/verify.sh`, not as a file beside this skill, on 2026-08-05 a pass
 over this repo looked for it in `skills/checkup/`, found nothing, and reported the whole step
 dead while all sixteen of its checks were passing. Confirm where a relative path resolves before
 you call it missing.
 
-## Step 1.5 — Prove the guards bite
+## Step 1.5: Prove the guards bite
 
 A guard nobody has watched fail is not a guard, it is a belief. Step 1 proves a hook's file
 is still on disk. This step proves the hook still refuses something.
 
-Real suites already live in `hooks/tests/` — one per hook, each feeding it a deliberately bad
+Real suites already live in `hooks/tests/`, one per hook, each feeding it a deliberately bad
 event on stdin and asserting it refuses. Run those. They are also what `verify.sh` checks 1
 and 1b run, so this step reuses the repo's own proof rather than starting a second one.
 
@@ -76,32 +76,32 @@ done
 
 Report every printed line as a row: `| Hook | Result | Evidence |`. Treat a hook that
 produced no row as a FAIL and chase it down. **Count the assertions, and treat the exit code
-as only half the answer** — a suite that runs and asserts nothing exits 0 and reads exactly
+as only half the answer**, a suite that runs and asserts nothing exits 0 and reads exactly
 like a suite that proved something. `verify.sh` check 1b has that shape today: with zero
 shell suites on disk it records PASS.
 
 Three rows come from something that is not a hook: the route-map skill's driver
 (`route-check`, `route-check-units`) and this skill's own borrowed-code checker
-(`borrowed-check`). Keep them — they run here because they share the folder, which is also what
-`verify.sh` checks 1 and 1b glob — and label them as such so the count is honest.
+(`borrowed-check`). Keep them. They run here because they share the folder, which is also what
+`verify.sh` checks 1 and 1b glob, and label them as such so the count is honest.
 
 What each hook can be asked to prove, and what it cannot:
 
 | Hook | Kind | What a row means |
 |---|---|---|
-| `lockstep-guard.js` | blocking | Exits 2 with a message on stderr. **It only blocks while lockstep is engaged** — with no `.lockstep-active` flag it exits 0, and that is correct behaviour rather than a miss. Its suite drives both states, so PASS covers both |
+| `lockstep-guard.js` | blocking | Exits 2 with a message on stderr. **It only blocks while lockstep is engaged**, with no `.lockstep-active` flag it exits 0, and that is correct behaviour rather than a miss. Its suite drives both states, so PASS covers both |
 | `config-protection.js` | blocking | Exits 2 when an *existing* checker config is edited. Creating one for the first time passes by design |
 | `slop-guard.js` | blocking | Refuses a different way: exit code 0 with `{"decision":"block"}` on **stdout**. Judging this one by exit code alone would score every block as a pass |
 | `secret-scan.sh` | blocking | The scanner `pre-commit` calls for credentials and infra values |
 | `node-shim.sh` | launcher | Not a guard, but it is what starts them, and it fails closed when node is missing |
-| `format-typecheck.js` | SKIPPED as a guard | Warns and always exits 0 on purpose — it runs after the reply is already written. Its suite still runs above |
+| `format-typecheck.js` | SKIPPED as a guard | Warns and always exits 0 on purpose. It runs after the reply is already written. Its suite still runs above |
 | `mockup-autoopen.js`, `eli5-activate.js`, `literal-mode-tracker.js` | SKIPPED | They open, activate and track. There is nothing here for them to refuse |
 | `statusline.sh`, `literal-statusline.sh` | SKIPPED | They draw the status line |
-| `pre-commit` | blocking | Exits 1 and prints `❌ BLOCKED:` naming the rule that fired. It judges a real staged index, so its suite builds a throwaway git repo in a mktemp sandbox and installs the tracked hook there — this repo's index is never touched. Proved in both directions: it refuses a staged credential value, a staged infra value, a blocked personal path and a scanner it cannot run, and it allows a clean file. Planted values come from the pinned probe fixture, never written inline |
+| `pre-commit` | blocking | Exits 1 and prints `❌ BLOCKED:` naming the rule that fired. It judges a real staged index, so its suite builds a throwaway git repo in a mktemp sandbox and installs the tracked hook there, so this repo's index is never touched. Proved in both directions: it refuses a staged credential value, a staged infra value, a blocked personal path and a scanner it cannot run, and it allows a clean file. Planted values come from the pinned probe fixture, never written inline |
 
-## Step 2 — Inventory (what you actually have)
+## Step 2: Inventory (what you actually have)
 
-Derive it live from the filesystem. Never read a stored catalogue — a catalogue that has to
+Derive it live from the filesystem. Never read a stored catalogue, a catalogue that has to
 be kept in sync is the thing this setup deleted.
 
 ```bash
@@ -117,10 +117,10 @@ echo "=== docs ==="; wc -l docs/*.md *.md 2>/dev/null | sort -rn | head -30
 ```
 
 Report as one table: `| Kind | Name | Own or borrowed | Note |`. Borrowed items are managed by
-the `skills` installer (`~/.agents/.skill-lock.json`) — deleting the shortcut does nothing,
+the `skills` installer (`~/.agents/.skill-lock.json`), deleting the shortcut does nothing,
 so never recommend that. Recommend the installer instead.
 
-## Step 3 — Doc hygiene
+## Step 3: Doc hygiene
 
 **Duplicate rules.** For every `.md` under `docs/` and the repo root, extract rule-shaped
 lines (imperative sentences, bullet rules, table rows stating a constraint). Report any rule
@@ -150,7 +150,7 @@ done | sort -u
 ```
 
 The dangling sweep is deliberately built this way; the earlier version missed a real outage.
-It only looked at `CLAUDE.md` and `skills/*/SKILL.md`, and only for absent `docs/*.md` — so it
+It only looked at `CLAUDE.md` and `skills/*/SKILL.md`, and only for absent `docs/*.md`, so it
 never read `SHIP.md`, and could not see references to deleted **skills, hooks or scripts**. On
 2026-08-05 that blind spot had let `SHIP.md` accumulate five dead references, two inside HARD
 BLOCK steps, which would have stopped every release. Three details carry their weight:
@@ -158,18 +158,18 @@ BLOCK steps, which would have stopped every release. Three details carry their w
 | Detail | Why |
 |---|---|
 | `git ls-files`, not a directory walk | only tracked files can break a release for someone else, and walking drags in gitignored vendor folders nobody edits here |
-| backtick-quoted paths only | this repo cites real files in backticks; bare text floods on substrings — the tail of `ingest-docs/SKILL.md` looks like a docs path |
+| backtick-quoted paths only | this repo cites real files in backticks; bare text floods on substrings, the tail of `ingest-docs/SKILL.md` looks like a docs path |
 | marker filtered per line, before extraction | `grep -o` prints only the match and discards its line, so filtering afterwards can never see the marker |
 
 Prose that names a deleted file on purpose carries `<!-- gone-on-purpose -->` on that line. That
-marker is for history and rationale only — never to silence a reference something still follows.
+marker is for history and rationale only. Never to silence a reference something still follows.
 
 **Drift.** A skill's `description` frontmatter is its contract. Report any skill whose
 description names a mode, flag or file that its own body no longer contains.
 
-## Step 4 — Skill structure
+## Step 4: Skill structure
 
-For each **own** skill (skip borrowed — you can't edit those):
+For each **own** skill (skip borrowed ones, which you can't edit):
 
 | Dimension | The question | Flag when |
 |---|---|---|
@@ -178,7 +178,7 @@ For each **own** skill (skip borrowed — you can't edit those):
 | Verifier | Does it check its own output before claiming done? | It produces something and asserts nothing |
 | Dead reference | Does it point at a file, skill or agent that exists? | Any cited path, `Skill tool` name or `subagent_type` missing |
 
-Dead references are the highest-value check here — a skill quietly pointing at something you
+Dead references are the highest-value check here, a skill quietly pointing at something you
 deleted keeps working right up until the moment it matters.
 
 ```bash
@@ -191,13 +191,13 @@ done
 ```
 
 Two details keep this honest; without them it reported three dead paths on 2026-08-06 and all
-three were wrong. `json` has to be in the alternation *and* followed by `\b` — with neither,
+three were wrong. `json` has to be in the alternation *and* followed by `\b`, with neither,
 `~/.claude/settings.json` matches as a phantom `.js` path, and a genuinely missing
 `.json` file can never be reported at all. And the `gone-on-purpose` marker is filtered per line
 before extraction, for the reason Step 3 gives: `grep -o` discards the line it matched, so a
 filter placed after it never sees the marker.
 
-## Step 5 — Drift against the outside world
+## Step 5: Drift against the outside world
 
 **Behind or ahead of GitHub:**
 ```bash
@@ -214,13 +214,13 @@ automatic push.
 python3 skills/checkup/scripts/borrowed_check.py
 ```
 
-It prints a finished table — `| Source | Method | Local state | Upstream state |` — with one
+It prints a finished table (`| Source | Method | Local state | Upstream state |`) with one
 row per source registered in `docs/BORROWED.md`, plus a row for anything found on disk under a
 declared root that nobody registered. Paste the rows into the report as they come.
 
 `docs/BORROWED.md` is the manifest, and registering a source there is what makes it watched.
 When a later change vendors something, deletes something, or adds a reference, that change
-updates the manifest in the same commit — otherwise the check either goes quiet about real code
+updates the manifest in the same commit, otherwise the check either goes quiet about real code
 or nags forever about code that is gone.
 
 Three states are findings, not noise:
@@ -228,7 +228,7 @@ Three states are findings, not noise:
 | Row says | What it means |
 |---|---|
 | `UNREGISTERED` | Borrowed code on disk that nothing is watching. The highest-value row in the table |
-| `MISSING` | The manifest believes in a directory that is not there — a stale entry, or a broken install |
+| `MISSING` | The manifest believes in a directory that is not there, a stale entry, or a broken install |
 | `CANNOT CHECK — <reason>` | The check genuinely could not run. Report the reason verbatim; never round it up to "fine" |
 
 **Why this is a script and not four lines of inline bash like everything else here.** The four
@@ -238,14 +238,14 @@ only `plugins/marketplaces/`, so the 144K vendored `taste-skill/` was never look
 skip read as healthy; `git rev-list --count HEAD..@{u}` printed empty with no tracking branch,
 rendering `<sha>  behind` with a blank where the number goes; and no git-based method could ever
 work on a directory that was never a git checkout. Logic with that many failure modes has to be
-provable, and `hooks/tests/borrowed-check.test.js` drives each one against a throwaway fixture —
+provable, and `hooks/tests/borrowed-check.test.js` drives each one against a throwaway fixture:
 including watching a directory with no upstream say so out loud. Uniformity with the rest of this
 file is exactly how those four bugs survived.
 
 **Borrowed skills.** Read `~/.agents/.skill-lock.json` and report anything installed but no
-longer read by any surviving skill — a candidate for `npx skills` removal, your call.
+longer read by any surviving skill, a candidate for `npx skills` removal, your call.
 
-**Ghost entries — on the list, no files.** These are the dangerous ones.
+**Ghost entries, on the list, no files.** These are the dangerous ones.
 
 ```bash
 python3 - <<'PY'
@@ -266,7 +266,7 @@ reads as harmless and is not: `npx skills update` treats "listed, files missing"
 date**, so an update downloads the package and links it into `skills/`, where it loads. A
 routine update is therefore an install.
 
-Report every ghost as **rot to delete**, and recommend `npx skills remove <names>` — never an
+Report every ghost as **rot to delete**, and recommend `npx skills remove <names>`. Never an
 update, and never an install. Say the count in the summary even when it is large; a number
 this size is the finding.
 
@@ -275,17 +275,17 @@ scope, finds nothing, and reports "no matching skills" for entries that plainly 
 
 The whole shape of this check comes from one afternoon: on 2026-08-06, `npx skills update`
 was run here to refresh borrowed code. Nine ghost packages were downloaded and switched on
-without being asked for, and four `obra/superpowers` ghosts — a library removed weeks earlier
-— were one update away from returning. Nothing was corrupt. The list was simply believed.
+without being asked for, and four `obra/superpowers` ghosts, a library removed weeks earlier
+were one update away from returning. Nothing was corrupt. The list was simply believed.
 
-## Step 5.5 — Learn from the outside
+## Step 5.5: Learn from the outside
 
 Step 5 asks whether borrowed code has moved. This asks a different question: **what does
 someone else's skill library do better than mine?** The library is
 [`mattpocock/skills`](https://github.com/mattpocock/skills) (public, MIT).
 
 **It is deliberately not installed, and staying that way is the decision.** Read it, borrow
-ideas from it, leave it uninstalled — this step recommends no installer command.
+ideas from it, leave it uninstalled. This step recommends no installer command.
 
 Already harvested from the full comparison run on 2026-08-06: `handoff`, prove-the-guards-bite
 (Step 1.5 above), `docs/AGENT_WRITING.md`, and the plain-language rules now in `/eli5`. Treat
@@ -301,11 +301,11 @@ if [ "$n" -gt 0 ]; then echo "| outside library | OK | $n skills found |"
 else echo "| outside library | FAIL | could not reach the repo — 0 skills read |"; fi
 ```
 
-Quote the URL — an unquoted `?` stops zsh before `gh` runs. Keep the `grep '/SKILL\.md$'`
+Quote the URL, an unquoted `?` stops zsh before `gh` runs. Keep the `grep '/SKILL\.md$'`
 filter and count the surviving lines: **on failure `gh api` prints its error JSON to stdout,
 not stderr**, so a plain "is the variable empty" test reads a 404 body as a full result. When
 the count is zero, print that FAIL row. Reaching the network and finding nothing is a finding,
-never silence — Step 1.5 exists because a check that printed nothing was read as passing.
+never silence, Step 1.5 exists because a check that printed nothing was read as passing.
 
 **2. Read each one's `name` and `description`, and nothing more.**
 
@@ -318,7 +318,7 @@ done
 
 Frontmatter answers the question; whole bodies cost a lot and add little. A full pass reads
 every skill on the list. If you ever do stop short, print the number you skipped in the output
-— a silent cap reads as full coverage.
+because a silent cap reads as full coverage.
 
 **3. Derive my own skills live.** Own skills only; a symlinked folder is borrowed, so skip it.
 Derive this every time rather than reading a stored catalogue.
@@ -336,14 +336,14 @@ done
 
 | Rule | What it means |
 |---|---|
-| Name the mechanism | "He has X and you don't" teaches nothing. Say what his skill actually *does* differently — the step it takes, the gate it holds, the file it writes |
+| Name the mechanism | "He has X and you don't" teaches nothing. Say what his skill actually *does* differently: the step it takes, the gate it holds, the file it writes |
 | Mark the gaps | Where nothing of mine is close, put `no equivalent` in column two. Those rows are the point of the step |
 | Drop the empties | Where his adds nothing, leave the row out and say how many rows you dropped |
 
 **5. Close with this.** This step installs nothing and changes nothing. The owner picks what
 is worth acting on at Step 10.
 
-## Step 5.55 — Has a second design door appeared?
+## Step 5.55: Has a second design door appeared?
 
 `docs/DESIGN_SURFACES.md` records the decision that `/design` is the entry point for design
 work and everything else is reference material it reads. That decision decays in silence: an
@@ -354,24 +354,24 @@ design skills accumulated here that way, and not one of them was ever deliberate
 python3 skills/checkup/scripts/design_doors.py
 ```
 
-Two findings, and everything healthy is silent — a check that prints twenty green rows buries
+Two findings, and everything healthy is silent, a check that prints twenty green rows buries
 the one row that matters.
 
 | Row says | What it means |
 |---|---|
-| `RIVAL REAPPEARED` | The roster says this is reference material, but it is model-invocable again — usually `npx skills` reinstalling over the local patch |
+| `RIVAL REAPPEARED` | The roster says this is reference material, but it is model-invocable again, usually `npx skills` reinstalling over the local patch |
 | `UNCLASSIFIED` | Something invocable that touches design, which nobody has ruled on. Add a verdict to the roster; it then goes quiet forever |
 | `CANNOT CHECK` | A route that could not be enumerated. Never counted as zero rivals |
 
 **Never classify a surface yourself in this step.** The verdict is the owner's judgement,
 recorded once in the roster. The first version of this check decided by keyword instead and
-reported nine rivals, every one of them wrong — `eli5`, `xcheck`, `build` and `debate` all
+reported nine rivals, every one of them wrong, `eli5`, `xcheck`, `build` and `debate` all
 discuss interfaces without being one. The machine's only job is noticing what is new and what
 changed underneath the roster.
 
-## Step 5.6 — What every session pays before it starts
+## Step 5.6: What every session pays before it starts
 
-`CLAUDE.md`'s `@import` lines load unconditionally — on a backend task as much as a design one.
+`CLAUDE.md`'s `@import` lines load unconditionally, on a backend task as much as a design one.
 Nothing measured that until 2026-08-18, when the screen-design half of the slop list turned out
 to be 10,120 bytes that most sessions never consult.
 
@@ -383,21 +383,21 @@ Paste the table it prints. Two things earn a finding:
 
 | Row | Finding |
 |---|---|
-| `BROKEN IMPORT` | An `@import` naming a file that is not on disk. It loads nothing and says nothing, so the rules inside it are simply absent — and the session looks normal |
+| `BROKEN IMPORT` | An `@import` naming a file that is not on disk. It loads nothing and says nothing, so the rules inside it are simply absent, and the session looks normal |
 | A large file whose subject is conditional | Bytes that only matter sometimes, being paid always. The fix is a pointer in the conditional read list, not a smaller file |
 
 **There is no pass/fail threshold and adding one would be a finding of its own.** Report the
 number and the breakdown; the owner judges. An invented ceiling is the unmeasured number this
 setup's first rule bans.
 
-## Step 6 — Prose slop
+## Step 6: Prose slop
 
-Read `~/.claude/docs/ANTISLOP.md`, then check the repo's own prose against the writing tells —
+Read `~/.claude/docs/ANTISLOP.md`, then check the repo's own prose against the writing tells:
 `README.md`, `INSTALL.md`, and every file in `docs/`. Diagnosis only.
 
 This matters more here than in code: creative user-facing prose is where slop actually ships.
 
-## Step 7 — Memory lint
+## Step 7: Memory lint
 
 ```bash
 python3 memory/bin/memory_compile.py 2>&1 | tail -20
@@ -405,16 +405,16 @@ python3 memory/bin/memory_compile.py 2>&1 | tail -20
 Read the lint output; record findings. Flag any fact file with no `type:`, a duplicate of
 another fact, or a `[[link]]` pointing at a fact that doesn't exist.
 
-## Step 8 — Learnings staleness
+## Step 8: Learnings staleness
 
 Check whether `learnings.md` has a section for the current model ID. Stale → surface a finding
-recommending `/better-prompt --refresh`. **Never auto-run it** — it fetches the web and
+recommending `/better-prompt --refresh`. **Never auto-run it**. It fetches the web and
 rewrites the file. Opt-in only.
 
-## Step 8.5 — Outside grade (Codex)
+## Step 8.5: Outside grade (Codex)
 
 Every step above is this setup grading itself. This one hands the repo to a second model that
-has never seen it. Checkup is read-only, so nothing is written for Codex to read — it reads the
+has never seen it. Checkup is read-only, so nothing is written for Codex to read. It reads the
 repo directly in a read-only sandbox, from the working directory Step 0's repo guard has already
 confirmed. A run typically takes 2–4 minutes; the timeout below caps it at 8, which leaves the
 harness its own headroom above the runner's wall clock.
@@ -424,7 +424,7 @@ bash ~/.claude/skills/xcheck/scripts/codex-run.sh -m gpt-5.6-sol -s read-only -t
   "You are inside ~/.claude, a Claude Code configuration repository (your working directory; you are read-only): global rules in CLAUDE.md and docs/, skills in skills/*/SKILL.md, hooks in hooks/. Grade it as an outside reviewer who has never seen it. Look for: rules that contradict each other, skill descriptions that would misfire or never fire, and always-loaded text that earns nothing. First line: GRADE <A-F>. Then one line per finding, at most 8: FINDING <n> | <file:line> | <one-sentence issue>. Order them so your LAST finding line is the one change you would make first. Every finding must cite a real file and line you read. A grade below A requires at least one finding; a clean pass returns exactly GRADE A and no finding lines. No preamble."
 ```
 
-**Read the answer, not the transcript.** The runner returns codex's whole session — a
+**Read the answer, not the transcript.** The runner returns codex's whole session: a
 `Reading additional input from stdin...` banner, then the reasoning, then the final message,
 which codex prints TWICE (once inline, once as the tail block). Parse the LAST block only.
 Counting matches across the raw output double-counts every line.
@@ -432,29 +432,29 @@ Counting matches across the raw output double-counts every line.
 **Adjudicate every finding.** Open the `file:line` it cites and read it. A finding whose
 citation holds joins the Step 9 summary tagged `[codex]`; a finding whose citation does not hold
 gets a one-line dissent and does not enter the summary. Print the letter grade labelled as
-advisory — it is one outsider's read of a repo it met a minute ago, and Claude's own findings
+advisory. It is one outsider's read of a repo it met a minute ago, and Claude's own findings
 remain the report.
 
 **When it doesn't run.** Codex absent is already governed by Step 0's graceful degrade: SKIP
-with the reason, disclosed in Step 9. Installed but failing is the case that hides — a non-zero
+with the reason, disclosed in Step 9. Installed but failing is the case that hides, a non-zero
 exit, a timeout (exit 124), or a final block whose first line does not match `GRADE <A-F>` earns
 its own Step 9 row reading `Codex grade DID NOT RUN — <reason>`. A gate that could not run is a
 flag, never a pass.
 
 This step reads the repo and writes nothing, so Step 0's read-only contract still holds.
 
-## Step 9 — One plain summary, then STOP
+## Step 9: One plain summary, then STOP
 
 Plain English, table-shaped, no jargon. Disclose:
 - Any check that was skipped, and why
 - The pre-existing dirty set from Step 0
-- Nothing was written — this pass is read-only
+- Nothing was written. This pass is read-only
 
 `| Area | Finding | Severity | Fixable |`
 
 Then stop. Do not start fixing.
 
-## Step 10 — Staged gate (never a blanket OK)
+## Step 10: Staged gate (never a blanket OK)
 
 The user first **selects** which findings to act on. Then `/build --plan-only` on those; the
 resulting plan gets its own approval before any edit; then build; then `/release`, which keeps
