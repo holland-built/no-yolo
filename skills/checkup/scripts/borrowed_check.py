@@ -194,9 +194,43 @@ def check_hash(row, path):
     return local, github_head(upstream, pinned)
 
 
+def installer_summary(locked, links):
+    """Compare the lock's names against the symlinks in skills/. Pure, so the failing case
+    can be watched with fixture data instead of assumed.
+
+    Two SETS, never two totals. The subtraction this replaced (`len(links) - len(skills)`)
+    let a lock entry with no symlink cancel out a symlink with no lock entry, which is not
+    a hypothetical: `impeccable` is locked and unlinked, so a real count of 16 unlocked
+    symlinks printed as 15. Worse, more lock entries than symlinks drove the number
+    negative and the old `> 0` guard then suppressed the line entirely — the report going
+    quiet exactly as the problem grew. Both numbers now print unconditionally, including
+    the zero state, because "0 unlocked" is a result and a blank line is not.
+
+    Names are the join key because that is what the installer itself uses
+    (`skillName in lock.skills` in its cli.mjs). It cannot detect two different upstreams
+    sharing one skill name, so the sources are printed alongside for a human to eyeball.
+    """
+    unlocked = sorted(set(links) - set(locked))
+    ghosts = sorted(set(locked) - set(links))
+    parts = [f"{len(locked)} locked, {len(links)} symlinks in skills/",
+             f"{len(unlocked)} symlink(s) not in the lock file",
+             f"{len(ghosts)} lock entr(y/ies) with no symlink"]
+    if unlocked:
+        parts.append("unlocked: " + ", ".join(unlocked))
+    if ghosts:
+        parts.append("no symlink: " + ", ".join(ghosts))
+    return "; ".join(parts)
+
+
 def check_installer(row):
     """Installer-managed skills. Per-skill health belongs to the ghost check in Step 5,
-    which already owns it; duplicating it here would give two answers to one question."""
+    which already owns it; duplicating it here would give two answers to one question.
+
+    There is exactly ONE lock file, always at ~/.agents/.skill-lock.json (or under
+    $XDG_STATE_HOME), never one per install root — read from the installer's own
+    getSkillLockPath(). Skills land in two roots on this machine, and the root a skill
+    lives in has no bearing on whether it is locked.
+    """
     if not os.path.exists(SKILL_LOCK):
         return "MISSING — no ~/.agents/.skill-lock.json", "CANNOT CHECK — installer state absent"
     try:
@@ -207,11 +241,9 @@ def check_installer(row):
     sources = sorted({(m.get("source", "?") if isinstance(m, dict) else "?") for m in skills.values()})
     links = [d for d in sorted(os.listdir(os.path.join(ROOT, "skills")))
              if os.path.islink(os.path.join(ROOT, "skills", d))]
-    unlocked = len(links) - len(skills)
-    local = f"{len(skills)} locked from {len(sources)} sources; {len(links)} symlinks in skills/"
-    if unlocked > 0:
-        local += f" — {unlocked} symlinks NOT in the lock file"
-    return local, "deferred to the ghost check (Step 5) — per-skill status lives there"
+    local = installer_summary(skills, links) + f"; sources: {', '.join(sources)}"
+    return local, ("`npx skills update` iterates the lock's names only — an unlocked "
+                   "symlink is skipped in silence, never updated and never reported")
 
 
 def check_url_only(row):
