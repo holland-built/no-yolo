@@ -1,5 +1,5 @@
 <!-- GENERATED FROM ~/.claude/memory/facts/ — DO NOT EDIT. Run /memory-compile. -->
-<!-- compiled 2026-08-12 -->
+<!-- compiled 2026-08-18 -->
 # Learned Preferences (compiled from curated memory)
 
 Compiled from the fact store. Each line links its source fact.
@@ -22,6 +22,7 @@ Compiled from the fact store. Each line links its source fact.
 - **New skill creation checklist — 4 required steps** — Creating a skill requires 4 updates: SKILL.md with user-invocable true AND its triggers in that same description, catalog rows in my-skills, relock the catalog, delete any commands/ version if migrating ([pattern-new-skill-checklist](memory/facts/pattern-new-skill-checklist.md))
 
 ## Reference
+- **Codex stop-time review gate — how it is turned on and off** — The openai-codex plugin ships a Stop hook that sends the last turn to Codex before a session can end. Off by default, toggled with /codex:setup --enable-review-gate and --disable-review-gate, and scoped per git repo — /codex:status is the source of truth for the current value. ([reference-codex-stop-review-gate](memory/facts/reference-codex-stop-review-gate.md))
 - **Orca global Settings — what it actually contains** — What Orca (com.stablyai.orca) global Settings actually contains — don't invent toggles ([reference-orca-settings-surface](memory/facts/reference-orca-settings-surface.md))
 - **KB-mined Claude Code best practices** — High-signal Claude Code rules mined from the Obsidian KB (Karpathy/Cherny/Kochel) not yet in the global MD chain — apply when relevant. ([user-kb-best-practices](memory/facts/user-kb-best-practices.md))
 

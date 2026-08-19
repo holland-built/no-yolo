@@ -228,20 +228,25 @@ momentum forward, stays grabbable and reversible at any instant; springs over fi
 easing; always honour `prefers-reduced-motion`. Skip this read entirely for static surfaces
 (tables, forms, settings) — it is reference weight those variants do not need.
 
-## Step 2 — 8 mockups (6 Opus + 2 Codex wild)
+## Step 2 — 4 mockups (3 Opus + 1 Codex wild)
+
+**Four, not eight.** Set 2026-08-18 by the owner. The combined view has always been a
+4-row grid, so the other four were generated, judged, scored — and never shown. Four
+genuinely different directions beat eight where half are near-twins, and everything
+downstream costs half as much.
 ONE parallel Agent call, `model: "opus"`. Each writes `.mockups/design-<slug>/vN.html`: self-contained, inline `<style>`, **no external deps**, `file://` openable, `<!-- VARIANT: vN — paradigm -->` header. **Real data, not lorem ipsum.** Bake the Step 0 seed tokens throughout.
 
-**v1–v6**: each anchored to a DISTINCT paradigm — pick 6 from: Terminal/CLI · Bloomberg data grid · editorial/magazine · bento grid · command palette · split-pane reference · single-column full-bleed · floating action panel · timeline · kanban.
+**v1–v3**: each anchored to a DISTINCT paradigm — pick 3 from: Terminal/CLI · Bloomberg data grid · editorial/magazine · bento grid · command palette · split-pane reference · single-column full-bleed · floating action panel · timeline · kanban.
 
-**v9–v10**: WILD. A completely alien layout paradigm — impossible to mistake for a variation of v1–v6. Examples: physical-object skeuomorph, radial/circular nav, newspaper broadsheet, game HUD, brutalist raw grid with zero decoration. Label each with `WILD` in the header comment.
+**v4**: WILD. A completely alien layout paradigm — impossible to mistake for a variation of v1–v3. Examples: physical-object skeuomorph, radial/circular nav, newspaper broadsheet, game HUD, brutalist raw grid with zero decoration. Label each with `WILD` in the header comment.
 
-**Codex authors v9–v10 (cross-model generation; skip if `command -v codex` fails → Opus authors them as before).** All-Claude batches share one model's taste DNA — the WILD slots go to a different family. Codex stays read-only and returns HTML on stdout; **Claude writes the files** (write authority never delegates). Launch in the BACKGROUND *before* the Opus fan-out so it costs zero wall-clock, and give the Opus call only v1–v6:
+**Codex authors v4 (cross-model generation; skip if `command -v codex` fails → Opus authors it as before).** All-Claude batches share one model's taste DNA — the WILD slots go to a different family. Codex stays read-only and returns HTML on stdout; **Claude writes the files** (write authority never delegates). Launch in the BACKGROUND *before* the Opus fan-out so it costs zero wall-clock, and give the Opus call only v1–v6:
 
 ```bash
-bash ~/.claude/skills/xcheck/scripts/codex-run.sh -m gpt-5.6-sol -s read-only "Output two WILD UI mockup variants as complete self-contained HTML documents, delimited by lines ===V9=== and ===V10===. Each: completely alien layout paradigm (not card grids/dashboards), inline <style> only, no external deps, light + dark sections with a data-theme toggle button, a labeled states strip (hover/focus/empty/error/loading), 2-3 <!-- ANNOTATION: --> comments, header comment '<!-- VARIANT: vN — paradigm (WILD, codex) -->'. Use these tokens verbatim: <paste seed tokens>. Real data, no lorem ipsum. Banned: <paste the slop reject list you just read from GUI_SLOP.md>. Output ONLY the delimited HTML." > .mockups/design-<slug>/codex-wild.out 2>&1 &
+bash ~/.claude/skills/xcheck/scripts/codex-run.sh -m gpt-5.6-sol -s read-only "Output ONE WILD UI mockup variant as a complete self-contained HTML document, delimited by lines ===V4=== and ===END===. It must be: completely alien layout paradigm (not card grids/dashboards), inline <style> only, no external deps, light + dark sections with a data-theme toggle button, a labeled states strip (hover/focus/empty/error/loading), 2-3 <!-- ANNOTATION: --> comments, header comment '<!-- VARIANT: v4 — paradigm (WILD, codex) -->'. Use these tokens verbatim: <paste seed tokens>. Real data, no lorem ipsum. Banned: <paste the slop reject list you just read from GUI_SLOP.md>. Output ONLY the delimited HTML." > .mockups/design-<slug>/codex-wild.out 2>&1 &
 ```
 
-After the Opus agents finish, wait for the Codex job; split `codex-wild.out` and Write `v9.html` / `v10.html` yourself. **Split gotcha (verified):** codex echoes the prompt (which contains the delimiter strings) AND prints the answer twice (streamed + final) — match delimiters as whole lines only and use the LAST `===V9===`/`===V10===` pair; trim v10 at its final `</html>` — but first READ what came back: each document must be plain HTML/CSS/minimal-JS (no scripts fetching remote URLs, no external deps) and contain `<html`. Fails the check or missing → regenerate that slot with Opus (never block the round). Codex variants pass through the SAME validator as everyone. **Then delete `codex-wild.out`** — once the HTML is written the raw stdout is debris, and nothing else removes it.
+After the Opus agents finish, wait for the Codex job; split `codex-wild.out` and Write `v4.html` yourself. **Split gotcha (verified):** codex echoes the prompt (which contains the delimiter strings) AND prints the answer twice (streamed + final) — match delimiters as whole lines only and use the LAST `===V9===`/`===V10===` pair; trim v10 at its final `</html>` — but first READ what came back: each document must be plain HTML/CSS/minimal-JS (no scripts fetching remote URLs, no external deps) and contain `<html`. Fails the check or missing → regenerate that slot with Opus (never block the round). Codex variants pass through the SAME validator as everyone. **Then delete `codex-wild.out`** — once the HTML is written the raw stdout is debris, and nothing else removes it.
 
 **Every variant must include:**
 - Light + dark sections with toggle (LIGHT+DARK rule above)
@@ -292,12 +297,12 @@ Run it ONCE, up front, for the whole directory — never per variant. All four b
 
 **Static scan reaches about half the quality rules.** Verified 2026-08-05 against v3.5.0 on local HTML: `low-contrast`, `tiny-text`, `justified-text`, `all-caps-body`, `wide-tracking` and `skipped-heading` DO fire on files. Planted violations for `broken-image`, `line-length`, `cramped-padding`, `tight-leading`, `text-overflow` and `clipped-overflow-container` did NOT — those need a rendered page at a real viewport (`detect <url> --viewport WxH`). A clean mockup pre-pass therefore does not mean the shipped surface is clean.
 
-Spawn a judge agent running Taste + Swiss + UIwiki lenses on all 8, carrying that freshly-read reject list plus any detect hits. Reject any variant that hits it and regenerate it (max 2 rounds, specific brief per reject).
+Spawn a judge agent running Taste + Swiss + UIwiki lenses on all 4, carrying that freshly-read reject list plus any detect hits. Reject any variant that hits it and regenerate it (max 2 rounds, specific brief per reject).
 
-If BOLD MODE: also reject any variant that reads as a minor refresh of the current app. Minimum 6 survivors required before proceeding.
+If BOLD MODE: also reject any variant that reads as a minor refresh of the current app. Minimum 3 survivors required before proceeding — same 75% bar as the old 6-of-8.
 
 ### Combined view
-Build `.mockups/design-<slug>/all.html` — layout: **4 rows x 2 columns**. Each row = one variant pair: left column = light theme, right column = dark theme. States strip and annotation callouts visible in both columns. Sticky jump nav with v1–v6 + v9–v10 anchors. Per-variant theme toggle preserved.
+Build `.mockups/design-<slug>/all.html` — layout: **4 rows x 2 columns**, one row per variant: left column = light theme, right column = dark theme. All four variants, both themes, on ONE page — never four separate pages. The `mockup-autoopen` hook pops it in the browser on its own; do not tell the user to open anything. States strip and annotation callouts visible in both columns. Sticky jump nav with v1–v6 + v9–v10 anchors. Per-variant theme toggle preserved.
 
 ```bash
 "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" \
@@ -308,7 +313,7 @@ Build `.mockups/design-<slug>/all.html` — layout: **4 rows x 2 columns**. Each
 Show the screenshot inline.
 
 ### AI recommendation
-Spawn ONE scoring agent. It reads all 8 variant HTML files and scores each on:
+Spawn ONE scoring agent. It reads all 4 variant HTML files and scores each on:
 - Taste (anti-slop, typography, motion discipline) — 0–10
 - Swiss (grid, type scale, color count, negative space) — 0–10
 - UIwiki (20 rules, scored 1 each) — 0–20

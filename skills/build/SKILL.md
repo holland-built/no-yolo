@@ -275,15 +275,15 @@ ONE parallel call:
   to `.mockups/build-<slug>/`. Any failure → that slot regenerates via the normal agent. Skip
   silently without codex.
 
-### Step B — Slop judge (HARD gate, minimum 6 survivors)
+### Step B — Slop judge (HARD gate, minimum 3 survivors of 4)
 
-Spawn ONE adversarial judge agent with all 8 files. It rejects any variant matching ANY
+Spawn ONE adversarial judge agent with all 4 files. It rejects any variant matching ANY
 pattern in the canonical lists, read fresh at run time and never inlined here:
 `~/.claude/docs/GUI_SLOP.md` — every section, including its `### Mockup-only kill rules`.
 It also deduplicates functionally identical layouts, returning survivors with a one-line
 reason each.
 
-Fewer than 6 survive → respawn the rejects naming the exact slop pattern matched: "Go
+Fewer than 3 survive → respawn the rejects naming the exact slop pattern matched: "Go
 structurally different — change the layout paradigm entirely, not just the colour."
 
 ### Step C — Combined view + screenshot
