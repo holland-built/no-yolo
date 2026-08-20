@@ -1,0 +1,434 @@
+<title>The Great Clear-Out</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+:root {
+  --ground: #F6F7F9;
+  --surface: #FFFFFF;
+  --surface-sunk: #ECEFF4;
+  --line: #D5DBE4;
+  --line-soft: #E4E8EE;
+  --ink: #16202E;
+  --ink-soft: #4A5768;
+  --ink-faint: #78859A;
+  --accent: #1F3A5F;
+  --accent-soft: #E3E9F2;
+  --keep: #2C6B44;
+  --keep-bg: #E3F0E8;
+  --archive: #8A6516;
+  --archive-bg: #F6EEDC;
+  --cut: #9B3B2E;
+  --cut-bg: #F7E5E1;
+  --shadow: 0 1px 2px rgba(22,32,46,.06), 0 8px 24px -12px rgba(22,32,46,.14);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground: #10151C;
+    --surface: #171E27;
+    --surface-sunk: #1D262F;
+    --line: #2C3742;
+    --line-soft: #232C36;
+    --ink: #E6EBF2;
+    --ink-soft: #A7B3C2;
+    --ink-faint: #7B8899;
+    --accent: #9BB8DE;
+    --accent-soft: #1E2A3B;
+    --keep: #7FC397;
+    --keep-bg: #1A2C21;
+    --archive: #D9AE5F;
+    --archive-bg: #2C2415;
+    --cut: #E08A78;
+    --cut-bg: #2E1D19;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+  }
+}
+:root[data-theme="dark"] {
+  --ground: #10151C;
+  --surface: #171E27;
+  --surface-sunk: #1D262F;
+  --line: #2C3742;
+  --line-soft: #232C36;
+  --ink: #E6EBF2;
+  --ink-soft: #A7B3C2;
+  --ink-faint: #7B8899;
+  --accent: #9BB8DE;
+  --accent-soft: #1E2A3B;
+  --keep: #7FC397;
+  --keep-bg: #1A2C21;
+  --archive: #D9AE5F;
+  --archive-bg: #2C2415;
+  --cut: #E08A78;
+  --cut-bg: #2E1D19;
+  --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+  font-size: 16.5px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+.wrap {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 24px 120px;
+}
+
+header.masthead {
+  padding: 72px 0 40px;
+  border-bottom: 2px solid var(--ink);
+  margin-bottom: 48px;
+}
+.eyebrow {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 12px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin: 0 0 20px;
+}
+h1 {
+  font-family: "Newsreader", Georgia, serif;
+  font-weight: 600;
+  font-size: clamp(38px, 6.5vw, 62px);
+  line-height: 1.04;
+  letter-spacing: -.02em;
+  margin: 0 0 20px;
+  text-wrap: balance;
+}
+.standfirst {
+  font-family: "Newsreader", Georgia, serif;
+  font-size: clamp(18px, 2.4vw, 21px);
+  line-height: 1.5;
+  color: var(--ink-soft);
+  max-width: 62ch;
+  margin: 0;
+}
+
+.scoreboard {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  overflow: hidden;
+  margin: 40px 0 56px;
+}
+.score {
+  background: var(--surface);
+  padding: 20px 20px 18px;
+}
+.score .n {
+  font-family: "Newsreader", Georgia, serif;
+  font-size: 40px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -.02em;
+  display: block;
+  margin-bottom: 8px;
+}
+.score .lbl {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.score.was .n { color: var(--ink-faint); }
+.score.now .n { color: var(--keep); }
+.score.gone .n { color: var(--cut); }
+
+section { margin-bottom: 64px; }
+
+h2 {
+  font-family: "Newsreader", Georgia, serif;
+  font-weight: 600;
+  font-size: 30px;
+  letter-spacing: -.015em;
+  margin: 0 0 6px;
+  text-wrap: balance;
+}
+h2 + .sub {
+  color: var(--ink-faint);
+  font-size: 14.5px;
+  margin: 0 0 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--line-soft);
+}
+h3 {
+  font-family: "IBM Plex Sans", sans-serif;
+  font-weight: 600;
+  font-size: 17px;
+  margin: 36px 0 12px;
+}
+p { max-width: 66ch; }
+p.lede { font-size: 17.5px; color: var(--ink-soft); }
+
+code {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: .88em;
+  background: var(--surface-sunk);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: var(--ink);
+}
+
+.tablewrap {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+  min-width: 520px;
+}
+th {
+  text-align: left;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface-sunk);
+  white-space: nowrap;
+}
+td {
+  padding: 13px 18px;
+  border-bottom: 1px solid var(--line-soft);
+  vertical-align: top;
+}
+tr:last-child td { border-bottom: none; }
+td.cmd {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 13.5px;
+  white-space: nowrap;
+}
+td.num { font-variant-numeric: tabular-nums; text-align: right; color: var(--ink-soft); }
+
+.chip {
+  display: inline-block;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 10.5px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 3px;
+  white-space: nowrap;
+  font-weight: 500;
+}
+.chip.keep { background: var(--keep-bg); color: var(--keep); }
+.chip.archive { background: var(--archive-bg); color: var(--archive); }
+.chip.cut { background: var(--cut-bg); color: var(--cut); }
+
+.callout {
+  background: var(--surface-sunk);
+  border: 1px solid var(--line-soft);
+  border-radius: 6px;
+  padding: 20px 24px;
+  margin: 28px 0;
+}
+.callout p { margin: 0; max-width: none; }
+.callout p + p { margin-top: 12px; }
+.callout .who {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  display: block;
+  margin-bottom: 10px;
+}
+.callout.verdict { background: var(--cut-bg); border-color: var(--cut-bg); }
+.callout.verdict .who { color: var(--cut); }
+.callout.verdict blockquote { color: var(--ink); }
+
+blockquote {
+  margin: 0 0 14px;
+  font-family: "Newsreader", Georgia, serif;
+  font-size: 20px;
+  line-height: 1.45;
+  font-style: italic;
+  color: var(--ink);
+}
+
+ol.steps {
+  list-style: none;
+  counter-reset: s;
+  padding: 0;
+  margin: 24px 0 0;
+  display: grid;
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  overflow: hidden;
+}
+ol.steps li {
+  counter-increment: s;
+  background: var(--surface);
+  padding: 18px 22px 18px 62px;
+  position: relative;
+}
+ol.steps li::before {
+  content: counter(s);
+  position: absolute;
+  left: 22px;
+  top: 18px;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 13px;
+  color: var(--ink-faint);
+  background: var(--surface-sunk);
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+}
+ol.steps li strong { display: block; margin-bottom: 3px; }
+ol.steps li span { color: var(--ink-soft); font-size: 15px; }
+
+footer {
+  margin-top: 80px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+  font-size: 13.5px;
+  color: var(--ink-faint);
+}
+footer p { max-width: none; }
+
+a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+a:focus-visible, li:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+</style>
+
+<div class="wrap">
+
+<header class="masthead">
+  <p class="eyebrow">Setup audit · 20 August 2026</p>
+  <h1>The Great Clear-Out</h1>
+  <p class="standfirst">Anthropic's advice is to empty your setup every six months and start again. Here is what is actually in there, what a second model said about tearing it down, and what the plan became after it pushed back.</p>
+</header>
+
+<div class="scoreboard">
+  <div class="score was"><span class="n">37</span><span class="lbl">Commands today</span></div>
+  <div class="score now"><span class="n">14</span><span class="lbl">Commands after</span></div>
+  <div class="score was"><span class="n">1,894</span><span class="lbl">Lines of rules</span></div>
+  <div class="score gone"><span class="n">7</span><span class="lbl">Never once typed</span></div>
+</div>
+
+<section>
+  <h2>What the numbers actually say</h2>
+  <p class="sub">Counted from 7,820 of your own typed prompts. Not an estimate.</p>
+
+  <p class="lede">Six commands carry almost all the work. Everything else is either rare or has never been typed at all.</p>
+
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Command</th><th>What it does</th><th style="text-align:right">Times typed</th></tr></thead>
+      <tbody>
+        <tr><td class="cmd">whats-next</td><td>Tells you your next action</td><td class="num">280</td></tr>
+        <tr><td class="cmd">eli5</td><td>Answers in plain words as a table</td><td class="num">161</td></tr>
+        <tr><td class="cmd">release</td><td>Commits and publishes your work</td><td class="num">159</td></tr>
+        <tr><td class="cmd">handoff</td><td>Saves a session so a new one carries on</td><td class="num">47</td></tr>
+        <tr><td class="cmd">last-30</td><td>What is new in the last 30 days</td><td class="num">45</td></tr>
+        <tr><td class="cmd">build</td><td>Plans, mocks up, codes and tests a job</td><td class="num">22</td></tr>
+        <tr><td class="cmd">ponytail ×6</td><td>Forces the simplest solution, plus 5 helpers</td><td class="num">0</td></tr>
+        <tr><td class="cmd">computer-use</td><td>Reads and clicks other Mac apps</td><td class="num">0</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout">
+    <span class="who">Correction</span>
+    <p>An earlier count put <code>design</code> at 48 uses. That was wrong. Most of those were file paths like <code>/design/Labcorp.pdf</code>, not the command. The real figure is about 12.</p>
+  </div>
+</section>
+
+<section>
+  <h2>The rule that decided everything</h2>
+  <p class="sub">One question, applied to every file in the folder.</p>
+
+  <blockquote>Does it run, or does it just ask nicely?</blockquote>
+
+  <p>A hook, a gate or a checker survives, because it happens whether or not Claude is paying attention. A document that asks Claude to behave does not, because that is exactly the thing that keeps failing today.</p>
+
+  <p>There is hard evidence for this. StyleSeed measured 120 rendered screens: design rules on their own made Claude Code <strong>worse</strong>, by 3.7 points. The same rules behind a gate that scores the screen and sends it back for revision made it <strong>better</strong>, by 5.3. Rules without enforcement are not neutral. They are negative.</p>
+
+  <p>That is also the diagnosis for the readability problem. The plain-English instructions are 40 lines injected at the start of every session, and they get diluted. The replacement is a built-in Output Style, which changes how Claude writes at the source, plus a hard cap: five rows, three columns, one table. Anything longer becomes a page like this one.</p>
+</section>
+
+<section>
+  <h2>What Codex said when shown the plan</h2>
+  <p class="sub">A second model, asked to attack it. It refused to approve it.</p>
+
+  <div class="callout verdict">
+    <span class="who">Codex · gpt-5.6</span>
+    <blockquote>The plan correctly diagnoses bloat, but its remedy is too destructive and too enamored with enforcement machinery.</blockquote>
+    <p>It named three failures worth accepting, and one line it called the weakest in the whole plan.</p>
+  </div>
+
+  <h3>1. Rarely used is not the same as low value</h3>
+  <p>Some jobs are seasonal. You publish a release when there is something to publish; you ingest documents when documents arrive. Counting how recently you typed something measures recency, not worth. The original plan said seven commands with no outside replacement get deleted anyway. Codex called that the weakest sentence in the document, and it was right: having no replacement is a reason to keep something during a trial, not a reason to bin it.</p>
+
+  <h3>2. Ten outside tools is not obviously simpler than 37 of your own</h3>
+  <p>Outside tools can go stale, change under you, or be abandoned. A short rule file you can read is repairable; ten packages you cannot are not. The fix is a budget: one design authority, one browser checker, one secret scanner, one claim checker, one build method. Nothing else without removing something first.</p>
+
+  <h3>3. Two design scorers will fight</h3>
+  <p>StyleSeed and UI Craft both score a screen out of 100. Installing both invites endless revision, where fixing one score breaks the other. Pick one to have the final say. The other, if kept at all, only advises.</p>
+
+  <h3>Where Codex was told no</h3>
+  <p>It asked for 8 to 12 benchmark tasks, a 30 to 90 day observation window, and formal usability testing. That is a process for a team maintaining a product. This is one person's setup, and that much ceremony is how the folder got to 1,894 lines in the first place.</p>
+</section>
+
+<section>
+  <h2>The revised plan</h2>
+  <p class="sub">Archive rather than delete. Familiar names stay. Outside tools arrive one at a time.</p>
+
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Verdict</th><th>What it covers</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td><span class="chip keep">Keep</span></td><td class="cmd">whats-next · release · build · eli5 · handoff · debate · xcheck</td><td>Most used, high consequence, or a stated requirement</td></tr>
+        <tr><td><span class="chip keep">Keep</span></td><td>The mockup workflow</td><td>Yours. Nothing outside matches it. Rebuilt as one page, four options, nothing wild.</td></tr>
+        <tr><td><span class="chip keep">Keep</span></td><td>Slop guard · secret scanner · format checker · memory</td><td>They run. That is the whole test.</td></tr>
+        <tr><td><span class="chip archive">Archive</span></td><td class="cmd">last-30 · better-prompt · watch · ingest-docs · archify</td><td>Moved out of the way, not destroyed. Recoverable by name.</td></tr>
+        <tr><td><span class="chip cut">Cut</span></td><td class="cmd">ponytail ×6 · computer-use · design helpers ×6</td><td>Never typed, or folded into something that survives</td></tr>
+        <tr><td><span class="chip cut">Cut</span></td><td>17 of the 19 rule files</td><td>Only the ones a hook actually reads survive</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>What gets installed, in this order</h3>
+  <ol class="steps">
+    <li><strong>Output Style</strong><span>Built in. Changes how answers are written at the source. Nothing to install.</span></li>
+    <li><strong>visual-explainer</strong><span>Long answers become a page like this one instead of a wall of terminal text.</span></li>
+    <li><strong>avoid-ai-writing</strong><span>62 kinds of AI writing, 112 words with plainer replacements, and it rewrites rather than just flagging.</span></li>
+    <li><strong>One design authority</strong><span>StyleSeed or UI Craft, after a head-to-head on the same screen. Not both.</span></li>
+    <li><strong>Snip</strong><span>You circle what is wrong on the mockup itself and it comes straight back to Claude.</span></li>
+  </ol>
+
+  <div class="callout">
+    <span class="who">Held back</span>
+    <p>Superpowers, the mattpocock skill set, presence, dev-browser and Agent Guard all looked strong on inspection, but adding them now breaks the budget. Each one waits until something it replaces has proven itself unnecessary.</p>
+  </div>
+</section>
+
+<footer>
+  <p>Sources read in full: the awesome-claude-code list (166 entries) and Matt Pocock's skills repository. Read in depth: Superpowers, UI Craft, StyleSeed, visual-explainer, avoid-ai-writing, Snip, presence, dev-browser, and five of Matt Pocock's skill files. Reviewed by Codex gpt-5.6 on the full plan.</p>
+  <p>Usage figures come from your own <code>history.jsonl</code>. Nothing in your setup has been changed, moved or deleted yet.</p>
+</footer>
+
+</div>
