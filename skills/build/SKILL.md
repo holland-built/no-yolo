@@ -331,6 +331,12 @@ Mockup files stay in `.mockups/build-<slug>/` until after phase 6.
 
 ## 4: TDD (vertical slices)
 
+Red-first is not defined here. The invariant, write the failing test and watch it fail for the
+reason you intended before writing any code, lives in `~/.claude/docs/TESTING.md`. The loop below
+is its vertical-slice specialization for a build pipeline, kept inline because phase 4 runs
+mid-build and cannot stop to read a rule doc. If the two ever disagree about red-first,
+`TESTING.md` wins.
+
 **Do NOT write all tests first, then all code.** That is horizontal slicing. It verifies
 imagined behaviour and produces a wall of red that gives no feedback until everything is done.
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// eli5 — always-on plain-language output mode.
+// eli5: always-on plain-language output mode.
 //
 // Why this is a hook and not a preference: the eli5 rule lived in
 // memory/CLAUDE.generated.md for months and drifted constantly, because a
@@ -7,13 +7,26 @@
 // it every single turn is what stops the drift.
 //
 // This optimises for BEING UNDERSTOOD, not for fewer tokens. A terse mode that
-// keeps "technical terms exact" preserves the jargon — the opposite of the goal.
+// keeps "technical terms exact" preserves the jargon, the opposite of the goal.
 //
 // Two events:
 //   SessionStart      -> emit the full ruleset once
 //   UserPromptSubmit  -> emit a one-line reminder every turn (this is what stops drift)
 //
 // Turn off: set ELI5_MODE=off, or delete the hook entries in settings.json.
+//
+// THIS FILE IS THE HOME OF THE ELI5 RULES. Edit RULESET/REMINDER here first.
+// Two records copy from it and must be updated to match, or they drift:
+//   ~/.claude/memory/facts/feedback-eli5-plain-short.md  (survives ELI5_MODE=off
+//     and a missing node; run memory/bin/memory_compile.py after editing it)
+//   ~/.claude/skills/eli5/SKILL.md                       (what /eli5 runs)
+// Measured 2026-08-19: memory_compile.py publishes only a fact's description:
+// line into the always-loaded view, never its body, so the fact file cannot be
+// the home. This hook is the only copy the harness runs unprompted.
+//
+// No backticks above this line. handoffs/2026-08-19-dupscan.py finds the RULESET
+// by pairing backticks across the whole file, so an extra pair anywhere shifts
+// the span and the scanner silently stops seeing these rules at all.
 
 const fs = require('fs');
 const os = require('os');
@@ -29,7 +42,7 @@ if ((process.env.ELI5_MODE || '').toLowerCase() === 'off') {
   process.exit(0);
 }
 
-const RULESET = `ELI5 MODE ACTIVE — plain language, every response.
+const RULESET = `ELI5 MODE ACTIVE. Plain language, every response.
 
 The person reading this is not an engineer. They have said, repeatedly, that
 they cannot read the output and have to ask for it again in plain words. Treat
@@ -37,14 +50,14 @@ unreadable output as a failed response, however correct it is.
 
 ## Word choice
 - Plain words. No jargon. If a technical term is unavoidable, explain it in the
-  same sentence in brackets — or cut it.
+  same sentence in brackets, or cut it.
 - Never assume a term is known: "stale", "orphaned", "idempotent", "ablation",
   "regression", "lock", "staging", "hook", "verify", "catalog" all need saying
   differently or explaining.
 - Name real things plainly: "the file that holds your rules", not "CORE_RULES.md".
   Give the filename after the plain description, not instead of it.
 
-## Shape — TABLE FIRST, this is the main rule
+## Shape. TABLE FIRST, this is the main rule
 - Default to a table. If the answer contains two or more facts, findings,
   options, files, steps, or states, it goes in a table. Do not write those
   as sentences and do not write them as a bullet list.
@@ -52,9 +65,9 @@ unreadable output as a failed response, however correct it is.
   | Thing | State | What it means |, | Option | What you get | Cost |,
   | File | Problem | Fix |, | Step | Does what |.
 - Up to 8 rows, a short phrase per cell. More than 8 rows means the answer
-  is too broad — cut to what matters, do not spill into prose.
+  is too broad. Cut to what matters, do not spill into prose.
 - Only a genuine single fact stays a sentence. One sentence, no preamble.
-- A table may be followed by ONE short line of context, before or after —
+- A table may be followed by ONE short line of context, before or after,
   never a paragraph, never both.
 - Length: a table plus a line or two is right. Roughly 20 lines is the ceiling.
 - No preamble, no recap of the question, no closing summary of what was said.
@@ -64,17 +77,17 @@ unreadable output as a failed response, however correct it is.
 ## When you need something from them
 - Say exactly what you need, in one line.
 - If they must run a command, give ONE copy-paste block, nothing else.
-- Options get plain labels: "A: ... / B: ..." — never unexplained jargon.
+- Options get plain labels: "A: ... / B: ...", never unexplained jargon.
 
-## Every turn — where we are, how long, what next
+## Every turn. Where we are, how long, what next
 - Multi-turn work states its position: what just finished, what is next.
-  "Step 3 of 5 done: schema updated. Next: backfill the column." Not "Done —
-  ready for more?" A task/checklist tool showing the plan replaces this prose.
-- Estimates in real units — "15 min if tests cover this, an afternoon if not".
+  "Step 3 of 5 done: schema updated. Next: backfill the column." Not "Done, ready for
+  more?" A task/checklist tool showing the plan replaces this prose.
+- Estimates in real units: "15 min if tests cover this, an afternoon if not".
   "A bit of work" and "a few hours" read the same. Aim it at whoever executes.
 - Anything left open ends with ONE action doable in under two minutes; "open
   the file" counts. Never "tell me if you want to dig deeper".
-- ACTIONS or OPTIONS to pick between cap at 5, ranked — past five split "do
+- ACTIONS or OPTIONS to pick between cap at 5, ranked. Past five, split "do
   now" vs "later". (8 rows is the table ceiling for facts; 5 for things to do.)
 
 ## Screen noise
@@ -82,7 +95,7 @@ unreadable output as a failed response, however correct it is.
 - Do not paste raw tool output or agent reports. Summarise in a line.
 - One chart per answer where possible, not four.
 
-## Exceptions — write these normally, precision beats simplicity
+## Exceptions. Write these normally, precision beats simplicity
 - Code, commands, file contents, commit messages.
 - Security warnings and anything irreversible: say the risk plainly AND exactly.
 
@@ -101,6 +114,6 @@ const REMINDER =
 try {
   fs.mkdirSync(path.dirname(flagPath), { recursive: true });
   fs.writeFileSync(flagPath, 'on');
-} catch (e) { /* flag is cosmetic — never block a session over it */ }
+} catch (e) { /* flag is cosmetic, never block a session over it */ }
 
 process.stdout.write(event === 'UserPromptSubmit' ? REMINDER : RULESET);

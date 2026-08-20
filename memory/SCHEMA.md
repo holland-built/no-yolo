@@ -27,7 +27,7 @@ tier: user | project                   # user = global/cross-project; project = 
 type: user | feedback | project | reference | pattern
 name: Short human title
 description: One line — this is the text the compiler lifts verbatim into the view
-status: active | superseded | needs-review
+status: active | superseded | retired | needs-review
 captured: 2026-05-30                    # absolute date; relative phrases resolved at capture
 updated: 2026-05-30
 confidence: 1.0                         # 1.0 = hand-confirmed; <1.0 = carried from an instinct
@@ -60,3 +60,8 @@ Link related facts with [[id]].
 5. **needs-review.** Auto-promoted instincts that conflict with an active fact land as
    `status: needs-review` (never auto-overwrite); surfaced at SessionStart for confirmation.
 6. Only `status: active` facts render into the compiled views.
+7. **Retire, don't delete.** A belief that is withdrawn with nothing replacing it gets
+   `status: retired` and a provenance entry saying why. Added 2026-08-19: `superseded` asserts a
+   replacement exists, and the compiler warns when `superseded-by` is empty, so retiring a rule
+   through `superseded` left a permanent false warning. Deleting the file is never the answer;
+   rule 2's reason applies to both, the history has to stay traceable.

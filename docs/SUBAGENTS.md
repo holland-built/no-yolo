@@ -10,7 +10,7 @@ Use model `fable` for planning agents, `opus` for every agent that writes code.
 
 **Invocation triggers (auto-fire the planner):**
 - User says "plan X" or "opusplan X"
-- Non-trivial task (multi-file, new feature, architecture decision)
+- Any task meeting the "When to Plan" trigger in `~/.claude/docs/PLANNING.md`
 - Any time you'd otherwise plan inline
 
 ## Before Dispatch
@@ -64,13 +64,6 @@ Pre-built specialist agent definitions, each knowing a specific domain.
 - `performance-engineer`: perf hot spots
 - `api-designer`: REST/GraphQL design
 - `docker-expert`: containers
-
-## Skill Alignment
-
-- `build`: full feature pipeline (plan → Opus plan → TDD → build → prove)
-- `review`: PR/diff review gate before merge
-- `diagnose`: systematic bug diagnosis
-- `tdd`: vertical-slice red-green-refactor
 
 ## Agent Teams (expert dispatch)
 

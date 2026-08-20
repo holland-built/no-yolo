@@ -121,7 +121,7 @@ Pick 5–8 from this list, depending on what's being designed:
 
 ## Skill Reference
 
-- `/build`: full feature pipeline with 10-variant mockup gate (phase 3.5)
+- `/build`: runs the 10-variant mockup gate at phase 3.5
 - `/design` (audit mode): read-only audit, 5 lenses → violations table + top-10 improvements
 - `/design` (quick sketch mode): fast disposable layout mockups: up to 5 style-matched, lightly-functional candidates on one combined page with an AI pick, reads the project's CSS tokens
 - `/design`: fresh design pipeline, 10 Opus mockups (8 paradigms + 2 wild) → slop validator → confirm → Fable plan → Opus build

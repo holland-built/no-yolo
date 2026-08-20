@@ -93,7 +93,10 @@ for slug, facts in project_facts.items():
 # (dates, provenance shape, supersede reciprocity) are always WARN regardless of freshness.
 TIER_ENUM = {"user", "project"}
 TYPE_ENUM = {"user", "feedback", "project", "reference", "pattern"}
-STATUS_ENUM = {"active", "superseded", "needs-review"}
+# "retired" added 2026-08-19: a belief withdrawn with nothing replacing it. "superseded" asserts
+# a replacement exists and the lint below rightly warns when superseded-by is empty, so retiring a
+# rule through it produced a permanent false warning. Both are excluded from the compiled views.
+STATUS_ENUM = {"active", "superseded", "retired", "needs-review"}
 DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 
 def _sha(p): return hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest()[:12]
@@ -188,7 +191,7 @@ for f in all_active:
     if f.get("tier") != "user": continue
     groups.setdefault(f.get("type","feedback"), []).append(f)
 
-lines = ["<!-- GENERATED FROM ~/.claude/memory/facts/ — DO NOT EDIT. Run /memory-compile. -->",
+lines = ["<!-- GENERATED FROM ~/.claude/memory/facts/. DO NOT EDIT. Run /memory-compile. -->",
          f"<!-- compiled {datetime.date.today().isoformat()} -->",
          "# Learned Preferences (compiled from curated memory)",
          "",
@@ -199,10 +202,10 @@ for t in TYPE_ORDER:
     lines.append(f"## {TYPE_HDR.get(t,t)}")
     for f in sorted(groups[t], key=lambda x: x["id"]):
         rel = "memory/facts/" + pathlib.Path(f["_path"]).name
-        lines.append(f"- **{f.get('name', f['id'])}** — {f.get('description','').strip()} ([{f['id']}]({rel}))")
+        lines.append(f"- **{f.get('name', f['id'])}**: {f.get('description','').strip()} ([{f['id']}]({rel}))")
     lines.append("")
 if len(lines) > MAX_LINES:
-    lines = lines[:MAX_LINES] + [f"- … ({len(all_active)} active facts total; view truncated — see memory/facts/)"]
+    lines = lines[:MAX_LINES] + [f"- … ({len(all_active)} active facts total; view truncated, see memory/facts/)"]
 
 if "--dry-run" in sys.argv:
     print("\n--- CLAUDE.generated.md (dry-run) ---")
@@ -216,10 +219,10 @@ for slug, facts in project_facts.items():
     active = [f for f in facts if f.get("status") == "active"]
     if not active: continue
     mp = PROJ / slug / "memory" / "MEMORY.md"
-    pl = ["<!-- GENERATED FROM memory/facts/ — DO NOT EDIT. Run /memory-compile. -->",
-          f"# {slug} — memory index", ""]
+    pl = ["<!-- GENERATED FROM memory/facts/. DO NOT EDIT. Run /memory-compile. -->",
+          f"# {slug}: memory index", ""]
     for f in sorted(active, key=lambda x: x["id"]):
-        pl.append(f"- **{f.get('name',f['id'])}** — {f.get('description','')} (facts/{pathlib.Path(f['_path']).name})")
+        pl.append(f"- **{f.get('name',f['id'])}**: {f.get('description','')} (facts/{pathlib.Path(f['_path']).name})")
     if "--dry-run" not in sys.argv:
         mp.write_text("\n".join(pl) + "\n", encoding="utf-8")
         print(f"WROTE {mp}")

@@ -343,10 +343,12 @@ done
 **5. Close with this.** This step installs nothing and changes nothing. The owner picks what
 is worth acting on at Step 10.
 
-## Step 5.55: Has a second design door appeared?
+## Step 5.55: Has a fourth design door appeared?
 
-`docs/DESIGN_SURFACES.md` records the decision that `/design` is the entry point for design
-work and everything else is reference material it reads. That decision decays in silence: an
+`docs/DESIGN_SURFACES.md` records the decision, re-ruled 2026-08-19, that there are three doors
+for design work, each owning a job the other two do not: `/design` starts fresh,
+`impeccable:impeccable` improves what exists, `dataviz` draws charts. Everything else is
+reference material a door reads. That decision decays in silence: an
 installer adds a skill, a plugin gets switched on, a CLI upgrade ships a new bundled one. Five
 design skills accumulated here that way, and not one of them was ever deliberately used.
 

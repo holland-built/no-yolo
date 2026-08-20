@@ -75,10 +75,8 @@ Everything else was dropped because Opus 5 does it unprompted.
 
 ## Dropped, deliberately
 
-Simplicity-first, goal-driven phrasing, and the planner/builder model split were dropped:
-six days without them produced no visible regression, and the memory fact store already
-covers the model split. If any of them starts costing you, add it back here with the
-evidence, not wholesale.
+Simplicity-first, goal-driven phrasing, and the planner/builder model split were dropped after
+the July experiment. What was measured, and when to add one back: `~/.claude/docs/DECISIONS.md`.
 
 ## Lessons
 
