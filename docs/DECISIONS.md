@@ -79,3 +79,33 @@ That paragraph was considered for this file and deliberately left where it is. I
 thing that makes rule 9 persuasive enough to actually obey. A rule that says "run the
 cross-check" without the measurement proving the cross-check catches real defects is a rule that
 gets skipped. 250 bytes is a cheap price for a rule that works.
+
+## 2026-08-20: Snip rejected, and the portability rule it produced
+
+`Snip` (`rixinhahaha/snip`, MIT) was dependency 5 in `docs/REBUILD_PLAN.md`: the user annotates
+a mockup on screen (circle, arrow, note) and the agent gets the marks back as structured JSON.
+It does exactly that, and `snip render --format html` blocks until the review is finished, which
+plugs straight into the mockup gate. It is a good tool.
+
+It was rejected by the owner on the day it was found, on a ground nobody had written down:
+
+| Fact | Measured 2026-08-20 |
+|---|---|
+| Windows build | none, ever. Mac and Linux only |
+| Mac build | Apple Silicon only, no Intel |
+| Size | 181.9 MB `.dmg`, plus a 52 MB AI runtime |
+| Shape | an Electron desktop app installed per person, not a skill file |
+
+**The rule this produced: a dependency of this repo has to be installable by whoever the repo is
+for.** `no-yolo` exists so other people can set up a working configuration from `setup.sh`. A
+per-person 182 MB desktop app with no Windows build is a hard stop on day one for anyone on
+Windows or an Intel Mac, and "half the team cannot start" outweighs any feature the tool adds.
+Judge a candidate on who can install it, not only on what it does.
+
+This was not on the "check built-in first, then a maintained outside tool, then our own script"
+ladder, and it should have been. The ladder asks whether a thing is *good*; it never asked
+whether the people this repo serves could *run* it.
+
+**Nothing was installed.** The Homebrew tap was never added. If a cross-platform equivalent
+turns up, the mockup gate in `skills/build/SKILL.md` §3.5 is where it would attach: at the
+"stop and ask which variant" step, which today takes typed feedback.
