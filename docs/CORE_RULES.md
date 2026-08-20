@@ -97,6 +97,12 @@ Added when a mistake is caught, so it doesn't repeat.
   and see it refuse before you record it as healthy.
 - A relative path in a skill resolves against the working directory that skill runs in, not
   against the skill's own folder. Resolve it there before reporting the target missing.
+- One project per session — no cross-pollination. When a request clearly targets a DIFFERENT
+  project than the session's working directory (a screenshot of another app, a path outside
+  the repo), do NOT do that work here. Say which project it belongs to and give the one
+  command to open a session there. Writing to shared drawers (`~/.claude/handoffs`) on the
+  other project's behalf counts as doing the work. *Added 2026-08-20 after a DJ-app rewrite
+  handoff was authored from inside a Wayfinder session and the user asked how to prevent it.*
 - A failed lookup is a fact about your search, not about the system. "I did not find X by
   method Y" is honest; "X does not exist", "X is unreachable", or "X is never rendered" is
   not, until you have named the other paths to it and tried them. Before recording any
