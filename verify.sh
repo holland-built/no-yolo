@@ -63,13 +63,6 @@ for p in $(grep -oE '(\$HOME|~)/\.claude/hooks/[a-zA-Z0-9._-]+' settings.example
 done
 [ "$ok" = 1 ] && record PASS "hook paths exist" || record FAIL "hook paths exist"
 
-# 5b. catalog lock current — the menu (STORIES/TAGLINES/.../SKILL_TRIGGERS) still matches the
-#     SKILL.md descriptions it was last verified against. Mechanical: pure sha256, no LLM.
-
-# 5bb. rendered menus match their sources. The catalog lock hashes the SOURCES, so
-#      editing a source and re-locking WITHOUT running regen left this green while
-#      RENDERED.md was stale. --check renders in memory and compares; it writes nothing.
-
 # 5c. local third-party patches still applied (see docs/THIRD_PARTY_SKILLS.md).
 #     These live outside git on gitignored symlinks, so `npx skills add` reverts them
 #     with no warning. Skip silently where the path doesn't exist (CI, fresh clone) —
@@ -129,9 +122,6 @@ fi
 ok=1
 while IFS= read -r h; do grep -qF "$h" README.md || { echo "README missing: $h"; ok=0; }; done < <(grep '^## ' docs/README_FORMAT.md)
 [ "$ok" = 1 ] && record PASS "README format headings" || record FAIL "README format headings"
-
-# 6b. README inventory current — the skills table inside README.md's
-#     "## Skills inventory" section must be byte-identical to
 
 # 6c. setup.sh bash-3.2 clean — stock macOS ships bash 3.2 and the documented
 #     install command is `bash setup.sh`; a bash-4-only construct hard-blocks
