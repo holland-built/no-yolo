@@ -31,7 +31,7 @@ test('no argument -> full ruleset (SessionStart is the default)', () => {
   assert.strictEqual(result.status, 0);
   assert.match(result.stdout, /ELI5 MODE ACTIVE/);
   assert.match(result.stdout, /## Word choice/);
-  assert.match(result.stdout, /## Shape — TABLE FIRST/);
+  assert.match(result.stdout, /## Shape\. TABLE FIRST/);
   assert.strictEqual(result.stderr, '');
 });
 
@@ -64,12 +64,19 @@ test('the per-turn reminder is materially shorter than the ruleset', () => {
 test('reminder carries the rules that actually get broken', () => {
   const short = run(tmp(), ['UserPromptSubmit']).stdout;
 
-  // These four are the load-bearing rules. If one is dropped from the reminder
+  // These are the load-bearing rules. If one is dropped from the reminder
   // it stops being enforced per-turn, which is the whole point of the hook.
   assert.match(short, /TABLE FIRST/);
-  assert.match(short, /8/);              // table row ceiling
-  assert.match(short, /cap at 5/);       // actions/options ceiling
+  assert.match(short, /HARD CAPS/);        // one table, five rows, three columns
+  assert.match(short, /five rows/i);       // table row ceiling
+  assert.match(short, /three columns/i);   // column ceiling
+  assert.match(short, /cap at five/i);     // actions/options ceiling
   assert.match(short, /no jargon/i);
+
+  // The caps only work if there is somewhere for a longer answer to GO. Without
+  // the escape hatch the caps just teach it to drop facts, which is worse than
+  // an over-long reply. Ruled 2026-08-20.
+  assert.match(short, /Artifact/);
 });
 
 test('event argument is trimmed before dispatch', () => {
