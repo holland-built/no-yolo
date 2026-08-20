@@ -260,24 +260,23 @@ Either way every variant uses these tokens verbatim, no invented hex codes or fo
 its routing to pull only the references this task needs. Do not read all of them, and never
 let a reference override the tokens above.
 
-### Step A0: Pick the host — the real page beats a standalone file
+### Step A0: Mockups are standalone. They do NOT go in the running app.
 
-Rebuilt 2026-08-20. The old version of this gate always wrote standalone HTML files. That
-is the weaker of the two shapes and it was the only one on offer, which contradicted the
-owner's own recorded preference: **verify each surface in the running app, not on abstract
-mockups.** A variant judged in a vacuum always looks fine; the same variant next to the
-real header, real sidebar, real density and real data often does not.
+**Ruled by the owner 2026-08-18, and re-confirmed 2026-08-20 after this gate briefly got it
+backwards.** Asked directly whether mockups should be built inside the running app, the owner
+said no. The mockup step stays, stays cheap, and stays OUTSIDE the app:
+`.mockups/build-<slug>/<slug>-all.html`, one page, four variants, popped by the auto-open hook.
 
-So decide the host FIRST:
+The confusion is worth naming, because it will recur. Two different things both sound like
+"use the real app":
 
-| Host | When | What it means |
+| Phase | Where it happens | Why |
 |---|---|---|
-| **In the app** (default) | The surface has, or belongs inside, a page that already runs | Variants render on the real route behind `?variant=1..4`. Existing data fetching, params and auth stay put; only the rendered subtree swaps |
-| **Standalone file** (fallback) | No app runs, no plausible host page, or the dev server will not start | `.mockups/build-<slug>/<slug>-all.html`, one page, four variants stacked |
+| **3.5, this gate** | Standalone page, outside the app | A cheap contract to point at before any real code is written. Making it real costs the hours the mockup exists to save |
+| **5-6, the build** | Directly into the real component, one surface at a time, screenshot each in the browser before starting the next | The owner judges by what runs. This is where "verify in the real app" applies |
 
-Before choosing the fallback, ask whether there is genuinely no existing page this could sit
-inside. An empty route hides the problems a populated one exposes. State which host you
-picked and why, in one line, before generating anything.
+`memory/facts/feedback-realapp-incremental-ui.md` carries both halves and the session that
+produced them. Read it before changing this gate again.
 
 ### Step A: Generate exactly 4 variants, on ONE page
 
@@ -303,14 +302,10 @@ follow its routing, starting with the coherence row. Each variant picks ONE fami
 that mixes two radius families is not a design direction, it is a bug, and the judge below
 treats it as one.
 
-**In-app host:** each variant is a component (`VariantOne`…`VariantFour`) chosen by a
-`?variant=` search param, plus a floating switcher pinned bottom-centre with prev/back,
-the current label, and next. Arrow keys cycle it, except while an `<input>`, `<textarea>`
-or `[contenteditable]` has focus. The switcher is visually unlike the design being judged,
-so it is never mistaken for part of it, and it is gated so a stray merge cannot ship it.
-
-**Standalone host:** one file, four sections stacked, each with its variant label and a
-one-line description. The `mockup-autoopen` hook pops it; do not tell the user to open it.
+**One page, four variants, both themes.** Match `/design`'s combined view: 4 rows x 2
+columns, light left and dark right, each row labelled with its variant and a one-line
+description. Sticky jump nav with v1-v4 anchors. The `mockup-autoopen` hook pops it in the
+browser by itself; never hand the user a link to click.
 
 ### Step B: Slop judge (HARD gate, minimum 3 survivors of 4)
 
@@ -325,23 +320,7 @@ structurally different: change the layout paradigm entirely, not just the colour
 
 ### Step C: Look at it, then screenshot it
 
-**In-app host.** Serve the app, then capture each surviving variant at its own URL. The
-screenshot is of the REAL page, which is the entire point of this host:
-
-```bash
-for v in 1 2 3 4; do
-  "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless --disable-gpu \
-    --window-size=1400,900 --screenshot=".mockups/build-<slug>/v$v.png" \
-    "http://localhost:<port>/<route>?variant=$v"
-done
-```
-
-Print the URL with the `?variant=` keys so the user can flip through it themselves. That
-is where the useful feedback comes from, and it is usually "the header from 2 with the
-table from 3", which is the design they actually want.
-
-**Standalone host.** One page, survivors only, stacked vertically; each section carries its
-variant label and a one-line description. Mark the recommend with a star.
+Survivors only. Mark the recommend with a star. Open it and screenshot it, both:
 
 ```bash
 open ".mockups/build-<slug>/<slug>-all.html"
@@ -356,7 +335,7 @@ Show the screenshot inline.
 grading visuals Claude both generated and judged:
 ```bash
 bash ~/.claude/skills/xcheck/scripts/codex-run.sh -m gpt-5.6-sol -s read-only \
-  -i "<the combined png, or each v<N>.png in turn>" \
+  -i ".mockups/build-<slug>/<slug>-all.png" \
   "This image shows UI mockup variants, labeled v1-v4. For each: verdict slop|clean + one-line reason (slop = generic AI-generated look: card grids, gradient CTAs, hero+centered-CTA, shadcn starter DNA). Then name your single top pick + one sentence why. No preamble."
 ```
 
@@ -378,9 +357,7 @@ one row per interactive element. Hand-build rows need a closed-list reason; a ha
 on a primitive the detected library already provides is a gate failure. No phase 4 without
 the table shown.
 
-Mockup files stay in `.mockups/build-<slug>/` until after phase 6. For the in-app host, the
-losing variants and the switcher come OUT in the same phase the winner is folded in: variant
-components left behind rot fast and confuse the next reader.
+Mockup files stay in `.mockups/build-<slug>/` until after phase 6.
 
 ## 4: TDD (vertical slices)
 
