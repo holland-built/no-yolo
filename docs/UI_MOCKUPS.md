@@ -57,11 +57,20 @@ Two hard rules, every time a mockup is created or changed:
 | Situation | Tool | Variations |
 |---|---|---|
 | Fast throwaway layout sketch, no build | `/design` (quick sketch mode) | up to 5 style-matched functional variants, one page |
-| Manual or ad-hoc mockup (no skill) | this doc's manual flow | 5–8 |
-| Full feature pipeline | `/build` | 10 (phase 3.5 gate) |
-| Fresh design + build pipeline | `/design` | 10 Opus mockups (8 paradigms + 2 wild) → confirmed one feeds the build |
+| Manual or ad-hoc mockup (no skill) | this doc's manual flow | 5-8 |
+| Full feature pipeline | `/build` | 4 on ONE page or route (phase 3.5 gate) |
+| Fresh design + build pipeline | `/design` | 4 (3 paradigms + 1 adventurous) -> confirmed one feeds the build |
 
 Use the manual flow (5-8) when no skill applies. When a skill is invoked, use its count. Don't override it.
+
+**Four, and where the host lives.** The owner set four on 2026-08-18 for `/design`; `/build`
+still said ten here and eight in its own gate until 2026-08-20, while that same gate judged
+"3 survivors of 4". Three different counts for one job. Both skills now say four.
+
+`/build`'s gate also now prefers rendering the four variants **inside the running app** on the
+real route behind `?variant=`, falling back to a standalone `.mockups/` page only when no app
+can host them. A variant judged in a vacuum always looks fine; the same variant beside the real
+header, real density and real data often does not.
 
 ## Manual flow
 
@@ -124,4 +133,4 @@ Pick 5–8 from this list, depending on what's being designed:
 - `/build`: runs the 10-variant mockup gate at phase 3.5
 - `/design` (audit mode): read-only audit, 5 lenses → violations table + top-10 improvements
 - `/design` (quick sketch mode): fast disposable layout mockups: up to 5 style-matched, lightly-functional candidates on one combined page with an AI pick, reads the project's CSS tokens
-- `/design`: fresh design pipeline, 10 Opus mockups (8 paradigms + 2 wild) → slop validator → confirm → Fable plan → Opus build
+- `/design`: fresh design pipeline, 4 mockups (3 paradigms + 1 adventurous) -> slop validator -> confirm -> Fable plan -> Opus build

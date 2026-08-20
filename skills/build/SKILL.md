@@ -250,7 +250,7 @@ Check for a persisted design system, falling back to CSS tokens:
 ```
 
 - **MASTER.md exists** → read it. Its palette, typography, spacing scale and layout rules are
-  hard constraints for all 8 variants. Print `Using design system from design-system/MASTER.md`.
+  hard constraints for all four variants. Print `Using design system from design-system/MASTER.md`.
 - **No MASTER.md** → extract tokens from the project's CSS: `:root` variables, font-family
   declarations, colour palette, spacing scale.
 
@@ -260,20 +260,57 @@ Either way every variant uses these tokens verbatim, no invented hex codes or fo
 its routing to pull only the references this task needs. Do not read all of them, and never
 let a reference override the tokens above.
 
-### Step A: Generate 8 variants
+### Step A0: Pick the host — the real page beats a standalone file
 
-`.mockups/build-<slug>/<slug>-v1.html` … `v6.html` plus `v9.html`/`v10.html`, fanned out in
-ONE parallel call:
+Rebuilt 2026-08-20. The old version of this gate always wrote standalone HTML files. That
+is the weaker of the two shapes and it was the only one on offer, which contradicted the
+owner's own recorded preference: **verify each surface in the running app, not on abstract
+mockups.** A variant judged in a vacuum always looks fine; the same variant next to the
+real header, real sidebar, real density and real data often does not.
 
-- **v1–v6:** conservative to polished, all on real tokens, each a DISTINCT layout paradigm.
-  Not the same card grid with different spacing.
-- **v9–v10:** WILDLY different: a different layout paradigm, spatial arrangement or visual
-  language entirely (terminal, full-bleed hero with bold type, Bloomberg data grid, floating
-  action panel, bento grid, magazine editorial). They must look like a different product team
-  made them, never a card-grid or accordion variation.
-- **Codex authors v9–v10:** run `/design` Step 2's Codex wild-slot block with paths adapted
-  to `.mockups/build-<slug>/`. Any failure → that slot regenerates via the normal agent. Skip
-  silently without codex.
+So decide the host FIRST:
+
+| Host | When | What it means |
+|---|---|---|
+| **In the app** (default) | The surface has, or belongs inside, a page that already runs | Variants render on the real route behind `?variant=1..4`. Existing data fetching, params and auth stay put; only the rendered subtree swaps |
+| **Standalone file** (fallback) | No app runs, no plausible host page, or the dev server will not start | `.mockups/build-<slug>/<slug>-all.html`, one page, four variants stacked |
+
+Before choosing the fallback, ask whether there is genuinely no existing page this could sit
+inside. An empty route hides the problems a populated one exposes. State which host you
+picked and why, in one line, before generating anything.
+
+### Step A: Generate exactly 4 variants, on ONE page
+
+**Four, not eight.** Set by the owner 2026-08-18 for `/design`; this gate kept saying eight
+until 2026-08-20 while its own Step B judged "3 of 4", so the two halves disagreed about how
+many variants existed. Four genuinely different directions beat eight where half are
+near-twins, and everything downstream costs half as much.
+
+One page or one route holds all four. Never four separate files, and never a variant that
+only exists as a screenshot.
+
+- **v1-v3:** each anchored to a DISTINCT layout paradigm, not the same card grid respaced.
+  Pick three from: terminal/CLI · data grid · editorial · bento · command palette ·
+  split-pane · single-column full-bleed · floating action panel · timeline · kanban.
+- **v4:** the one adventurous slot. Different enough that nobody would call it a variation
+  of v1-v3. **Not** "wild" for its own sake: it still obeys the tokens and the coherence
+  rules below. Codex authors it when available (`/design` Step 2's Codex block, paths
+  adapted); any failure means Opus authors it instead, and the round never blocks.
+
+**Coherence rules apply to all four.** Read `~/.claude/skills/design/DESIGN_REFS.md` and
+follow its routing, starting with the coherence row. Each variant picks ONE family per axis
+(radius, shadow, spacing, icon style, type scale, control height) and holds it. A variant
+that mixes two radius families is not a design direction, it is a bug, and the judge below
+treats it as one.
+
+**In-app host:** each variant is a component (`VariantOne`…`VariantFour`) chosen by a
+`?variant=` search param, plus a floating switcher pinned bottom-centre with prev/back,
+the current label, and next. Arrow keys cycle it, except while an `<input>`, `<textarea>`
+or `[contenteditable]` has focus. The switcher is visually unlike the design being judged,
+so it is never mistaken for part of it, and it is gated so a stray merge cannot ship it.
+
+**Standalone host:** one file, four sections stacked, each with its variant label and a
+one-line description. The `mockup-autoopen` hook pops it; do not tell the user to open it.
 
 ### Step B: Slop judge (HARD gate, minimum 3 survivors of 4)
 
@@ -286,12 +323,26 @@ reason each.
 Fewer than 3 survive → respawn the rejects naming the exact slop pattern matched: "Go
 structurally different: change the layout paradigm entirely, not just the colour."
 
-### Step C: Combined view + screenshot
+### Step C: Look at it, then screenshot it
 
-Build ONE page `.mockups/build-<slug>/<slug>-all.html`, survivors only, stacked vertically.
-Each section: variant label, one-line description, iframe. Mark the recommend with ★.
+**In-app host.** Serve the app, then capture each surviving variant at its own URL. The
+screenshot is of the REAL page, which is the entire point of this host:
 
-**Mandatory, both:**
+```bash
+for v in 1 2 3 4; do
+  "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless --disable-gpu \
+    --window-size=1400,900 --screenshot=".mockups/build-<slug>/v$v.png" \
+    "http://localhost:<port>/<route>?variant=$v"
+done
+```
+
+Print the URL with the `?variant=` keys so the user can flip through it themselves. That
+is where the useful feedback comes from, and it is usually "the header from 2 with the
+table from 3", which is the design they actually want.
+
+**Standalone host.** One page, survivors only, stacked vertically; each section carries its
+variant label and a one-line description. Mark the recommend with a star.
+
 ```bash
 open ".mockups/build-<slug>/<slug>-all.html"
 "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless --disable-gpu \
@@ -305,17 +356,17 @@ Show the screenshot inline.
 grading visuals Claude both generated and judged:
 ```bash
 bash ~/.claude/skills/xcheck/scripts/codex-run.sh -m gpt-5.6-sol -s read-only \
-  -i ".mockups/build-<slug>/<slug>-all.png" \
-  "This image shows UI mockup variants, labeled. For each: verdict slop|clean + one-line reason (slop = generic AI-generated look: card grids, gradient CTAs, hero+centered-CTA, shadcn starter DNA). Then name your single top pick + one sentence why. No preamble."
+  -i "<the combined png, or each v<N>.png in turn>" \
+  "This image shows UI mockup variants, labeled v1-v4. For each: verdict slop|clean + one-line reason (slop = generic AI-generated look: card grids, gradient CTAs, hero+centered-CTA, shadcn starter DNA). Then name your single top pick + one sentence why. No preamble."
 ```
 
 Codex is advisory and never kills a variant alone. Claude's judge stays the gate, including
-for Codex's own v9–v10, which gets no self-grading weight. Output
+for Codex's own v4, which gets no self-grading weight. Output
 `| Variant | Description | Survived judge? | Codex | Pick |`, ★ on the recommend.
 
 Both models picking the same variant = high-confidence recommend. A split shows both reasons
-(that disagreement is signal) and triggers `/design` Step 3's synthesis round (crossover
-v11/v12); run it, append both, gate on all 10.
+(that disagreement is signal) and triggers `/design` Step 3's synthesis round: one crossover
+variant built from what each model praised. Append it and gate on all five.
 
 Stop and ask **"Which mockup variant? (or redirect)"** Do not proceed until the user names
 one. Lock it, the build agents match it exactly.
@@ -327,7 +378,9 @@ one row per interactive element. Hand-build rows need a closed-list reason; a ha
 on a primitive the detected library already provides is a gate failure. No phase 4 without
 the table shown.
 
-Mockup files stay in `.mockups/build-<slug>/` until after phase 6.
+Mockup files stay in `.mockups/build-<slug>/` until after phase 6. For the in-app host, the
+losing variants and the switcher come OUT in the same phase the winner is folded in: variant
+components left behind rot fast and confuse the next reader.
 
 ## 4: TDD (vertical slices)
 
