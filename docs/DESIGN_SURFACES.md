@@ -95,13 +95,14 @@ written here; the machine only notices what is new or what has changed underneat
 | `interface-design` | 2 | reference | Craft, hierarchy, tokens, design-system consistency |
 | `pick-ui-library` | 2 | reference | Library selection table |
 | `hallmark` | n/a, vendored, not installed | reference | 21 macrostructures, a six-axis pre-emit critique and a variety rule, read by `/design` from `skills/design/vendor/hallmark/`. It ships upstream as a four-verb door; the row exists so that if it is ever installed at `skills/hallmark/` the door check reports RIVAL REAPPEARED instead of going quiet |
-| `archify` | 2 | not a surface | Draws architecture diagrams. "Redesign this page" must never reach it |
+| `styleseed` + 22 `ss-*` | n/a, vendored, not installed | reference | The chosen coherence authority, picked by the owner 2026-08-20 over UI Craft after a head-to-head. `npx skills add bitjaru/styleseed` creates TWENTY-THREE invocable skills; all twenty-three symlinks were deleted on install day and only the engine rule docs were kept, at `.agents/styleseed-engine/`, read by `/design` via DESIGN_REFS.md. The row exists so that if any `ss-*` reappears under `skills/` the door check reports RIVAL REAPPEARED. Its scored gate is per-project and is not wired up |
+| `archify` | archived 2026-08-20 | not a surface | Draws architecture diagrams. "Redesign this page" must never reach it |
 | `build` | 1 | not a surface | Ships features end to end; it *calls* `/design`, it is not a design door |
 | `debate` | 1 | not a surface | Argues decisions, including UI ones, and produces no interface |
 | `eli5` | 1 | not a surface | Explains things in plain words |
 | `xcheck` | 1 | not a surface | Sends work to a second model |
 | `computer-use` | 2 | not a surface | Drives desktop windows; reads UI, never designs it |
-| `orca-cli` | 2 | not a surface | Operates worktrees and terminals |
+| `orca-cli` | archived 2026-08-20 | not a surface | Operates worktrees and terminals |
 | `react-specialist` | 6, agent | not a surface | Builds React components to a given design; it implements, it does not decide the design |
 | `accessibility-tester` | 6, agent | not a surface | Audits WCAG compliance. Genuinely adjacent, deliberately kept: `/design`'s AUDIT.md runs its own contrast and axe-core checks at runtime, and a second opinion on a11y is worth more than a tidy door count |
 | `dataviz` | 7, bundled | **door** | Charts and graphs, a job neither other door does. Owner ruled 2026-08-19 that it keeps this. Also could not be demoted from here anyway: it is compiled into the CLI |

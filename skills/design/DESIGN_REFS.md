@@ -8,6 +8,32 @@ Every path below is **reference text, never invoked as a skill**. Rules:
 - **The project's own tokens always win.** No reference's palette, typeface, or opinion overrides tokens extracted from the project.
 - **Read only what this task needs.** Never all nine. Match the WHEN heading, read that row, stop.
 
+## Coherence: making a screen look shaped by one mind
+
+Read this row FIRST on any surface with more than a couple of components. It is the
+chosen design authority, picked by the owner on 2026-08-20 over UI Craft after a
+head-to-head on the same screen. One authority only: nothing else in this file gets to
+overrule it on radius, spacing, shadow, icon style, type scale, motion or control height.
+
+| Path | Read it for | Ignore |
+|---|---|---|
+| `~/.claude/.agents/styleseed-engine/VISUAL-CRAFT.md` | §C0 the coherence laws: pick ONE family per axis (radius, shadow, colour roles, 8px spacing, icon style, type scale, easing, border weight, state layers, control height) and treat a mixed axis as a lint error. Then the numeric craft defaults below it | Its "read before scaffolding" framing. Read the axis table even mid-task |
+| `~/.claude/.agents/styleseed-engine/RULESETS.md` | Choosing one output grammar for the surface, before any colour or type decision | Anything once a grammar is already locked for this project |
+| `~/.claude/.agents/styleseed-engine/DESIGN-LANGUAGE.md` | The full 74-rule set. Big (2858 lines): open it only for the specific rule you are checking, never end to end | Reading it as an overview. Use VISUAL-CRAFT for that |
+| `~/.claude/.agents/styleseed-engine/PALETTE-RECIPES.md` · `BRAND-RECIPES.md` | Deriving a semantic palette that is not the default indigo | The project's own tokens always win over any recipe |
+
+**Vendored, not installed as skills.** `PROVENANCE.txt` in that folder pins the upstream
+revision. The 23 `ss-*` skills the installer created were deliberately removed from the
+loaded path: `docs/DESIGN_SURFACES.md` allows three doors and StyleSeed would have added
+twenty-three. The rules are reference here; `/design` stays the door.
+
+**The scored gate is per-project, and is NOT wired up.** `ss-score`'s checker
+(`~/.claude/.agents/skills/ss-score/scripts/styleseed-check.mjs`) needs a `.styleseed/`
+registry that `ss-setup` writes into a specific project. Run against a bare folder it
+returns one finding, `SS000 registry is missing`, and no score. Measured 2026-08-20. So
+today StyleSeed contributes rules, not enforcement. Do not describe a screen as "scored"
+unless that registry actually exists in the project you are working in.
+
 ## Picking a visual direction
 | Path | Read it for | Ignore |
 |---|---|---|

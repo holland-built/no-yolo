@@ -107,6 +107,24 @@ elif [ "$demoted_seen" -gt 0 ]; then
   record PASS "demoted design skills still reference-only ($demoted_seen checked)"
 fi
 
+# 5e. StyleSeed stayed rules-only. `npx skills add bitjaru/styleseed` makes 23 invocable
+#     skills and docs/DESIGN_SURFACES.md allows three doors, so setup.sh deletes every
+#     symlink and keeps only the engine rule docs. Two ways that silently comes undone:
+#     a plain `npx skills update` re-links them, or the installer writes its nested
+#     ./.claude/skills again (it resolves relative to the working directory, so running it
+#     from ~/.claude yields ~/.claude/.claude/skills — a live project-skills dir).
+#     Local-install check, same caveat as 5c/5d: only complain about what is actually here.
+ss_doors=""
+for s in "$ROOT"/skills/ss-* "$ROOT"/skills/styleseed; do
+  [ -e "$s" ] && ss_doors="$ss_doors $(basename "$s")"
+done
+[ -d "$ROOT/.claude/skills" ] && ss_doors="$ss_doors .claude/skills(nested)"
+if [ -n "$ss_doors" ]; then
+  record WARN "StyleSeed doors reappeared —$ss_doors; see docs/DESIGN_SURFACES.md, re-run setup.sh"
+elif [ -f "$ROOT/.agents/styleseed-engine/VISUAL-CRAFT.md" ]; then
+  record PASS "StyleSeed rules-only (engine vendored, 0 doors)"
+fi
+
 # 6. README format: every '## ' heading in docs/README_FORMAT.md exists in README.md
 ok=1
 while IFS= read -r h; do grep -qF "$h" README.md || { echo "README missing: $h"; ok=0; }; done < <(grep '^## ' docs/README_FORMAT.md)
