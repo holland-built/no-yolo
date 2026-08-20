@@ -1,5 +1,5 @@
 # Anti-Slop Reference
-> Canonical extraction target for `/better-prompt --refresh`, and the list the slop-guard hook reads. One bullet per tell.
+> The list the slop-guard hook reads. One bullet per tell. (It was also the extraction target for `/better-prompt --refresh`, archived 2026-08-20; restore from `archive/` before that pointer means anything.)
 > 15 writing tells. Every rule states the TELL (what makes the pattern suspicious) so a borderline case can be judged instead of pattern-matched.
 > Tells 1 and 2 end in a pointer to `CORE_RULES.md`: those two are enforced rules, not just
 > writing habits, and each stays complete here so extraction still works.

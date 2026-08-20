@@ -410,8 +410,9 @@ another fact, or a `[[link]]` pointing at a fact that doesn't exist.
 ## Step 8: Learnings staleness
 
 Check whether `learnings.md` has a section for the current model ID. Stale → surface a finding
-recommending `/better-prompt --refresh`. **Never auto-run it**. It fetches the web and
-rewrites the file. Opt-in only.
+recommending `/better-prompt --refresh`, **and say in the same finding that `/better-prompt` was
+archived on 2026-08-20** (`~/.claude/archive/skills/better-prompt/`), so the fix is restore-then-run,
+not run. **Never auto-run it either way.** It fetches the web and rewrites the file. Opt-in only.
 
 ## Step 8.5: Outside grade (Codex)
 

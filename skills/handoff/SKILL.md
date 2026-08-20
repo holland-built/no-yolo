@@ -119,12 +119,17 @@ user's own set. Do not send the next session to a skill that does not exist here
 | Next.js pages to prove actually render | `/route-map` |
 | Ready to publish | `/release` |
 | Setup itself feels off, or skills are drifting | `/checkup` |
-| Packages or licences to check | `/dep-audit` |
 | Something learned this session worth keeping | `/remember-that` |
 | Genuinely unsure what to do first | `/whats-next` |
 
-The rest of the set (`better-prompt`, `eli5`, `ingest-docs`, `last-30`, `lockstep`, `watch`)
-are worth naming only when the handoff is actually about one of them.
+The rest of the live set (`eli5`, `lockstep`) is worth naming only when the handoff is
+actually about one of them.
+
+**Archived 2026-08-20, do NOT send the next session to any of these:** `better-prompt`,
+`dep-audit`, `ingest-docs`, `last-30`, `watch`, `archify`, `improve`, `orca-cli`,
+`resolving-merge-conflicts`. They are in `~/.claude/archive/`, out of the loaded path, with a
+restore command each in `archive/MANIFEST.md`. Naming a skill that is not installed sends the
+next session hunting for a door that is not there.
 
 ## 6: Print one paste block, last
 
