@@ -272,8 +272,9 @@ else
   fi
   echo "    Installing emilkowalski/skills (design-eng taste rules — used by /design)..."
   if npx skills@latest add emilkowalski/skills; then RESULTS+=("emilkowalski/skills: OK"); else echo "    ! emilkowalski/skills install failed"; RESULTS+=("emilkowalski/skills: FAILED"); fi
-  echo "    Installing archify (zero-dep diagrams)..."
-  if npx skills@latest add tt-a1i/archify; then RESULTS+=("archify: OK"); else echo "    ! archify install failed"; RESULTS+=("archify: FAILED"); fi
+  # archify was installed here until 2026-08-20. It is archived, not deleted: leaving
+  # the install line in would silently reinstate the symlink on the next setup run,
+  # which is what "archived" is supposed to prevent. Restore command: archive/MANIFEST.md.
   # These skills are reference material read by /design, not doors of their own
   # (docs/DESIGN_SURFACES.md). `disable-model-invocation: true` keeps the file readable
   # while stopping the model auto-selecting it. Upstream ships without the line, so it has

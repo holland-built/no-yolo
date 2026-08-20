@@ -44,7 +44,7 @@ Restart the session; `claude mcp list` should show `firecrawl … ✔ Connected`
 Skills that prefer Firecrawl then use it automatically and fall back to
 `WebSearch` if it stops responding.
 
-### The fallback pattern (reference: `skills/last-30/SKILL.md`)
+### The fallback pattern (reference: `archive/skills/last-30/SKILL.md`, archived 2026-08-20)
 
 Any skill that reaches for an optional MCP provider must degrade gracefully:
 the server may be unconfigured, or self-hosted and offline. The pattern:
