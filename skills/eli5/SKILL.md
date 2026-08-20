@@ -34,8 +34,9 @@ file, do NOT re-run any research.
 Take the immediately preceding assistant message and re-emit it as a table. Same
 facts, nothing added, nothing looked up again. Columns come from the content:
 `| Thing | State |`, `| Option | What you get |`, `| File | Problem | Fix |`,
-`| Step | Does what |`. Up to 8 rows, a short phrase per cell, no jargon. One short
-line of context after the table if it genuinely needs one. Then stop.
+`| Step | Does what |`. One table, five rows, three columns, a short phrase per
+cell, no jargon. One short line of context after the table if it genuinely needs
+one. Then stop. If the facts do not fit five rows, build the page (see below).
 
 If the previous answer had only one fact in it, say that one fact in one sentence
 and note there was nothing to tabulate.
@@ -103,7 +104,8 @@ The user is non-technical. Plain words and table shape are both constant. **Pick
 | Live-test the judge | optional | `/design` |
 
 Hard rules for Mode B:
-- **A few words per cell, up to 8 rows.** Fragments, not sentences. More than 8 rows means the answer is too broad, cut rows, never spill into prose.
+- **A few words per cell. One table, five rows, three columns.** Fragments, not sentences. These are caps, not targets.
+- **Too big for the caps means build a page, not a smaller answer.** Write the full thing as one self-contained HTML file, publish it with the Artifact tool, and reply with the five-row summary plus the link. Dropping facts to fit is as much a failure as overflowing.
 - **No jargon anywhere.** Translate any technical term inline, or cut it. "md file", "supersede", "compile" → say what it does.
 - **No mandatory "why."** Add a reason ONLY if it's short and changes the decision. Never a paragraph, never history/justification padding.
 - Asks say plainly what you need; options spelled "A: … / B: …" in plain words.
@@ -125,8 +127,9 @@ These apply in **both** modes, on top of the shape rules above.
 | **One next action** | If anything is left open, end with ONE thing doable in under two minutes. Even "open the file" counts. Never "let me know if you want to dig deeper". |
 | **Five items, ranked** | A list of ACTIONS or OPTIONS the reader must act on or pick between stops at 5. Past five, split it: "do now" vs "later", or "must" vs "nice to have". Five ranked beats ten unranked. |
 
-**5 and 8 are two different ceilings, not a contradiction.** A table of facts, files
-or states may run to 8 rows. A list of things the reader has to do or choose caps at 5.
+**One ceiling now: five.** Five rows of facts, five things to act on or pick between.
+The old split (8 for facts, 5 for actions) went on 2026-08-20 when the caps became
+hard and the overflow route became a published page instead of a longer reply.
 
 ## Word and sentence rules
 

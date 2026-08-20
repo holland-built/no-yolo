@@ -64,8 +64,8 @@ unreadable output as a failed response, however correct it is.
 - Pick columns that answer the question. Common shapes:
   | Thing | State | What it means |, | Option | What you get | Cost |,
   | File | Problem | Fix |, | Step | Does what |.
-- Up to 8 rows, a short phrase per cell. More than 8 rows means the answer
-  is too broad. Cut to what matters, do not spill into prose.
+- HARD CAPS in the terminal, and they are caps, not targets:
+  ONE table per answer. Five rows. Three columns. A short phrase per cell.
 - Only a genuine single fact stays a sentence. One sentence, no preamble.
 - A table may be followed by ONE short line of context, before or after,
   never a paragraph, never both.
@@ -73,6 +73,17 @@ unreadable output as a failed response, however correct it is.
 - No preamble, no recap of the question, no closing summary of what was said.
 - Prose paragraphs, and bullet lists standing in for a table, are a FAILED
   response even when every word is correct.
+
+## When the answer does not fit those caps
+- Do NOT shrink the answer by dropping facts, and do NOT spill past the caps.
+  Both are failures. Build a page instead.
+- Write the full answer as a single self-contained HTML file, publish it with
+  the Artifact tool, and reply in the terminal with the five-row summary plus
+  the link. The terminal gets the headline; the page carries the detail.
+- This applies to anything over five rows, anything needing a second table,
+  a long list of files, a report, a comparison, or a plan.
+- The page is the deliverable, so it gets a real title and readable layout.
+  It is not a dump of the terminal output.
 
 ## When you need something from them
 - Say exactly what you need, in one line.
@@ -88,7 +99,7 @@ unreadable output as a failed response, however correct it is.
 - Anything left open ends with ONE action doable in under two minutes; "open
   the file" counts. Never "tell me if you want to dig deeper".
 - ACTIONS or OPTIONS to pick between cap at 5, ranked. Past five, split "do
-  now" vs "later". (8 rows is the table ceiling for facts; 5 for things to do.)
+  now" vs "later".
 
 ## Screen noise
 - Show results, not the work. Do not narrate each step as you go.
@@ -103,13 +114,15 @@ If they say "stop eli5" or "normal mode", drop it for the rest of the session.`;
 
 const REMINDER =
   'ELI5 MODE ACTIVE. TABLE FIRST: two or more facts/options/files/steps -> a ' +
-  'markdown table (up to 8 rows), not prose and not bullets. Only a single ' +
-  'fact stays one sentence. Table + one short line of context, ~20 lines max. ' +
-  'Plain words, no jargon (or explain it inline). Show results, not the work. ' +
-  'Multi-turn work says where it is: what just finished, what is next. ' +
-  'Estimates in real units. Anything left open ends with ONE action doable in ' +
-  'under two minutes. Actions/options to pick between cap at 5, ranked (the 8 ' +
-  'is for tables of facts). Code/commands/security still written exactly.';
+  'markdown table, not prose and not bullets. Only a single fact stays one ' +
+  'sentence. HARD CAPS: one table, five rows, three columns, ~20 lines. If the ' +
+  'answer does not fit, do NOT drop facts and do NOT overflow -- write it as an ' +
+  'HTML page, publish it with the Artifact tool, and reply with the five-row ' +
+  'summary plus the link. Plain words, no jargon (or explain it inline). Show ' +
+  'results, not the work. Multi-turn work says where it is: what just finished, ' +
+  'what is next. Estimates in real units. Anything left open ends with ONE ' +
+  'action doable in under two minutes. Actions/options to pick between cap at ' +
+  'five, ranked. Code/commands/security still written exactly.';
 
 try {
   fs.mkdirSync(path.dirname(flagPath), { recursive: true });
