@@ -63,21 +63,36 @@ Two hard rules, every time a mockup is created or changed:
 
 Use the manual flow (5-8) when no skill applies. When a skill is invoked, use its count. Don't override it.
 
-**Four, and where the host lives.** The owner set four on 2026-08-18 for `/design`; `/build`
+**Four, and the shape of the page.** The owner set four on 2026-08-18 for `/design`; `/build`
 still said ten here and eight in its own gate until 2026-08-20, while that same gate judged
-"3 survivors of 4". Three different counts for one job. Both skills now say four.
+"3 survivors of 4". Three different counts for one job. All three files now say four.
 
-`/build`'s gate also now prefers rendering the four variants **inside the running app** on the
-real route behind `?variant=`, falling back to a standalone `.mockups/` page only when no app
-can host them. A variant judged in a vacuum always looks fine; the same variant beside the real
-header, real density and real data often does not.
+**The owner's four rules for a mockup page, stated 2026-08-20 and not up for reinterpretation:**
+
+| Rule | What it means |
+|---|---|
+| All options on ONE page | Never one file per variant, never a link to click per option |
+| Light AND dark | Both themes visible together, side by side, not a toggle to hunt for |
+| Throwaway | It is a contract to point at, not code that gets promoted |
+| Looks like the real design | The project's own tokens, palette and type. Its LOOK is real |
+| Data need NOT be real | Plausible stand-in content is fine. Real records are not required |
+
+That last row was a relaxation, made 2026-08-20. Both skills had demanded real data. **Lorem
+ipsum is still banned**, and the two are not the same rule: fake latin destroys the thing a
+mockup is for, because real labels and real name lengths are what break a layout. Plausible
+invented content ("Northgate Refit", "£14,280", "3 days overdue") keeps that and costs nothing.
+
+Mockups are also NOT rendered inside the running app. Asked directly on 2026-08-18, the owner
+said no; a version of this file briefly said otherwise on 2026-08-20 and was corrected. Building
+into the real app is phases 5-6 of `/build`, one surface at a time. See
+`memory/facts/feedback-realapp-incremental-ui.md`.
 
 ## Manual flow
 
 1. Create a single HTML file at `.mockups/manual-<feature-name>/index.html` in the current project root.
 2. Include 5–8 distinct variations side-by-side, each labeled (Option A, B, C…).
 3. Vary one or more of: layout, color, density, motion, copy, hierarchy.
-4. Show real content, not lorem ipsum.
+4. Show plausible content, never lorem ipsum. It does not have to be real records; it does have to have realistic labels and realistic lengths.
 5. Show it to the user. Get a pick. Discard the rest.
 6. Only then start implementation.
 

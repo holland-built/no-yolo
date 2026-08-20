@@ -307,6 +307,13 @@ columns, light left and dark right, each row labelled with its variant and a one
 description. Sticky jump nav with v1-v4 anchors. The `mockup-autoopen` hook pops it in the
 browser by itself; never hand the user a link to click.
 
+**Content: plausible, not necessarily real.** Owner's ruling, 2026-08-20. The mockup must LOOK
+like the real product, so the project's tokens, palette and type are mandatory. The DATA does
+not have to be the project's actual records; invented ones are fine. **Lorem ipsum stays
+banned**, and it is a different rule: real-sounding labels at realistic lengths are exactly what
+expose a layout that breaks, and latin hides it. "Northgate Refit / £14,280 / 3 days overdue"
+does the job; "Lorem ipsum dolor sit" does not.
+
 ### Step B: Slop judge (HARD gate, minimum 3 survivors of 4)
 
 Spawn ONE adversarial judge agent with all 4 files. It rejects any variant matching ANY
