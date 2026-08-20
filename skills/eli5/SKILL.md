@@ -14,6 +14,14 @@ allowed-tools:
 
 Explain what something actually does before the user says yes to it.
 
+> **Where these rules come from.** The shape and word rules below are a copy. Their home is
+> `~/.claude/hooks/eli5-activate.js`, which the harness injects at every session start and every
+> turn; `~/.claude/memory/facts/feedback-eli5-plain-short.md` is the durable record that survives
+> the hook being switched off. They are kept inline here on purpose: this skill runs on a
+> low-effort model and may run after the session has been compacted, so it cannot rely on the
+> hook's text still being in view. **If any of the three disagree, the hook wins, and fix all
+> three.**
+
 ## How to run
 
 ### Step 0a: reprint mode (check this FIRST)

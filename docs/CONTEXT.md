@@ -25,11 +25,17 @@ The connected services are the problem: 60.4k, six times everything else put tog
 - Stay in the smart zone. Attention is reported to fall off somewhere around 120-140k tokens, a rule of thumb from a public talk, not something measured here.
 - So budget big work in chunks of roughly 100–120k tokens, say the budget out loud before starting, and clear context between phases.
 
-## Scan delegation (hard rule, not advice)
+## Scan delegation: retired 2026-08-19
 
-- **≥5 read-only tool calls for one question → MUST delegate** to `Explore`; report findings only. Under 5 → inline fine.
-- Exceptions: user asks to watch live; sequential lookups (each depends on the last); skills that already dispatch their own agents.
-- Why it's hard: soft "prefer subagents" advice sat here for weeks and changed nothing. Inline grep waterfalls kept filling screens and context.
+This section used to carry a hard rule: 5 or more read-only tool calls for one question MUST be
+delegated to `Explore`. It was removed because it could not fire. The harness session config says
+"Do not call the AgentTool unless the user requested it", and a setting beats a document every
+time, so the rule sat here for weeks describing behaviour that never happened. A hard rule that
+never applies is worse than no rule, because the next reader believes it.
+
+The full text and its exceptions are preserved at `memory/facts/pattern-delegate-scans-to-subagents.md`,
+now `status: retired`. Reinstate it there and here together if agents are ever allowed by default.
+
 - For UI work, use text-based checks before screenshots. They're faster.
 
 ## Long-running work

@@ -1,11 +1,25 @@
 # Design surfaces: what counts as one, and which are allowed to be doors
 
-The decision this file records: **there is one door for design work, `/design`.** Everything
-else that knows about interfaces is reference material that door reads on demand. This file
-exists so that "everything else" is a list somebody can check, rather than a feeling.
+The decision this file records: **there are three doors for design work, and each owns a job the
+other two do not.** Everything else that knows about interfaces is reference material that a door
+reads on demand. This file exists so that "everything else" is a list somebody can check, rather
+than a feeling.
+
+| Door | Owns | What happens to the current look |
+|---|---|---|
+| `/design` | Starting fresh | Thrown away. Every option is a clean sheet |
+| `impeccable:impeccable` | Improving what exists | Kept and refined, in place, through named sub-commands |
+| `dataviz` | Charts and graphs | Not applicable, it draws data, not interfaces |
+
+**Ruled 2026-08-19, replacing the previous one-door version of this file.** The old rule said
+`/design` was the only door, and the roster below then listed three, with a paragraph admitting
+the contradiction rather than fixing it. The owner settled it: the three are not rivals, they do
+different jobs, and `dataviz` stays the charts tool without further argument. The count is now
+allowed to be three; what is still forbidden is a *fourth*, or any of the three quietly growing
+into another's job.
 
 It is written for a machine as much as a person. `/checkup` reads it to answer one question
-each run: *has a second door appeared?* A door that reappears quietly is the failure mode:
+each run: *has a fourth door appeared?* A door that reappears quietly is the failure mode:
 five design skills were installed here over time and none of them was ever invoked once.
 
 ## What a design surface is
@@ -71,7 +85,7 @@ written here; the machine only notices what is new or what has changed underneat
 | Surface | Route | Verdict | Why |
 |---|---|---|---|
 | `design` | 1, own skill | **door** | Fresh generation, audit, quick sketch, conform, component pull, mockup port |
-| `impeccable:impeccable` | 3, enabled plugin | **door** | Allowed by observation, not by design. See the honest note below |
+| `impeccable:impeccable` | 3, enabled plugin | **door** | Improves an existing interface in place: polish, bolder, quieter, animate, typeset, harden, plus a11y/perf checks and a cross-session design record |
 | `animation-vocabulary` | 2 | reference | Naming effects |
 | `find-animation-opportunities` | 2 | reference | Whether something should animate at all |
 | `improve-animations` | 2 | reference | Whole-codebase motion audit |
@@ -89,8 +103,8 @@ written here; the machine only notices what is new or what has changed underneat
 | `computer-use` | 2 | not a surface | Drives desktop windows; reads UI, never designs it |
 | `orca-cli` | 2 | not a surface | Operates worktrees and terminals |
 | `react-specialist` | 6, agent | not a surface | Builds React components to a given design; it implements, it does not decide the design |
-| `accessibility-tester` | 6, agent | not a surface | Audits WCAG compliance. Genuinely adjacent, deliberately kept: `/design`'s AUDIT.md runs its own contrast and axe-core checks at runtime, and a second opinion on a11y is worth more than one-door tidiness |
-| `dataviz` | 7, bundled | **door, unavoidable** | Compiled into the CLI. Cannot be demoted from here at all |
+| `accessibility-tester` | 6, agent | not a surface | Audits WCAG compliance. Genuinely adjacent, deliberately kept: `/design`'s AUDIT.md runs its own contrast and axe-core checks at runtime, and a second opinion on a11y is worth more than a tidy door count |
+| `dataviz` | 7, bundled | **door** | Charts and graphs, a job neither other door does. Owner ruled 2026-08-19 that it keeps this. Also could not be demoted from here anyway: it is compiled into the CLI |
 | `design-plugins/design-lab` | 4, dormant | reference | Cloned, not enabled. Enabling it is a decision to have a second door |
 | `claude-plugins-official/frontend-design` | 4, dormant | reference | Same |
 | `claude-plugins-official/build-mcp-app` | 4, dormant | not a surface | Builds MCP apps. Caught by the keyword net; it is not a design surface |
@@ -130,7 +144,7 @@ separation, so that flag is the lever.
 | `interface-design` | 2026-08-18 (cohort C) | `skills/interface-design/SKILL.md` |
 
 All seven are listed in `skills/design/DESIGN_REFS.md` with what to read them for, exactly once
-each. Demotion is not deletion: every word of them is still reachable, through the one door.
+each. Demotion is not deletion: every word of them is still reachable, through `/design`.
 
 **Undo, exactly.** These files are gitignored, so `git revert` does not restore them. Reverting
 the tracked commit only removes the policy, not the flag. The local undo is one command:
@@ -183,15 +197,24 @@ like an oversight, and the plan's step 4b, which lists it in Cohort A, is wrong 
 `claude-plugins-official/plugins/frontend-design`. Both are cloned to disk. Neither is enabled.
 Enabling either one is a decision to have a second door, and should be made on purpose.
 
-## The honest note on `impeccable`
+## The note on `impeccable`, now resolved
 
-The plan says one door. The measurement says `impeccable:impeccable` was invoked 3 times in 13
-days and `design` twice, so the plugin is used *more* than the door it supposedly competes with.
+The measurement, taken 2026-08-18: `impeccable:impeccable` was invoked 3 times in 13 days and
+`design` twice, so the plugin is used slightly *more* than the door it was supposed to be
+competing with. That number is kept here because it is the only usage evidence there is, and
+because it is what settled the question.
 
-Recorded rather than resolved. Declaring it a rival and demoting it would be acting against the
-only usage evidence there is; declaring the one-door rule satisfied while two doors are open
-would be untrue. It sits on the allowlist with this paragraph attached so the next reader
-inherits the tension instead of a tidy lie. Revisit it with a fresh count, not an argument.
+This used to be recorded as an unresolved tension: demoting `impeccable` would have contradicted
+the usage evidence, while calling the one-door rule satisfied with two doors open would have been
+untrue. Resolved 2026-08-19 by dropping the false premise instead of either horn. They were never
+competing. `/design` throws the current look away and returns fresh options to pick from;
+`impeccable` keeps the current look and improves it in place through named sub-commands, and it
+carries the accessibility, performance and responsive checks plus the cross-session design record
+that `/design` does not. Two genuinely different jobs, both worth having.
+
+The one real overlap left: `/design`'s audit-then-fix mode does roughly what `impeccable polish`
+does. Left in place deliberately, because removing a mode the owner may be using is a bigger risk
+than an overlap that costs nothing. Revisit that one with a fresh count, not an argument.
 
 ## What `/checkup` does with this file
 

@@ -9,12 +9,8 @@ project's own `CLAUDE.md`.
 @docs/CORE_RULES.md
 @docs/ANTISLOP.md
 
-> Three imports and no more. Learned preferences, the 8 rules that survived the
-> 2026-07-29 experiment, and the writing-slop list. Anti-slop is imported rather than
-> pointed at because a pointer gets read after the writing has already started.
-> Its GUI half was split into `docs/GUI_SLOP.md` on 2026-08-18 and is pointed at
-> below. 10,249 bytes that only matter when there is a screen do not belong in
-> every backend session.
+> Three imports and no more. Why these three, and why anti-slop is imported rather
+> than pointed at: `~/.claude/docs/DECISIONS.md`.
 
 ## Read these when the condition fires
 
@@ -25,7 +21,7 @@ project's own `CLAUDE.md`.
 - Before designing or reviewing a surface where a model does the work → `docs/AI_UI_PATTERNS.md`
 - Before writing any UI or GUI code → `docs/UI_MOCKUPS.md`
 - Before dispatching a subagent or building a multi-step plan → `docs/SUBAGENTS.md`
-- When a session runs long, or one question needs 5+ read-only lookups → `docs/CONTEXT.md`
+- When a session runs long, or context is filling up → `docs/CONTEXT.md`
 - Before finishing a `/health` pass or any diff review → `docs/CODE_REVIEW.md`
 - When you learn a preference or fact worth keeping → `docs/MEMORY.md`
 - Before writing or editing a skill file, `CLAUDE.md`, or a rules doc → `docs/AGENT_WRITING.md`
