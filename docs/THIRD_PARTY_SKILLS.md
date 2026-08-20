@@ -52,6 +52,7 @@ honest than a rule the repo breaks in its own installer.
 | `apple-design` | same | same | `setup.sh` (skipped when absent, since nothing here installs it) | `verify.sh` 5d |
 | `emil-design-eng` | same | same | `setup.sh` | `verify.sh` 5d |
 | `interface-design` | same | same | `setup.sh` | `verify.sh` 5d |
+| `styleseed` and 22 `ss-*` | **all 23 symlinks deleted** | The chosen coherence authority, but `docs/DESIGN_SURFACES.md` allows three doors and this would have added 23. Only `engine/*.md` is kept, vendored at `.agents/styleseed-engine/`, read by `/design` | `setup.sh` | `verify.sh` 5e |
 | `animation-vocabulary`, `ponytail-help`, `ponytail-gain`, `ponytail-debt` | `model: haiku` | Cheap skills pinned to a cheap model | **nothing**, see below | nothing |
 
 ## Why every overlay needs both halves

@@ -297,6 +297,48 @@ else
       && mv "$SK.tmp" "$SK" \
       && echo "    Demoted $s to reference-only (see docs/DESIGN_SURFACES.md)"
   done
+
+  # StyleSeed — the coherence authority, chosen by the owner 2026-08-20 over UI Craft.
+  # Installed for its RULES ONLY. `npx skills add bitjaru/styleseed` creates TWENTY-THREE
+  # invocable skills, and docs/DESIGN_SURFACES.md allows three doors; adding 23 would make
+  # the door rule meaningless. So: install, delete every symlink it made, keep the engine
+  # rule docs, and let /design read them (skills/design/DESIGN_REFS.md).
+  #
+  # It also writes into ./.claude/skills relative to the working directory. Run from
+  # ~/.claude that produces a nested ~/.claude/.claude/skills — a real project-skills
+  # directory whose 23 entries all load as doors. Removing it is not tidying.
+  echo "    Installing StyleSeed (rules only, all 23 skill doors removed after)..."
+  if (cd "$CLAUDE_DIR" && npx -y skills@latest add bitjaru/styleseed >/dev/null 2>&1); then
+    rm -rf "$CLAUDE_DIR/.claude"
+    rm -f "$CLAUDE_DIR/skills-lock.json"
+    for s in "$CLAUDE_DIR"/skills/ss-* "$CLAUDE_DIR"/skills/styleseed; do
+      [ -L "$s" ] && rm -f "$s"
+    done
+    SS_ENGINE="$CLAUDE_DIR/.agents/styleseed-engine"
+    if [ ! -f "$SS_ENGINE/VISUAL-CRAFT.md" ]; then
+      SS_TMP="$(mktemp -d)"
+      if git clone -q --depth 1 https://github.com/bitjaru/styleseed.git "$SS_TMP/ss" 2>/dev/null; then
+        mkdir -p "$SS_ENGINE"
+        cp "$SS_TMP"/ss/engine/*.md "$SS_ENGINE"/ 2>/dev/null || true
+        cp "$SS_TMP"/ss/LICENSE "$SS_ENGINE"/ 2>/dev/null || true
+        cp -R "$SS_TMP"/ss/engine/tokens "$SS_ENGINE"/tokens 2>/dev/null || true
+        {
+          echo "source: https://github.com/bitjaru/styleseed"
+          echo "revision: $(git -C "$SS_TMP/ss" rev-parse HEAD)"
+          echo "engine-version: $(cat "$SS_TMP/ss/engine/VERSION" 2>/dev/null || echo unknown)"
+          echo "vendored: $(date +%Y-%m-%d)"
+          echo "licence: MIT (LICENSE copied alongside)"
+          echo "what: engine/*.md rule docs only, no scripts"
+        } > "$SS_ENGINE/PROVENANCE.txt"
+      else
+        echo "    ! StyleSeed engine rules not vendored (clone failed) — /design will skip them"
+      fi
+      rm -rf "$SS_TMP"
+    fi
+    RESULTS+=("styleseed: OK (rules only)")
+  else
+    echo "    ! styleseed install failed"; RESULTS+=("styleseed: FAILED")
+  fi
 fi
 echo ""
 echo "    Nothing to install for impeccable: /antislop, /design-audit and /design run"
