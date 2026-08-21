@@ -11,16 +11,40 @@ One wrapper holds it, so a change reaches every caller at once:
 bash "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/codex.sh" "<prompt>" [output-file]
 ```
 
-Inside it: `codex exec --sandbox read-only --skip-git-repo-check "<prompt>" < /dev/null`.
+Inside it: `codex exec --sandbox workspace-write --skip-git-repo-check "<prompt>" < /dev/null`.
 Three parts earn their place, each learned by watching it fail on 2026-08-21:
 
 | Part | Without it |
 |---|---|
 | `< /dev/null` | Waits on standard input forever. Silent for 40 minutes, looking like a slow model |
 | `--skip-git-repo-check` | Refuses to run outside a trusted directory |
-| `--sandbox read-only` | Codex could write to the tree. It advises; it never edits |
+| `--sandbox workspace-write` | Either no network, so it cannot check a claim about the outside world, or no boundary at all |
 
 The prompt is an argument. Piping the file and passing the prompt as well is a usage error.
+
+## What it is actually running
+
+Not stated anywhere until 2026-08-21, which is how it went unnoticed that every review this
+setup had ever run used the lowest reasoning setting the model offers. A file calling itself
+the single source for how the check runs has to carry the settings that decide what comes back.
+
+| Setting | Value | Set in |
+|---|---|---|
+| Model | `gpt-5.6-sol` | `~/.codex/config.toml` |
+| Reasoning effort | `high` | `~/.codex/config.toml` |
+| Sandbox | `workspace-write` | The `--sandbox` flag in `hooks/codex.sh`, which overrides the config |
+| Network | on | `[sandbox_workspace_write] network_access` in `~/.codex/config.toml` |
+
+**Codex can now write inside the working tree, and this file said it could not.** That was
+true while the sandbox was `read-only`. It stopped being true the moment the sandbox widened,
+and the reason to widen it was network: a read-only sandbox has none, so Codex reviewed seven
+invented package names without being able to look one of them up. Read what it returns; do not
+assume the tree is untouched.
+
+`danger-full-access` was the alternative and was declined. It reaches the whole disk, including
+`~/.ssh` and `~/.aws`, and `codex exec` runs with `approval: never`, so nothing would sit
+between a generated command and the filesystem. `hooks/safety-net.sh` does not cover this:
+it is a Claude Code hook on Claude's own commands and never sees Codex's.
 
 ## The prompt shape
 

@@ -61,7 +61,14 @@ jobs:
         if: runner.os == 'macOS'
         run: brew install shellcheck
 
+      # GITHUB_TOKEN raises the API limit from 60 requests per hour PER SHARED RUNNER IP to
+      # 1000 per repository. Without it the external-reference row would flap red on a busy
+      # hour, and a check that goes red for reasons unrelated to the code is a check people
+      # learn to ignore. The script treats 403 and 429 as "could not run" rather than
+      # "missing", so a flap can never delete a real dependency; the token stops the flap.
       - name: Run verify.sh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: bash verify.sh
 
       # verify.sh reports WARN for a check it could not run, and WARN never fails
@@ -70,6 +77,8 @@ jobs:
       # else: a suite that skips half its checks looks identical to one that passes
       # them. This asserts the platform-sensitive ones actually ran.
       - name: Assert the platform-sensitive checks actually ran
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -uo pipefail
           bash verify.sh > /tmp/verify.out 2>&1 || true
@@ -82,7 +91,8 @@ jobs:
             "pre-commit scan positive control" \
             "tracked-content scan" \
             "setup.sh bash-3.2 clean" \
-            "shellcheck"
+            "shellcheck" \
+            "external references"
           do
             if ! grep -qF "$check" /tmp/verify.out; then
               echo "::error::verify.sh did not report '$check' on ${{ matrix.os }} — it did not run"

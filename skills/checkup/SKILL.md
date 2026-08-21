@@ -34,15 +34,21 @@ A command whose job takes more than one plain sentence has a finding of its own.
 
 ## 2. Mechanical checks
 
-Two linters read rule files and hooks and report structural faults. Run both:
+Two linters read rule files and hooks and report structural faults, and one check proves the
+tools this repo names are the tools that exist. Run all three:
 
 ```bash
-npx --yes agnix check "$CFG" 2>&1
-npx --yes ctxlint "$CFG" 2>&1
+npx --yes agnix "$CFG" 2>&1
+npx --yes @yawlabs/ctxlint "$CFG" 2>&1
+bash "$CFG/hooks/external-check.sh" 2>&1
 ```
 
+`agnix` takes a path. It carried a `check` subcommand here until 2026-08-21 and has never had
+one, so the word was read as a second path to scan and the command looked like it worked.
+
 Report each tool's own output. A tool that is unavailable, errors, or scans nothing reports
-"did not run, <reason>"; a clean result means it executed and found nothing.
+"did not run, <reason>"; a clean result means it executed and found nothing. `external-check.sh`
+exits 3 for exactly that case, and 3 is not a pass.
 
 ## 3. Nothing said twice
 

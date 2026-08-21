@@ -5,9 +5,11 @@ read as writing rather than as output.
 
 The list below is the standing bar and stands on its own.
 
-For a deeper pass over a finished draft, the `avoid-ai-writing` skill carries 49 pattern
-families and rewrites rather than flags. It is one of the optional installs in `INSTALL.md`;
-when it is absent, this file is the whole standard.
+For a deeper pass over a finished draft, the `avoid-ai-writing` skill rewrites rather than
+flags, in three modes: rewrite, detect, and edit in place. Its own README said 62 pattern
+categories on 2026-08-21, against the 49 this file claimed, so read the count there rather
+than here. It is one of the optional installs in `INSTALL.md`; when it is absent, this file
+is the whole standard.
 
 ## Punctuation
 

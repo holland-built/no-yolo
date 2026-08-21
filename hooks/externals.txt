@@ -1,0 +1,33 @@
+# Every external tool this repo tells anyone to install, with where it comes from.
+#
+# WHY THIS FILE EXISTS. On 2026-08-21 a rebuild published seven install references. Six were
+# wrong: four GitHub repos under an owner who does not own them, one npm package under a name
+# that is not its published name, and one, cxpak, that has never existed under any name, with a
+# build stage written to run it. Nothing caught it, because nothing checked. The reference that
+# a session writes and the package that exists are two different facts, and only one of them
+# was ever recorded.
+#
+# WHY PROVENANCE AND NOT JUST EXISTENCE. "The name resolves" is a weaker claim than it looks.
+# Names get squatted, abandoned, and transferred, and a package that exists under the right
+# name can still be the wrong project. So each npm entry pins the GitHub repository its
+# published metadata must point at, and hooks/external-check.sh compares them.
+#
+# FORMAT, one per line:
+#   npm  <package>       <owner/repo its repository.url must contain>
+#   gh   <owner/repo>    -
+#
+# Adding a row is a deliberate act: query the registry first (CLAUDE.md rule 5), then write
+# what you saw. hooks/external-check.sh fails when a tracked install command names anything
+# absent from this file, so an invented name cannot reach a commit.
+
+npm  agnix              agent-sh/agnix
+npm  @yawlabs/ctxlint   YawLabs/ctxlint
+npm  impeccable         pbakaus/impeccable
+
+gh   conorbronsdon/avoid-ai-writing   -
+gh   bitjaru/styleseed               -
+gh   NVIDIA/SkillSpector             -
+
+# This repo's own clone URL, from README.md. Self-referential and deliberate: rename or move
+# the repository and the install instructions everyone else follows go red here first.
+gh   holland-built/no-yolo           -

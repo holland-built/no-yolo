@@ -191,6 +191,22 @@ printf '\ndeclare -A zz_selftest_map\n' >> setup.sh
 assert_red "setup.sh bash-3.2 clean" "check 6c catches a bash-4-only construct"
 restore_one setup.sh
 
+# 7b. external references. A tracked file gains an install command for a package that cannot
+#     exist, which is exactly the shape of the defect this row was built for: on 2026-08-21 six
+#     of seven published references were wrong and one had never existed anywhere.
+#     docs/TESTING.md is tracked, carries no scan exclusion, and is restored straight after.
+backup docs/TESTING.md
+printf '\n```bash\nnpm install -g zz-selftest-package-that-cannot-exist\n```\n' >> docs/TESTING.md
+assert_red "external references" "check 7b catches an install command naming an undeclared package"
+restore_one docs/TESTING.md
+
+# 7b-manifest. Removing the manifest must fail CLOSED. A guard whose rule file is gone and
+#     which then reports "nothing undeclared" is the decoration this whole self-test hunts.
+backup hooks/externals.txt
+rm hooks/externals.txt
+assert_red "external references" "removing hooks/externals.txt turns the row red instead of passing clean"
+restore_one hooks/externals.txt
+
 # 8. tracked-content scan. The value goes into a file that is ALREADY TRACKED, so the
 #    git index is never touched: `git ls-files` lists it either way and the scanner
 #    reads the working tree. Staging a new file instead would leave it in the index if

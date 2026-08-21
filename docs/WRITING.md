@@ -92,6 +92,12 @@ and even then it carries the positive target beside it.
 
 ## Checking your work
 
-Run `agnix` and `Ctxlint` over the file. They read rule files mechanically and report broken
-references, dead commands, and structural faults. A finding they raise is a fact; a clean
-result means those two classes are clear, and says nothing about the rest.
+Run `agnix` and `@yawlabs/ctxlint` over the file, each taking a path. They read rule files
+mechanically and report broken references, dead commands, and structural faults. A finding
+they raise is a fact; a clean result means those two classes are clear, and says nothing about
+the rest.
+
+Naming an outside tool is itself a claim. Query it before you write it (`CLAUDE.md` rule 5),
+add it to `hooks/externals.txt` with the project it resolves to, and `hooks/external-check.sh`
+will hold you to it. This paragraph named a tool as `Ctxlint`, which is neither its package
+name nor its capitalisation, and stood that way from the day it was written.

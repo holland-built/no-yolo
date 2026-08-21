@@ -27,8 +27,13 @@ Fan independent agents out in one call, five at a time.
 For every new symbol the build would introduce, search the tree for an existing one with the
 same name or role. A sibling already doing the job means using it.
 
-`cxpak` builds the dependency graph that makes this search reliable in a large repo. Run it
-when the tree is bigger than a grep can hold.
+In a tree bigger than a grep can hold, search by role rather than by name: the symbol you
+would introduce is rarely called what the existing one is called. Read the importers of a
+candidate before reusing it, because a sibling that fits the name and not the job costs more
+than writing the thing.
+
+This paragraph named a package called `cxpak` until 2026-08-21, said it built a dependency
+graph, and told you to run it. No package of that name has ever existed on any registry.
 
 ## The rival implementation
 
