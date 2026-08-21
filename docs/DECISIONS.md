@@ -80,6 +80,51 @@ thing that makes rule 9 persuasive enough to actually obey. A rule that says "ru
 cross-check" without the measurement proving the cross-check catches real defects is a rule that
 gets skipped. 250 bytes is a cheap price for a rule that works.
 
+## 2026-08-20: config-protection kept, and the "REPLACE" verdict withdrawn
+
+`docs/KEEP_LIST.md` item 60 and `docs/REBUILD_PLAN.md` both said `hooks/config-protection.js`
+should go, replaced by built-in deny rules in `settings.json`, saving about 100 lines. That
+verdict is withdrawn. **Nobody ever wrote those deny rules.** `settings.json` has no
+`permissions.deny` array at all and `settings.example.json` has one entry, `Read(.env)`. So the
+choice was never "hook versus deny rules", it was "a guard that works versus a guard that has
+not been written", and the repo's own rule settles that: do not delete a working guard on the
+strength of an untested replacement.
+
+What was measured, in order:
+
+| # | Test | Result |
+|---|---|---|
+| A | existing `.eslintrc.json`, payload piped in | exit 2, teaching message |
+| B | guarded name under a directory that does not exist | exit 0, creation allowed |
+| C | ordinary `index.js` | exit 0 |
+| D | the real Edit tool on a real `.eslintrc.json`, live in a session | **blocked**, message returned to the model |
+| E | `sed -i '' 's/error/off/' .eslintrc.json` in Bash, guard active | **not blocked, the rule was turned off** |
+
+D matters because it proves the whole path, the settings wiring and the node shim included,
+not just the script in isolation. `node --test hooks/tests/config-protection.test.js` is 32
+tests, 32 passing.
+
+E is the finding that changed the file. The header comment said this hook makes the failure
+mode "mechanically impossible". It does not: it is a PreToolUse hook on Edit/Write/MultiEdit,
+so every Bash write walks past it. That word is gone, and four limits are now written in the
+hook itself: Bash writes are unguarded, creating a nested config can still weaken an inherited
+one, checker settings inside dual-purpose files like `package.json` are not covered, and
+`CLAUDE_ALLOW_CONFIG_EDIT=1` opens the gate for the rest of the process rather than for one
+file. The hook also stayed silent when it errored, so a broken guard and a passed edit looked
+identical from outside; it now writes a stderr notice and still exits 0.
+
+Treat it as a habit correction that catches the common case loudly, not as an enforcement
+boundary. Real enforcement needs something that sees Bash, and that is separate work nobody
+has scoped.
+
+Found by `/xcheck`, two rounds, 5 findings accepted and 3 rejected. The rejected three:
+prototype targeted `Bash(sed:*)` deny rules (the bypass list is open-ended, so a blocklist of
+commands is whack-a-mole, and denying `sed` everywhere to protect one file is a worse trade);
+require approval for creating configs too (that is the false block the hook's own design note
+argues gets the escape hatch exported permanently); and fail closed on unreadable input (this
+guard fails open by design, unlike `hooks/lockstep-guard.js`, which is a user-issued stop
+order and fails closed).
+
 ## 2026-08-20: Snip rejected, and the portability rule it produced
 
 `Snip` (`rixinhahaha/snip`, MIT) was dependency 5 in `docs/REBUILD_PLAN.md`: the user annotates
