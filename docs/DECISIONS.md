@@ -109,10 +109,36 @@ is a belief.
 rather than parsing shell quoting. A false block costs one retype; a false allow costs the
 machine.
 
-## Nothing was carried over
+## Nothing was carried over, except the guards
 
 **2026-08-21, the owner's decision.** A previous rebuild copied 12,053 lines forward
 unchanged. The owner named that as the reason it failed to be a rebuild.
 
-**Consequence:** every file here was written from a blank page. Names and measured evidence
-crossed over; no text did.
+**Consequence:** every rule, doc and skill here was written from a blank page. Names and
+measured evidence crossed over; no text did.
+
+The consequence covers instruction-bearing prose: anything a session reads and follows.
+`hooks/` is the sole exception, and it is an exception to the blank-page requirement only.
+Everything else in this file still applies to a hook, its comments included.
+
+**Measured 2026-08-21**, diffing the whole `hooks/` subtree against the pre-rebuild tree at
+`~/.claude-old-2026-08-05`. Fifteen files are byte-identical, four are edited rather than
+rewritten, and nine were written here:
+
+| Where | Byte-identical | Edited | Written here |
+|---|---|---|---|
+| `hooks/` | 8 | 3 | 5 |
+| `hooks/tests/` | 7 | 1 | 4 |
+
+Two different reasons, and only the first is about tests:
+
+**Six carry a test that has been watched failing**, so rewriting them from a blank page would
+discard the failure each was proven to catch: `format-typecheck.js`,
+`literal-mode-tracker.js`, `secret-scan.sh`, `config-protection.js`, `node-shim.sh`,
+`pre-commit`. The pattern files `secret-patterns.txt` and `infra-patterns.txt` are data those
+tests read, exercised through `secret-scan.test.sh` and the two probe fixtures beside it.
+
+**Three carry no test of any kind:** `statusline.sh`, `literal-statusline.sh`, and the
+25-byte `package.json` that marks the directory as CommonJS. They were kept because they were
+working and nothing asked them to change, which is a weaker reason than the one above and is
+recorded here as such rather than borrowed from it.

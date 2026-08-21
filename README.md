@@ -278,6 +278,12 @@ Example: `Opus 5 · 42%ctx · 5h 18% 3h · wk 40% 5d · no-yolo* · ⬢ prod`
 It is drawn by `hooks/statusline.sh`. When literal mode is on, a badge for it appears at the
 front.
 
+**Literal mode** is the one thing you can type that is not in the list of six above. Type
+`/literal` and Claude stops offering alternatives and does exactly what you asked; `/literal
+off` ends it, and so does starting a new session. It is not a skill, which is why it has no
+row up there: `hooks/literal-mode-tracker.js` reads what you typed and sets a flag the status
+bar shows.
+
 ## What's excluded
 
 These are kept out of git on purpose.
