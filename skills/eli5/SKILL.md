@@ -1,145 +1,84 @@
 ---
 name: eli5
-description: Use this skill when the user types /eli5, says 'as a table', 'table that', 'reprint that', 'again in plain words', 'in plain english', or 'in a chart'; when the user says they are lost ('I don't understand', 'no clue', 'wait what', 'you lost me', 'huh', 'say that again', 'what does that mean') about anything you just said; and automatically on every completed-work summary, next-actions list, or question to the user. Explains any skill, command, plan, decision, or finished work in plain English, no jargon, table-shaped. Mode C reprints the answer just given as a table, with no argument and nothing re-researched.
+description: Use when the owner types /eli5, says "as a table", "table that", "again in plain words", "in plain english", or "reprint that"; and whenever the owner signals they are lost ("I don't understand", "no clue", "wait what", "you lost me", "what does that mean", "not sure what's happening"). Also runs on every completed-work summary and every question put to the owner.
 user-invocable: true
-argument-hint: "[skill name, plan text, command, or file path]"
-model: haiku
-effort: low
-allowed-tools:
-  - Bash
-  - Read
+model: opus
+effort: medium
+allowed-tools: [Read, Grep, Glob]
 ---
 
 # eli5
 
-Explain what something actually does before the user says yes to it.
+The owner is not an engineer and has said, repeatedly, that they cannot read technical
+output and have to ask again in plain words. An answer they cannot read has failed, however
+correct it is.
 
-> **Where these rules come from.** The shape and word rules below are a copy. Their home is
-> `~/.claude/hooks/eli5-activate.js`, which the harness injects at every session start and every
-> turn; `~/.claude/memory/facts/feedback-eli5-plain-short.md` is the durable record that survives
-> the hook being switched off. They are kept inline here on purpose: this skill runs on a
-> low-effort model and may run after the session has been compacted, so it cannot rely on the
-> hook's text still being in view. **If any of the three disagree, the hook wins, and fix all
-> three.**
+## Words
 
-## How to run
+Name the real thing plainly, then give the filename: "the file that holds your rules
+(`CLAUDE.md`)", in that order.
 
-### Step 0a: reprint mode (check this FIRST)
+Explain any unavoidable technical word in the same sentence, in brackets, or cut it.
+Words that have needed explaining: stale, orphaned, idempotent, regression, lock, staging,
+hook, verify, catalog, drift, gate, blast radius.
 
-If the user is pointing at the answer you just gave: "as a table", "table that",
-"reprint that", "again in plain words", "in a chart", or a bare `/eli5` right after
-a prose answer. This is **Mode C**. Do NOT show the skill picker, do NOT read any
-file, do NOT re-run any research.
+## Shape
 
-Take the immediately preceding assistant message and re-emit it as a table. Same
-facts, nothing added, nothing looked up again. Columns come from the content:
-`| Thing | State |`, `| Option | What you get |`, `| File | Problem | Fix |`,
-`| Step | Does what |`. One table, five rows, three columns, a short phrase per
-cell, no jargon. One short line of context after the table if it genuinely needs
-one. Then stop. If the facts do not fit five rows, build the page (see below).
+The format the owner asked for wins. Absent one:
 
-If the previous answer had only one fact in it, say that one fact in one sentence
-and note there was nothing to tabulate.
-
-**When the trigger was "I don't understand" / "no clue" / "wait what",** the previous answer
-failed, so reprinting its shape repeats the failure. Before re-emitting, find which idea it
-leaned on that had never been introduced (that is almost always the break) and introduce
-that idea first, in its own row. Then reprint the rest. Say which part you are re-explaining
-so the reader can tell you if you picked the wrong one.
-
-### Step 0: no argument
-
-If Step 0a did not apply and no argument was provided, run:
-
-```bash
-ls -1d ~/.claude/skills/*/ | xargs -n1 basename | sort
-```
-
-Emit as a 2-column table titled **Pick a skill to explain** with columns **Skill** | **Skill** (pair them left-right, 2 per row). Below the table add one line: `Run /eli5 <name> — also works on any command, plan text, or file path.` Then stop. Do not explain anything further.
-
-### Step 1: gather the input
-
-If the argument looks like a known skill name, read its own description, the skill is the
-source of truth about itself, and there is no separate catalogue to fall out of date:
-
-```bash
-arg="REPLACE_WITH_ARG"
-awk '/^description:/{sub(/^description: */,""); print; exit}' ~/.claude/skills/"$arg"/SKILL.md 2>/dev/null
-```
-
-If the argument looks like a file path and the file exists, use the Read tool to read it.
-
-If the argument is raw text (a command, a plan snippet, a decision), use it directly.
-
-### Step 2: pick the mode
-
-Two modes. Pick by what the input IS:
-
-- **Mode A, explain a thing** (a skill, a command, a plan not yet run): the user is deciding whether to say yes.
-- **Mode B, explain finished work / next steps** (a completion summary, "what was done", next actions, a question you need answered): the user is catching up and deciding what to do now.
-
-Both modes output a TABLE, never prose paragraphs.
-
-### Mode A: explain a thing
-
-| Question | Plain answer |
+| The content | The shape |
 |---|---|
-| **What is this?** | 1-2 sentences, like the reader has never heard of it. What problem does it solve? |
-| **What actually happens?** | Real verbs, concrete steps: "reads X", "runs Y", "pushes to GitHub". No "processes"/"handles". Use `<br>` for multiple steps. |
-| **Watch out** | ONLY if irreversible, costs money, or visible to others, e.g. "deletes files permanently", "pushes to GitHub, your team sees it". If nothing risky, OMIT this row entirely. Never write "nothing to worry about". |
+| One fact | One sentence, no preamble |
+| Two or more facts, options, files, steps, or states | A table |
+| An argument whose steps depend on each other | Prose |
+| A document the owner asked to see | The document, printed in full in the terminal |
 
-### Mode B: finished work / next steps
+A default table runs to about five rows and three columns, with a short phrase per cell, and
+one line of context before or after it.
 
-The user is non-technical. Plain words and table shape are both constant. **Pick the form by the content:**
+**Printed here, always.** Long answers go in the terminal. A page gets published only when
+the owner asks for one.
 
-**A genuine single fact, one reminder, one next step → ONE plain sentence.** No table.
-> Saved and switched on. Next: run `/memory-compile` when you want it live.
+## Every turn says where it is
 
-**Everything else, two or more facts, findings, options, files, steps or states → a table.** This is the default, not the exception:
+Multi-turn work names the step that just finished and the one next: "Step 3 of 5 done:
+rules written. Next: the six commands." A visible task list replaces this.
 
-| What | Status | Type this |
-|---|---|---|
-| Renamed /review to /health | done |, |
-| Pick eli5 format | need your call | answer here |
-| Live-test the judge | optional | `/design` |
+Estimates come in real units aimed at whoever does the work: "15 minutes if tests cover
+this, an afternoon if not."
 
-Hard rules for Mode B:
-- **A few words per cell. One table, five rows, three columns.** Fragments, not sentences. These are caps, not targets.
-- **Too big for the caps means build a page, not a smaller answer.** Write the full thing as one self-contained HTML file, publish it with the Artifact tool, and reply with the five-row summary plus the link. Dropping facts to fit is as much a failure as overflowing.
-- **No jargon anywhere.** Translate any technical term inline, or cut it. "md file", "supersede", "compile" → say what it does.
-- **No mandatory "why."** Add a reason ONLY if it's short and changes the decision. Never a paragraph, never history/justification padding.
-- Asks say plainly what you need; options spelled "A: … / B: …" in plain words.
-- One short line of context, before or after the table. Never both, never a paragraph. When unsure between a sentence and a table, use the table.
+Anything left open ends with one action doable in under two minutes. Opening a file counts.
 
-## Every turn: where we are, how long, what next
+Choices cap at five, ranked, with the recommendation first and labelled. Past five, split
+into now and later.
 
-<!-- Four rules adapted from ayghri/i-have-adhd (MIT), pinned at d05af1e. Only these four:
-     the rest of that skill is action-first for a different reader, and table-first stays
-     primary. These are copied text, not a live dependency, so nothing needs to track the
-     upstream; re-read it only if you deliberately want more of it. -->
+## Screen noise
 
-These apply in **both** modes, on top of the shape rules above.
+Show the result, not the work. Summarise tool output and agent reports in a line rather than
+pasting them.
 
-| Rule | What it means |
+## Written exactly, whatever the mode
+
+Code, commands, file contents, commit messages, security warnings, and anything
+irreversible. Precision beats simplicity here: say the risk plainly and exactly at the same
+time.
+
+## Modes
+
+| Trigger | What runs |
 |---|---|
-| **Say where we are** | The reader cannot hold "we are on step 3 of 5" between messages. Work that spans turns names its own position every time: what just finished, what is next. Bad: "Done. Ready for the next part?" Good: "Step 3 of 5 done: schema updated. Next: backfill the new column." If a task or checklist tool is already showing the plan, that IS the restating, so don't narrate it as prose as well. |
-| **Real time estimates** | "A bit of work" and "a few hours" land as the same non-answer. Ballpark in concrete units: "about 15 minutes if tests already cover this, an afternoon if not." When a subagent does the work, aim the estimate at whoever executes the steps. |
-| **One next action** | If anything is left open, end with ONE thing doable in under two minutes. Even "open the file" counts. Never "let me know if you want to dig deeper". |
-| **Five items, ranked** | A list of ACTIONS or OPTIONS the reader must act on or pick between stops at 5. Past five, split it: "do now" vs "later", or "must" vs "nice to have". Five ranked beats ten unranked. |
+| The owner is lost about something just said | Say that same thing again, plainer, nothing re-researched |
+| A piece of work just finished | The results table: what changed, what it means, what is next |
+| A question is going to the owner | The question in plain words, with real options |
+| "stop eli5" or "normal mode" | Drop all of this for the rest of the session |
 
-**One ceiling now: five.** Five rows of facts, five things to act on or pick between.
-The old split (8 for facts, 5 for actions) went on 2026-08-20 when the caps became
-hard and the overflow route became a published page instead of a longer reply.
+## Done
 
-## Word and sentence rules
+This command has finished when the answer meets all four:
 
-<!-- The working half of ASD-STE100, the controlled-English standard aviation manuals are
-     written in. Its rules are here; its name stays out of the output, because citing a
-     standard to prove you are being plain is the thing it exists to prevent. -->
-
-| Rule | What it means |
+| Check | Met when |
 |---|---|
-| **One word, one meaning** | Pick the single everyday word for a thing and use that same word every time. "Skill", then "command", then "tool" for one thing reads as three things. |
-| **Say who does it** | Name the actor and put it in front: "`/checkup` reads your hooks", never "the hooks are read". A sentence with no actor hides who is about to change what. |
-| **One idea per sentence** | Roughly twenty words. A sentence carrying two ideas makes the reader hold the first one while parsing the second, and that is where they drop it. |
-| **Introduce before you use** | Every idea a row leans on is either one the reader already brought, or one an earlier row introduced. When neither is true, add the introducing row first. That gap is what "I don't understand" is pointing at. |
+| Words | Every technical term is explained inline, or gone |
+| Shape | The format matches the owner's request, or the table above |
+| Position | Multi-turn work names the step just finished and the step next. A standalone answer skips this row |
+| Exit | Work or a decision still open ends with one action that takes under two minutes. A closed answer skips this row |

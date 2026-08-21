@@ -1,43 +1,104 @@
-# Testing Discipline
+# Testing
 
-## TDD (Test-Driven Development, write the test before the code) Default
+Read before writing code for a fix or a feature.
 
-For any bug fix or new feature:
-1. Write a failing test that reproduces the bug or specifies the feature.
-2. Run it, confirm it fails for the right reason.
-3. Write the minimum code to pass.
-4. Refactor only if tests still pass.
+Adapted from `mattpocock/skills` → `tdd` and `diagnosing-bugs`.
 
-### Goal-Driven Restatement
+## The loop
 
-Restate every vague instruction as a verifiable goal before acting: "write a failing test, then make it pass", not "improve the tests".
+One behaviour at a time, all the way through, before starting the next:
 
-For multi-step work, append a per-step verification to each step: `[Step] → verify: [check]`.
+```
+1. Write ONE failing test for the smallest useful behaviour
+2. Run it. Watch it go red for the reason you intended
+3. Write the least code that turns it green
+4. Run it. Confirm green
+5. Tidy, staying green
+6. Next behaviour
+```
 
-Use skill: `/build` (its TDD phase).
+Finishing every test before any code verifies imagined behaviour and produces a wall of red
+that reports nothing until the end. One slice at a time keeps the feedback tight.
 
-## A Check Must Prove It Can Fail
+## Red means you watched it fail
 
-A verifier that cannot go red is decoration, worse than none, because it reads as evidence while checking nothing. Three shipped this way in `~/.claude` before anyone noticed: `md-check --drift` grepped a file whose format had moved (always "no drift"), `skill-audit` echoed its report path instead of writing it, and `hooks/tests/*.test.sh` was executed by nothing.
+A test you wrote and never ran has an unknown colour. Run it and read the failure. It goes
+red because the behaviour is absent, not because of an import error, a typo, a wrong fixture
+path, or a stale mock. A test that passes the first time asserts something already true:
+fix the test before writing any implementation.
 
-So: **never trust a green you haven't seen go red.** For every check, feed it one input that must pass and one that must fail, and confirm it says so. `verify-selftest.sh` does this for `verify.sh`: it sabotages each check in turn, asserts the FAIL appears, and restores. Run it whenever you add or edit a check.
+## Expected values are written by hand
 
-The same trap causes a *false red*: scope a grep wrong and it reports a problem that isn't there. Both directions come from never testing the check against a known answer.
+`expect(total).toBe(17.5)`. A literal you worked out yourself.
 
-## Stack-Specific Commands
+An assertion that recomputes the expected value with the same logic as the code under test
+passes whatever the code does, wrong included. The same goes for asserting against the
+implementation's own output, against a helper both sides call, or against a snapshot you
+just regenerated to make it green.
 
-Project test/lint commands live in the project's `ARCHITECTURE.md` or `CLAUDE.md`, not here. Detect them at session start from `package.json` scripts, `README`, or project skill.
+When you cannot state the expected value without running the code, work the behaviour out
+first.
 
-## UI Verification (Mandatory for any frontend change)
+## Scope while iterating
 
-**Before coding any GUI/UI change:** see `~/.claude/docs/UI_MOCKUPS.md` for how many mockups to make before production code.
+Run the one file or pattern you are working on. Save the full suite for the gate.
 
-After writing production code: start the dev server, open the page in a browser, and confirm it works as expected before claiming done.
+Golden-master and snapshot suites are regression guards: leave them untouched and put new
+behaviour in its own file beside the module.
 
-**Never claim "done" on a UI change without browser-level verification.**
+## When a test fails and you do not know why
 
-Use skill: `/build` (phase 6, prove).
+Stop writing tests. A red test you cannot explain is worth more as a diagnostic than as a
+TODO. Go to the loop below.
 
-## When to skip TDD
+## Diagnosing
 
-Trivial typo fixes, single-line renames, comment edits. Everything else: TDD.
+### 1. Build the fastest reliable way to observe it
+
+Ranked by how tight the loop is:
+
+| Rank | Loop |
+|---|---|
+| 1 | A failing test that runs in under 5 seconds |
+| 2 | A short script that triggers it |
+| 3 | One curl or API call showing the wrong behaviour |
+| 4 | Dev server plus browser |
+| 5 | Grep the error in existing logs |
+
+State it before going on: `Loop: <command> -> reproduces, output: <output>`.
+
+### 2. Shrink it
+
+Strip everything not load-bearing: unrelated code paths, config, environment variables.
+Bisect when it appeared recently (`git bisect start && git bisect bad && git bisect good
+<hash>`). Narrow to one file, one function, one call.
+
+### 3. Guess, then kill the guesses
+
+Three to five distinct explanations. For each: what would have to be true, what evidence
+already speaks to it, and the single observation that would eliminate it.
+
+### 4. Instrument
+
+Add observation without changing behaviour: values at branch points, assertions that should
+always hold, config and state at the failure point, request and response headers for network
+bugs, `typeof` and `.constructor.name` for type errors.
+
+Run the loop. Eliminate. Repeat until one explanation survives.
+
+### 5. Fix the cause, in the fewest lines
+
+State the cause in one sentence before writing anything.
+
+### 6. Lock it
+
+Write the test that would have caught it. Run it against the broken version and watch it
+fail. Run it against the fix and watch it pass. Commit it with the fix.
+
+Stuck at any point: go back to step 1 and make the loop tighter.
+
+## Done
+
+A build run's completion contract lives in `skills/build/stages/6-prove.md`. Work outside a
+build run borrows the same shape: measure the success condition the way it was measured
+before, and commit the regression test that goes red without the fix.

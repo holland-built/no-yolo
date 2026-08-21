@@ -1,51 +1,51 @@
-# Context Hygiene
+# When a session runs long
 
-## Token Budget Awareness
+Read when context is filling, or when a session has been going for hours.
 
-What actually loads before you type your first message (measured from `/context`, 2026-07-31):
+## The signal
 
-| What loads every session | Tokens |
+Context fills fastest on file reads and tool output, not on conversation. A session that has
+read a dozen large files is closer to the edge than one that has talked for an hour.
+
+Watch for the shape rather than the number: repeating a search you already ran, re-reading a
+file you already have, or losing track of which decision was settled. Those are the symptoms
+of a window under pressure.
+
+## Spend it well
+
+| Instead of | Do |
 |---|---|
-| Connected-service tool definitions (MCP) | 60.4k |
-| Deferred system tools | 13.5k |
-| System prompt + tools | 10.3k |
-| 76 skills | 9.9k (~130 each) |
-| Memory files | 3.2k (CLAUDE.md itself ~1k) |
-| Custom agents | 1.5k |
+| Reading a whole file to answer one question | Grep for the symbol, read the region |
+| Dumping tool output into the reply | State the conclusion and the command |
+| Reading every sibling doc | Read the one whose condition fired |
+| Keeping a long search in this context | Dispatch it and take the conclusion back |
 
-The skills are not the problem. 76 of them cost 9.9k, about 130 tokens each, a deliberate trade for trigger descriptions rich enough to route on. Installing them per-project instead of globally would save almost nothing.
+A subagent's value here is that its reading stays in its own window. You get the answer, not
+the files.
 
-The connected services are the problem: 60.4k, six times everything else put together. They attach to the Claude **account**, not to this folder. Turn them off at claude.ai → Connectors, or with `/mcp`. Nothing in `~/.claude` can shrink that number.
+## Stop at a boundary
 
-## Habits
+A stage boundary is the cheapest place to stop: the work in front of you is finished, the
+work behind it has not started, and the state is describable in a paragraph.
 
-- `/context` every ~20 minutes during long sessions.
-- At 60% context full → `/compact focus on <module>` to trim history.
-- `/statusline` to monitor context %, 5h limit %, 7d limit %.
-- Stay in the smart zone. Attention is reported to fall off somewhere around 120-140k tokens, a rule of thumb from a public talk, not something measured here.
-- So budget big work in chunks of roughly 100–120k tokens, say the budget out loud before starting, and clear context between phases.
+When a session is long and a boundary arrives, name the stage that just finished and the one
+next, and offer the handoff. A handoff written at a boundary survives; one written mid-stage
+carries a half-finished thought nobody can resume.
 
-## Scan delegation: retired 2026-08-19
+## What a handoff carries
 
-This section used to carry a hard rule: 5 or more read-only tool calls for one question MUST be
-delegated to `Explore`. It was removed because it could not fire. The harness session config says
-"Do not call the AgentTool unless the user requested it", and a setting beats a document every
-time, so the rule sat here for weeks describing behaviour that never happened. A hard rule that
-never applies is worse than no rule, because the next reader believes it.
+The `/handoff` command writes it. The ordering matters more than the content:
 
-The full text and its exceptions are preserved at `memory/facts/pattern-delegate-scans-to-subagents.md`,
-now `status: retired`. Reinstate it there and here together if agents are ever allowed by default.
+1. **The goal, in the owner's own words**, quoted. First thing written, first thing read.
+2. What was decided, and what is still open.
+3. What was tried and did not work, so the next session skips it.
+4. The single first action to take on resume.
 
-- For UI work, use text-based checks before screenshots. They're faster.
+The goal goes first because it is the part that gets lost. A handoff that carries every
+technical detail and loses the goal sends the next session confidently in the wrong
+direction for a day.
 
-## Long-running work
+## Resuming
 
-*(These commands are harness/build-specific, not present in every Claude Code install. Skip silently if the command is unknown.)*
-
-- `/branch` to fork the conversation when trying an experimental direction. *(if available in your harness)*
-- `/teleport` to move cloud → local session. *(if available in your harness)*
-- `/loop <interval> <cmd>` for repeated checks (cache TTL is 5 min, so pick 60-270s or 1200s+, not 300s). *(if available in your harness)*
-
-## Cache discipline
-
-Anthropic caches your conversation for 5 minutes (prompt cache TTL = 5 min) to speed up responses; pause longer and the cache clears, so the next response is slower. When polling, either stay under 270s between checks or commit to 1200s+. Sleeps just past 300s pay the cache cost for nothing.
+State the goal and the first action back in one line, then wait. A resumed session that
+starts working before confirming it read the right file has guessed.
