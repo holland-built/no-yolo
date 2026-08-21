@@ -13,8 +13,10 @@ Measured 2026-08-18 by resolving all 19 symlinks with `os.path.realpath`, 0 brok
 
 | Root | Holds |
 |---|---|
-| `~/.agents/skills/` | `computer-use`, `improve`, `interface-design`, `orca-cli`, plus `impeccable`, which nothing symlinks to |
-| `~/.claude/.agents/skills/` | the other 15, including `resolving-merge-conflicts` |
+| `~/.agents/skills/` | `improve`, `interface-design`, `orca-cli`, plus `impeccable`, which nothing symlinks to |
+| `~/.claude/.agents/skills/` | the rest, including `resolving-merge-conflicts` |
+
+`computer-use` was in the first root until 2026-08-20, when it was removed.
 
 This paragraph previously placed `resolving-merge-conflicts` in `~/.agents/skills/`. It is in
 `~/.claude/.agents/skills/`. A doc that names a hardcoded root, and names it wrongly, is the
@@ -53,7 +55,8 @@ honest than a rule the repo breaks in its own installer.
 | `emil-design-eng` | same | same | `setup.sh` | `verify.sh` 5d |
 | `interface-design` | same | same | `setup.sh` | `verify.sh` 5d |
 | `styleseed` and 22 `ss-*` | **all 23 symlinks deleted** | The chosen coherence authority, but `docs/DESIGN_SURFACES.md` allows three doors and this would have added 23. Only `engine/*.md` is kept, vendored at `.agents/styleseed-engine/`, read by `/design` | `setup.sh` | `verify.sh` 5e |
-| `animation-vocabulary`, `ponytail-help`, `ponytail-gain`, `ponytail-debt` | `model: haiku` | Cheap skills pinned to a cheap model | **nothing**, see below | nothing |
+| `animation-vocabulary`, `ponytail-debt` | `model: haiku` | Cheap skills pinned to a cheap model | **nothing**, see below | nothing |
+| `ponytail-gain`, `ponytail-help` | **deleted after install** | Neither is invoked by anything and neither does work: one prints a scoreboard, the other a help card. They cannot be uninstalled on their own, because one `npx skills add DietrichGebert/ponytail` installs all six, so `setup.sh` deletes these two straight after that line | `setup.sh` | nothing yet |
 
 ## Why every overlay needs both halves
 
@@ -78,27 +81,38 @@ next to the earlier `improve` patch would have it overwritten seconds later by t
 running below it. `apple-design` is installed by hand and by nothing in this repo, so the loop
 skips it when the path is absent rather than reporting a failure.
 
-## Why 16 of the 19 borrowed skills are deliberately not in the lock file
+## Why 12 of the 13 borrowed skills are deliberately not in the lock file
 
-Decided 2026-08-18. Only 3 symlinks are locked (`computer-use`, `interface-design`,
-`orca-cli`); a 4th entry, `impeccable`, is locked with nothing symlinked to it, and it is a
-*different project* from the enabled `impeccable` plugin: `bergside/awesome-design-md-skills`
+Decided 2026-08-18, recounted 2026-08-20. The lock holds three entries, and only one of them,
+`interface-design`, has a live symlink under `skills/`. `orca-cli` is locked but archived, so
+the entry outlives the link. `impeccable` is locked with nothing symlinked to it at all, and it
+is a *different project* from the enabled `impeccable` plugin: `bergside/awesome-design-md-skills`
 against `pbakaus/impeccable`. Same name, different upstream.
+
+`computer-use` was the fourth entry until 2026-08-20. Removing the skill did **not** remove the
+entry: `npx skills remove` deleted the symlink and the folder and left the lock untouched, which
+is exactly the state that makes `npx skills update` reinstall a thing you thought was gone. The
+entry was deleted by hand afterwards. **Treat `npx skills remove` as one of three steps, never
+the whole job**, and check the lock after every removal.
 
 **What being unlocked costs.** `npx skills update` builds its work list from
 `Object.keys(lock.skills)` and nothing else (its `updateGlobalSkills`). An unlocked skill is
-not updated and is not mentioned, and the run reports success having touched none of them. So 16
-borrowed skills sit frozen, silently. `/checkup` now prints both numbers and names, so the
+not updated and is not mentioned, and the run reports success having touched none of them. So 12
+borrowed skills sit frozen, silently. `/checkup` prints both numbers and names, so the
 silence is at least visible here.
 
+Note that the `Source:` column in `npx skills list` is read from each skill's own frontmatter
+(`metadata.author`), not from the lock. A skill can therefore show a GitHub source and still be
+unlocked, which is how the earlier count was overstated.
+
 **Why re-locking is worse today.** `npx skills add`/`update` rewrite a skill from upstream and
-say nothing, which wipes the frontmatter overlays in the table above. **Nine** of the unlocked
+say nothing, which wipes the frontmatter overlays in the table above. **Eight** of the unlocked
 skills carry one: `animation-vocabulary`, `find-animation-opportunities`, `improve-animations`,
 `review-animations`, `apple-design`, `emil-design-eng` (demotions), `improve`
-(`user-invocable`), and the `model: haiku` pins on `ponytail-help`, `ponytail-gain`,
-`ponytail-debt`. Losing a demotion turns reference material back into a competing design
-door, the thing `skills/checkup/scripts/design_doors.py` exists to catch. The four haiku pins
-have neither a `setup.sh` re-apply nor a `verify.sh` row, so they would go without a trace.
+(`user-invocable`), and the `model: haiku` pin on `ponytail-debt`. Losing a demotion turns
+reference material back into a competing design door, the thing
+`skills/checkup/scripts/design_doors.py` exists to catch. The remaining haiku pins have neither
+a `setup.sh` re-apply nor a `verify.sh` row, so they would go without a trace.
 
 Trading a silent non-update for a silent demotion-reversal is a bad trade, so nothing was
 re-installed. Hand-writing lock entries was also rejected: their hashes would be invented, and

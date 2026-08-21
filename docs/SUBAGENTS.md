@@ -37,44 +37,28 @@ Every dispatch prompt must bound how much other code the change could break.
 - Trivial questions → answer from working memory.
 - Tasks where you already have full context.
 
-## Daily-Driver Agents (in `~/.claude/agents/`)
+## The agents that actually exist
 
-Pre-built specialist agent definitions, each knowing a specific domain.
+`~/.claude/agents/` holds **two** files, and that is the whole roster:
 
-> The `agents/` roster is a curated cut of the community subagents pack (VoltAgent-style definitions), none of it authored here. Three are hard-wired into skills: `/build` dispatches `code-reviewer`, `security-auditor`, and `accessibility-tester`. The rest are an optional dispatch menu for the role tables below.
+| Agent | Wired into | Dispatch it for |
+|---|---|---|
+| `accessibility-tester` | `/build`, at `skills/build/SKILL.md:547`, only when the change touches UI | WCAG audits, keyboard paths, screen-reader behaviour |
+| `react-specialist` | nothing; you dispatch it by hand | React components built to a design that is already decided |
+
+Everything else is a built-in: `Explore` for read-only fan-out searches, `Plan` for
+implementation plans, `general-purpose` for the rest. Those need no file here.
+
+> This section listed fifteen more agents until 2026-08-20: `debugger`, `code-reviewer`,
+> `security-auditor`, `test-automator`, `typescript-pro` and the rest, a curated cut of the
+> community subagents pack. **None of those files were ever in this repo.** The list was
+> aspirational and read as inventory, so a session that followed it would dispatch a name
+> that does not resolve. The same sentence also claimed `/build` dispatches `code-reviewer`
+> and `security-auditor`; it dispatches neither, and never did. Checked by `ls agents/` and
+> by grepping every skill for each name.
 >
-> **Unused ones are not free.** Every agent's `description` frontmatter is injected into the system prompt each session whether it is ever dispatched or not: 17 definitions cost roughly 300 tokens per session. Measured 2026-08-04: four have never been dispatched once (`api-designer`, `fastapi-developer`, `performance-engineer`, `prompt-engineer`). Prune freely in your fork; the saving is real but small, and a pruned agent is one prompt away from being wanted again.
-
-**Cross-cutting (use most days):**
-- `debugger`: bug hunts (Karpathy "write a failing test")
-- `code-reviewer`: PR gate
-- `test-automator`: TDD scaffolding
-- `refactoring-specialist`: dedup + cleanup
-- `architect-reviewer`: high-level design review
-- `security-auditor`: auth/payment/PII touches
-- `prompt-engineer`: improve CLAUDE.md + skill prompts
-- `qa-expert`: test strategy / quality audits
-
-**<YOUR_STACK> (fill in your framework + language + database):**
-- `react-specialist` / `typescript-pro`
-- `python-pro` / `fastapi-developer` / `backend-developer`
-
-**UI / quality:**
-- `accessibility-tester`: a11y audits
-- `performance-engineer`: perf hot spots
-- `api-designer`: REST/GraphQL design
-- `docker-expert`: containers
-
-## Agent Teams (expert dispatch)
-
-Agents that work well together. Dispatch the matching team in parallel. Build → review pairs: builder writes, reviewer verifies.
-
-| Team | Build | Review / Verify | Use for | Model |
-|---|---|---|---|---|
-| **Frontend** | `react-specialist`, `typescript-pro` | `typescript-pro`, `accessibility-tester` | UI components, pages, mockup→dev | Opus |
-| **Backend** | `backend-developer`, `typescript-pro` | `backend-developer`, `typescript-pro` | API routes, ORM, database | Opus |
-| **Quality** | n/a | `code-reviewer`, `architect-reviewer`, `security-auditor` | pre-merge review, auth/secrets, system design | Opus |
-| **Debug** | `debugger`, `performance-engineer` | `qa-expert` | bugs, regressions, perf bottlenecks | Opus |
-| **Test** | `test-automator` | `qa-expert` | new test suites, coverage, CI gates | Haiku |
+> **An agent is not free even when unused.** Every `description` in `agents/` is injected
+> into the system prompt each session whether it is dispatched or not. Two files is a rounding
+> error; a roster of seventeen was not. Add one only when a real dispatch wants it.
 
 Rules: read target file + imports before dispatching a file-editing agent (cap output ~300 words). For 2+ independent tasks, run in parallel. Never serialize independent work.

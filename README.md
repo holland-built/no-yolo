@@ -81,10 +81,8 @@ Everything here is optional. Install one only when you want the command that use
 |---|---|---|---|
 | [impeccable](https://github.com/pbakaus/impeccable) | 59 deterministic checks on UI source (no model call, no API key) | `/design`, `/checkup` | Nothing to install — run on demand as `npx -y impeccable detect` (needs Node + network) |
 | [Codex plugin](https://github.com/openai/codex-plugin-cc) | Gets a second opinion from OpenAI's Codex | `/xcheck` and others (see note) | `/plugin marketplace add openai/codex-plugin-cc` then `/plugin install codex@openai-codex` |
-| [archify](https://github.com/tt-a1i/archify) | Turns a description into a diagram | diagrams | installed by `setup.sh` |
 | [fallow](https://www.npmjs.com/package/fallow) | Finds code nothing uses any more | `/health` | installed by `setup.sh` (`npm install -g fallow@2.98.0`) |
 | [gh (GitHub CLI)](https://cli.github.com/) | GitHub from the terminal | `/health`, `/release` | Mac: `brew install gh` · Linux: `sudo apt install gh` — then `gh auth login` |
-| [Groq Whisper key](https://console.groq.com/) | Turns speech in a video into text | `/watch` | Free API key, then `export GROQ_API_KEY=...` in `~/.zshrc` |
 | [Chrome](https://www.google.com/chrome/) | Renders design previews | `/design`, `/build` | Usually already there. Mac: `brew install --cask google-chrome` · Linux: download the `.deb` from the link |
 | [Playwright MCP](https://github.com/microsoft/playwright-mcp) | Lets Claude drive a browser | `/build` | Add the `playwright` MCP server to `settings.json` (see below) |
 | Firecrawl MCP | Searches and reads web pages | optional | See `docs/MCP_SERVICES.md` |
@@ -153,21 +151,21 @@ Nothing to do. Skills make their own folders when they need them, like `brainsto
 
 ## Skills inventory
 
-A skill is a shortcut command you type, like `/health`. There are 18 custom commands, plus 1 utility command (`/memory-compile`, which lives in `commands/`), plus 19 borrowed from other people's repos.
+A skill is a shortcut command you type, like `/health`. There are 13 custom commands, plus 1 utility command (`/memory-compile`, which lives in `commands/`), plus 13 borrowed from other people's repos.
 
 | Skill | What it does | Skill | What it does |
 | --- | --- | --- | --- |
-| build | Whole job: plan, mockup, build, prove | design | All UI work — 7 modes it picks for you |
+| build | Whole job: plan, mockup, build, prove | design | All UI work — modes it picks for you |
 | health | Review, diagnose or autonomously fix | checkup | One health pass over your own setup |
 | release | Publish, following the repo's SHIP.md | xcheck | Codex second opinion on a plan |
-| better-prompt | Sharpen a rough prompt | eli5 | Plain-English table, no jargon |
 | whats-next | Shows unfinished work | debate | 7-persona decision debate |
 | lockstep | Hard block on file edits | remember-that | Save facts across sessions |
-| watch | Ask a video questions, or file it | ingest-docs | PDFs and decks to context files |
-| last-30 | What gained traction this month | dep-audit | npm supply-chain risk audit |
+| handoff | Save a dying session for the next one | eli5 | Plain-English table, no jargon |
 | route-map | Proves every page's content | — | — |
 
-The borrowed 19 are not commands you type — they are reference text and behaviours the 18 read. `/design` reads the eight design and animation ones; `/health` invokes the ponytail set and `improve`; `archify`, `resolving-merge-conflicts`, `computer-use` and `orca-cli` stand alone. They live in `~/.agents/skills/`, installed by `npx skills`, so removing them is that tool's job and not a matter of deleting a file here.
+Five more commands were archived on 2026-08-20 and are not gone: `better-prompt`, `last-30`, `watch`, `ingest-docs`, `dep-audit`. Each has a one-line restore command in `archive/MANIFEST.md`.
+
+The borrowed 13 are not commands you type — they are reference text and behaviours the 13 read. `/design` reads the eight design and animation ones; `/health` invokes the ponytail set and `improve`. They live under `~/.agents/skills/` or `~/.claude/.agents/skills/`, installed by `npx skills`, so removing one is that tool's job and not a matter of deleting a file here.
 
 
 ## Model guidance
@@ -182,7 +180,7 @@ Claude comes in three sizes and they cost different amounts. This setup picks on
 
 The rule: a planning model writes the plan, then separate agents do the building — never the same breath. Today that is Fable planning and Opus building; swapping in a newer, better planner is expected. Never start coding without a plan.
 
-Four borrowed skills are pinned to Haiku by hand: `animation-vocabulary`, `ponytail-help`, `ponytail-gain`, `ponytail-debt`. Each carries one added line, `model: haiku`, in its frontmatter. They live in `~/.agents/skills/`, which `npx skills` overwrites, so those four lines are wiped whenever the borrowed skills are reinstalled — including by a plain re-run of `setup.sh`. Nothing breaks when that happens; the four just go back to the session model. Re-add the line to restore it.
+Two borrowed skills are pinned to Haiku by hand: `animation-vocabulary` and `ponytail-debt`. Each carries one added line, `model: haiku`, in its frontmatter. They live in a folder `npx skills` overwrites, so those two lines are wiped whenever the borrowed skills are reinstalled, including by a plain re-run of `setup.sh`. Nothing breaks when that happens; the two just go back to the session model. Re-add the line to restore it. (It was four until 2026-08-20, when `ponytail-help` and `ponytail-gain` were removed.)
 
 ## Keeping your setup up to date
 
@@ -262,7 +260,7 @@ These are kept out of git on purpose.
 | `settings.json` | It is specific to your computer — paths, connections, possibly API keys. Never commit it. Start from `settings.example.json`. |
 | `plugins/` and plugin shortcuts (`ponytail*/`, `improve`, …) | Other people's code. Reinstall from the Add-ons table. |
 | `skills/design/vendor/` | Other people's code, fetched on demand. `/checkup` reports when it has drifted from upstream. |
-| `.pending-tasks.md`, `learnings.md` | Working files on your machine: the `/whats-next` list and the `/better-prompt --refresh` output |
+| `.pending-tasks.md`, `learnings.md` | Working files on your machine: the `/whats-next` list, and notes a session left behind |
 | `cache/`, `sessions/`, `history.jsonl`, logs | Temporary files |
 
 ## Uninstall
