@@ -127,7 +127,53 @@ Nothing about it looks wrong. If a branch claims to be in sync but GitHub disagr
    ls -d skills/*/ | wc -l
    ```
 
-7. **Config template check (HARD BLOCK):** `settings.example.json` must parse
+7. **README prose sweep (warn only):** step 6 keeps one number honest and nothing reads the
+   other 270 lines. Step 4 catches a path that stopped resolving. It cannot catch a sentence
+   whose every path resolves and whose description is wrong, which is the whole class that
+   reached publication on 2026-08-21: seven install references whose every surrounding path
+   was valid and six of whose package names were not.
+
+   Print every README line naming a skill or rule this release changes, and read those lines
+   against what the change actually did:
+
+   ```bash
+   git diff --name-only origin/HEAD -- skills/ rules/ \
+     | awk -F/ '{print $1 "/" $2}' | sort -u \
+     | while IFS= read -r p; do
+         n="$(basename "${p%.md}")"
+         hits="$(grep -nF -- "$n" README.md || true)"
+         if [ -n "$hits" ]; then printf '%s\n' "$hits" | sed "s|^|$n  |"
+         elif [ -e "$p" ]; then echo "$n  NO README MENTION (it exists; the page never introduces it)"
+         else echo "$n  removed, and the page never named it: nothing to re-read"; fi
+       done
+   ```
+
+   Four details, each because the obvious version fails:
+
+   - **The change set is `origin/HEAD`, not `--cached`.** Staging happens in the Stage scope
+     section below, which runs after this step, so a `--cached` diff here reads empty and a
+     step that examined nothing looks exactly like a step that found nothing. Comparing against
+     the remote covers staged, unstaged and already-committed-but-unpushed alike, which is what
+     this release will actually publish.
+   - **The names come off a pipe, not out of a variable.** The obvious version collects them
+     into `changed` and runs `for n in $changed`, which works in bash and silently does not in
+     zsh: zsh performs no word splitting on an unquoted expansion, so the loop runs once with
+     every name glued into one string and greps for something that cannot match. Reproduced on
+     2026-08-21: the same loop over "a b c" runs once under zsh and three times under bash.
+   - **`grep -nF`, with `|| true`.** Fixed-string, and a no-match exit status is swallowed. A
+     warn-only step whose last name happens to miss must not report failure.
+   - **A removed skill is not a finding.** `[ -e "$p" ]` separates a skill the page never
+     introduced, which is a gap, from one deleted on purpose, which is expected.
+
+   Some names are ordinary English words, so `design` and `release` match prose that is not
+   about them. Read the line, never the count. That noise is the price of a substring match,
+   and a stricter pattern would miss the sentence naming a skill without backticks, which is
+   the sentence this step exists to catch.
+
+   Warn only, on purpose. Whether a sentence still reads true is a judgement, and a block on a
+   judgement gets satisfied by editing the sentence until the gate stops complaining.
+
+8. **Config template check (HARD BLOCK):** `settings.example.json` must parse
    (`python3 -c "import json;json.load(open('settings.example.json'))"`); its hook command
    strings must use `$HOME/` not a quoted `~/` (a quoted `~` never expands, hard-fail on any
    match of `grep -c '"~/.claude/hooks' settings.example.json`, want `0`); and every hook path
@@ -161,7 +207,10 @@ repo root. Each of these was omitted once and something silently never shipped:
 - `LICENSE` is the MIT terms the README's licence badge reads: omit it and the badge renders
   "unknown" against a file git never received.
 - `.no-yolo-deny.example.txt` is the tracked template for the gitignored `.no-yolo-deny.txt`.
-- `agents/` (subagent roster) and `commands/` (utility commands) are tracked and must ship.
+- `agents/` (subagent roster) is tracked and must ship. This bullet also named `commands/`
+  until 2026-08-21, when no such directory existed and nothing was tracked under one: the
+  rebuild deleted it and the line outlived it. It was never in the `git add` list above, so
+  nothing ever failed to ship, which is exactly why nobody noticed.
 
 After staging, confirm nothing tracked was left behind: `git status --porcelain | grep -v '^[AMD]'`
 should list only Guard paths and gitignored files. Anything else means the scope above is
