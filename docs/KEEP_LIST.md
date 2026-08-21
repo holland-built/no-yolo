@@ -1,4 +1,4 @@
-# Keep list — decisions as they are made
+# Keep list: decisions as they are made
 
 Rule: **everything is deleted unless marked KEEP.**
 
@@ -30,10 +30,10 @@ then outside tool, then our own script. Applied to 57 and 60 already.
 pass finds nothing worth changing, say so plainly rather than inventing a change.
 
 Shortlist to check against later rounds:
-- visual-explainer — turns long output into a readable web page
-- Agent Guard — stronger secret-leak blocking (see #63)
-- StyleSeed — design judgment rules (see the design commands)
-- agnix / Schliff — linters for rule and skill files
+- visual-explainer: turns long output into a readable web page
+- Agent Guard: stronger secret-leak blocking (see #63)
+- StyleSeed: design judgment rules (see the design commands)
+- agnix / Schliff: linters for rule and skill files
 
 ## Round 2: commands (in progress 2026-08-20)
 
@@ -103,6 +103,5 @@ Round 2 final: 37 commands -> 14.
 Survivors: whats-next, release, build, handoff, last-30, better-prompt, lockstep, watch,
 debate, eli5, xcheck, health, archify, remember-that, ingest-docs.
 
-## Round 3: rule files — not started
-## Round 3: rule files — not started
-## Round 4: borrowed plugins — not started
+## Round 3: rule files, not started
+## Round 4: borrowed plugins, not started

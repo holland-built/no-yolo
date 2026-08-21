@@ -2,11 +2,20 @@
 
 ## The Rule
 
-**Any UI or GUI change requires a mockup file with design variations BEFORE writing production code.** The count depends on which tool you use. See the decision tree below.
+**Any UI or GUI change requires a mockup page with four variants BEFORE writing production code.** Four, on ONE page, light and dark side by side. The owner's five rules for that page are in the table further down and they govern every skill here.
 
 No exceptions for new components, redesigns, layout changes, or visual refactors. One-line CSS tweaks and pure bug fixes are exempt.
 
-**At least 1-2 of the variations must be wildly different:** a different layout paradigm, opposite density, unexpected color treatment, or unconventional structure. Safe incremental variations only reveal safe incremental taste. Wild variations reveal where the real ceiling is.
+**The mockup does not replace building in the real app; it comes before it.** These are two different steps and they have been confused in both directions:
+
+| Step | Where | What it is for |
+|---|---|---|
+| The mockup, this doc | A standalone page outside the app | A cheap contract to point at before real code exists |
+| The build, `/build` phases 5-6 | Straight into the real component, one surface at a time, checked in the browser before the next | Where "verify it in the real app" applies |
+
+So `memory/facts/feedback-realapp-incremental-ui.md` ("build redesigns into the running app") and the rule above are not in conflict: the fact governs the build, this doc governs what happens before it. `skills/build/SKILL.md` §3.5 Step A0 carries both halves and the session that got it backwards.
+
+**No wild or experimental variants.** All four are real candidates. This line said the opposite until 2026-08-20 ("at least 1-2 must be wildly different... wild variations reveal where the real ceiling is"), and the owner reversed it: a variant nobody would ship is a wasted quarter of the page. Four genuinely different but plausible directions, not three safe ones plus a stunt.
 
 ## Slop prohibition (applies to every mockup, every skill)
 
@@ -49,25 +58,27 @@ Two hard rules, every time a mockup is created or changed:
 
 - Forces visual exploration before committing to one direction
 - Side-by-side comparison reveals taste preferences the user can't articulate cold
-- Cheap to throw away 4 of 5 mockups; expensive to throw away merged code
+- Cheap to throw away 3 of the 4; expensive to throw away merged code
 - Matches Karpathy Rule 1 (think before coding) for visual work: present multiple interpretations side-by-side; never pick one direction silently
 
 ## Tool decision tree
 
-| Situation | Tool | Variations |
+| Situation | Tool | Variants |
 |---|---|---|
-| Fast throwaway layout sketch, no build | `/design` (quick sketch mode) | up to 5 style-matched functional variants, one page |
-| Manual or ad-hoc mockup (no skill) | this doc's manual flow | 5-8 |
-| Full feature pipeline | `/build` | 4 on ONE page or route (phase 3.5 gate) |
-| Fresh design + build pipeline | `/design` | 4 (3 paradigms + 1 adventurous) -> confirmed one feeds the build |
+| Fast throwaway layout sketch, no build | `/design` (quick sketch mode) | 4 style-matched functional variants, one page |
+| Manual or ad-hoc mockup (no skill) | this doc's manual flow | 4 |
+| Full feature pipeline | `/build` | 4, one page or route (phase 3.5 gate) |
+| Fresh design + build pipeline | `/design` | 4 paradigms, the confirmed one feeds the build |
 
-Use the manual flow (5-8) when no skill applies. When a skill is invoked, use its count. Don't override it.
+Four everywhere, so there is no count to override. The column used to read 5-8 for the manual
+flow and "3 paradigms + 1 adventurous" for `/design`; both were left behind by the 2026-08-20
+ruling below and corrected on the same day the rest of this file was.
 
 **Four, and the shape of the page.** The owner set four on 2026-08-18 for `/design`; `/build`
 still said ten here and eight in its own gate until 2026-08-20, while that same gate judged
 "3 survivors of 4". Three different counts for one job. All three files now say four.
 
-**The owner's four rules for a mockup page, stated 2026-08-20 and not up for reinterpretation:**
+**The owner's rules for a mockup page, stated 2026-08-20 and not up for reinterpretation.** They were described as four when set; the fifth row is the relaxation made in the same conversation, so the table carries five:
 
 | Rule | What it means |
 |---|---|
@@ -90,7 +101,7 @@ into the real app is phases 5-6 of `/build`, one surface at a time. See
 ## Manual flow
 
 1. Create a single HTML file at `.mockups/manual-<feature-name>/index.html` in the current project root.
-2. Include 5–8 distinct variations side-by-side, each labeled (Option A, B, C…).
+2. Include exactly 4 distinct variants side-by-side, each labeled (Option A, B, C, D).
 3. Vary one or more of: layout, color, density, motion, copy, hierarchy.
 4. Show plausible content, never lorem ipsum. It does not have to be real records; it does have to have realistic labels and realistic lengths.
 5. Show it to the user. Get a pick. Discard the rest.
@@ -117,7 +128,7 @@ Substitute the actual port from the project's `CLAUDE.md` or `ARCHITECTURE.md`. 
 
 ## Variation Dimensions to Cover
 
-Pick 5–8 from this list, depending on what's being designed:
+Pick from this list, enough to make the four genuinely different:
 
 - **Layout:** left-rail vs top-rail vs grid vs single-column
 - **Density:** compact vs spacious
@@ -145,7 +156,7 @@ Pick 5–8 from this list, depending on what's being designed:
 
 ## Skill Reference
 
-- `/build`: runs the 10-variant mockup gate at phase 3.5
+- `/build`: runs the 4-variant mockup gate at phase 3.5
 - `/design` (audit mode): read-only audit, 5 lenses → violations table + top-10 improvements
-- `/design` (quick sketch mode): fast disposable layout mockups: up to 5 style-matched, lightly-functional candidates on one combined page with an AI pick, reads the project's CSS tokens
-- `/design`: fresh design pipeline, 4 mockups (3 paradigms + 1 adventurous) -> slop validator -> confirm -> Fable plan -> Opus build
+- `/design` (quick sketch mode): fast disposable layout mockups, 4 style-matched lightly-functional candidates on one combined page with an AI pick, reads the project's CSS tokens
+- `/design`: fresh design pipeline, 4 mockups -> slop validator -> confirm -> Fable plan -> Opus build
