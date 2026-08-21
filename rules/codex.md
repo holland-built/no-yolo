@@ -11,14 +11,14 @@ One wrapper holds it, so a change reaches every caller at once:
 bash "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/codex.sh" "<prompt>" [output-file]
 ```
 
-Inside it: `codex exec --sandbox workspace-write --skip-git-repo-check "<prompt>" < /dev/null`.
+Inside it: `codex exec --sandbox read-only --skip-git-repo-check "<prompt>" < /dev/null`.
 Three parts earn their place, each learned by watching it fail on 2026-08-21:
 
 | Part | Without it |
 |---|---|
 | `< /dev/null` | Waits on standard input forever. Silent for 40 minutes, looking like a slow model |
 | `--skip-git-repo-check` | Refuses to run outside a trusted directory |
-| `--sandbox workspace-write` | Either no network, so it cannot check a claim about the outside world, or no boundary at all |
+| `--sandbox read-only` | Codex could write to the tree. It advises; it never edits |
 
 The prompt is an argument. Piping the file and passing the prompt as well is a usage error.
 
@@ -32,19 +32,32 @@ the single source for how the check runs has to carry the settings that decide w
 |---|---|---|
 | Model | `gpt-5.6-sol` | `~/.codex/config.toml` |
 | Reasoning effort | `high` | `~/.codex/config.toml` |
-| Sandbox | `workspace-write` | The `--sandbox` flag in `hooks/codex.sh`, which overrides the config |
-| Network | on | `[sandbox_workspace_write] network_access` in `~/.codex/config.toml` |
+| Sandbox | `read-only` | The `--sandbox` flag in `hooks/codex.sh`, which overrides the config |
+| Network | none, which `read-only` implies | Not configurable in this mode |
 
-**Codex can now write inside the working tree, and this file said it could not.** That was
-true while the sandbox was `read-only`. It stopped being true the moment the sandbox widened,
-and the reason to widen it was network: a read-only sandbox has none, so Codex reviewed seven
-invented package names without being able to look one of them up. Read what it returns; do not
-assume the tree is untouched.
+## Why it is read-only, having briefly not been
 
-`danger-full-access` was the alternative and was declined. It reaches the whole disk, including
-`~/.ssh` and `~/.aws`, and `codex exec` runs with `approval: never`, so nothing would sit
-between a generated command and the filesystem. `hooks/safety-net.sh` does not cover this:
-it is a Claude Code hook on Claude's own commands and never sees Codex's.
+The sandbox was widened to `workspace-write` on 2026-08-21 to give Codex a network, because a
+read-only sandbox has none and it had just reviewed seven invented package names without being
+able to look up one of them. Measured, not assumed: under `read-only`, `curl` returns 000 and
+`npm view` returns ENOTFOUND. The `network_access` setting belongs to `workspace-write` alone,
+so the two cannot be separated.
+
+Within the hour, during two reviews whose prompts asked for findings and nothing else, Codex
+wrote a new step into `SHIP.md` and rewrote a section of `docs/DECISIONS.md`. Both edits turned
+out to be substantially correct, and neither was requested. An advisor that edits is not an
+advisor, and a review you have to diff afterwards costs more than it returns.
+
+**Verification moved instead of the sandbox.** `hooks/external-check.sh` resolves every
+external name against the registry on every run of `verify.sh`, so the job that needed a
+network now belongs to this repo and runs on every push, rather than to a model that runs only
+when a skill invokes it. Codex is back to what it is good at, which is judgement about a plan
+or a diff, and that needs no network at all.
+
+`danger-full-access` was considered and declined at the same time. It reaches the whole disk,
+including `~/.ssh` and `~/.aws`, and `codex exec` runs with `approval: never`, so nothing would
+sit between a generated command and the filesystem. `hooks/safety-net.sh` is no help there: it
+is a Claude Code hook on Claude's own commands and never sees Codex's.
 
 ## The prompt shape
 
