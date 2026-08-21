@@ -3,14 +3,38 @@
 //
 // Purpose: stop the "agent turns the rule off instead of fixing the code"
 // failure mode. When a lint/format/type check fails, the cheapest way to make
-// it green is to edit the config that defines the check. This hook makes that
-// mechanically impossible without the user's knowledge.
+// it green is to edit the config that defines the check.
 //
 // The distinction that matters:
 //   - CREATING one of these files for the first time is ALLOWED. A project with
 //     no formatter config is not being weakened by gaining one.
-//   - MODIFYING an existing one is BLOCKED. That is the only shape the failure
-//     mode takes.
+//   - MODIFYING an existing one is BLOCKED. That is the shape the failure mode
+//     usually takes.
+//
+// WHAT THIS DOES NOT COVER, and the header claimed otherwise until 2026-08-20.
+// It said this hook makes the failure "mechanically impossible". It does not.
+// It is a PreToolUse hook on Edit/Write/MultiEdit and nothing else, so any
+// Bash command that writes the same file walks straight past it. Demonstrated,
+// not assumed: with the guard active, `sed -i '' 's/error/off/' .eslintrc.json`
+// turned a rule off with no block and no message. Three further limits, raised
+// by a cross-model review the same day and accepted:
+//   1. Bash writes are unguarded (above). sed, mv, cp, tee, a heredoc, a
+//      redirect, or a formatter's own --write all bypass it.
+//   2. Creation is allowed, and a NEW config can still weaken an inherited one
+//      — a nested tsconfig.json with "strict": false is the clean example. So
+//      allowing creation is a deliberate false negative, accepted because
+//      blocking it fires on ordinary work far more often than on the failure
+//      mode (see the note below on guards that cry wolf). It is not a case
+//      where nothing can go wrong.
+//   3. Checker settings living inside dual-purpose files are not covered:
+//      package.json (eslintConfig, prettier), pyproject.toml, setup.cfg,
+//      deno.json. See the deliberately-not-guarded note below.
+//   4. CLAUDE_ALLOW_CONFIG_EDIT=1 is inherited by every later call in the same
+//      process, so it opens the gate for the rest of the session, not for one
+//      file. It is an escape hatch, not a scoped approval.
+// Treat this as a habit correction that catches the common case loudly, not as
+// an enforcement boundary. Anything that must actually be enforced needs a
+// mechanism that sees Bash.
 //
 // Escape hatch: CLAUDE_ALLOW_CONFIG_EDIT=1 passes silently. It is named in the
 // block message so a stuck agent can tell the user how to unblock it.
@@ -111,7 +135,23 @@ function main() {
 let code = 0;
 try {
   code = main();
-} catch {
-  code = 0; // never throw; a crashing guard is worse than no guard
+} catch (err) {
+  // Never throw; a crashing guard is worse than no guard. But say so on the way
+  // past. Until 2026-08-20 this swallowed the error and exited 0 in silence,
+  // which made "the guard broke" and "the guard passed you" look identical from
+  // outside. The exit code stays 0 — this is a notice, not a block.
+  //
+  // Scope: this covers errors escaping main() only. Unreadable or unparseable
+  // stdin is handled by its own catch above and stays silent on purpose, since
+  // an empty payload is a normal thing for a hook to be handed and a notice on
+  // every one of those would be noise, not signal.
+  code = 0;
+  try {
+    process.stderr.write(
+      `config-protection: guard errored and allowed the edit through — ${err && err.message}\n`
+    );
+  } catch {
+    /* stderr itself is gone; there is nowhere left to report to */
+  }
 }
 process.exit(code);

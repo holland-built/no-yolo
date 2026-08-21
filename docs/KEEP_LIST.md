@@ -9,7 +9,7 @@ Rule: **everything is deleted unless marked KEEP.**
 | 57 | eli5-activate.js | REPLACE | Current version fails: user still asks for a restate ~90% of the time. Replace the hook with a native Output Style (`/output-style`), which changes how Claude writes at the source instead of nagging each turn. |
 | 58 | slop-guard.js | KEEP, may improve | Check the two reference repos for a better version first. |
 | 59 | lockstep-guard.js | KEEP | Works. Stops unasked-for coding. |
-| 60 | config-protection.js | REPLACE | Same protection using built-in deny rules in settings.json. Deletes ~100 lines of custom script. |
+| 60 | config-protection.js | ~~REPLACE~~ **KEEP** | Reversed 2026-08-20 on evidence. The deny rules that were meant to replace it were never written, and the hook was watched blocking a real edit through the live wiring. Its four real limits are now written into the file. Full record: `docs/DECISIONS.md`. |
 | 61 | format-typecheck.js | KEEP as is | No better tool found. Tidies and checks code after each reply. |
 | 62 | mockup-autoopen.js | KEEP but REBUILD | ONE page holding all mockups, not one file each. Exactly 4 options. No wild/experimental ones. |
 | 63 | secret-scan + pre-commit | KEEP, may improve | |
