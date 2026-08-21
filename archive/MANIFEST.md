@@ -1,6 +1,6 @@
 # Archive manifest
 
-Archived 2026-08-20, under `docs/REBUILD_PLAN.md`.
+Archived 2026-08-20, under `docs/REBUILD_PLAN.md`. <!-- gone-on-purpose -->
 
 Archived means out of the loaded path but recoverable by name. It does not mean
 deleted, and it does not mean "git remembers". Nothing here is loaded at session
@@ -40,7 +40,7 @@ the next setup run. If you restore `archify`, restore that line too.
 
 `resolving-merge-conflicts` and `orca-cli` were never in `setup.sh`. Their payloads were
 installed by hand, so a fresh machine will not have them to link to. Sources are recorded
-in `docs/THIRD_PARTY_SKILLS.md`.
+in `docs/THIRD_PARTY_SKILLS.md`. <!-- gone-on-purpose -->
 
 ## Not archived, and why
 
@@ -49,9 +49,9 @@ finding, not a deferral: the plan assumed they were retired commands.
 
 | Name | Why it stayed |
 |---|---|
-| `design` | 31 inbound files. `build` calls `skills/design/scripts/mockup-dir.sh` and reads `PREFAB_SOURCING.md`; `release`, `SHIP.md` and two hook tests also depend on it. |
+| `design` | 31 inbound files. `build` calls `skills/design/scripts/mockup-dir.sh` and reads `PREFAB_SOURCING.md`; `release`, `SHIP.md` and two hook tests also depend on it. | <!-- gone-on-purpose -->
 | `checkup` | Two hook tests exercise its scripts (`design_doors.py`, `borrowed_check.py`). |
-| `route-map` | `build` runs `skills/route-map/scripts/route-check.mjs`, and `hooks/tests/route-check.test.sh` tests it. |
+| `route-map` | `build` runs `skills/route-map/scripts/route-check.mjs`, and `hooks/tests/route-check.test.sh` tests it. | <!-- gone-on-purpose -->
 | `improve` | `verify.sh` asserts a local patch on it; `setup.sh` installs it; `health` and the design docs reference it. |
 
 Moving any of these means moving the code its dependants call, in the same commit.

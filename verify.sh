@@ -63,66 +63,6 @@ for p in $(grep -oE '(\$HOME|~)/\.claude/hooks/[a-zA-Z0-9._-]+' settings.example
 done
 [ "$ok" = 1 ] && record PASS "hook paths exist" || record FAIL "hook paths exist"
 
-# 5c. local third-party patches still applied (see docs/THIRD_PARTY_SKILLS.md).
-#     These live outside git on gitignored symlinks, so `npx skills add` reverts them
-#     with no warning. Skip silently where the path doesn't exist (CI, fresh clone) —
-#     this guards a local install, not the repo.
-IMPROVE_SKILL="$HOME/.agents/skills/improve/SKILL.md"
-if [ -f "$IMPROVE_SKILL" ]; then
-  if grep -q '^user-invocable: true' "$IMPROVE_SKILL"; then
-    record PASS "third-party patches applied"
-  else
-    record WARN "improve lost its user-invocable patch — /improve is dead; see docs/THIRD_PARTY_SKILLS.md"
-  fi
-fi
-
-# 5d. the demoted design skills are still reference-only (docs/DESIGN_SURFACES.md).
-#     `npx skills add/update` restores upstream frontmatter with no warning, and the symptom
-#     is invisible: a rival design door is simply back in the model's skill list. Same
-#     local-install caveat as 5c — skip where the path doesn't exist.
-#     Paths go through skills/<name>/, not an installer root: there are two roots in play
-#     (~/.claude/.agents/skills/ and ~/.agents/skills/) and interface-design lives in the
-#     second, so a hardcoded root skipped it in silence — the exact failure this row exists
-#     to catch. PASS is conditional on having actually checked something, not on a directory
-#     existing, so "checked nothing" can never render as "all clear".
-demoted_lost=""
-demoted_seen=0
-for s in animation-vocabulary find-animation-opportunities improve-animations review-animations \
-         apple-design emil-design-eng interface-design; do
-  SK="$ROOT/skills/$s/SKILL.md"
-  [ -f "$SK" ] || continue
-  demoted_seen=$((demoted_seen + 1))
-  grep -q '^disable-model-invocation: true' "$SK" || demoted_lost="$demoted_lost $s"
-done
-if [ -n "$demoted_lost" ]; then
-  record WARN "rival design door(s) reappeared —$demoted_lost lost disable-model-invocation; re-run setup.sh"
-elif [ "$demoted_seen" -gt 0 ]; then
-  record PASS "demoted design skills still reference-only ($demoted_seen checked)"
-fi
-
-# 5e. StyleSeed stayed rules-only. `npx skills add bitjaru/styleseed` makes 23 invocable
-#     skills and docs/DESIGN_SURFACES.md allows three doors, so setup.sh deletes every
-#     symlink and keeps only the engine rule docs. Two ways that silently comes undone:
-#     a plain `npx skills update` re-links them, or the installer writes its nested
-#     ./.claude/skills again (it resolves relative to the working directory, so running it
-#     from ~/.claude yields ~/.claude/.claude/skills — a live project-skills dir).
-#     Local-install check, same caveat as 5c/5d: only complain about what is actually here.
-ss_doors=""
-for s in "$ROOT"/skills/ss-* "$ROOT"/skills/styleseed; do
-  [ -e "$s" ] && ss_doors="$ss_doors $(basename "$s")"
-done
-[ -d "$ROOT/.claude/skills" ] && ss_doors="$ss_doors .claude/skills(nested)"
-if [ -n "$ss_doors" ]; then
-  record WARN "StyleSeed doors reappeared —$ss_doors; see docs/DESIGN_SURFACES.md, re-run setup.sh"
-elif [ -f "$ROOT/.agents/styleseed-engine/VISUAL-CRAFT.md" ]; then
-  record PASS "StyleSeed rules-only (engine vendored, 0 doors)"
-fi
-
-# 6. README format: every '## ' heading in docs/README_FORMAT.md exists in README.md
-ok=1
-while IFS= read -r h; do grep -qF "$h" README.md || { echo "README missing: $h"; ok=0; }; done < <(grep '^## ' docs/README_FORMAT.md)
-[ "$ok" = 1 ] && record PASS "README format headings" || record FAIL "README format headings"
-
 # 6c. setup.sh bash-3.2 clean — stock macOS ships bash 3.2 and the documented
 #     install command is `bash setup.sh`; a bash-4-only construct hard-blocks
 #     every un-provisioned Mac (shipped once: declare -A in the preflight).

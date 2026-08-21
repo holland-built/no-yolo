@@ -2,9 +2,11 @@
 # node-shim.sh — resolve a Node interpreter dynamically so hooks survive nvm
 # upgrades that delete a pinned version dir. Usage:
 #   bash node-shim.sh /path/to/hook.js [args...]
-# Fail-closed rule: if no node is found AND the target is lockstep-guard.js,
-# exit 2 (block the edit) — the lockstep gate must never fail open. For every
-# other hook, exit 0 quietly (a dead cosmetic hook is harmless).
+# Fail-closed rule: if no node is found AND the target is config-protection.js,
+# exit 2 (block the edit) — a guard that cannot run must not read as a guard that
+# found nothing. For every other hook, exit 0 quietly (a dead cosmetic hook is
+# harmless). This named lockstep-guard.js until 2026-08-21, when that hook was
+# deleted; the branch had gone dead, so every hook was failing open.
 set -u
 script="${1:-}"
 
@@ -20,8 +22,8 @@ fi
 
 if [ -z "$node_bin" ] || [ ! -x "$node_bin" ]; then
   case "${script##*/}" in
-    lockstep-guard.js)
-      echo "node-shim: no node interpreter found — blocking edit (lockstep fail-closed)" >&2
+    config-protection.js)
+      echo "node-shim: no node interpreter found — blocking edit (config guard fail-closed)" >&2
       exit 2 ;;
     *)
       exit 0 ;;

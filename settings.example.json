@@ -55,27 +55,7 @@
     ]
   },
   "hooks": {
-    "SessionStart": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash \"$HOME/.claude/hooks/node-shim.sh\" \"$HOME/.claude/hooks/eli5-activate.js\" SessionStart"
-          }
-        ]
-      }
-    ],
     "PreToolUse": [
-      {
-        "matcher": "Edit|Write|NotebookEdit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash \"$HOME/.claude/hooks/node-shim.sh\" \"$HOME/.claude/hooks/lockstep-guard.js\"",
-            "timeout": 5
-          }
-        ]
-      },
       {
         "matcher": "Edit|Write|MultiEdit",
         "hooks": [
@@ -85,30 +65,18 @@
             "timeout": 5
           }
         ]
-      }
-    ],
-    "PostToolUse": [
+      },
       {
-        "matcher": "Write",
+        "matcher": "Bash",
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"$HOME/.claude/hooks/node-shim.sh\" \"$HOME/.claude/hooks/mockup-autoopen.js\"",
-            "timeout": 5
+            "command": "bash \"$HOME/.claude/hooks/safety-net.sh\""
           }
         ]
       }
     ],
     "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash \"$HOME/.claude/hooks/node-shim.sh\" \"$HOME/.claude/hooks/slop-guard.js\"",
-            "timeout": 5
-          }
-        ]
-      },
       {
         "hooks": [
           {
@@ -129,12 +97,15 @@
             "statusMessage": "Tracking literal mode..."
           }
         ]
-      },
+      }
+    ],
+    "PostToolUse": [
       {
+        "matcher": "Write|Edit",
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"$HOME/.claude/hooks/node-shim.sh\" \"$HOME/.claude/hooks/eli5-activate.js\" UserPromptSubmit"
+            "command": "bash \"$HOME/.claude/hooks/slop-block.sh\""
           }
         ]
       }

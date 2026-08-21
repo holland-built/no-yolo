@@ -21,6 +21,12 @@ LOCAL_PATTERNS="/Users/[a-zA-Z0-9_-]+|session: [a-f0-9-]{36}|password\s*[:=]|sec
 
 BLOCKED_FILES=(
   "memory/facts/"
+  # The index names every fact, so publishing it publishes the list of what the
+  # owner asked to be remembered even though the fact bodies stay behind. It is
+  # gitignored, and .gitignore stops an ordinary `git add` and nothing else, so a
+  # `git add -f` or an already-tracked history would walk straight past it. The
+  # tracked template is memory/MEMORY.example.md.
+  "memory/MEMORY.md"
   "memory/compile-manifest.json"
   "brainstorms/"
   "plans/"

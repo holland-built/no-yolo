@@ -112,36 +112,11 @@ EOF
 assert_red "hook paths exist" "check 5 catches a hook path that does not exist"
 cp "$TMP/settings.example.json.bak" settings.example.json
 
-# 5b. catalog lock — edit a SKILL.md description, the lock must notice
-backup skills/eli5/SKILL.md
-python3 - <<'EOF'
-p = "skills/eli5/SKILL.md"
-s = open(p).read()
-s = s.replace("description: ", "description: SELFTEST SABOTAGE. ", 1)
-open(p, "w").write(s)
-EOF
-assert_red "catalog lock" "check 5b catches an edited SKILL.md description"
-cp "$TMP/SKILL.md.bak" skills/eli5/SKILL.md
-
-# 5bb. rendered menus — hand-edit the generated output, the check must notice.
-#      (The real-world case is the inverse: a source edited and re-locked without
-#      regen. Same comparison, and this direction is safe to restore.)
-backup skills/my-skills/RENDERED.md
-printf '\n| zz-selftest | sabotage | sabotage | sabotage |\n' >> skills/my-skills/RENDERED.md
-assert_red "rendered menus" "check 5bb catches a stale/hand-edited RENDERED.md"
-cp "$TMP/RENDERED.md.bak" skills/my-skills/RENDERED.md
-
 # 7. shellcheck — blocking at warning severity
 backup hooks/statusline.sh
 printf '\nzz_selftest_unused_var=1\n' >> hooks/statusline.sh
 assert_red "shellcheck" "check 7 catches a shellcheck warning"
 cp "$TMP/statusline.sh.bak" hooks/statusline.sh
-
-# 6. README format headings
-backup docs/README_FORMAT.md
-echo '## zz-selftest-heading-that-is-not-in-readme' >> docs/README_FORMAT.md
-assert_red "README format headings" "check 6 catches a README missing a required heading"
-cp "$TMP/README_FORMAT.md.bak" docs/README_FORMAT.md
 
 # 8. secret pattern file — the credential rules live in ONE file now, so deleting it
 #    must fail the scan CLOSED. A scanner that reports "clean" with no rules loaded

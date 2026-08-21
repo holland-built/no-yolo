@@ -18,13 +18,12 @@ assert_eq() {
   fi
 }
 
-# Guard: a stray lockstep flag would skew the node-present case.
-rm -f "$HOME/.claude/.lockstep-active"
-
-# --- Case 1: node present -> runs lockstep-guard.js -> exit 0 (no flag set) ---
-bash "$SHIM" "$REPO/hooks/lockstep-guard.js"
+# --- Case 1: node present -> runs config-protection.js -> exit 0 (nothing to block) ---
+# The hook reads its tool payload from stdin; an empty object is a well-formed
+# call that touches no config file, so a working shim + working hook exits 0.
+echo '{}' | bash "$SHIM" "$REPO/hooks/config-protection.js"
 rc1=$?
-assert_eq "node present: lockstep-guard exit code" "0" "$rc1"
+assert_eq "node present: config-protection exit code" "0" "$rc1"
 
 # Cases 2 & 3 need a HOME with no real .nvm install so the fallback glob
 # genuinely finds nothing (this machine's real $HOME has a live nvm install,
@@ -33,15 +32,15 @@ assert_eq "node present: lockstep-guard exit code" "0" "$rc1"
 # can't locate `bash` itself via the stripped PATH.
 FAKE_HOME="$(mktemp -d)"
 
-# --- Case 2: PATH stripped, no node anywhere -> lockstep-guard.js -> exit 2 (fail closed) ---
-env -i PATH=/nonexistent HOME="$FAKE_HOME" "$BASH_BIN" "$SHIM" "$REPO/hooks/lockstep-guard.js" >/dev/null 2>&1
+# --- Case 2: PATH stripped, no node anywhere -> config-protection.js -> exit 2 (fail closed) ---
+env -i PATH=/nonexistent HOME="$FAKE_HOME" "$BASH_BIN" "$SHIM" "$REPO/hooks/config-protection.js" >/dev/null 2>&1
 rc2=$?
-assert_eq "no node: lockstep-guard fail-closed exit code" "2" "$rc2"
+assert_eq "no node: config-protection fail-closed exit code" "2" "$rc2"
 
-# --- Case 3: PATH stripped, no node anywhere -> eli5-activate.js -> exit 0 (fail open, harmless) ---
-env -i PATH=/nonexistent HOME="$FAKE_HOME" "$BASH_BIN" "$SHIM" "$REPO/hooks/eli5-activate.js"
+# --- Case 3: PATH stripped, no node anywhere -> a cosmetic hook -> exit 0 (fail open) ---
+env -i PATH=/nonexistent HOME="$FAKE_HOME" "$BASH_BIN" "$SHIM" "$REPO/hooks/format-typecheck.js"
 rc3=$?
-assert_eq "no node: eli5-activate quiet exit code" "0" "$rc3"
+assert_eq "no node: format-typecheck quiet exit code" "0" "$rc3"
 
 rm -rf "$FAKE_HOME"
 

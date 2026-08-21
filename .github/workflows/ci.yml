@@ -39,11 +39,19 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-      # verify.sh shells to python3 (settings.example.json parse check, and the
-      # memory compile scripts). Don't rely on the runner image preinstalling it.
+      # verify.sh shells to python3 for the settings.example.json parse check.
+      # Don't rely on the runner image preinstalling it.
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+
+      # jq is what both guard hooks read their input with, so their tests skip
+      # themselves without it. A skipped test reports the same green as a passing
+      # one, which is the failure this whole file exists to prevent. Ubuntu runners
+      # ship jq; macOS runners do not.
+      - name: Install jq (macOS runners have none)
+        if: runner.os == 'macOS'
+        run: brew install jq
 
       # ubuntu-latest ships shellcheck; macos-latest does not. Without this the
       # macOS run records "shellcheck not installed — skipped" as a WARN, and WARN
@@ -57,10 +65,10 @@ jobs:
         run: bash verify.sh
 
       # verify.sh reports WARN for a check it could not run, and WARN never fails
-      # the build. That is right for a genuinely local-only check (the third-party
-      # patch guard, which guards an install and not the repo) and wrong for
-      # everything else: a suite that skips half its checks looks identical to one
-      # that passes them. This asserts the platform-sensitive ones actually ran.
+      # the build. That is right for a genuinely local-only check (the installed
+      # pre-commit hook, which a CI checkout does not have) and wrong for everything
+      # else: a suite that skips half its checks looks identical to one that passes
+      # them. This asserts the platform-sensitive ones actually ran.
       - name: Assert the platform-sensitive checks actually ran
         run: |
           set -uo pipefail

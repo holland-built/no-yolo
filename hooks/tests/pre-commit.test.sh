@@ -132,6 +132,23 @@ assert_eq "3. blocked personal path: exit code" "1" "$rc"
 assert_has "3. blocked personal path: names the path" "personal path being added/modified: memory/facts/" "$out"
 unstage_all
 
+# --- Case 3b: the memory INDEX, which is gitignored and so never reaches an ordinary
+#     `git add`. .gitignore is not a guard: `git add -f` ignores it, and a file already
+#     tracked from before it was ignored is staged with no flag at all. The index names
+#     every fact the owner asked to be remembered, so it gets a path rule of its own. ---
+stage "memory/MEMORY.md" "$CLEAN_LINES"
+out="$(run_hook)"; rc=$?
+assert_eq "3b. blocked memory index: exit code" "1" "$rc"
+assert_has "3b. blocked memory index: names the path" "personal path being added/modified: memory/MEMORY.md" "$out"
+unstage_all
+
+# --- Case 3c: the tracked TEMPLATE beside it must still be allowed, or the rule above
+#     has quietly blocked the one memory file that is meant to ship. --------------------
+stage "memory/MEMORY.example.md" "$CLEAN_LINES"
+out="$(run_hook)"; rc=$?
+assert_eq "3c. memory template still allowed: exit code" "0" "$rc"
+unstage_all
+
 # --- Case 4: a clean file -> ALLOW. A guard that refuses everything is as broken as
 #     one that refuses nothing; without this case the three above prove nothing. ------
 stage "docs/clean.md" "$CLEAN_LINES"
