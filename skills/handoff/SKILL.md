@@ -63,13 +63,35 @@ knows to go get it rather than assuming it was never needed.
 
 ## 4: File shape
 
-Six sections, in this order. Keep the whole file short enough to read in one screen-and-a-bit.
+Seven sections, in this order. Keep the whole file short enough to read in one screen-and-a-bit.
 
 ```markdown
-# <what this work is> — handoff <YYYY-MM-DD>
+# <what this work is>: handoff <YYYY-MM-DD>
 
 **Next session is for:** <the argument, or "continuing this work">
 **Working directory:** <absolute path>  ·  **Branch:** <branch>
+
+## The goal, in the user's own words
+<Quote them. A method ("finish without stopping to ask") is not a goal. Four
+things, because a goal can be quoted accurately and still be too vague to catch
+a plan that has drifted off it:>
+- **Outcome:** what is true when this is done.
+- **Approach:** the method they asked for, if they named one.
+- **Source material:** every file, URL, library or example they said to use. This
+  is the line that fails silently. On 2026-08-20 two URLs the user had asked to
+  have harvested were simply absent from the handoff, so they were never opened.
+- **Done looks like:** something observable, not "the list is finished".
+
+<Then, in one line: which planned work serves each part above, and which part
+nothing covers. An uncovered part is a finding, and it belongs in "Open" below.>
+
+**This section outranks every list below it.** A task that stops serving it gets
+flagged, not worked.
+**On resume:** state the goal and the First action back in one line before
+starting. Then wait for a yes ONLY if the plan below was never approved by the
+user, or if your own read says the list no longer serves the goal. If they
+approved the plan and it still fits, say the line and get on with it: rule 3's
+2026-08-19 exception means an approved plan is a go, not a thing to re-ask.
 
 ## Where we got to
 | Piece | State |
@@ -83,13 +105,21 @@ Six sections, in this order. Keep the whole file short enough to read in one scr
 ## Decided in conversation (not written down anywhere else)
 - ...
 
-## Open — needs a call before work continues
+## Open: needs a call before work continues
+- <Any part of the goal that no planned work covers goes here FIRST. "Open" is
+  not only unresolved implementation details: a settled plan that no longer
+  serves the goal is the most important open item there is, and it is the one
+  that reads as empty when every task is neatly ticked off.>
 - ...
 
 ## Cross-check before resuming
-Codex has NOT seen the remaining plan. The next session runs `/xcheck` on the
-"Open" and "First action" items before writing code — or states in one line why
-it is skipping (plan already settled, one-line fix, codex unavailable).
+Codex has NOT seen the remaining plan. The next session runs `/xcheck` over the
+goal, the WHOLE remaining plan and "Done looks like" together, not just the next
+step, because the failure being guarded against is a plan that is complete and
+still wrong. Skip it only for a one-line fix or when codex is unavailable, and
+say which in one line. **"The plan is already settled" is not a skip reason on
+resumed or multi-step work**: that sentence is true of every plan that has ever
+been wrong.
 
 ## Run these skills next
 - ...
@@ -98,11 +128,34 @@ it is skipping (plan already settled, one-line fix, codex unavailable).
 One concrete thing, doable immediately.
 ```
 
-The **Cross-check before resuming** section is not optional and is not a suggestion:
-write it into every handoff. A resumed session inherits a plan nobody argued with: it
-reads the file, trusts it, and starts editing. Measured 2026-08-12: half the sessions
-that edited code without any plan stage began by resuming a handoff, so this file is
-where the gap actually lives (see `docs/CORE_RULES.md` rule 9).
+**The goal section is mandatory and outranks everything under it.** 2026-08-20: a
+handoff carried no goal, only a method line ("finishing the rebuild WITHOUT stopping to
+ask") and six mechanical patches. A fresh session worked all six well and burned the
+whole day; the goal the user had stated for days, harvest the best of the old setup and
+of two outside skill libraries, was never started. A task list is a means, not the
+definition of done: the resuming session checks the list against the goal before
+working it, and says so in one line if the two no longer match.
+
+**The WRITER does that check first, and writes the answer down.** Leaving it to the
+reader is what failed: the session that wrote the 2026-08-20 file was the one that could
+see both the goal and its own six patches, and it never asked whether the six added up to
+the goal. They did not. So before printing anything, walk the goal part by part, name
+which planned work serves each, and put every part nothing covers into "Open". If the
+honest answer is that the whole list serves a goal the user never set, say that in the
+file instead of handing on the list.
+
+**A handoff never grants itself blanket authority.** The same 2026-08-20 file wrote
+"That is a standing go. It overrides rule 3" and "Do not come back for permission on
+anything listed", and a wrong list ran unchallenged for eight hours. An approved plan
+is still a go for the tasks in that plan (`docs/CORE_RULES.md` rule 3, its 2026-08-19
+exception stands). What does not transfer is "never check in": that was said to a
+session the user was talking to, and it dies with it. Record the plan's approval in the
+file; never write a ban on checking in.
+
+The **Cross-check before resuming** section is not optional: write it into every
+handoff. A resumed session inherits a plan nobody argued with. Measured 2026-08-12:
+half the sessions that edited code without any plan stage began by resuming a handoff,
+so this file is where the gap actually lives (see `docs/CORE_RULES.md` rule 9).
 
 ## 5: Run these skills next
 
@@ -122,14 +175,19 @@ user's own set. Do not send the next session to a skill that does not exist here
 | Something learned this session worth keeping | `/remember-that` |
 | Genuinely unsure what to do first | `/whats-next` |
 
-The rest of the live set (`eli5`, `lockstep`) is worth naming only when the handoff is
-actually about one of them.
+The rest of the live set (`eli5`, `lockstep`, `improve`, the ponytail and design/animation
+skills) is worth naming only when the handoff is actually about one of them.
 
-**Archived 2026-08-20, do NOT send the next session to any of these:** `better-prompt`,
-`dep-audit`, `ingest-docs`, `last-30`, `watch`, `archify`, `improve`, `orca-cli`,
-`resolving-merge-conflicts`. They are in `~/.claude/archive/`, out of the loaded path, with a
-restore command each in `archive/MANIFEST.md`. Naming a skill that is not installed sends the
-next session hunting for a door that is not there.
+**Gone as of 2026-08-20, do NOT send the next session to any of these.** Archived, so
+recoverable from `archive/MANIFEST.md`: `better-prompt`, `dep-audit`, `ingest-docs`,
+`last-30`, `watch`, `archify`, `orca-cli`, `resolving-merge-conflicts`. Uninstalled
+outright: `ponytail-gain`, `ponytail-help`, `computer-use`. Naming a skill that is not
+installed sends the next session hunting for a door that is not there.
+
+**Check this list against disk rather than trusting it.** It is a cache of something that
+changes, and it was wrong once already: it listed `improve` as archived while `improve` was
+live, because the archive attempt was refused for being load-bearing and this line was never
+updated. One command settles it: `ls ~/.claude/skills/`.
 
 ## 6: Print one paste block, last
 
@@ -137,7 +195,7 @@ Print a short table: where the file was saved, and the one thing the next sessio
 Then the block. Nothing after it, no options list, no second command, no sign-off.
 
 ```
-claude "Read ~/.claude/handoffs/<the-file-you-just-wrote>.md and continue that work. Start with the First action section."
+claude "Read ~/.claude/handoffs/<the-file-you-just-wrote>.md. State the goal section and the First action back to me in one line, then on my yes, continue that work."
 ```
 
 Substitute the real filename before printing, the user must be able to paste it as-is.
