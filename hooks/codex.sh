@@ -13,7 +13,7 @@ prompt="${1:?usage: codex.sh \"<prompt>\" [output-file]}"
 out="${2:-}"
 
 run() {
-  codex exec --sandbox workspace-write --skip-git-repo-check "$prompt" < /dev/null 2>&1
+  codex exec --sandbox read-only --skip-git-repo-check "$prompt" < /dev/null 2>&1
 }
 
 if [ -n "$out" ]; then
