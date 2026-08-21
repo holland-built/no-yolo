@@ -40,11 +40,17 @@ name it. Those stay. This paragraph is the only place the character appears as i
 
 ## Vocabulary that reads as machine-written
 
-Treated as density, not as a ban: one is nothing, three on a page is the signal. *elevate,
-seamless, unleash, tapestry, testament, holistic, meticulous, nuanced, myriad, embark,
-unlock, underscore, showcasing.*
+Treated as density, not as a ban: one is nothing, three on a page is the signal.
 
-These are ordinary engineering words and stay: *implement, robust, leverage, delve, utilize.*
+`elevate` `seamless` `unleash` `tapestry` `testament` `holistic` `meticulous` `nuanced`
+`myriad` `embark` `unlock` `underscore` `showcasing`
+
+These are ordinary engineering words and stay: `implement` `robust` `leverage` `delve`
+`utilize`
+
+The list is written in backticks because `hooks/slop-block.sh` counts these words in any
+`.md` file, and this one holds thirteen of them. Naming a word is not using it, and the
+hook reads code spans as the specimens they are.
 
 ## Shape
 

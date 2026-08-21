@@ -403,7 +403,10 @@ if [ -f .git/hooks/pre-commit ]; then
   if cmp -s .git/hooks/pre-commit hooks/pre-commit; then
     record PASS "installed pre-commit matches tracked source"
   else
-    record FAIL "installed .git/hooks/pre-commit is STALE — your commits are not running the tracked scan; fix: cp hooks/pre-commit .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit"
+    # The label opens with the same words as the PASS above, deliberately. A row whose
+    # two outcomes read differently cannot be asserted by name, and verify-selftest.sh
+    # asserts every row by name.
+    record FAIL "installed pre-commit matches tracked source — it does NOT; your commits are not running the tracked scan; fix: cp hooks/pre-commit .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit"
   fi
 elif [ -d .git ]; then
   record WARN "no .git/hooks/pre-commit installed — commits are unscanned locally; run setup.sh"
