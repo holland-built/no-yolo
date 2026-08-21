@@ -1,4 +1,37 @@
-# The rebuild plan
+# The rebuild plan — SUPERSEDED, kept for the reasoning
+
+> **Do not build from this file.** It is the plan as written on the morning of 2026-08-20,
+> before any of it was executed. The rebuild then happened, and about half of what follows was
+> overturned during it, usually because the plan had a fact wrong. **What was actually decided
+> lives in `docs/DECISIONS.md`; what was actually archived lives in `archive/MANIFEST.md`.**
+>
+> The file is kept rather than deleted because the *reasoning* in it is still good: the
+> four-way test, the dependency budget, and the mattpocock verdict all survived contact and
+> none of them are recorded anywhere else. A plan left lying around as if it were the spec is
+> how the next session rebuilds yesterday's mistakes, so the reality table comes first.
+
+## What it said, against what actually happened
+
+| The plan said | What actually happened |
+|---|---|
+| Archive `improve`, `checkup`, `design`, `route-map` | **All four refused.** Each is load-bearing: 31 inbound files for `design` alone. Reasons per skill in `archive/MANIFEST.md` |
+| Delete `ponytail` and its 5 helpers, "never typed once" | **4 of 6 kept.** `/health` invokes `ponytail-review`, `-audit` and `-debt`; `/design` invokes `/ponytail`. It is a standard applied to coding, not a command anyone types, so a usage count was the wrong measure. Only `-gain` and `-help` went |
+| Delete the `accessibility-tester` and `react-specialist` subagents | **Neither deleted.** `accessibility-tester` turned out to be wired into `/build`, and `react-specialist` is marked KEEP in `docs/KEEP_LIST.md` item 66. The plan and the keep list contradicted each other and the plan was wrong |
+| Delete `config-protection.js`, built-in deny rules replace it | **Kept.** The deny rules were never written. Full record and the five tests in `docs/DECISIONS.md` |
+| Replace `eli5-activate.js` with an Output Style | **Not done.** The hook is still the mechanism and there is no `output-styles/` directory |
+| Cut `CORE_RULES.md` to ~40 lines, delete the other 17 rule files | **Not done, and now argued against.** The premise was context bloat; that was measured false. Every line was added after a specific failure |
+| The `lockstep` command goes, plan mode covers it | **Kept.** It is a hook-enforced hard block, which plan mode is not |
+| Install `visual-explainer` (dependency 2) | **Not installed, owner's decision.** The built-in Artifact tool already produces the pages |
+| Install `avoid-ai-writing` (dependency 3), point slop-guard at its pattern list | **Not installed, owner's decision.** The 24-pattern hook is tuned and tested; a 62-pattern swap was not. "Point slop-guard at its pattern list" was also not a wiring job as described |
+| Install Snip (dependency 5) | **Rejected on portability.** Mac-only, per-person. `docs/DECISIONS.md` carries the rule that came out of it |
+| StyleSeed **or** UI Craft, after a head-to-head | **Done as written.** The owner picked StyleSeed from two rendered screens. Installed for its rules only, all 23 skill doors deleted |
+| Rebuild the mockup workflow on top of `prototype` | **Rebuilt, but not on `prototype`.** None of the four mattpocock skills were installed. The four mockup rules are in `skills/build/SKILL.md` §3.5 |
+
+Two things in the plan were simply wrong on the day it was written: dependency 2 named the
+wrong `visual-explainer`, and "deleting the 17 rule files" was costed as a saving that turned
+out not to be measurable.
+
+## Everything below is the original text, unedited
 
 Decided 2026-08-20. Replaces `docs/FRESH_START_PLAN.md` (Aug 4) and closes `docs/KEEP_LIST.md`.
 Research complete: all 166 awesome-claude-code entries, all 20 mattpocock skills, 8 candidate

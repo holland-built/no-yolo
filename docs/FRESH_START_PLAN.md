@@ -1,4 +1,8 @@
-# Fresh Start: ~/.claude rebuild plan
+# Fresh Start: ~/.claude rebuild plan — SUPERSEDED
+
+> **Do not build from this file.** It was replaced by `docs/REBUILD_PLAN.md` on 2026-08-20,
+> and that file has since been superseded in its turn. What was actually decided is in
+> `docs/DECISIONS.md`. Kept for its usage measurements, which are still the only ones taken.
 
 **Decided 2026-08-04/05.** Replaces incremental cleanup. Old setup stays on `main` and on
 GitHub (`holland-built/no-yolo`) forever, so nothing in this plan destroys anything.
