@@ -49,6 +49,56 @@ assert_file 2 g.md 'Let me know if you need anything else.'  "a closing line wit
 assert_file 2 h.md 'Feel free to ask questions.'             "another form of the same"
 assert_file 0 i.md 'Next: run bash verify.sh.'               "a closing line that names one"
 
+# --- Code is not prose --------------------------------------------------------
+# Every case below came from a real file in this repo that the first version of the
+# hook refused on 2026-08-21. Four of the six were the hook's own supporting docs.
+assert_file 0 m.md '```bash
+printf "The plan is simple — build it.\n"
+```' "a long dash inside a fenced block"
+
+assert_file 0 n.md 'A few `- **Term** — explanation` rows are a reference block.' \
+  "a long dash inside an inline code span"
+
+assert_file 0 o.md '```
+Size: <tweak|fix> — <what made it that size>
+```' "a long dash inside a fenced output template"
+
+# The fence must close at the fence and not swallow what follows.
+assert_file 2 p.md '```
+code — here
+```
+And then real prose — with a dash in it.' "prose on a line after the fence closes"
+
+# A shorter run never closes a longer one, so the inner fence stays inside.
+assert_file 0 q.md '````
+```
+still — inside
+````' "a short fence nested in a longer one"
+
+# A tilde fence is a fence. A backtick run must not close it.
+assert_file 0 r.md '~~~
+tilde — fenced
+~~~' "a tilde fence"
+
+# Four spaces of indent is an indented code block, not a fence opener, so the dash
+# after it is prose and must still be caught.
+assert_file 2 s.md '    ```
+prose — after a non-fence' "four-space indent does not open a fence"
+
+# An unterminated fence must not switch the rest of the file off. It is reported,
+# and every line is still checked.
+assert_file 2 t.md '```
+never closed
+and then prose — with a dash' "an unterminated fence is reported, not obeyed"
+
+# An unmatched backtick must not blank the rest of the line.
+assert_file 2 u.md 'A stray ` backtick and then a dash — right here.' \
+  "an unmatched backtick leaves the prose visible"
+
+# Counting still works when the words are real prose rather than specimens.
+assert_file 2 v.md 'We elevate the seamless holistic result.' "three plain words still count"
+assert_file 0 w.md 'The list is `elevate` `seamless` `holistic`.' "three quoted words do not"
+
 # --- Scope: only prose files, and only files that exist -----------------------
 assert_file 0 j.js 'const x = 1; // simple — really'         "a code file is not prose"
 assert_file 0 k.txt 'Plain text is checked too.'             "plain text is in scope"
