@@ -101,7 +101,7 @@ written here; the machine only notices what is new or what has changed underneat
 | `debate` | 1 | not a surface | Argues decisions, including UI ones, and produces no interface |
 | `eli5` | 1 | not a surface | Explains things in plain words |
 | `xcheck` | 1 | not a surface | Sends work to a second model |
-| `computer-use` | 2 | not a surface | Drives desktop windows; reads UI, never designs it |
+| `computer-use` | removed 2026-08-20 | not a surface | Drove desktop windows; read UI, never designed it. Uninstalled with `npx skills remove` and its lock entry deleted by hand, because the CLI leaves the entry behind and `npx skills update` would reinstall it |
 | `orca-cli` | archived 2026-08-20 | not a surface | Operates worktrees and terminals |
 | `react-specialist` | 6, agent | not a surface | Builds React components to a given design; it implements, it does not decide the design |
 | `accessibility-tester` | 6, agent | not a surface | Audits WCAG compliance. Genuinely adjacent, deliberately kept: `/design`'s AUDIT.md runs its own contrast and axe-core checks at runtime, and a second opinion on a11y is worth more than a tidy door count |

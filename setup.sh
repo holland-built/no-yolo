@@ -260,6 +260,17 @@ if [[ "$MODE" == "core-only" ]]; then
 else
   echo "    Installing ponytail..."
   if npx skills@latest add DietrichGebert/ponytail; then RESULTS+=("ponytail: OK"); else echo "    ! ponytail install failed"; RESULTS+=("ponytail: FAILED"); fi
+  # ponytail-gain and ponytail-help were removed 2026-08-20: nothing invokes either,
+  # and neither does work — one prints a scoreboard, the other a help card. They cannot
+  # be uninstalled on their own, because the line above installs all six skills from one
+  # repo, so a plain setup.sh re-run would silently put both back. Delete them here
+  # instead, the same way the StyleSeed block below keeps its rules and drops its doors.
+  # The four that stay are all invoked by /health or /design. Restore either by deleting
+  # its line from this loop and re-running setup.sh.
+  for s in ponytail-gain ponytail-help; do
+    rm -f "$CLAUDE_DIR/skills/$s"
+    rm -rf "$CLAUDE_DIR/.agents/skills/$s"
+  done
   echo "    Installing improve..."
   if npx skills@latest add shadcn/improve; then RESULTS+=("improve: OK"); else echo "    ! improve install failed"; RESULTS+=("improve: FAILED"); fi
   # upstream ships without user-invocable, which kills /improve — re-apply the
@@ -371,14 +382,11 @@ else
 fi
 echo "    To check for plugin updates: run /plugin list in Claude Code, then /plugin update <name>"
 
-echo ""
-echo "==> 6. Environment variables (add to ~/.zshrc or ~/.bash_profile)"
-cat <<'ENVEOF'
-
-    export GROQ_API_KEY=your_key_here               # video-to-kb (Whisper transcription)
-    export OBSIDIAN_VAULT="$HOME/path/to/your/vault"  # video-to-kb vault root
-
-ENVEOF
+# Step 6 printed two environment variables, GROQ_API_KEY and OBSIDIAN_VAULT, and
+# labelled them "video-to-kb" — a skill that has never existed in this repo. The only
+# thing that read either was /watch, archived 2026-08-20 (archive/MANIFEST.md). Nothing
+# on disk reads them now, so asking a new installer to set them was busywork with a
+# wrong name attached. Restoring /watch means restoring this block too.
 
 echo ""
 echo "==> Install summary"

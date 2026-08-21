@@ -83,9 +83,7 @@ Read the summary. `OK` means it installed. `FAILED` means it did not, and the ta
 of this page tells you what to do. Any `FAILED` also makes the script exit with an error, which
 is expected, not a crash.
 
-Two messages are safe to ignore for now: a note about adding MCP servers to `settings.json`, and
-two optional settings (`GROQ_API_KEY` and `OBSIDIAN_VAULT`) that only matter if you later use the
-video commands.
+One message is safe to ignore for now: a note about adding MCP servers to `settings.json`.
 
 **About permission prompts.** If Claude Code is running these for you, it may stop and ask
 permission to run a command or touch a file. That is on purpose. This setup is deliberately
