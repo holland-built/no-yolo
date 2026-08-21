@@ -15,9 +15,9 @@ The terminal is a window where you type commands instead of clicking. On a Mac, 
 
 Every command below goes there: paste one line, press Return, wait for it to finish.
 
-You will see `~` a lot. It means your home folder — on a Mac, `/Users/<yourname>`; on Linux, `/home/<yourname>`. So `~/.claude` is the folder Claude Code reads every time it starts, and this setup *is* that folder.
+You will see `~` a lot. It means your home folder: on a Mac, `/Users/<yourname>`; on Linux, `/home/<yourname>`. So `~/.claude` is the folder Claude Code reads every time it starts, and this setup *is* that folder.
 
-## Step 1 — Check what you already have
+## Step 1: Check what you already have
 
 Type each command below and press Return. You are only checking that it prints a version number.
 
@@ -25,7 +25,7 @@ Type each command below and press Return. You are only checking that it prints a
 |---|---|---|
 | `claude --version` | Claude Code itself | `2.0.1 (Claude Code)` |
 | `git --version` | downloads the files | `git version 2.39.5` |
-| `node --version` | runs the extra tools | `v22.14.0` — **must be 20 or newer** |
+| `node --version` | runs the extra tools | `v22.14.0`, **must be 20 or newer** |
 | `npm --version` | installs those tools (comes with Node) | `10.9.2` |
 | `python3 --version` | only needed for the rules-only install in Step 4 | `Python 3.12.7` |
 
@@ -35,10 +35,10 @@ If one prints `command not found`, install it before going on:
 |---|---|---|
 | Claude Code | [docs.anthropic.com](https://docs.anthropic.com/en/docs/claude-code) | Yes. This whole thing is for it. |
 | git | Mac: already there. Linux: `sudo apt install git` | Yes. The installer stops without it. |
-| Node and npm | Mac: [nodejs.org](https://nodejs.org/) (one download gives you both). Ubuntu/Debian: `curl -fsSL https://deb.nodesource.com/setup_22.x \| sudo -E bash - && sudo apt install -y nodejs` | Yes, for the normal install. **Version 20 or newer.** Ubuntu's own `sudo apt install nodejs` gives version 18, which is too old — four tools fail on it. |
+| Node and npm | Mac: [nodejs.org](https://nodejs.org/) (one download gives you both). Ubuntu/Debian: `curl -fsSL https://deb.nodesource.com/setup_22.x \| sudo -E bash - && sudo apt install -y nodejs` | Yes, for the normal install. **Version 20 or newer.** Ubuntu's own `sudo apt install nodejs` gives version 18, which is too old: four tools fail on it. |
 | python3 | Mac: already there. Linux: `sudo apt install python3` | Only for the rules-only install. |
 
-## Step 2 — Move any old setup out of the way
+## Step 2: Move any old setup out of the way
 
 ```bash
 mv ~/.claude ~/.claude.bak 2>/dev/null || true
@@ -48,7 +48,7 @@ This prints nothing at all, which is the correct result. If you already had a `~
 it is now sitting safely at `~/.claude.bak`. Nothing was deleted. If you had no such folder,
 nothing happened.
 
-## Step 3 — Download the files
+## Step 3: Download the files
 
 ```bash
 git clone https://github.com/holland-built/no-yolo.git ~/.claude
@@ -56,7 +56,7 @@ git clone https://github.com/holland-built/no-yolo.git ~/.claude
 
 You will see counting lines and then `Resolving deltas: 100%`. That means the files arrived.
 
-## Step 4 — Pick which install you want
+## Step 4: Pick which install you want
 
 Most people want the first one. Pick one line and copy it, you will run it in Step 5.
 
@@ -69,14 +69,14 @@ Most people want the first one. Pick one line and copy it, you will run it in St
 Any of these is safe to run again later. `--md-only` backs up your rules file first, and running
 the plain version afterwards puts it back.
 
-## Step 5 — Run it
+## Step 5: Run it
 
 Paste the line you picked and press Return. It takes a couple of minutes and prints as it goes:
 
-1. **Preflight** — a `found` or `missing` line for each tool it needs.
-2. **Numbered steps 1 to 6** — settings file, scripts, tools, borrowed commands, plugins, and a
+1. **Preflight**: a `found` or `missing` line for each tool it needs.
+2. **Numbered steps 1 to 6**: settings file, scripts, tools, borrowed commands, plugins, and a
    list of two optional settings you can add later.
-3. **Install summary** — one line per tool, each reading `OK`, `SKIPPED`, or `FAILED`.
+3. **Install summary**: one line per tool, each reading `OK`, `SKIPPED`, or `FAILED`.
 4. **Done.**
 
 Read the summary. `OK` means it installed. `FAILED` means it did not, and the table at the bottom
@@ -89,7 +89,7 @@ One message is safe to ignore for now: a note about adding MCP servers to `setti
 permission to run a command or touch a file. That is on purpose. This setup is deliberately
 careful about permissions. Read what it wants to do, then allow it.
 
-## Step 6 — Check that it worked
+## Step 6: Check that it worked
 
 Open Claude Code in any folder and run:
 

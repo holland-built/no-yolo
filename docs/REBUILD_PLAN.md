@@ -1,4 +1,4 @@
-# The rebuild plan — SUPERSEDED, kept for the reasoning
+# The rebuild plan: SUPERSEDED, kept for the reasoning
 
 > **Do not build from this file.** It is the plan as written on the morning of 2026-08-20,
 > before any of it was executed. The rebuild then happened, and about half of what follows was

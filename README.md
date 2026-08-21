@@ -38,7 +38,7 @@ For a fuller check, run `bash ~/.claude/verify.sh`. Every row should say PASS. I
 
 **Never done anything like this before?** Open Claude Code and say: `walk me through installing this — read ~/.claude/INSTALL.md`. It looks at your computer and explains each step.
 
-**That is the whole install. Everything below is reference — read it when you need it, not before.**
+**That is the whole install. Everything below is reference, read it when you need it, not before.**
 
 Four words you will see:
 
@@ -68,10 +68,10 @@ Two smaller installs:
 |---|---|---|
 | [Claude Code](https://claude.ai/code) | `claude --version` | [docs.anthropic.com](https://docs.anthropic.com/en/docs/claude-code) |
 | **git** | `git --version` | Already on a Mac; Linux: `sudo apt install git` |
-| **Node.js 20+** | `node --version` | Mac: [nodejs.org](https://nodejs.org/) · Ubuntu: `curl -fsSL https://deb.nodesource.com/setup_22.x \| sudo -E bash - && sudo apt install -y nodejs` (apt's own nodejs is v18 — too old, four add-ons fail) |
+| **Node.js 20+** | `node --version` | Mac: [nodejs.org](https://nodejs.org/) · Ubuntu: `curl -fsSL https://deb.nodesource.com/setup_22.x \| sudo -E bash - && sudo apt install -y nodejs` (apt's own nodejs is v18, too old: four add-ons fail) |
 | **python3** | `python3 --version` | Already on a Mac; needed for `--md-only`, the plugin list, and the catalog scripts |
 
-`~` means your home folder — on a Mac `/Users/<username>`, on Linux `/home/<username>`.
+`~` means your home folder: on a Mac `/Users/<username>`, on Linux `/home/<username>`.
 
 ### Add-ons
 
@@ -79,10 +79,10 @@ Everything here is optional. Install one only when you want the command that use
 
 | Add-on | What it does | Used by | Install |
 |---|---|---|---|
-| [impeccable](https://github.com/pbakaus/impeccable) | 59 deterministic checks on UI source (no model call, no API key) | `/design`, `/checkup` | Nothing to install — run on demand as `npx -y impeccable detect` (needs Node + network) |
+| [impeccable](https://github.com/pbakaus/impeccable) | 59 deterministic checks on UI source (no model call, no API key) | `/design`, `/checkup` | Nothing to install, run on demand as `npx -y impeccable detect` (needs Node + network) |
 | [Codex plugin](https://github.com/openai/codex-plugin-cc) | Gets a second opinion from OpenAI's Codex | `/xcheck` and others (see note) | `/plugin marketplace add openai/codex-plugin-cc` then `/plugin install codex@openai-codex` |
 | [fallow](https://www.npmjs.com/package/fallow) | Finds code nothing uses any more | `/health` | installed by `setup.sh` (`npm install -g fallow@2.98.0`) |
-| [gh (GitHub CLI)](https://cli.github.com/) | GitHub from the terminal | `/health`, `/release` | Mac: `brew install gh` · Linux: `sudo apt install gh` — then `gh auth login` |
+| [gh (GitHub CLI)](https://cli.github.com/) | GitHub from the terminal | `/health`, `/release` | Mac: `brew install gh` · Linux: `sudo apt install gh`, then `gh auth login` |
 | [Chrome](https://www.google.com/chrome/) | Renders design previews | `/design`, `/build` | Usually already there. Mac: `brew install --cask google-chrome` · Linux: download the `.deb` from the link |
 | [Playwright MCP](https://github.com/microsoft/playwright-mcp) | Lets Claude drive a browser | `/build` | Add the `playwright` MCP server to `settings.json` (see below) |
 | Firecrawl MCP | Searches and reads web pages | optional | See `docs/MCP_SERVICES.md` |
@@ -93,16 +93,16 @@ The install commands show Mac (`brew`). On Linux use your package manager (`sudo
 
 > **More on the Codex add-on.** `/xcheck`, `/health`, `/build`, `/design` and `/design` use it directly. `/build --plan-only`, `/debate` and `/health --debate` use it through their `/xcheck` step. Every one of them skips it quietly if it isn't installed. It needs a ChatGPT login (the free tier works) or an OpenAI API key. `/xcheck` asks for the `gpt-5.6-sol` model, which may need a paid plan; without it, Codex falls back to your default model.
 
-> **MCP servers** give Claude an extra tool. You add one as a block of settings in `settings.json` — see the [Claude MCP docs](https://docs.anthropic.com/en/docs/claude-code/mcp).
+> **MCP servers** give Claude an extra tool. You add one as a block of settings in `settings.json`, see the [Claude MCP docs](https://docs.anthropic.com/en/docs/claude-code/mcp).
 >
-> ⚠️ **Security note.** Claude asks your permission before running most commands. The settings shipped here deliberately do **not** pre-approve five of them: `Bash(curl:*)`, `Bash(env:*)`, `Bash(export:*)`, `Bash(chmod:*)` and `Bash(cat:*)`. Used together, those five are enough to read a password or key off your machine and send it out to someone else, without ever showing you a prompt. Leaving them un-approved means the first time a session wants one, you get asked. `skipAutoPermissionPrompt` is `false` for the same reason — this repo is called no-yolo. Reading `.env` files, which is where passwords and keys usually sit, is blocked as well by `permissions.deny: ["Read(.env)"]`.
+> ⚠️ **Security note.** Claude asks your permission before running most commands. The settings shipped here deliberately do **not** pre-approve five of them: `Bash(curl:*)`, `Bash(env:*)`, `Bash(export:*)`, `Bash(chmod:*)` and `Bash(cat:*)`. Used together, those five are enough to read a password or key off your machine and send it out to someone else, without ever showing you a prompt. Leaving them un-approved means the first time a session wants one, you get asked. `skipAutoPermissionPrompt` is `false` for the same reason: this repo is called no-yolo. Reading `.env` files, which is where passwords and keys usually sit, is blocked as well by `permissions.deny: ["Read(.env)"]`.
 >
 > **Turning them back on.** On a computer only you use, you can add any of those five back to `permissions.allow` in your own `settings.json` (that file never leaves your machine), and set `skipAutoPermissionPrompt: true`. There is a safer route first: the `fewer-permission-prompts` skill reads what you actually run and writes a narrow approved list from that, instead of approving everything. Only remove the `Read(.env)` block if you understand what it exposes.
 
 ### Running two accounts from one setup
 
 Claude Code keeps its login in the config folder, so two accounts need two folders. You cannot
-share one. What you *can* share is everything else — and you should, or the two drift apart.
+share one. What you *can* share is everything else, and you should, or the two drift apart.
 
 Point each account at its own folder with `CLAUDE_CONFIG_DIR`, as a shell alias:
 
@@ -125,12 +125,12 @@ done
 **`settings.json` is the one people miss, and it is the one that bites.** Skills and docs are
 usually linked on day one; settings gets copied instead, then edited in one folder and not the
 other. On 2026-08-05 that drift left the work folder pointing at five hooks this repo had
-deleted — two errors on every session start, `MODULE_NOT_FOUND`, and none of the plain-English
+deleted: two errors on every session start, `MODULE_NOT_FOUND`, and none of the plain-English
 mode, slop guard, format check or approved-command list that the main folder had. Link it, don't
 copy it. Anything you genuinely want to differ per account (a pinned model, an extra plugin)
 belongs in `~/.claude/settings.json` for both, or in neither.
 
-Because `settings.json` is gitignored, cloning this repo cannot recreate those links for you —
+Because `settings.json` is gitignored, cloning this repo cannot recreate those links for you, 
 that is why they are written down here.
 
 ## Set up a new project
@@ -141,7 +141,7 @@ Nothing to do. Skills make their own folders when they need them, like `brainsto
 
 | Path | What it holds |
 |---|---|
-| `CLAUDE.md` | The main rules file. It holds no rules itself — it points at the others. |
+| `CLAUDE.md` | The main rules file. It holds no rules itself; it points at the others. |
 | `docs/CORE_RULES.md` | 8 core rules, rebuilt 2026-08-04 from the survivors of a six-day test that unloaded all 35. Each one names the evidence that earned it back |
 | `docs/*.md` | One file per topic (planning, testing, memory, and so on), each pointed at by `CLAUDE.md`. `/checkup` lists them and flags any that nothing reads |
 | `memory/` | Things you asked it to remember. `facts/` is the real copy; `CLAUDE.generated.md` is built from it. |
@@ -155,17 +155,17 @@ A skill is a shortcut command you type, like `/health`. There are 13 custom comm
 
 | Skill | What it does | Skill | What it does |
 | --- | --- | --- | --- |
-| build | Whole job: plan, mockup, build, prove | design | All UI work — modes it picks for you |
+| build | Whole job: plan, mockup, build, prove | design | All UI work, modes it picks for you |
 | health | Review, diagnose or autonomously fix | checkup | One health pass over your own setup |
 | release | Publish, following the repo's SHIP.md | xcheck | Codex second opinion on a plan |
 | whats-next | Shows unfinished work | debate | 7-persona decision debate |
 | lockstep | Hard block on file edits | remember-that | Save facts across sessions |
 | handoff | Save a dying session for the next one | eli5 | Plain-English table, no jargon |
-| route-map | Proves every page's content | — | — |
+| route-map | Proves every page's content | - | - |
 
 Five more commands were archived on 2026-08-20 and are not gone: `better-prompt`, `last-30`, `watch`, `ingest-docs`, `dep-audit`. Each has a one-line restore command in `archive/MANIFEST.md`.
 
-The borrowed 13 are not commands you type — they are reference text and behaviours the 13 read. `/design` reads the eight design and animation ones; `/health` invokes the ponytail set and `improve`. They live under `~/.agents/skills/` or `~/.claude/.agents/skills/`, installed by `npx skills`, so removing one is that tool's job and not a matter of deleting a file here.
+The borrowed 13 are not commands you type, they are reference text and behaviours the 13 read. `/design` reads the eight design and animation ones; `/health` invokes the ponytail set and `improve`. They live under `~/.agents/skills/` or `~/.claude/.agents/skills/`, installed by `npx skills`, so removing one is that tool's job and not a matter of deleting a file here.
 
 
 ## Model guidance
@@ -178,7 +178,7 @@ Claude comes in three sizes and they cost different amounts. This setup picks on
 | Sonnet | most coding and reviews | middle, and the default |
 | Opus | planning and hard analysis | most expensive |
 
-The rule: a planning model writes the plan, then separate agents do the building — never the same breath. Today that is Fable planning and Opus building; swapping in a newer, better planner is expected. Never start coding without a plan.
+The rule: a planning model writes the plan, then separate agents do the building, never the same breath. Today that is Fable planning and Opus building; swapping in a newer, better planner is expected. Never start coding without a plan.
 
 Two borrowed skills are pinned to Haiku by hand: `animation-vocabulary` and `ponytail-debt`. Each carries one added line, `model: haiku`, in its frontmatter. They live in a folder `npx skills` overwrites, so those two lines are wiped whenever the borrowed skills are reinstalled, including by a plain re-run of `setup.sh`. Nothing breaks when that happens; the two just go back to the session model. Re-add the line to restore it. (It was four until 2026-08-20, when `ponytail-help` and `ponytail-gain` were removed.)
 
@@ -212,7 +212,7 @@ That replays your own changes on top, so nothing you wrote is lost. Then `git pu
 
 Make a file at `skills/<name>/SKILL.md` with `user-invocable: true`, and put the phrases that should trigger it in that same `description`. That is the whole checklist.
 
-There is deliberately no catalogue to update, no lock file to re-seal and no index to regenerate. This repo used to have all three, and maintaining them cost more edits than the skills themselves — roughly 390 commits against files whose only job was describing other files. `/checkup` now derives the inventory from the folder at read time instead.
+There is deliberately no catalogue to update, no lock file to re-seal and no index to regenerate. This repo used to have all three, and maintaining them cost more edits than the skills themselves, roughly 390 commits against files whose only job was describing other files. `/checkup` now derives the inventory from the folder at read time instead.
 
 Before adding one, ask whether an existing skill should gain a mode instead. Seventeen commands with modes beat fifty-two commands; that is the entire lesson of this repo's first six weeks.
 
@@ -245,11 +245,11 @@ It is drawn by `hooks/statusline.sh`. When literal mode is on, a badge for it ap
 
 ## The CLAUDE.md instruction chain
 
-`CLAUDE.md` holds pointers and nothing else: three imports — `@memory/CLAUDE.generated.md` (learned preferences), `@docs/CORE_RULES.md` (8 rules, down from 35 after a six-day test with them switched off), and `@docs/ANTISLOP.md` — then one line per topic, each naming the condition before the file (Before any multi-file change → `PLANNING.md`, and so on). Never put an actual rule in `CLAUDE.md`. Put it in the right topic file and point at it.
+`CLAUDE.md` holds pointers and nothing else: three imports (`@memory/CLAUDE.generated.md` for learned preferences, `@docs/CORE_RULES.md` for the 8 rules that survived a six-day test with them switched off, and `@docs/ANTISLOP.md`), then one line per topic, each naming the condition before the file (Before any multi-file change → `PLANNING.md`, and so on). Never put an actual rule in `CLAUDE.md`. Put it in the right topic file and point at it.
 
 Anti-slop is imported rather than pointed at, and it is the only doc treated that way: a pointer gets read after the writing has already started.
 
-The reasoning behind the current shape of all of this — what was deleted, what was kept, and the evidence for each call — is `docs/FRESH_START_PLAN.md`. Read it before you undo something here on the grounds that it looks arbitrary.
+The reasoning behind the current shape of all of this, what was deleted, what was kept, and the evidence for each call, is `docs/DECISIONS.md`. Read it before you undo something here on the grounds that it looks arbitrary. The two older plans, `docs/FRESH_START_PLAN.md` and `docs/REBUILD_PLAN.md`, are history rather than instructions and each says so at the top.
 
 ## What's excluded
 
@@ -257,7 +257,7 @@ These are kept out of git on purpose.
 
 | Left out | Why |
 |---|---|
-| `settings.json` | It is specific to your computer — paths, connections, possibly API keys. Never commit it. Start from `settings.example.json`. |
+| `settings.json` | It is specific to your computer: paths, connections, possibly API keys. Never commit it. Start from `settings.example.json`. |
 | `plugins/` and plugin shortcuts (`ponytail*/`, `improve`, …) | Other people's code. Reinstall from the Add-ons table. |
 | `skills/design/vendor/` | Other people's code, fetched on demand. `/checkup` reports when it has drifted from upstream. |
 | `.pending-tasks.md`, `learnings.md` | Working files on your machine: the `/whats-next` list, and notes a session left behind |

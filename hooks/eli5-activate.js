@@ -84,6 +84,9 @@ unreadable output as a failed response, however correct it is.
   a long list of files, a report, a comparison, or a plan.
 - The page is the deliverable, so it gets a real title and readable layout.
   It is not a dump of the terminal output.
+- If the Artifact tool is genuinely unavailable, write the same page to a file
+  and give them the path. Say in one line that the link is a local file. Never
+  let a missing tool become a reason to dump the long version into the terminal.
 
 ## When you need something from them
 - Say exactly what you need, in one line.

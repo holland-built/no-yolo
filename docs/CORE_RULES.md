@@ -14,6 +14,14 @@ Everything else was dropped because Opus 5 does it unprompted.
    plausible. *Broken three times on 2026-08-04: a grep that counted mentions was reported
    as usage, and "never used" was asserted about skills that were two days old.*
 
+   **A forecast is not a measurement, and this rule does not ban one.** "15 minutes if tests
+   cover this, an afternoon if not" is an estimate of work not yet done, offered as such; the
+   rule bites on a number presented as something that was counted. The distinction is needed
+   because the always-loaded output rules require an estimate in real units on open work, so
+   read literally the two instructions cancelled each other out. Added 2026-08-20 after a
+   cross-model review found the collision. Label the estimate as an estimate and give the
+   assumption it rests on, and never dress a guess up as a reading.
+
 2. **Verify before claiming, every time.** After any claim about the state of a system,
    name what you actually ran to know it. A claim with no evidence sentence next to it is
    unfinished work.
@@ -97,7 +105,7 @@ Added when a mistake is caught, so it doesn't repeat.
   and see it refuse before you record it as healthy.
 - A relative path in a skill resolves against the working directory that skill runs in, not
   against the skill's own folder. Resolve it there before reporting the target missing.
-- One project per session — no cross-pollination. When a request clearly targets a DIFFERENT
+- One project per session: no cross-pollination. When a request clearly targets a DIFFERENT
   project than the session's working directory (a screenshot of another app, a path outside
   the repo), do NOT do that work here. Say which project it belongs to and give the one
   command to open a session there. Writing to shared drawers (`~/.claude/handoffs`) on the

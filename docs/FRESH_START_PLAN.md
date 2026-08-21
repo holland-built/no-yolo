@@ -1,4 +1,4 @@
-# Fresh Start: ~/.claude rebuild plan — SUPERSEDED
+# Fresh Start: ~/.claude rebuild plan, SUPERSEDED
 
 > **Do not build from this file.** It was replaced by `docs/REBUILD_PLAN.md` on 2026-08-20,
 > and that file has since been superseded in its turn. What was actually decided is in

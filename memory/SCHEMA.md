@@ -1,8 +1,8 @@
-# Curated Memory — Schema Contract
+# Curated Memory: Schema Contract
 
 This directory is the **source of truth** for what Claude knows about how you work.
 The compiled views (`CLAUDE.generated.md`, project `MEMORY.md`) are REGENERATED from these
-facts by `/memory-compile` — never hand-edit a generated file.
+facts by `/memory-compile`; never hand-edit a generated file.
 
 ## Layout
 
@@ -45,10 +45,10 @@ Body: the full statement. For feedback/pattern facts, follow with:
 Link related facts with [[id]].
 ```
 
-## Rules (from the hybrid memory architecture — see KB topic memory-context-architecture)
+## Rules (from the hybrid memory architecture: see KB topic memory-context-architecture)
 
 1. **Truth vs view.** `facts/*.md` are truth. `CLAUDE.generated.md` + `MEMORY.md` are views,
-   rebuilt from truth. Fix a fact and recompile — never patch a view.
+   rebuilt from truth. Fix a fact and recompile; never patch a view.
 2. **Supersede, don't merge.** When a belief changes, flip the old fact's `status` to
    `superseded` + set `superseded-by`; create a NEW fact with `supersedes: [old-id]`. The old
    file stays on disk so the history/contradiction is traceable. Never overwrite in place.

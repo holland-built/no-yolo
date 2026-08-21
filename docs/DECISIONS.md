@@ -46,6 +46,24 @@ em-dashes inside the string it injects into every session, which reach the model
 prose. Those were fixed as part of the duplicate sweep. The `.py` and `.sh` count above is
 unchanged.
 
+**Update, 2026-08-20: the sweep's scope was narrower than the rule's.** The status above was
+accurate and still misleading, because it reported on `docs/`, `CLAUDE.md` and the own skills,
+and the rule says "everywhere". A `/checkup` pass counted **79 em-dashes in ordinary prose** in
+the files nobody had swept: `README.md` (22), `SHIP.md` (21), `INSTALL.md` (12), `docs/KEEP_LIST.md`
+(8), `commands/memory-compile.md` (5), `memory/SCHEMA.md` (4), both files in `agents/` (2 each),
+and one each in `CORE_RULES.md`, `FRESH_START_PLAN.md` and `REBUILD_PLAN.md`. Two of those were
+introduced the same morning by the session doing the rebuild, in headings it had just written,
+which is the clearest evidence available that a binary rule still needs a check that runs.
+
+All 79 are gone. Headings and glossary lead-ins took a colon, sentence-internal ones took a
+comma or a full stop, and the eight worst comma splices the mechanical pass produced were
+rewritten by hand. Specimens inside backticks and fenced blocks were left alone, per the
+carve-out. The counting method is worth repeating rather than a plain `grep -c`: strip fenced
+blocks by line, strip inline code spans, then count what is left, otherwise the specimens the
+rule protects are scored as violations.
+
+Still outstanding, unchanged: the 147 in `.py` and `.sh` sources, and the borrowed skills.
+
 ## 2026-08-19: why CLAUDE.md has exactly three imports
 
 *Moved from the blockquote under "Always loaded" in `~/.claude/CLAUDE.md`.*
