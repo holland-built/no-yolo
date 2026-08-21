@@ -25,32 +25,15 @@ refs/design-specs/
 # /checkup reports how far behind upstream it is; pulling it is always manual.
 skills/design/vendor/
 
-# external symlinked skills
-skills/improve
-skills/impeccable
-# Orca-managed external skills (symlinks to ~/.agents/skills/)
-skills/computer-use
-skills/orca-cli
-# emilkowalski/skills — animation/design-eng taste rules (npx skills@latest add emilkowalski/skills)
-skills/emil-design-eng
-skills/animation-vocabulary
-skills/review-animations
-# Skills installed into .agents/skills/ and symlinked into skills/ so they load
-# in every project, not only when editing ~/.claude. The symlinks are local
-# install state, not repo content.
-skills/apple-design
-skills/find-animation-opportunities
-skills/improve-animations
-skills/pick-ui-library
-skills/ponytail
-skills/ponytail-audit
-skills/ponytail-debt
-skills/ponytail-gain
-skills/ponytail-help
-skills/ponytail-review
-
-# interface-design = externally managed by npx skills@latest (symlink to ~/.agents/)
-skills/interface-design
+# Skills installed by `npx skills` land in ~/.agents/skills/ or ~/.claude/.agents/skills/
+# and are symlinked into skills/ so they load in every project, not only when editing
+# ~/.claude. Those symlinks are local install state, not repo content.
+#
+# This block named nineteen skills on 2026-08-21 and every one of them had already been
+# deleted by the rebuild. A dead ignore rule is quiet, so it survives: add a line when you
+# install something, and delete it when you remove it.
+skills/avoid-ai-writing
+skills/styleseed
 
 # runtime / session
 projects/

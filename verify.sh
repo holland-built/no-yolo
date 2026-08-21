@@ -89,6 +89,33 @@ else
   record WARN "shellcheck not installed — skipped (CI has it; install locally: brew install shellcheck, or sudo apt install shellcheck)"
 fi
 
+# 7b. external references — every tool a tracked install command names must be declared in
+#     hooks/externals.txt and must still resolve to the project pinned there.
+#
+#     WHY THIS ROW EXISTS. On 2026-08-21 this repo published seven install references and six
+#     were wrong: four GitHub repos under an owner who does not own them, one npm package under
+#     a name that is not its published name, and cxpak, which has never existed anywhere, with
+#     a build stage written to run it. Every other check in this file was green throughout.
+#     Nothing here had ever asked whether a name resolves.
+#
+#     EXIT 3 IS A FAILURE, NOT A SKIP. The script separates "this name is wrong" (1) from "I
+#     could not reach the registry" (3), and both go red. An unrun check and a clean check look
+#     identical, which is the argument this whole file is built on. Set EXTERNAL_CHECK_OFFLINE=1
+#     to downgrade the unreachable case to WARN when you are deliberately working offline; it is
+#     opt-in on purpose, so it cannot become the silent default in CI.
+"$ROOT/hooks/external-check.sh" >/tmp/verify-external.log 2>&1
+ext_rc=$?
+case "$ext_rc" in
+  0) record PASS "external references resolve" ;;
+  1) record FAIL "external references — a tracked install command names something that does not exist or points elsewhere (see /tmp/verify-external.log)" ;;
+  *)
+    if [ -n "${EXTERNAL_CHECK_OFFLINE:-}" ]; then
+      record WARN "external references — could not reach the registry, downgraded by EXTERNAL_CHECK_OFFLINE (see /tmp/verify-external.log)"
+    else
+      record FAIL "external references COULD NOT RUN (exit $ext_rc) — this is not a clean result; set EXTERNAL_CHECK_OFFLINE=1 if you are deliberately offline (see /tmp/verify-external.log)"
+    fi ;;
+esac
+
 # 8. tracked-content scan — CI backstop for the local pre-commit hook
 #    (pre-commit only guards staged diffs on machines that ran setup.sh; a
 #    --no-verify commit or a pre-setup commit would otherwise publish a leak).

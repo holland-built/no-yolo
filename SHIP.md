@@ -111,9 +111,14 @@ Nothing about it looks wrong. If a branch claims to be in sync but GitHub disagr
    tracked template beside them, the way `settings.example.json` sits beside `settings.json`.
 
 5. **Outside-tool freshness (warn only: never auto-pull):** run `/checkup` and print its drift
-   rows. It reports how far behind this clone is against GitHub, and which of the seven
-   optional tools in `INSTALL.md` are absent. Warn only, and never install anything mid-release:
-   an outside tool that arrives in the middle of a publish has not been watched working.
+   rows. It reports how far behind this clone is against GitHub, and which of the five optional
+   tools in `INSTALL.md` are absent. Warn only, and never install anything mid-release: an
+   outside tool that arrives in the middle of a publish has not been watched working.
+
+   Whether those five tools are the tools they claim to be is not a judgement call and is not
+   here: `hooks/external-check.sh` resolves every one against the registry on every run of
+   `verify.sh`, and a name that does not resolve to the project `hooks/externals.txt` pins is a
+   hard failure, not a drift row.
 
 6. **README count patch:** update the skill count in `README.md` from the live directory.
    Every skill is now a real directory of this repo's own; the borrowed/symlinked split the
