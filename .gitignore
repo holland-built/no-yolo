@@ -144,3 +144,4 @@ skills/resolving-merge-conflicts
 # python bytecode from the catalog scripts
 __pycache__/
 *.pyc
+memory/MEMORY.md

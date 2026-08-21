@@ -24,28 +24,26 @@ block() {
   exit 2
 }
 
-# A recursive-force rm, whatever order its flags arrived in: -rf, -fr, -r -f, -Rf,
-# --recursive --force. Tokenised, so `--` and quotes cannot hide the target.
+# EVERY non-option operand of an rm, one per line, whatever order the flags arrived in:
+# -rf, -fr, -r -f, -Rf, --recursive --force. Tokenised, so `--` and quotes cannot hide one.
 # awk rather than sed: BSD sed on macOS has no \b, which made an earlier version of this
 # guard pass everything through while looking correct.
+#
+# It returns every operand and not the first, because `rm -rf /tmp /etc` put a harmless
+# path in front of a protected one and the guard read only as far as /tmp. Found by a
+# cross-model review of this file on 2026-08-21, after the single-target version had
+# already passed its own tests.
 rm_scan() {
   printf '%s' "$1" | tr -d "\"'" | awk '
-    BEGIN { seen=0; rec=0; frc=0; target="" }
+    BEGIN { seen=0 }
     {
       for (i=1; i<=NF; i++) {
         if (!seen) { if ($i=="rm") seen=1; continue }
         if ($i == "--") continue
-        if ($i == "--recursive") { rec=1; continue }
-        if ($i == "--force")     { frc=1; continue }
-        if (substr($i,1,1) == "-") {
-          if ($i ~ /[rR]/) rec=1
-          if ($i ~ /f/)    frc=1
-          continue
-        }
-        if (target == "") target=$i
+        if (substr($i,1,1) == "-") continue
+        print $i
       }
     }
-    END { if (seen && rec && frc) print target; }
   '
 }
 
@@ -76,25 +74,45 @@ while IFS= read -r seg; do
   [ -z "$seg" ] && continue
   case "$seg" in *rm*) ;; *) continue ;; esac
 
-  t="$(rm_scan "$seg")"
+  targets="$(rm_scan "$seg")"
   printf '%s' "$seg" | grep -Eq '(^|[[:space:]])rm([[:space:]]|$)' || continue
 
   # A recursive-force rm with every flag stripped and no path left is `rm -rf /` or worse.
-  if [ -z "$t" ] && rm_is_force "$seg"; then
+  if [ -z "$targets" ] && rm_is_force "$seg"; then
     block "a recursive delete with no bounded target"
   fi
 
-  # Trim a trailing slash on a real path, keeping "/" itself, which is the whole point.
-  [ "$t" != "/" ] && t="${t%/}"
-  case "$t" in
-    "") : ;;
-    "/"|"~"|'$HOME'|"$HOME"|'${HOME}')
-        block "a recursive delete of the root or home directory" ;;
-    "$HOME/.claude"|"~/.claude"|".claude"|"$HOME/.claude-new"|'$HOME/.claude')
-        block "a delete of the Claude configuration directory" ;;
-    /bin|/etc|/usr|/var|/opt|/sbin|/System|/Library|/Applications|/Users)
-        block "a recursive delete of a system directory ($t)" ;;
-  esac
+  while IFS= read -r t; do
+    [ -z "$t" ] && continue
+
+    # Peel every trailing glob and slash until the target stops shrinking, keeping "/"
+    # itself, which is the whole point. `rm -rf /*` empties the disk exactly as `rm -rf /`
+    # does, and so do `/*/`, `/**` and `/*/*`; each reached the case below as its own
+    # literal string and matched no pattern there. One peel handled only the first of them.
+    while [ "$t" != "/" ]; do
+      case "$t" in
+        */|*\*) t="${t%/}"; t="${t%\*}" ;;
+        *) break ;;
+      esac
+      [ -z "$t" ] && t="/" && break
+    done
+
+    # SC2088 fires on "~/.claude" below. The tilde is meant to stay unexpanded: $t holds the
+    # command's own text, so an unexpanded ~ is exactly what a person typing `rm -rf ~/.claude`
+    # produces, and this case has to match that text literally.
+    # shellcheck disable=SC2088
+    case "$t" in
+      "") : ;;
+      "/"|"~"|'$HOME'|"$HOME"|'${HOME}')
+          block "a recursive delete of the root or home directory" ;;
+      "$HOME/.claude"|"~/.claude"|".claude"|"$HOME/.claude-new"|'$HOME/.claude')
+          block "a delete of the Claude configuration directory" ;;
+      /bin|/etc|/usr|/var|/opt|/sbin|/System|/Library|/Applications|/Users)
+          block "a recursive delete of a system directory ($t)" ;;
+    esac
+  done <<TARGETS
+$targets
+TARGETS
 done <<EOF
 $segments
 EOF

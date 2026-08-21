@@ -1,34 +1,43 @@
 #!/usr/bin/env bash
-# setup.sh — idempotent post-clone setup for ~/.claude (no-yolo)
+# setup.sh — post-clone setup for ~/.claude (no-yolo). Safe to run again.
 #
 # Usage:
-#   bash ~/.claude/setup.sh             # full install — tools, CLI plugins, skill symlinks
-#   bash ~/.claude/setup.sh --md-only   # rules only — no tools, skill triggers stripped from CLAUDE.md
-#   bash ~/.claude/setup.sh --core-only # full install minus third-party plugin skills (step 4) — re-run plain setup.sh later to add them
+#   bash ~/.claude/setup.sh
 #
+# What it does: checks the tools this setup needs, seeds settings.json and the
+# deny-list from their templates, makes the hooks executable, and installs the
+# pre-commit secret scanner into this clone.
+#
+# What it does NOT do: install anything from the internet. The rebuild of
+# 2026-08-21 moved that out. Seven optional outside tools are listed in
+# INSTALL.md with one command that installs all of them, and every file that
+# reaches for one carries a fallback, so a machine with none of them works.
+#
+# Two flags were removed in the same rebuild:
+#   --md-only    stripped @imports out of CLAUDE.md. CLAUDE.md has no imports
+#                now, and the flag kept a pristine copy at CLAUDE.md.pre-md-only
+#                that a later full run would move back over the current file. A
+#                stale copy from before the rebuild would have silently restored
+#                the old thirty-five-rule setup.
+#   --core-only  skipped the third-party installs, which no longer happen here.
 set -euo pipefail
 
 CLAUDE_DIR="${HOME}/.claude"
-MODE="full"
-case "${1:-}" in
-  "") ;;
-  --md-only) MODE="md-only" ;;
-  --core-only) MODE="core-only" ;;
-  *)
-    echo "Unknown option: ${1}"
-    echo "Usage: bash setup.sh [--md-only | --core-only]  (no flag = full install)"
-    exit 2
-    ;;
-esac
 
-echo "==> Mode: $MODE"
-echo ""
+if [ "${1:-}" != "" ]; then
+  echo "Unknown option: ${1}"
+  echo "Usage: bash setup.sh          (no flags; optional extras are in INSTALL.md)"
+  exit 2
+fi
 
 # ── Preflight: tool availability ─────────────────────────────────────────────
 echo "==> Preflight"
-# NOTE: no bash-4-only constructs (associative arrays) anywhere in this file —
-# stock macOS ships bash 3.2, and the documented install command is `bash setup.sh`.
-PRE_TOOLS="git node npm npx python3 claude"
+# NOTE: nothing bash-4-only in this file. Stock macOS ships bash 3.2 and the
+# documented install command is `bash setup.sh`, so associative arrays, line-reading
+# builtins and case-changing expansions are all out. verify.sh enforces this by
+# grepping for them, and the grep reads comments too, so they cannot be named here
+# either.
+PRE_TOOLS="git node jq python3 claude"
 PRE_MISSING=" "
 for t in $PRE_TOOLS; do
   if command -v "$t" >/dev/null 2>&1; then
@@ -41,50 +50,38 @@ done
 
 pre_missing() { case "$PRE_MISSING" in *" $1 "*) return 0;; *) return 1;; esac; }
 
-if [[ "$MODE" == "full" || "$MODE" == "core-only" ]]; then
-  if pre_missing git; then
-    echo ""
-    echo "    ! git missing — required: the pre-commit secret-scanner install needs it."
-    echo "    Install: see README.md Prerequisites"
-    exit 1
-  fi
-  if [[ "$MODE" == "core-only" ]]; then
-    # core-only needs node only (hooks runtime) — npm is for third-party installs
-    if pre_missing node; then
-      echo ""
-      echo "    ! node missing — required for --core-only (hooks runtime)."
-      echo "    Install: https://nodejs.org/ (see README.md Prerequisites)"
-      exit 1
-    fi
-  elif pre_missing node || pre_missing npm; then
-    echo ""
-    echo "    ! node and/or npm missing — required for full install."
-    echo "    Install: https://nodejs.org/ (see README.md Prerequisites)"
-    exit 1
-  fi
-else
-  if pre_missing python3; then
-    echo ""
-    echo "    ! python3 missing — required for --md-only (see README.md Prerequisites)"
-    exit 1
-  fi
+if pre_missing git; then
+  echo ""
+  echo "    ! git missing — required: the pre-commit secret-scanner install needs it."
+  echo "      Install: see README.md Prerequisites"
+  exit 1
 fi
-# Node MAJOR version gate. Four add-ons install through the `skills` CLI, which
-# imports styleText from node:util — added in Node 20. On Ubuntu 24.04
-# `apt install nodejs` still gives v18, so a reader following the guide gets four
-# lines reading "install failed" plus a stack trace about a missing export, with
-# nothing anywhere connecting that to their Node version. Verified on a clean
-# 24.04 box: v18 fails all four, v22 installs all four. Say it once, up front,
-# in the words that lead to the fix.
+
+# jq is not optional. Both guard hooks read their input with it, and
+# hooks/safety-net.sh refuses every command when jq is absent rather than
+# waving them through, so a missing jq is a wall, not a degradation.
+if pre_missing jq; then
+  echo ""
+  echo "    ! jq missing — the two guard hooks cannot read their input without it,"
+  echo "      and safety-net.sh refuses every Bash command rather than failing open."
+  if [ "$(uname -s)" = "Darwin" ]; then
+    echo "      Fix: brew install jq"
+  else
+    echo "      Fix: sudo apt install jq"
+  fi
+  exit 1
+fi
+
+# Node MAJOR version gate. The .js hooks run under it, and Node 18 is missing
+# APIs they use. On Ubuntu 24.04 `apt install nodejs` still gives v18.
 if ! pre_missing node; then
   NODE_MAJOR="$(node --version 2>/dev/null | sed 's/^v//; s/[.].*//')"
   case "$NODE_MAJOR" in
-    ""|*[!0-9]*) : ;;   # unreadable version — let the installs speak for themselves
+    ""|*[!0-9]*) : ;;   # unreadable version — let the hooks speak for themselves
     *)
       if [ "$NODE_MAJOR" -lt 20 ]; then
         echo ""
         echo "    ! node $(node --version) is too old — need 20 or newer (22 recommended)."
-        echo "      Four add-ons fail with a confusing 'styleText' error on this version."
         if [ "$(uname -s)" = "Darwin" ]; then
           echo "      Fix: brew install node@22"
         else
@@ -95,6 +92,10 @@ if ! pre_missing node; then
       fi
       ;;
   esac
+else
+  echo ""
+  echo "    ! node missing — the .js hooks will not run. Install: https://nodejs.org/"
+  exit 1
 fi
 
 if pre_missing claude; then
@@ -102,26 +103,24 @@ if pre_missing claude; then
 fi
 
 if command -v codex >/dev/null 2>&1; then
-  echo "    codex    found (cross-model checks active)"
+  echo "    codex    found (the second-model check will run)"
 else
-  echo "    codex    not installed — cross-model check steps in skills will skip themselves; optional, add later via /plugin install codex@openai-codex"
+  echo "    codex    not installed — the second-model check reports itself as unrun; see rules/codex.md"
 fi
 
-RESULTS=()
-
-# ── Step 1: settings.json ────────────────────────────────────────────────────
+# ── 1. settings.json ─────────────────────────────────────────────────────────
+echo ""
 echo "==> 1. settings.json"
 if [ -f "$CLAUDE_DIR/settings.json" ]; then
-  echo "    settings.json already exists — skipping copy"
+  echo "    settings.json already exists — left alone"
 else
   cp "$CLAUDE_DIR/settings.example.json" "$CLAUDE_DIR/settings.json"
-  echo "    Created settings.json from template"
+  echo "    Created settings.json from settings.example.json"
 fi
-echo "    ACTION REQUIRED: ensure 'node' is on PATH for GUI-launched apps, then add your MCP servers to settings.json"
 
-# ── Step 2: hook permissions ─────────────────────────────────────────────────
+# ── 2. hooks ─────────────────────────────────────────────────────────────────
 echo ""
-echo "==> 2. chmod hooks"
+echo "==> 2. Hooks"
 if ls "$CLAUDE_DIR"/hooks/*.sh >/dev/null 2>&1; then
   chmod +x "$CLAUDE_DIR"/hooks/*.sh
   echo "    Hook scripts made executable"
@@ -129,282 +128,44 @@ else
   echo "    No hook scripts found — skipping"
 fi
 
-# Install the tracked pre-commit hook into this clone's .git/hooks. Without
-# this, a fresh clone of a PUBLIC template repo commits with NO secret scanning
-# — the guard that blocks personal data, LAN IPs, and deny-listed terms from
-# reaching GitHub would simply not exist. The source is tracked at
-# hooks/pre-commit; git never copies it into .git/hooks on its own.
-if [[ -f "$CLAUDE_DIR/hooks/pre-commit" ]] && git -C "$CLAUDE_DIR" rev-parse --git-dir >/dev/null 2>&1; then
+# Install the tracked pre-commit hook into this clone's .git/hooks. Without this,
+# a fresh clone of a PUBLIC repo commits with NO secret scanning. The source is
+# tracked at hooks/pre-commit; git never copies it into .git/hooks on its own.
+if [ -f "$CLAUDE_DIR/hooks/pre-commit" ] && git -C "$CLAUDE_DIR" rev-parse --git-dir >/dev/null 2>&1; then
   HOOKS_DIR="$(git -C "$CLAUDE_DIR" rev-parse --git-path hooks)"
   # rev-parse may return a path relative to CLAUDE_DIR
   case "$HOOKS_DIR" in /*) : ;; *) HOOKS_DIR="$CLAUDE_DIR/$HOOKS_DIR" ;; esac
   mkdir -p "$HOOKS_DIR"
   cp "$CLAUDE_DIR/hooks/pre-commit" "$HOOKS_DIR/pre-commit"
   chmod +x "$HOOKS_DIR/pre-commit"
-  echo "    Installed pre-commit secret-scanner into $HOOKS_DIR"
+  echo "    Installed the pre-commit secret scanner into $HOOKS_DIR"
 else
-  echo "    No git dir or hooks/pre-commit — skipping hook install"
+  echo "    No git dir or hooks/pre-commit — skipping the scanner install"
 fi
 
 # Seed the local (gitignored) deny-list from the template if absent, so the
-# deny-list mechanism is discoverable on a fresh install. Never overwrites an
-# existing one. Mirrors the settings.example.json -> settings.json pattern.
-if [[ -f "$CLAUDE_DIR/.no-yolo-deny.example.txt" && ! -f "$CLAUDE_DIR/.no-yolo-deny.txt" ]]; then
+# mechanism is discoverable on a fresh install. Never overwrites an existing one.
+if [ -f "$CLAUDE_DIR/.no-yolo-deny.example.txt" ] && [ ! -f "$CLAUDE_DIR/.no-yolo-deny.txt" ]; then
   cp "$CLAUDE_DIR/.no-yolo-deny.example.txt" "$CLAUDE_DIR/.no-yolo-deny.txt"
-  echo "    Seeded .no-yolo-deny.txt from template (edit it for your company/private terms)"
+  echo "    Seeded .no-yolo-deny.txt from its template (edit it for your private terms)"
 fi
 
-# ── MD-only: strip skill triggers from CLAUDE.md, then exit ─────────────────
-if [[ "$MODE" == "md-only" ]]; then
-  echo ""
-  echo "==> 3. Strip skill triggers from CLAUDE.md"
-  # Reversible: keep the pristine file so a later full setup can restore the
-  # stripped @memory/@triggers imports (md-only edits CLAUDE.md in place).
-  if [[ ! -f "$CLAUDE_DIR/CLAUDE.md.pre-md-only" ]]; then
-    cp "$CLAUDE_DIR/CLAUDE.md" "$CLAUDE_DIR/CLAUDE.md.pre-md-only"
-    echo "    Backed up original -> CLAUDE.md.pre-md-only (full setup restores it)"
-  fi
-  echo "    (reads current file — no hardcoded skill names)"
-
-  python3 - "$CLAUDE_DIR/CLAUDE.md" <<'PYEOF'
-import re, sys, pathlib
-
-p = pathlib.Path(sys.argv[1])
-text = p.read_text()
-
-# Remove @memory/CLAUDE.generated.md import line (memory system not included)
-text = re.sub(r'^@memory/CLAUDE\.generated\.md\n?', '', text, flags=re.MULTILINE)
-
-# Remove @docs/SKILL_TRIGGERS.md import line (triggers not included in md-only install)
-text = re.sub(r'^@docs/SKILL_TRIGGERS\.md\n?', '', text, flags=re.MULTILINE)
-
-# Remove skill trigger blocks. Each block is exactly:
-#   # skillname                (single lowercase word/hyphens)
-#   - **skillname** ...        (description + trigger)
-#   When the user types ...    (invocation line — may repeat for multi-phrase triggers)
-text = re.sub(
-    r'^# [a-z][a-z0-9-]+\n- \*\*.*\n(?:When the user .*\n?)+',
-    '',
-    text,
-    flags=re.MULTILINE
-)
-
-# Collapse triple+ blank lines left behind
-text = re.sub(r'\n{3,}', '\n\n', text)
-
-p.write_text(text)
-print("    Removed: @memory + @docs/SKILL_TRIGGERS imports")
-PYEOF
-
-  echo ""
-  echo "==> Done (MD-only)."
-  echo "    Core rules load automatically when you open Claude Code in any project."
-  echo "    Skills folder still present but Claude won't trigger them — safe to ignore or delete."
-  echo "    docs/SKILL_TRIGGERS.md remains on disk but is no longer imported — safe to ignore or delete."
-  echo ""
-  echo "    To install tools later: run bash ~/.claude/setup.sh (safe to re-run — skips anything already installed)"
-  exit 0
-fi
-
-# ── Full install ─────────────────────────────────────────────────────────────
-
-# Undo a previous --md-only strip: restore the pristine CLAUDE.md so the
-# @memory and @docs/SKILL_TRIGGERS.md imports come back.
-if [[ -f "$CLAUDE_DIR/CLAUDE.md.pre-md-only" ]]; then
-  if ! grep -q '@memory/CLAUDE\.generated\.md' "$CLAUDE_DIR/CLAUDE.md"; then
-    mv "$CLAUDE_DIR/CLAUDE.md.pre-md-only" "$CLAUDE_DIR/CLAUDE.md"
-    echo "    Restored full CLAUDE.md (undid earlier --md-only strip)"
-  else
-    rm "$CLAUDE_DIR/CLAUDE.md.pre-md-only"
-    echo "    current CLAUDE.md already has imports — stale backup discarded"
-  fi
-fi
-
+# ── 3. memory index ──────────────────────────────────────────────────────────
 echo ""
-echo "==> 3. CLI tools"
-
-if [[ "$MODE" == "core-only" ]]; then
-  echo "    Skipped fallow install (--core-only) — add later: npm install -g fallow@2.98.0"
-  RESULTS+=("fallow: SKIPPED (--core-only)")
-elif command -v fallow >/dev/null 2>&1; then
-  echo "    fallow already installed"
-  RESULTS+=("fallow: OK")
+echo "==> 3. Memory index"
+if [ -f "$CLAUDE_DIR/memory/MEMORY.md" ]; then
+  echo "    memory/MEMORY.md already exists — left alone"
 else
-  echo "    Installing fallow..."
-  # pinned; bump deliberately
-  if npm install -g fallow@2.98.0; then
-    RESULTS+=("fallow: OK")
-  else
-    echo "    ! fallow install failed — install manually: npm install -g fallow@2.98.0"
-    RESULTS+=("fallow: FAILED")
-  fi
+  mkdir -p "$CLAUDE_DIR/memory/facts"
+  cp "$CLAUDE_DIR/memory/MEMORY.example.md" "$CLAUDE_DIR/memory/MEMORY.md"
+  echo "    Created memory/MEMORY.md from its template (gitignored, like memory/facts/)"
 fi
 
-
-if command -v gh >/dev/null 2>&1; then
-  echo "    gh already installed"
-else
-  if [ "$(uname -s)" = "Darwin" ]; then
-    echo "    ! gh missing — install: brew install gh && gh auth login"
-  else
-    echo "    ! gh missing — install: sudo apt install gh && gh auth login"
-    echo "      (if apt has no 'gh': https://github.com/cli/cli/blob/trunk/docs/install_linux.md)"
-  fi
-fi
-
+# ── Done ─────────────────────────────────────────────────────────────────────
 echo ""
-echo "==> 4. Plugin skills"
-if [[ "$MODE" == "core-only" ]]; then
-  echo "    Skipped third-party installs (--core-only) — add them later: bash setup.sh"
-  RESULTS+=("third-party: SKIPPED (--core-only)")
-else
-  echo "    Installing ponytail..."
-  if npx skills@latest add DietrichGebert/ponytail; then RESULTS+=("ponytail: OK"); else echo "    ! ponytail install failed"; RESULTS+=("ponytail: FAILED"); fi
-  # ponytail-gain and ponytail-help were removed 2026-08-20: nothing invokes either,
-  # and neither does work — one prints a scoreboard, the other a help card. They cannot
-  # be uninstalled on their own, because the line above installs all six skills from one
-  # repo, so a plain setup.sh re-run would silently put both back. Delete them here
-  # instead, the same way the StyleSeed block below keeps its rules and drops its doors.
-  # The four that stay are all invoked by /health or /design. Restore either by deleting
-  # its line from this loop and re-running setup.sh.
-  for s in ponytail-gain ponytail-help; do
-    rm -f "$CLAUDE_DIR/skills/$s"
-    rm -rf "$CLAUDE_DIR/.agents/skills/$s"
-  done
-  echo "    Installing improve..."
-  if npx skills@latest add shadcn/improve; then RESULTS+=("improve: OK"); else echo "    ! improve install failed"; RESULTS+=("improve: FAILED"); fi
-  # upstream ships without user-invocable, which kills /improve — re-apply the
-  # local patch (docs/THIRD_PARTY_SKILLS.md); harmless if already present
-  IMPROVE_MD="$HOME/.agents/skills/improve/SKILL.md"
-  if [ -f "$IMPROVE_MD" ] && ! grep -q '^user-invocable: true' "$IMPROVE_MD"; then
-    awk 'NR==1{print; print "user-invocable: true"; next} {print}' "$IMPROVE_MD" > "$IMPROVE_MD.tmp" \
-      && mv "$IMPROVE_MD.tmp" "$IMPROVE_MD" \
-      && echo "    Applied user-invocable patch to improve (see docs/THIRD_PARTY_SKILLS.md)"
-  fi
-  echo "    Installing emilkowalski/skills (design-eng taste rules — used by /design)..."
-  if npx skills@latest add emilkowalski/skills; then RESULTS+=("emilkowalski/skills: OK"); else echo "    ! emilkowalski/skills install failed"; RESULTS+=("emilkowalski/skills: FAILED"); fi
-  # archify was installed here until 2026-08-20. It is archived, not deleted: leaving
-  # the install line in would silently reinstate the symlink on the next setup run,
-  # which is what "archived" is supposed to prevent. Restore command: archive/MANIFEST.md.
-  # These skills are reference material read by /design, not doors of their own
-  # (docs/DESIGN_SURFACES.md). `disable-model-invocation: true` keeps the file readable
-  # while stopping the model auto-selecting it. Upstream ships without the line, so it has
-  # to be re-applied here — and AFTER the emilkowalski install above, which owns four of
-  # these directories and would overwrite an earlier patch. apple-design is installed by
-  # hand rather than by this script, so the loop skips it when absent instead of failing.
-  # Idempotent; see docs/THIRD_PARTY_SKILLS.md.
-  #
-  # Path goes through skills/<name>/, NOT an installer root. There are two roots in play —
-  # ~/.claude/.agents/skills/ and ~/.agents/skills/ — and interface-design is in the second
-  # one, so a hardcoded root silently skipped it. The symlink in skills/ is followed by
-  # normal file operations and does not care which root the installer chose.
-  for s in animation-vocabulary find-animation-opportunities improve-animations review-animations \
-           apple-design emil-design-eng interface-design; do
-    SK="$CLAUDE_DIR/skills/$s/SKILL.md"
-    [ -f "$SK" ] || continue
-    grep -q '^disable-model-invocation: true' "$SK" && continue
-    head -1 "$SK" | grep -qx -- '---' || { echo "    ! $s: no frontmatter, not patched"; continue; }
-    awk 'NR==1{print; print "disable-model-invocation: true"; next} {print}' "$SK" > "$SK.tmp" \
-      && mv "$SK.tmp" "$SK" \
-      && echo "    Demoted $s to reference-only (see docs/DESIGN_SURFACES.md)"
-  done
-
-  # StyleSeed — the coherence authority, chosen by the owner 2026-08-20 over UI Craft.
-  # Installed for its RULES ONLY. `npx skills add bitjaru/styleseed` creates TWENTY-THREE
-  # invocable skills, and docs/DESIGN_SURFACES.md allows three doors; adding 23 would make
-  # the door rule meaningless. So: install, delete every symlink it made, keep the engine
-  # rule docs, and let /design read them (skills/design/DESIGN_REFS.md).
-  #
-  # It also writes into ./.claude/skills relative to the working directory. Run from
-  # ~/.claude that produces a nested ~/.claude/.claude/skills — a real project-skills
-  # directory whose 23 entries all load as doors. Removing it is not tidying.
-  echo "    Installing StyleSeed (rules only, all 23 skill doors removed after)..."
-  if (cd "$CLAUDE_DIR" && npx -y skills@latest add bitjaru/styleseed >/dev/null 2>&1); then
-    rm -rf "$CLAUDE_DIR/.claude"
-    rm -f "$CLAUDE_DIR/skills-lock.json"
-    for s in "$CLAUDE_DIR"/skills/ss-* "$CLAUDE_DIR"/skills/styleseed; do
-      [ -L "$s" ] && rm -f "$s"
-    done
-    SS_ENGINE="$CLAUDE_DIR/.agents/styleseed-engine"
-    if [ ! -f "$SS_ENGINE/VISUAL-CRAFT.md" ]; then
-      SS_TMP="$(mktemp -d)"
-      if git clone -q --depth 1 https://github.com/bitjaru/styleseed.git "$SS_TMP/ss" 2>/dev/null; then
-        mkdir -p "$SS_ENGINE"
-        cp "$SS_TMP"/ss/engine/*.md "$SS_ENGINE"/ 2>/dev/null || true
-        cp "$SS_TMP"/ss/LICENSE "$SS_ENGINE"/ 2>/dev/null || true
-        cp -R "$SS_TMP"/ss/engine/tokens "$SS_ENGINE"/tokens 2>/dev/null || true
-        {
-          echo "source: https://github.com/bitjaru/styleseed"
-          echo "revision: $(git -C "$SS_TMP/ss" rev-parse HEAD)"
-          echo "engine-version: $(cat "$SS_TMP/ss/engine/VERSION" 2>/dev/null || echo unknown)"
-          echo "vendored: $(date +%Y-%m-%d)"
-          echo "licence: MIT (LICENSE copied alongside)"
-          echo "what: engine/*.md rule docs only, no scripts"
-        } > "$SS_ENGINE/PROVENANCE.txt"
-      else
-        echo "    ! StyleSeed engine rules not vendored (clone failed) — /design will skip them"
-      fi
-      rm -rf "$SS_TMP"
-    fi
-    RESULTS+=("styleseed: OK (rules only)")
-  else
-    echo "    ! styleseed install failed"; RESULTS+=("styleseed: FAILED")
-  fi
-fi
-echo ""
-echo "    Nothing to install for impeccable: /antislop, /design-audit and /design run"
-echo "      'npx -y impeccable detect' on demand (github.com/pbakaus/impeccable) — needs network."
-echo ""
-echo "    Optional: design pipeline MCP servers (add to settings.json mcpServers block):"
-echo "      interface-design (design memory) — github.com/Dammyjay93/interface-design"
-echo "      design-refine (variant compare)  — github.com/0xdesign/design-plugin"
-
-echo ""
-echo "==> 5. Plugins (Claude Code marketplace)"
-PLUGINS_JSON="$CLAUDE_DIR/plugins/installed_plugins.json"
-if [ -f "$PLUGINS_JSON" ] && command -v python3 >/dev/null 2>&1; then
-  # shared lister — one source of truth, also used by /update (skills/update/SKILL.md)
-  OUT=$(python3 "$CLAUDE_DIR/hooks/list-plugins.py" "$PLUGINS_JSON")
-  case "$OUT" in
-    "No plugins"*|"installed_plugins.json"*) echo "    $OUT" ;;
-    *)
-      echo "    Found $(printf '%s\n' "$OUT" | wc -l | tr -d ' ') installed plugins:"
-      printf "    %-42s %-14s %s\n" "NAME" "VERSION" "SCOPE"
-      printf '%s\n' "$OUT" | awk -F'\t' '{printf "    %-42s %-14s %s\n",$1,$2,$3}' ;;
-  esac
-else
-  echo "    No installed_plugins.json found — no plugin is required by any skill."
-  echo "    Maintainer's extras (optional), install inside Claude Code:"
-  echo "      /plugin marketplace add karpathy/karpathy-skills     # Karpathy skill set"
-  echo "      /plugin marketplace add design-plugins/design-and-refine  # UI design"
-  echo "      /plugin marketplace add AgriciDaniel/claude-obsidian # Obsidian integration"
-  echo "      /plugin marketplace add openai/codex-plugin-cc       # Codex from Claude Code (then /plugin install codex@openai-codex)"
-fi
-echo "    To check for plugin updates: run /plugin list in Claude Code, then /plugin update <name>"
-
-# Step 6 printed two environment variables, GROQ_API_KEY and OBSIDIAN_VAULT, and
-# labelled them "video-to-kb" — a skill that has never existed in this repo. The only
-# thing that read either was /watch, archived 2026-08-20 (archive/MANIFEST.md). Nothing
-# on disk reads them now, so asking a new installer to set them was busywork with a
-# wrong name attached. Restoring /watch means restoring this block too.
-
-echo ""
-echo "==> Install summary"
-SUMMARY_FAIL=0
-for r in "${RESULTS[@]}"; do
-  echo "    $r"
-  case "$r" in *FAILED) SUMMARY_FAIL=1 ;; esac
-done
-
-if [[ "$SUMMARY_FAIL" == 1 ]]; then
-  echo ""
-  echo "FAILED steps above — re-run setup.sh after fixing, or install manually (see README Add-ons)"
-  exit 1
-fi
-
 echo "==> Done."
 echo ""
-echo "    Verify setup: claude --version"
-echo "    Check skills: run /my-skills in Claude Code"
+echo "    Check it: bash $CLAUDE_DIR/verify.sh    (every row should read PASS)"
+echo "    Then open Claude Code anywhere and type /checkup."
 echo ""
-echo "    See README.md for full documentation."
+echo "    Optional extras, and the one command that installs all seven: INSTALL.md"

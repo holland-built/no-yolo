@@ -2,11 +2,19 @@
 
 Repo: `github.com/holland-built/no-yolo`. Run `/release` from anywhere under `~/.claude`.
 
-Rewritten 2026-08-05. The previous version was written against the catalogue system that the
-fresh-start rebuild deleted: eight of its ten steps called `/md-check`, `/update`,
-`skills/my-skills/`, `skills/my-md/` or `docs/HOOKS.md`, none of which exist. Two of those <!-- gone-on-purpose -->
-were hard blocks, so every release would have stopped forever. **A step belongs here only if
-the thing it runs is on disk right now**. Check before adding one.
+Rewritten 2026-08-05, and again on 2026-08-21. The 2026-08-05 version was written against the
+catalogue system that the fresh-start rebuild deleted: eight of its ten steps called
+`/md-check`, `/update`, `skills/my-skills/`, `skills/my-md/` or `docs/HOOKS.md`, none of which <!-- gone-on-purpose -->
+exist. Two of those were hard blocks, so every release would have stopped forever.
+
+It happened a second time. The 2026-08-21 rebuild cut 26 skills to 6 and replaced the rule
+files, and this playbook was left naming `docs/ANTISLOP.md` and `docs/README_FORMAT.md`, <!-- gone-on-purpose -->
+along with a mockup-pruning script that went with `/design`. All deleted. Three of nine steps,
+two of them hard blocks. Step 4 below is the sweep that should have caught it and did not run,
+because nobody released in between.
+
+**A step belongs here only if the thing it runs is on disk right now.** Check before adding
+one, and check again after any rebuild.
 
 ## Environments
 | Env | Branch | Default | Notes |
@@ -30,19 +38,36 @@ Nothing about it looks wrong. If a branch claims to be in sync but GitHub disagr
 
 ## Steps
 
-1. **Antislop scan (warn only):** scan changed `.md` files against `docs/ANTISLOP.md` writing
-   tells; print `| File | Tell | Excerpt |`, never block.
+1. **Writing check (warn only):** print `| File | Tell | Excerpt |`; never block.
 
-2. **Size check (warn only):** `wc -l ~/.claude/*.md ~/.claude/docs/*.md
+   The hook takes a tool-call payload on standard input, not a filename, because that is how
+   Claude Code invokes it. Wrap each path the same way to run it by hand:
+
+   ```bash
+   git diff --name-only --cached -- '*.md' | while read -r f; do
+     printf '{"tool_input":{"file_path":"%s/%s"}}' "$PWD" "$f" | bash hooks/slop-block.sh
+   done
+   ```
+
+   The hook decides only what a program can decide, so read the judgement rules in
+   `docs/PROSE.md` against the same files yourself. It already fires on every Write and Edit,
+   so a clean result here is the expected one, and a finding means a file reached git without
+   passing through a hook.
+
+2. **Size check (warn only):** `wc -l ~/.claude/*.md ~/.claude/docs/*.md ~/.claude/rules/*.md
    ~/.claude/skills/*/SKILL.md`; table any file >200 lines.
 
 3. **Stale-external sweep (repo mirrors the machine: HARD BLOCK):** every external tool
-   referenced in tracked files (a `skills/<name>` .gitignore entry, a setup.sh install or
-   suggestion line, a README Add-ons row) must exist on THIS machine right now. Check with
+   referenced in tracked files (a row in `INSTALL.md`, a `skills/<name>` .gitignore entry, a
+   README prerequisite) must exist on THIS machine right now. Check with
    `ls ~/.agents/skills/<name>`, `ls ~/.claude/.agents/skills/<name>` (newer npx installs land
-   here), or `ls skills/<name>`. A reference to something not installed is old shit. Delete the
-   reference, don't ship it. Standing rule from a past incident: a tool was uninstalled locally
-   but its 16 references shipped for weeks.
+   here), `ls skills/<name>`, or `command -v <tool>` for anything installed globally. A
+   reference to something not installed is old shit. Delete the reference, don't ship it.
+   Standing rule from a past incident: a tool was uninstalled locally but its 16 references
+   shipped for weeks.
+
+   `INSTALL.md` is the one file that may name a tool this machine does not have, because its
+   whole subject is what to install. What it must not do is claim one is present.
 
    **One exemption: on-demand npx tools.** A tool that is fetched and run by `npx` at call
    time (e.g. `npx -y impeccable detect`) is never on disk by design, so `ls` can only ever
@@ -66,7 +91,7 @@ Nothing about it looks wrong. If a branch claims to be in sync but GitHub disagr
    ```bash
    git ls-files -- '*.md' | while read -r src; do
      grep -v 'gone-on-purpose' "$src" \
-       | grep -oE '`(docs|skills|hooks|agents|commands)/[A-Za-z0-9._/-]+\.(md|sh|js|py|mjs|json)`' \
+       | grep -oE '`(docs|rules|skills|hooks|agents)/[A-Za-z0-9._/-]+\.(md|sh|js|py|mjs|json)`' \
        | tr -d '`' | while read -r p; do
            [ -e "$p" ] || [ -e "$(dirname "$src")/$p" ] || echo "DANGLING: $p  (in $src)"
          done
@@ -79,30 +104,25 @@ Nothing about it looks wrong. If a branch claims to be in sync but GitHub disagr
    `<!-- gone-on-purpose -->` on that line. Use it only for history and rationale, never to
    silence a reference something still follows.
 
-   Gitignored-by-design paths are the one real gap here: `skills/design/vendor/` is absent on a
-   fresh clone, so this check passes locally and would fail for a stranger. Anything citing it
-   must also name the tracked fallback, the way `docs/ANTISLOP.md` names `TASTE_CORE.md`.
+   Gitignored-by-design paths are the one real gap here, because they exist locally and are
+   absent on a fresh clone, so the check passes for you and fails for a stranger. Two live
+   cases: `memory/MEMORY.md` and `memory/facts/`. Neither is matched by the pattern above, and
+   that is deliberate rather than lucky, so anything that starts citing them has to name the
+   tracked template beside them, the way `settings.example.json` sits beside `settings.json`.
 
-5. **Third-party and setup freshness (warn only: never auto-pull):** run `/checkup` and print
-   its drift rows. `/checkup` absorbed the old `/update` and `/md-check`; it reports how far
-   behind each vendored directory and cloned marketplace is, and lists borrowed skills nothing
-   reads any more. Warn only: `taste-skill` drives what `/design` builds, so a stranger's commit
-   must never land silently mid-release.
+5. **Outside-tool freshness (warn only: never auto-pull):** run `/checkup` and print its drift
+   rows. It reports how far behind this clone is against GitHub, and which of the seven
+   optional tools in `INSTALL.md` are absent. Warn only, and never install anything mid-release:
+   an outside tool that arrives in the middle of a publish has not been watched working.
 
-6. **README format check (HARD BLOCK):** every `## ` heading in `docs/README_FORMAT.md` must
-   exist in `README.md`; missing → STOP. Run `bash verify.sh` from the repo root; the
-   `README format headings` row must read PASS. This is the identical script CI runs.
-
-7. **README count patch:** update "N custom commands" and "plus N borrowed from other people's
-   repos" from the live skill directory counts. Own skills are real directories, borrowed ones
-   are symlinks:
+6. **README count patch:** update the skill count in `README.md` from the live directory.
+   Every skill is now a real directory of this repo's own; the borrowed/symlinked split the
+   old version of this step counted no longer exists.
    ```bash
-   own=0; bor=0
-   for d in skills/*/; do [ -L "${d%/}" ] && bor=$((bor+1)) || own=$((own+1)); done
-   echo "own=$own borrowed=$bor"
+   ls -d skills/*/ | wc -l
    ```
 
-8. **Config template check (HARD BLOCK):** `settings.example.json` must parse
+7. **Config template check (HARD BLOCK):** `settings.example.json` must parse
    (`python3 -c "import json;json.load(open('settings.example.json'))"`); its hook command
    strings must use `$HOME/` not a quoted `~/` (a quoted `~` never expands, hard-fail on any
    match of `grep -c '"~/.claude/hooks' settings.example.json`, want `0`); and every hook path
@@ -111,21 +131,12 @@ Nothing about it looks wrong. If a branch claims to be in sync but GitHub disagr
    fresh installs get a failing hook every turn. Both shipped once
    (`log-learnings-stop.sh`, quoted-`~` paths); never again.
 
-9. **Prune stale mockups (every release, all repos):**
-   ```bash
-   bash ~/.claude/skills/design/scripts/mockup-dir.sh --prune
-   ```
-   Deletes `.mockups/` folders untouched for 30+ days, and removes `.mockups/` entirely once
-   empty. Refuses to touch anything under 7 days old whatever number you pass. Mockups are
-   disposable and gitignored, so nothing else prunes them and they accumulate silently: 21MB in
-   one repo, 8.5MB in another before anyone looked. Report one line; never block on it.
-
 ## Stage scope
 
 ```
-git add skills/ docs/ hooks/ .github/ agents/ commands/ README.md INSTALL.md LICENSE \
+git add skills/ docs/ rules/ hooks/ .github/ agents/ README.md INSTALL.md LICENSE \
   .gitignore .no-yolo-deny.example.txt setup.sh settings.example.json SHIP.md CLAUDE.md \
-  memory/bin/ memory/CLAUDE.generated.md memory/SCHEMA.md verify.sh verify-selftest.sh
+  memory/MEMORY.example.md verify.sh verify-selftest.sh
 ```
 
 Explicit paths: do NOT rely on a `*.md` shell glob, which expands in the CWD rather than the
@@ -135,10 +146,13 @@ repo root. Each of these was omitted once and something silently never shipped:
   CI-config fix could never ship.
 - `verify.sh` and `verify-selftest.sh` are tracked and CI runs them: omitted once, so a fix to
   the verifier itself silently never shipped.
-- Under `memory/`, exactly three tracked things must ship: `bin/*.py`, `CLAUDE.generated.md`
-  (imported by CLAUDE.md), and `SCHEMA.md`. `memory/facts/` stays private via .gitignore, which
-  is what the `memory/` Guard protects. `CLAUDE.generated.md` was missing once, so a
-  `/memory-compile` could never reach GitHub.
+- Under `memory/`, exactly one tracked thing ships: `MEMORY.example.md`. Both the real index
+  `memory/MEMORY.md` and the `memory/facts/` it lists are gitignored, because both name things
+  about the owner. Until 2026-08-21 a compiled view shipped instead; the compiler is gone and
+  the index that replaced it is written by hand (`docs/MEMORY.md`).
+- `rules/` holds the files two or more skills share (`codex.md`, `mockups.md`). A rule that
+  lives in one skill stays in that skill; a rule two files need lives here, and both point at
+  it, so the number in one cannot drift from the number in the other.
 - `LICENSE` is the MIT terms the README's licence badge reads: omit it and the badge renders
   "unknown" against a file git never received.
 - `.no-yolo-deny.example.txt` is the tracked template for the gitignored `.no-yolo-deny.txt`.
@@ -175,4 +189,4 @@ Dated GitHub release. Optional, only when the user asks to publish, not on a pla
   every change had become five changes.
 - `gh release create "$TAG" --repo holland-built/no-yolo --title "$TAG" --notes "$NOTES"`
 - Update the repo description with the current custom-skill count.
-- If `gh` is missing or unauthed: print `⚠️ release skipped — run gh auth login` and continue.
+- If `gh` is missing or unauthed: print `⚠️ release skipped: run gh auth login` and continue.
