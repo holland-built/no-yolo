@@ -1,130 +1,128 @@
-# secrets
-.credentials.json
-settings.local.json
-*.local.json
+# What never leaves this machine.
+#
+# Rewritten 2026-08-22 (machinery rebuild). Rules were RETAINED unless proved
+# dead, not dropped for being quiet: a rule whose artifact is absent here may
+# still be protecting a file in someone else's clone, and removing it exposes
+# that file on their next `git add -A`. Entries kept for that reason are marked
+# LEGACY, with what produced them.
+#
+# A dead ignore rule is silent, so it survives. On 2026-08-21 this file named
+# nineteen skills the rebuild had already deleted. Add a line when you install
+# something; delete it when you remove it.
 
-# machine-specific config (ship settings.example.json instead)
-# settings.json holds live API keys in `env` — it and EVERY backup of it must stay local.
-# Glob, not exact names: a one-off backup (settings.json.pre-hookfix.bak) once slipped
-# past the exact-name entries and would have been committed with live keys.
+# --- credentials, and anything that can carry one -------------------------
+# settings.json holds live API keys under `env`. The globs matter as much as
+# the name: a one-off backup (settings.json.pre-hookfix.bak) once slipped past
+# exact-name entries and would have been committed with live keys.
 settings.json
 settings.json*.bak
 settings.json.*
-# Orca / environment machine-local runtime config
-policy-limits.json
-remote-settings.json
+settings.local.json
+*.local.json
+.credentials.json
 
-# third-party plugins (own repos)
-plugins/
+# The harness leaves these behind when a write to ~/.claude.json is
+# interrupted. They carry mcpServers blocks with live tokens; two were found
+# untracked and UNIGNORED on 2026-08-02, one of them 70KB. A single
+# `git add -A` would have published them.
+.claude.json
+.claude.json.tmp.*
+*.json.tmp.*
 
-# saved design specs — palette/type/spacing scraped from third-party websites by /design.
-# Derived third-party content, and a cache: it is rebuilt by re-scraping, never by a clone.
-refs/design-specs/
+# Company names and private hostnames, read by hooks/pre-commit rule 4.
+# The tracked template beside it is .no-yolo-deny.example.txt.
+.no-yolo-deny.txt
 
-# vendored third-party skill content (own repos) — stays local, never committed.
-# /checkup reports how far behind upstream it is; pulling it is always manual.
-skills/design/vendor/
+# --- things that name the owner -------------------------------------------
+# The index lists every fact remembered, so publishing it publishes the list
+# even when the fact bodies stay behind. hooks/pre-commit blocks both by path
+# as well, because .gitignore stops an ordinary `git add` and nothing else.
+# The tracked template is memory/MEMORY.example.md.
+memory/MEMORY.md
+memory/facts/
+# LEGACY: the deleted memory compiler
+memory/compile-manifest.json
+learnings.md
 
-# Skills installed by `npx skills` land in ~/.agents/skills/ or ~/.claude/.agents/skills/
-# and are symlinked into skills/ so they load in every project, not only when editing
-# ~/.claude. Those symlinks are local install state, not repo content.
-#
-# This block named nineteen skills on 2026-08-21 and every one of them had already been
-# deleted by the rebuild. A dead ignore rule is quiet, so it survives: add a line when you
-# install something, and delete it when you remove it.
-skills/avoid-ai-writing
-skills/styleseed
+# --- work in progress, and session state ----------------------------------
+# Handoffs and plans quote conversation detail that was never meant to travel.
+handoffs/
+plans/
+advisor-plans/
+proposals/
+brainstorms/
+tasks/
+.pending-tasks.md
+# LEGACY: Codex round transcripts
+.xcheck/
+# LEGACY
+.pending-audit-*.md
+# LEGACY
+.audit-*-detail/
+.mockups/
+# LEGACY: sketches belonging to another repo
+mockup-archive/
 
-# runtime / session
+# --- runtime state the harness writes -------------------------------------
 projects/
 sessions/
 session-data/
 session-env/
 shell-snapshots/
 file-history/
+history.jsonl
 ide/
 metrics/
-
-# caches
-cache/
-paste-cache/
-image-cache/
-
-# personal / private (project-scoped memories live in projects/ — already ignored)
-memory/compile-manifest.json
-memory/facts/
-
-# ephemeral work
-# /handoff session summaries — local session state, and they can carry conversation
-# detail that was never meant to leave the machine.
-handoffs/
-plans/
-advisor-plans/
-tasks/
-proposals/
-brainstorms/
-# /xcheck + /build phase 4.5 scratch — Codex round transcripts and spec handoffs.
-# Ephemeral by design; the accepted findings are folded into brainstorms/ instead.
-.xcheck/
-.pending-audit-*.md
-.audit-*-detail/
-.mockups/
-# Kept mockups from another project, parked here by a session that ran in this
-# directory. Local reference only — the sketches belong to their own repo.
-mockup-archive/
-
-# archives / trash
-_archive_*/
-backups/
-.skill-trash/
-skills/*/_claude_bak/
-
-# logs
-history.jsonl
+chrome/
+debug/
+.claude/
 *.log
 
-# runtime markers
-.pending-tasks.md
-learnings.md
-.lockstep-active
+# Mode markers. Existence IS the state; contents are never read.
 .literal-active
+# LEGACY: the deleted lockstep guard
+.lockstep-active
 .eli5-active
 .worktree-active/
 .last-cleanup
 .last-update-result.json
+# LEGACY
 .learnings-turn-counter
+# LEGACY
 .reflect-turn-counter
 mcp-health-cache.json
 mcp-needs-auth-cache.json
+policy-limits.json
+remote-settings.json
 
-# OS
-.DS_Store
-.agents/
-
-# Claude Code runtime state (created when ~/.claude itself is opened as a project)
-.claude.json
-.claude/
-chrome/
-debug/
-
-# no-yolo local deny-list (company names / private hostnames — never published)
-.no-yolo-deny.txt
-
-# archify — npx-installed under .agents/; defensive entry
-skills/archify
-
-# --md-only backup of CLAUDE.md (restored by full setup)
-CLAUDE.md.pre-md-only
-skills/resolving-merge-conflicts
-
-# stray temp copies of ~/.claude.json — the harness leaves these behind on an
-# interrupted write. They carry mcpServers blocks with live tokens and API keys,
-# and two were found untracked and UNIGNORED on 2026-08-02, one 70KB. A single
-# `git add -A` would have published them.
-.claude.json.tmp.*
-*.json.tmp.*
-
-# python bytecode from the catalog scripts
+# --- caches, rebuilt not restored -----------------------------------------
+cache/
+paste-cache/
+image-cache/
 __pycache__/
 *.pyc
-memory/MEMORY.md
+
+# --- other people's code --------------------------------------------------
+plugins/
+.agents/
+# `npx skills` installs land in .agents/ and are symlinked into skills/ so they
+# load in every project. Those symlinks are local install state, not content.
+skills/styleseed
+skills/avoid-ai-writing
+skills/archify
+skills/resolving-merge-conflicts
+# LEGACY: the deleted /design skill
+skills/design/vendor/
+# LEGACY: scraped third-party design specs
+refs/design-specs/
+
+# --- archives and backups -------------------------------------------------
+_archive_*/
+backups/
+.skill-trash/
+skills/*/_claude_bak/
+# LEGACY: the removed setup.sh --md-only flag
+CLAUDE.md.pre-md-only
+
+# --- OS -------------------------------------------------------------------
+.DS_Store

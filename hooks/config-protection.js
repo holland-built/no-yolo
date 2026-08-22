@@ -1,56 +1,42 @@
 #!/usr/bin/env node
-// config-protection — PreToolUse guard for Edit/Write/MultiEdit.
+// Blocks edits to an EXISTING lint / format / type-check config.
+// PreToolUse hook on Edit|Write|MultiEdit, run through node-shim.sh.
 //
-// Purpose: stop the "agent turns the rule off instead of fixing the code"
-// failure mode. When a lint/format/type check fails, the cheapest way to make
-// it green is to edit the config that defines the check.
+// Rewritten from a blank page 2026-08-22 (machinery rebuild). The contract is
+// hooks/tests/config-protection.test.js: which names block, which names
+// deliberately do not, and which malformed inputs must pass silently.
 //
-// The distinction that matters:
-//   - CREATING one of these files for the first time is ALLOWED. A project with
-//     no formatter config is not being weakened by gaining one.
-//   - MODIFYING an existing one is BLOCKED. That is the shape the failure mode
-//     usually takes.
+// THE FAILURE MODE THIS EXISTS FOR. When a check fails, the cheapest green is
+// to edit the config that defines the check. So:
+//   - creating a config that does not exist yet is ALLOWED — a project gaining
+//     a formatter is not being weakened;
+//   - modifying one that exists is BLOCKED, with the two legitimate ways
+//     forward spelled out in the message.
 //
-// WHAT THIS DOES NOT COVER, and the header claimed otherwise until 2026-08-20.
-// It said this hook makes the failure "mechanically impossible". It does not.
-// It is a PreToolUse hook on Edit/Write/MultiEdit and nothing else, so any
-// Bash command that writes the same file walks straight past it. Demonstrated,
-// not assumed: with the guard active, `sed -i '' 's/error/off/' .eslintrc.json`
-// turned a rule off with no block and no message. Three further limits, raised
-// by a cross-model review the same day and accepted:
-//   1. Bash writes are unguarded (above). sed, mv, cp, tee, a heredoc, a
-//      redirect, or a formatter's own --write all bypass it.
-//   2. Creation is allowed, and a NEW config can still weaken an inherited one
-//      — a nested tsconfig.json with "strict": false is the clean example. So
-//      allowing creation is a deliberate false negative, accepted because
-//      blocking it fires on ordinary work far more often than on the failure
-//      mode (see the note below on guards that cry wolf). It is not a case
-//      where nothing can go wrong.
-//   3. Checker settings living inside dual-purpose files are not covered:
-//      package.json (eslintConfig, prettier), pyproject.toml, setup.cfg,
-//      deno.json. See the deliberately-not-guarded note below.
-//   4. CLAUDE_ALLOW_CONFIG_EDIT=1 is inherited by every later call in the same
-//      process, so it opens the gate for the rest of the session, not for one
-//      file. It is an escape hatch, not a scoped approval.
-// Treat this as a habit correction that catches the common case loudly, not as
-// an enforcement boundary. Anything that must actually be enforced needs a
-// mechanism that sees Bash.
+// WHAT IT IS NOT. This sees Edit/Write/MultiEdit and nothing else. A Bash
+// `sed -i` on the same file walks straight past it, demonstrated and accepted:
+// it is a loud habit correction, not an enforcement boundary. Also accepted:
+//   - a NEW nested config can still weaken an inherited one (tsconfig with
+//     "strict": false) — allowed anyway, because blocking creation fires on
+//     ordinary work far more often than on the failure mode;
+//   - checker settings living inside dual-purpose files (pyproject.toml,
+//     setup.cfg, package.json's eslintConfig key) are not covered, because
+//     ordinary work edits those files constantly and a guard that cries wolf
+//     gets its escape hatch exported permanently;
+//   - CLAUDE_ALLOW_CONFIG_EDIT=1 opens the gate for the whole process tree
+//     that inherits it, not for one file. An escape hatch, not an approval.
 //
-// Escape hatch: CLAUDE_ALLOW_CONFIG_EDIT=1 passes silently. It is named in the
-// block message so a stuck agent can tell the user how to unblock it.
-//
-// Fail-open by design: any unexpected error exits 0. A guard that crashes the
-// session is worse than the thing it guards against. Contrast lockstep-guard,
-// which fails CLOSED — lockstep is a user-issued stop order, this is a habit
-// correction, and a false block on a legitimate first-time config write costs
-// more than a missed one.
+// FAIL OPEN, SILENTLY, ON ANYTHING UNREADABLE. A guard that crashes the
+// session is worse than the thing it guards, and the tests pin stderr EMPTY on
+// every ordinary allow path. The one loud case is an unexpected exception
+// escaping the guard itself, which reports that it failed open — otherwise
+// "the guard broke" and "the guard passed you" look identical from outside.
 
 const fs = require('fs');
 const path = require('path');
 
-// Guarded config basenames. Case-insensitive. `*` matches any suffix.
-// Edit THIS array to add or remove a guarded config — nothing else in the file
-// needs to change.
+// Basenames that ARE the check. `*` is a wildcard; matching is whole-name and
+// case-insensitive. Add or remove entries here; nothing else needs to change.
 const GUARDED = [
   '.eslintrc*',
   'eslint.config.*',
@@ -63,59 +49,37 @@ const GUARDED = [
   'tsconfig*.json',
   '.flake8',
 ];
-// Deliberately NOT guarded: pyproject.toml, setup.cfg, .editorconfig. Each is
-// dual-purpose — pyproject.toml and setup.cfg carry dependencies and packaging
-// metadata that legitimate work edits constantly, and .editorconfig is
-// whitespace, not a check anyone cheats. Guarding them would fire on ordinary
-// edits far more often than on the failure mode, and a guard that cries wolf
-// gets the escape hatch exported permanently, which is worse than no guard.
-// If a project keeps its ruff/flake8 rules in pyproject.toml and you want that
-// covered, add it back here — the trade is yours to make, not the default.
+// Considered and left out: pyproject.toml, setup.cfg, .editorconfig. The tests
+// assert these stay unguarded, so putting one back forces the argument.
 
-// A guarded entry is a literal basename with optional `*` wildcards. Build a
-// full-string, case-insensitive matcher — no path separators, basename only.
-function toMatcher(pattern) {
-  const rx = pattern
+const MATCHERS = GUARDED.map((entry) => {
+  const escaped = entry
     .split('*')
-    .map((chunk) => chunk.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+    .map((part) => part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
     .join('.*');
-  return new RegExp(`^${rx}$`, 'i');
-}
+  return new RegExp(`^${escaped}$`, 'i');
+});
 
-const MATCHERS = GUARDED.map(toMatcher);
-
-function isGuarded(basename) {
-  return MATCHERS.some((m) => m.test(basename));
-}
-
-function targetPath(input) {
-  if (!input || typeof input !== 'object') return null;
-  const p = input.file_path || input.notebook_path || input.path;
-  return typeof p === 'string' && p.trim() ? p : null;
-}
-
-function main() {
+function guard() {
   if (process.env.CLAUDE_ALLOW_CONFIG_EDIT === '1') return 0;
 
-  let payload = {};
+  let payload;
   try {
-    const raw = fs.readFileSync(0, 'utf8');
-    if (raw.trim()) payload = JSON.parse(raw);
+    payload = JSON.parse(fs.readFileSync(0, 'utf8'));
   } catch {
-    return 0; // no readable payload -> nothing to judge -> allow
+    return 0; // nothing readable arrived: nothing to judge
   }
   if (!payload || typeof payload !== 'object') return 0;
 
-  let target = targetPath(payload.tool_input || payload.toolInput);
-  if (!target) return 0; // can't see a target -> allow (fail open)
+  const input = payload.tool_input || payload.toolInput;
+  if (!input || typeof input !== 'object') return 0;
+  const named = input.file_path || input.notebook_path || input.path;
+  if (typeof named !== 'string' || !named.trim()) return 0;
 
-  target = payload.cwd ? path.resolve(payload.cwd, target) : path.resolve(target);
-  const base = path.basename(target);
+  const target = payload.cwd ? path.resolve(payload.cwd, named) : path.resolve(named);
 
-  if (!isGuarded(base)) return 0;
-
-  // First-time creation is allowed. Only an EXISTING file can be weakened.
-  if (!fs.existsSync(target)) return 0;
+  if (!MATCHERS.some((m) => m.test(path.basename(target)))) return 0;
+  if (!fs.existsSync(target)) return 0; // first-time creation is allowed
 
   process.stderr.write(
     `CONFIG PROTECTION — blocked an edit to an existing checker config.\n` +
@@ -132,26 +96,17 @@ function main() {
   return 2;
 }
 
-let code = 0;
+let exitCode = 0;
 try {
-  code = main();
+  exitCode = guard();
 } catch (err) {
-  // Never throw; a crashing guard is worse than no guard. But say so on the way
-  // past. Until 2026-08-20 this swallowed the error and exited 0 in silence,
-  // which made "the guard broke" and "the guard passed you" look identical from
-  // outside. The exit code stays 0 — this is a notice, not a block.
-  //
-  // Scope: this covers errors escaping main() only. Unreadable or unparseable
-  // stdin is handled by its own catch above and stays silent on purpose, since
-  // an empty payload is a normal thing for a hook to be handed and a notice on
-  // every one of those would be noise, not signal.
-  code = 0;
+  exitCode = 0; // fail open, but never silently
   try {
     process.stderr.write(
       `config-protection: guard errored and allowed the edit through — ${err && err.message}\n`
     );
   } catch {
-    /* stderr itself is gone; there is nowhere left to report to */
+    /* stderr is gone too; nowhere left to say it */
   }
 }
-process.exit(code);
+process.exit(exitCode);

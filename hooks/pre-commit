@@ -1,31 +1,42 @@
 #!/usr/bin/env bash
-# Pre-commit hook for ~/.claude (holland-built/no-yolo) — TRACKED SOURCE.
-# Installed into .git/hooks/pre-commit by setup.sh. Blocks commits containing
-# personal data, private-network/infra values, and terms from .no-yolo-deny.txt.
+# Refuses a commit that would publish something private. TRACKED SOURCE:
+# setup.sh copies this into .git/hooks/pre-commit, and verify.sh check 8c fails
+# when the installed copy has drifted from this one.
+#
+# Rewritten from a blank page 2026-08-22 (machinery rebuild). The contract is
+# hooks/tests/pre-commit.test.sh, which installs a copy into a throwaway repo
+# and proves each refusal happens for its OWN stated reason, plus verify.sh
+# check 8b, which replays the two scanner invocations below against the pinned
+# probe fixture.
+#
+# FOUR RULES, CHEAPEST FIRST. Each refusal names its rule, because an exit code
+# alone cannot say WHICH guard refused, and a hook that refuses for the wrong
+# reason passes a lazy test while blind to the case it claims to cover.
+#   1. Private PATHS never ship, whatever they contain.
+#   2. Credential-shaped CONTENT never ships (hooks/secret-scan.sh, rule set 1).
+#   3. Private-network / internal-infra CONTENT never ships (same scanner,
+#      --infra rule set).
+#   4. Terms from the owner's local deny-list never ship.
+#
+# NO PATTERN TEXT LIVES HERE. Both rule sets belong to hooks/secret-scan.sh and
+# its two rule files; this hook executes the scanner, so there is no copy to
+# drift. The one local exception is LOCAL_ONLY below, and the comment on it
+# says why it cannot move.
+#
+# EVERYTHING FAILS CLOSED. A git diff that errors, a scanner that is missing,
+# not executable, or exiting outside {0 match, 1 clean}: each refuses the
+# commit and says the scan DID NOT RUN. An unrun scan and a clean scan must
+# never look alike; that principle is load-bearing across this whole repo.
 
-# Credential / personal patterns — the five that CANNOT be shared.
-# Every vendor credential FORMAT rule now lives in hooks/secret-patterns.txt, and every
-# private-network / internal-infra rule in hooks/infra-patterns.txt. Both are applied by
-# one executable, hooks/secret-scan.sh (step 2 and step 3 below), which every consumer
-# calls — this hook and verify.sh. Two rule files, one reader, one
-# regex engine, and NO pattern text left in this hook at all: there is nothing to keep in
-# sync by hand and nothing for verify.sh check 8b to parse back out.
-# These five stay local because a shared scan cannot carry them:
-#   - the unguarded WORD forms (password=, secret:, api_key=) match the pinned CLEAN
-#     fixture's own line `example config: api_key = <your-key-here>`
-#     (hooks/tests/infra-scan-clean.txt), and that fixture must stay clean;
-#   - /Users/… would flag ordinary documentation paths in the public tracked-content scan.
-# Both are safe here only because this runs against the staged diff, where the
-# excluded-file list below supplies the context those rules lack.
-LOCAL_PATTERNS="/Users/[a-zA-Z0-9_-]+|session: [a-f0-9-]{36}|password\s*[:=]|secret\s*[:=]|api[_-]?key\s*[:=]"
-
-BLOCKED_FILES=(
+# Rule-1 paths: added or modified under any of these means refusal. Deletions
+# are allowed, so cleaning up a mistake is never itself blocked.
+PRIVATE_PATHS=(
   "memory/facts/"
-  # The index names every fact, so publishing it publishes the list of what the
-  # owner asked to be remembered even though the fact bodies stay behind. It is
-  # gitignored, and .gitignore stops an ordinary `git add` and nothing else, so a
-  # `git add -f` or an already-tracked history would walk straight past it. The
-  # tracked template is memory/MEMORY.example.md.
+  # The memory INDEX is gitignored, and .gitignore is not a guard: `git add -f`
+  # ignores it, and a file tracked from before it was ignored stages with no
+  # flag at all. The index names every fact the owner asked to be remembered,
+  # so it carries a path rule of its own. The tracked template beside it,
+  # memory/MEMORY.example.md, must stay committable, which the test asserts.
   "memory/MEMORY.md"
   "memory/compile-manifest.json"
   "brainstorms/"
@@ -40,129 +51,120 @@ BLOCKED_FILES=(
   "paste-cache/"
 )
 
-T="$(mktemp -d)"
-trap 'rm -rf "$T"' EXIT
+# Word-next-to-value shapes and machine-user paths. These CANNOT move into the
+# shared rule files: the bare word forms match the pinned clean fixture's own
+# example-config line (turning the negative control red), and the /Users/ rule
+# would flag ordinary documentation paths in the public tracked-content scan.
+# They are safe here only because this hook reads the staged DIFF, where the
+# exclusion list below supplies the context those rules lack.
+LOCAL_ONLY="/Users/[a-zA-Z0-9_-]+|session: [a-f0-9-]{36}|password\s*[:=]|secret\s*[:=]|api[_-]?key\s*[:=]"
+
+refuse() {  # $1 headline, remaining args extra lines
+  echo "❌ BLOCKED: $1"
+  shift
+  for line in "$@"; do echo "   $line"; done
+  exit 1
+}
+
+WORK="$(mktemp -d)"
+trap 'rm -rf "$WORK"' EXIT
 
 echo "🔍 no-yolo pre-commit: scanning for personal data..."
 
-# 1 — Block personal dirs (only additions/modifications — allow deletions)
-STAGED_AM=$(git diff --cached --name-status | grep -E "^[AM]" | awk '{print $2}')
-for pattern in "${BLOCKED_FILES[@]}"; do
-  if echo "$STAGED_AM" | grep -q "^$pattern"; then
-    echo "❌ BLOCKED: personal path being added/modified: $pattern"
-    echo "   Run: git reset HEAD <file> to unstage"
-    exit 1
+# --- Rule 1: private paths --------------------------------------------------
+STAGED=$(git diff --cached --name-status | grep -E '^[AM]' | awk '{print $2}')
+for p in "${PRIVATE_PATHS[@]}"; do
+  if printf '%s\n' "$STAGED" | grep -q "^$p"; then
+    refuse "personal path being added/modified: $p" "Run: git reset HEAD <file> to unstage"
   fi
 done
 
-# The two probe fixtures are excluded from the infra scan below, by name, because
-# their whole purpose is to hold the values it blocks: they are the controls
-# that prove this pattern can still match (verify.sh checks 8a/8b). Without this
-# exclusion the hook refuses every commit that touches them — it did, which is how
-# they came to be separate files instead of inline test data.
+# --- The three diff slices ---------------------------------------------------
+# Each diff is written to a file and its exit status checked on the spot. The
+# inline `$(git diff | grep)` form once hid a fail-open: a diff that errored
+# left the variable empty and every scan below found nothing, printing "clean"
+# while blind. And `set -o pipefail` is not the fix, because grep exiting 1 is
+# the NORMAL result on most commits.
 #
-# They are the ONE place in this repo a real leak could hide, so verify.sh pins both
-# by sha256 and fails if either changes without the hash being updated. Keep this
-# list and verify.sh's SCAN_EXCLUDE in step.
-# Each diff is produced ONCE, into a file, and its exit status checked immediately.
-# Inline `$(git diff ... | grep ...)` hid a fail-open: a git diff that failed left the
-# variable empty, every scan below found nothing, and the hook printed "clean" while
-# blind. `set -o pipefail` is NOT the fix — grep exiting 1 is normal in these pipelines
-# and would abort step 1 on every ordinary commit.
-# added lines only, minus lines that are themselves regex patterns
-git diff --cached > "$T/all.diff" || { echo "❌ BLOCKED: git diff failed — the scan did not run (fail closed)"; exit 1; }
-ADDED=$(grep -E "^\+" "$T/all.diff" | grep -vE "^\+\+\+" | grep -v "\[a-zA-Z" | grep -v "\[a-z0-9")
+# Slice A (deny-list): everything staged.
+# Slice B (infra scan): minus the two pinned probe fixtures, whose entire
+#   purpose is to hold values the scan must catch, and minus the infra rule
+#   file, which matches its own rules. The fixtures are sha256-pinned by
+#   verify.sh, so excluding them hides nothing.
+# Slice C (credential scan): B's exclusions plus every file that legitimately
+#   documents credential shapes: this hook, verify.sh, the deny-list template,
+#   and both rule files. This list mirrors verify.sh's SCAN_EXCLUDE; change one,
+#   change the other.
+added_lines() {  # $1 diff file -> the + lines, minus headers and regex-carrying lines
+  grep -E '^\+' "$1" | grep -vE '^\+\+\+' | grep -v '\[a-zA-Z' | grep -v '\[a-z0-9'
+}
 
-# The same, with the probe fixtures' hunks removed, for the infra scan only. Done
-# per-file via --cached -- :!path so a probe line cannot be attributed to another
-# file's diff. hooks/infra-patterns.txt is excluded for the same reason
-# hooks/secret-patterns.txt is excluded below: a file of infra regexes matches its own
-# rules. Its compensating control is secret-scan.sh, which lints that file's comments
-# against its own patterns and refuses to run on a hit.
+git diff --cached > "$WORK/a.diff" \
+  || refuse "git diff failed — the scan did not run (fail closed)"
+ALL_ADDED=$(added_lines "$WORK/a.diff")
+
 git diff --cached -- . ":!hooks/tests/infra-scan-probe.txt" ":!hooks/tests/infra-scan-clean.txt" \
-  ":!hooks/infra-patterns.txt" \
-  > "$T/noprobe.diff" || { echo "❌ BLOCKED: git diff failed — the scan did not run (fail closed)"; exit 1; }
-ADDED_NOPROBE=$(grep -E "^\+" "$T/noprobe.diff" | grep -vE "^\+\+\+" | grep -v "\[a-zA-Z" | grep -v "\[a-z0-9")
+  ":!hooks/infra-patterns.txt" > "$WORK/b.diff" \
+  || refuse "git diff failed — the scan did not run (fail closed)"
+INFRA_ADDED=$(added_lines "$WORK/b.diff")
 
-# The same again, minus every file that legitimately CONTAINS credential formats:
-# the two pinned probe fixtures, plus the five files that document the patterns
-# themselves (this hook, verify.sh, the deny-list example, and the two rule files —
-# a file of regexes matches its own rules on every line; their compensating control
-# is secret-scan.sh, which lints whichever file it loads against that file's own
-# patterns and refuses to run on a hit).
-# This list mirrors verify.sh's SCAN_EXCLUDE — change one, change the other.
-# The fixtures are sha256-pinned by verify.sh, so excluding them hides nothing.
-# ":!skills/health/SKILL.md" was a sixth entry here until 2026-08-21. The rebuild
-# deleted that skill, so the pathspec matched nothing and excluded nothing; it was
-# removed from this list and from verify.sh's in the same edit.
 git diff --cached -- . ":!hooks/pre-commit" ":!verify.sh" \
   ":!.no-yolo-deny.example.txt" ":!hooks/secret-patterns.txt" ":!hooks/infra-patterns.txt" \
-  ":!hooks/tests/infra-scan-probe.txt" ":!hooks/tests/infra-scan-clean.txt" \
-  > "$T/cred.diff" || { echo "❌ BLOCKED: git diff failed — the scan did not run (fail closed)"; exit 1; }
-ADDED_CRED=$(grep -E "^\+" "$T/cred.diff" | grep -vE "^\+\+\+" | grep -v "\[a-zA-Z" | grep -v "\[a-z0-9")
+  ":!hooks/tests/infra-scan-probe.txt" ":!hooks/tests/infra-scan-clean.txt" > "$WORK/c.diff" \
+  || refuse "git diff failed — the scan did not run (fail closed)"
+CRED_ADDED=$(added_lines "$WORK/c.diff")
 
-# 2 — Block personal / credential content
-# This hook runs as a COPY in .git/hooks, outside the repo tree, so the scanner has to
-# be resolved from the repo root at runtime — the same idiom the deny-list uses below.
-SCAN="$(git rev-parse --show-toplevel)/hooks/secret-scan.sh"
-[ -x "$SCAN" ] || { echo "❌ BLOCKED: hooks/secret-scan.sh missing or not executable — the leak scans cannot run (fail closed)"; exit 1; }
+# --- Rules 2 and 3: the shared scanner ---------------------------------------
+# Resolved from the repo root at run time, because this hook executes as a COPY
+# in .git/hooks, outside the tree.
+SCANNER="$(git rev-parse --show-toplevel)/hooks/secret-scan.sh"
+[ -x "$SCANNER" ] || refuse "hooks/secret-scan.sh missing or not executable — the leak scans cannot run (fail closed)"
 
-# The scan that runs is the WORKING-TREE scanner and rule files, not the versions
-# being committed. An unstaged edit to any of them would approve a different staged
-# implementation than the one that was tested.
+# The scan that runs is the WORKING-TREE scanner and rules. If any of the three
+# has unstaged changes, the version being tested is not the version being
+# committed, and approving one on the other's behaviour is meaningless.
 if ! git diff --quiet -- hooks/secret-scan.sh hooks/secret-patterns.txt hooks/infra-patterns.txt 2>/dev/null; then
-  echo "❌ BLOCKED: hooks/secret-scan.sh or one of its rule files has unstaged changes."
-  echo "   The scan that just ran is not the scan being committed. Stage them, then commit."
-  exit 1
+  refuse "hooks/secret-scan.sh or one of its rule files has unstaged changes." \
+         "The scan that just ran is not the scan being committed. Stage them, then commit."
 fi
 
-MATCHES=$(printf '%s\n' "$ADDED_CRED" | "$SCAN")
+CRED_HITS=$(printf '%s\n' "$CRED_ADDED" | "$SCANNER")
 rc=$?
-# Only 0 (match) and 1 (no match) are outcomes. Anything else means the scan could not run.
 if [ "$rc" -ne 0 ] && [ "$rc" -ne 1 ]; then
-  echo "❌ BLOCKED: secret-scan.sh exited $rc — the credential scan could not run (fail closed)."
-  echo "   Check hooks/secret-patterns.txt is present and every rule compiles."
-  exit 1
+  refuse "secret-scan.sh exited $rc — the credential scan could not run (fail closed)." \
+         "Check hooks/secret-patterns.txt is present and every rule compiles."
 fi
-
-LOCAL_MATCHES=$(printf '%s\n' "$ADDED_CRED" | grep -E "$LOCAL_PATTERNS")
-if [ -n "$MATCHES" ] || [ -n "$LOCAL_MATCHES" ]; then
+LOCAL_HITS=$(printf '%s\n' "$CRED_ADDED" | grep -E "$LOCAL_ONLY")
+if [ -n "$CRED_HITS" ] || [ -n "$LOCAL_HITS" ]; then
   echo "❌ BLOCKED: personal data pattern found in diff:"
-  [ -n "$MATCHES" ] && echo "$MATCHES"
-  [ -n "$LOCAL_MATCHES" ] && echo "$LOCAL_MATCHES"
+  [ -n "$CRED_HITS" ] && echo "$CRED_HITS"
+  [ -n "$LOCAL_HITS" ] && echo "$LOCAL_HITS"
   echo ""
   echo "Fix the content above, then re-stage and commit."
   exit 1
 fi
 
-# 3 — Block private-network / internal-infra values (use placeholders in docs).
-# These leaked once (a self-hosted LAN IP, a tailnet host) and the credential rules
-# above did not catch them. Same executable as step 2, second rule file:
-# hooks/infra-patterns.txt. Same status allowlist too — only 0 (match) and 1 (no match)
-# are outcomes, and anything else means the scan could not run.
-INFRA=$(printf '%s\n' "$ADDED_NOPROBE" | "$SCAN" --infra)
+INFRA_HITS=$(printf '%s\n' "$INFRA_ADDED" | "$SCANNER" --infra)
 rc=$?
 if [ "$rc" -ne 0 ] && [ "$rc" -ne 1 ]; then
-  echo "❌ BLOCKED: secret-scan.sh --infra exited $rc — the private-network scan could not run (fail closed)."
-  echo "   Check hooks/infra-patterns.txt is present and every rule compiles."
-  exit 1
+  refuse "secret-scan.sh --infra exited $rc — the private-network scan could not run (fail closed)." \
+         "Check hooks/infra-patterns.txt is present and every rule compiles."
 fi
-
-if [ -n "$INFRA" ]; then
+if [ -n "$INFRA_HITS" ]; then
   echo "❌ BLOCKED: private network / internal infra value in diff:"
-  echo "$INFRA"
+  echo "$INFRA_HITS"
   echo ""
   echo "Docs must use placeholders (<your-host>, <port>) — never real LAN IPs,"
   echo "tailnet addresses, or internal hostnames. Fix, re-stage, commit."
   exit 1
 fi
 
-# 4 — Block company / private terms from the local (gitignored) deny-list
-DENY_FILE="$(git rev-parse --show-toplevel)/.no-yolo-deny.txt"
-if [ -f "$DENY_FILE" ]; then
-  TERMS=$(grep -vE '^\s*#|^\s*$' "$DENY_FILE" | paste -sd'|' -)
+# --- Rule 4: the owner's local deny-list -------------------------------------
+DENY="$(git rev-parse --show-toplevel)/.no-yolo-deny.txt"
+if [ -f "$DENY" ]; then
+  TERMS=$(grep -vE '^\s*#|^\s*$' "$DENY" | paste -sd'|' -)
   if [ -n "$TERMS" ]; then
-    DENIED=$(echo "$ADDED" | grep -iE "$TERMS")
+    DENIED=$(printf '%s\n' "$ALL_ADDED" | grep -iE "$TERMS")
     if [ -n "$DENIED" ]; then
       echo "❌ BLOCKED: term from .no-yolo-deny.txt (company/private) in diff:"
       echo "$DENIED"
