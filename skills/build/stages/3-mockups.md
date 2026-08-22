@@ -38,9 +38,7 @@ axes table in `docs/SCREENS.md` is the standard. See `INSTALL.md`.
 
 ## Generate
 
-`rules/mockups.md` assigns the slots and says who authors each. Launch the Codex slot in the
-background before the Opus call, so it costs no waiting. Claude writes every file to disk,
-including Codex's.
+`rules/mockups.md` assigns the slots, says who authors each, and carries the launch order.
 
 Codex echoes its prompt and prints its answer twice, so take the last delimited block and
 trim at the final `</html>`. Read what came back before writing it: plain HTML, CSS and

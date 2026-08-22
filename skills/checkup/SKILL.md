@@ -1,6 +1,6 @@
 ---
 name: checkup
-description: Use when the owner types /checkup, says "checkup", "is my setup healthy", "check my skills", "list my skills", "what hooks do I have", "am I out of date", or "check for updates". A read-only pass over this setup: what exists, what is broken, what has drifted, what is out of date. Reports and stops.
+description: 'Use when the owner types /checkup, says "checkup", "is my setup healthy", "check my skills", "list my skills", "what hooks do I have", "am I out of date", or "check for updates". A read-only pass over this setup: what exists, what is broken, what has drifted, what is out of date. Reports and stops.'
 user-invocable: true
 model: opus
 effort: high

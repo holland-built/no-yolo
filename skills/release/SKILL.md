@@ -2,6 +2,10 @@
 name: release
 description: Use when the owner types /release, says "release", "push this", "commit and push", "ship it", or "get this to github". Reads the repo's own SHIP.md playbook and runs it. Without a SHIP.md it stops and builds one with the owner before anything is committed.
 user-invocable: true
+# Typing /release still works. This stops the MODEL choosing to publish on its own, which is
+# the one action here that reaches other people and cannot be taken back from their clones.
+# Raised by agnix on 2026-08-21, the first time it was run against this repo.
+disable-model-invocation: true
 model: opus
 effort: high
 allowed-tools: [Bash, Read, Write, Edit, Grep, Glob]
