@@ -72,38 +72,9 @@ State the goal and this first action back in one line, then wait for a yes.
 ## Open, needs a decision
 
 <Numbered. Each one names who decides and what turns on it.>
-
-## What can run at once
-
-| Group | Steps | Waits on |
-|---|---|---|
-| A | <steps that start immediately> | nothing |
-| B | <steps that need A's result> | A |
 ```
 
-## 4. Run the Wait Test on what remains
-
-Map the remaining work as a graph: each step a node, each hand-off between steps an edge.
-
-Then run the Wait Test on every step: **does this step actually need the result of the one
-before it?** A step that merely follows in the order someone happened to write it is not
-blocked, it is queued.
-
-Flag every step waiting on something it does not need. Those go in the same group and start
-together.
-
-Two exceptions, both learned by watching them bite:
-
-- **Same file, same time.** Two steps that need nothing from each other still collide when
-  they edit one file. They are sequential for that reason alone, and the group table says so.
-- **Same tree, same time.** A step that mutates the working tree and a step that reads it are
-  not parallel. On 2026-08-22 a check suite and the script that sabotages it ran together and
-  produced a red row that described neither.
-
-This step has finished when every remaining step either names what it waits on, or sits in a
-group that starts immediately.
-
-## 5. Rescue what exists nowhere else
+## 4. Rescue what exists nowhere else
 
 Facts that live only in this conversation and belong to another repo: name them, name the
 repo, and say they need writing from a session opened there.
@@ -111,7 +82,7 @@ repo, and say they need writing from a session opened there.
 Writing them from here counts as doing that project's work in this project's session, and
 that has produced work in the wrong repo before.
 
-## 6. Print one command
+## 5. Print one command
 
 One copy-paste block, nothing around it:
 
@@ -122,5 +93,5 @@ claude "Read <path>. State the goal section and the First action back to me in o
 ## Done
 
 This command has finished when the file exists, its goal section quotes the owner verbatim,
-its first action is doable in under two minutes, every remaining step names what it waits on
-or starts immediately, and the start command is printed as a single block.
+its first action is doable in under two minutes, and the start command is printed as a
+single block.
