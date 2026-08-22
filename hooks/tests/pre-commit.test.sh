@@ -110,14 +110,14 @@ unstage_all() {
 run_hook() { ( cd "$R" && ./.git/hooks/pre-commit 2>&1 ); }
 
 # --- Case 1: a staged infra value -> REFUSE, naming the infra rule -----------------
-stage "docs/leak.md" "$INFRA_LINES"
+stage "docs/leak.md" "$INFRA_LINES"  # gone-on-purpose: a fixture name staged into a scratch index, never a file in this repo
 out="$(run_hook)"; rc=$?
 assert_eq "1. staged infra value: exit code" "1" "$rc"
 assert_has "1. staged infra value: names the infra rule" "private network / internal infra value in diff" "$out"
 unstage_all
 
 # --- Case 2: a staged credential value -> REFUSE, naming the credential rule -------
-stage "docs/creds.md" "$CRED_LINES"
+stage "docs/creds.md" "$CRED_LINES"  # gone-on-purpose: a fixture name staged into a scratch index, never a file in this repo
 out="$(run_hook)"; rc=$?
 assert_eq "2. staged credential value: exit code" "1" "$rc"
 assert_has "2. staged credential value: names the credential rule" "personal data pattern found in diff" "$out"
@@ -151,7 +151,7 @@ unstage_all
 
 # --- Case 4: a clean file -> ALLOW. A guard that refuses everything is as broken as
 #     one that refuses nothing; without this case the three above prove nothing. ------
-stage "docs/clean.md" "$CLEAN_LINES"
+stage "docs/clean.md" "$CLEAN_LINES"  # gone-on-purpose: a fixture name staged into a scratch index, never a file in this repo
 out="$(run_hook)"; rc=$?
 assert_eq "4. clean file: exit code" "0" "$rc"
 assert_has "4. clean file: reports clean" "no-yolo pre-commit: clean" "$out"
@@ -162,7 +162,7 @@ unstage_all
 #     Commit count is the evidence: a refusal that still writes a commit is not a
 #     refusal. --------------------------------------------------------------------
 before=$(git -C "$R" rev-list --count HEAD)
-stage "docs/creds2.md" "$CRED_LINES"
+stage "docs/creds2.md" "$CRED_LINES"  # gone-on-purpose: a fixture name staged into a scratch index, never a file in this repo
 git -C "$R" commit -q -m "should be refused" >/dev/null 2>&1
 rc=$?
 [ "$rc" -ne 0 ] && rc=1 || rc=0
@@ -170,7 +170,7 @@ assert_eq "5. git commit with a credential value is refused" "1" "$rc"
 assert_eq "5. git commit refused: no commit written" "$before" "$(git -C "$R" rev-list --count HEAD)"
 unstage_all
 
-stage "docs/clean2.md" "$CLEAN_LINES"
+stage "docs/clean2.md" "$CLEAN_LINES"  # gone-on-purpose: a fixture name staged into a scratch index, never a file in this repo
 git -C "$R" commit -q -m "should be allowed" >/dev/null 2>&1
 rc=$?
 assert_eq "6. git commit with a clean file is allowed" "0" "$rc"
@@ -180,7 +180,7 @@ unstage_all
 # --- Case 7: the scanner cannot run -> FAIL CLOSED. The staged file is clean, so a
 #     hook that judged by scan output alone would allow this commit blind. ----------
 chmod -x "$R/hooks/secret-scan.sh"
-stage "docs/clean3.md" "$CLEAN_LINES"
+stage "docs/clean3.md" "$CLEAN_LINES"  # gone-on-purpose: a fixture name staged into a scratch index, never a file in this repo
 out="$(run_hook)"; rc=$?
 chmod 755 "$R/hooks/secret-scan.sh"
 assert_eq "7. scanner not executable: fails closed" "1" "$rc"

@@ -153,6 +153,77 @@ esac
 # wrappers and leading VAR=value assignments consumed.
 CMDPOS='(^|[;&|(`]|&&|\|\|)[[:space:]]*((env|sudo|command|nohup|time|stdbuf)[[:space:]]+)*([A-Za-z_][A-Za-z0-9_]*=[^[:space:]]*[[:space:]]+)*'
 
+# ---------------------------------------------------------------------------
+# HEREDOC BODIES ARE DATA, AND `^` IN CMDPOS DOES NOT KNOW THAT.
+#
+# grep applies `^` per LINE, not per string. So in a multi-line command every
+# line start is a command position as far as CMDPOS is concerned, including the
+# lines inside a heredoc body, which are being fed to a program as text.
+#
+# Measured 2026-08-22, and it was this hook refusing this repo's own commit:
+#
+#   git commit -F - <<'MSG'
+#   ... git push --force-with-lease origin main    committed hook: 2
+#   MSG
+#
+# The body was a commit message describing the very regression being fixed. The
+# comment above says a guard that blocks talking about a command gets unwired;
+# that is precisely what had just happened, one anchor short.
+#
+# THE BODY IS ONLY DROPPED WHEN ITS CONSUMER IS NOT AN INTERPRETER. This is the
+# whole safety of it. `bash <<EOF` / `python3 <<EOF` are code being executed and
+# the body must keep facing every rule below, or the strip becomes a bypass:
+# write `rm -rf /` inside a heredoc fed to sh and it would sail through. Only a
+# heredoc going to something else — git commit, cat, jq, tee — is dropped.
+#
+# An unterminated heredoc drops the rest of the command, which is the safe
+# direction only because the delete rules above have already run against the
+# full text; these remaining rules are the ones that need command position.
+heredoc_stripped() {
+  printf '%s' "$1" | awk '
+    { L[NR] = $0 }
+    END {
+      i = 1
+      while (i <= NR) {
+        line = L[i]
+        print line
+        # QUOTED delimiters only: <<"X" and <<\047X\047. An UNQUOTED heredoc still
+        # performs expansion, so its body is not inert — `cat <<EOF` around
+        # $(git push --force ...) runs the substitution. Refusing to strip those
+        # closes that hole and, incidentally, the bare-word openers that appear in
+        # prose. Both were live against the first version of this function.
+        if (match(line, /<<-?[ \t]*("[^"]+"|\047[^\047]+\047)/)) {
+          pre = substr(line, 1, RSTART - 1)
+          # An opener after a # on the same line is being talked about, not used.
+          if (index(pre, "#") == 0) {
+            d = substr(line, RSTART, RLENGTH)
+            sub(/^<<-?[ \t]*/, "", d)
+            gsub(/["\047]/, "", d)
+            # A body an interpreter reads is code; it must keep facing the rules.
+            if (line !~ /(^|[;&|(`]|[ \t])((env|sudo|command)[ \t]+)*([^ \t]*\/)?(sh|bash|zsh|ksh|dash|python[0-9.]*|node|nodejs|perl|ruby|php|deno|bun)([ \t]|$)/) {
+              # The terminator must actually EXIST before anything is dropped. An
+              # opener with no closing line strips to end of input, which is how a
+              # fake one hides a real command behind it. No terminator, no strip.
+              endi = 0
+              for (j = i + 1; j <= NR; j++) {
+                t = L[j]; sub(/^[ \t]+/, "", t); sub(/[ \t]+$/, "", t)
+                if (t == d) { endi = j; break }
+              }
+              if (endi > 0) i = endi
+            }
+          }
+        }
+        i++
+      }
+    }
+  '
+}
+
+# Every rule below matches command position, so every rule below reads this
+# rather than $cmd. The delete/database/device rules above deliberately do not:
+# they match tokens anywhere and have no anchor to protect.
+hcmd="$(heredoc_stripped "$cmd")"
+
 # Git operations that cannot be undone.
 #
 # These were three fixed-string patterns matched against the whole command until
@@ -173,13 +244,13 @@ GIT="${CMDPOS}"'([^[:space:]]*/)?git([[:space:]]+-[^[:space:]]+)*[[:space:]]+'
 # promised since it was written that this guard refuses the lease form too.
 # The lease form still rewrites what others have pulled; it only declines to
 # do so when the remote has moved since the last fetch.
-if printf '%s' "$cmd" | grep -Eq "${GIT}push([[:space:]][^;&|]*)?[[:space:]](--force(-with-lease)?(=[^[:space:]]*)?|-f)([[:space:]]|$)"; then
+if printf '%s' "$hcmd" | grep -Eq "${GIT}push([[:space:]][^;&|]*)?[[:space:]](--force(-with-lease)?(=[^[:space:]]*)?|-f)([[:space:]]|$)"; then
   block "a force push, which rewrites what others have pulled"
 fi
-if printf '%s' "$cmd" | grep -Eq "${GIT}reset([[:space:]][^;&|]*)?[[:space:]]--hard"; then
+if printf '%s' "$hcmd" | grep -Eq "${GIT}reset([[:space:]][^;&|]*)?[[:space:]]--hard"; then
   block "a hard reset, which discards uncommitted work with no undo"
 fi
-if printf '%s' "$cmd" | grep -Eq "${GIT}clean[[:space:]]+-[a-zA-Z]*[fdx]"; then
+if printf '%s' "$hcmd" | grep -Eq "${GIT}clean[[:space:]]+-[a-zA-Z]*[fdx]"; then
   block "git clean, which deletes untracked files permanently"
 fi
 
@@ -195,9 +266,25 @@ CODEFLAG='([[:space:]]+-[^[:space:]]+)*[[:space:]]*(-c|-e|-E|--eval|--exec|-p|--
 # parses JSON is untouched, and prose naming `shutil.rmtree` never reaches here.
 DESTRUCTIVE='(rmtree|unlink|rmSync|rmdirSync|rm_rf|rm_r[^A-Za-z]|rimraf|os\.remove|os\.rmdir|removedirs|rm[[:space:]]+-[a-zA-Z]*[rRf])'
 
-if printf '%s' "$cmd" | grep -Eq "${CMDPOS}${INTERP}${CODEFLAG}" \
-   && printf '%s' "$cmd" | grep -Eq "$DESTRUCTIVE"; then
+if printf '%s' "$hcmd" | grep -Eq "${CMDPOS}${INTERP}${CODEFLAG}" \
+   && printf '%s' "$hcmd" | grep -Eq "$DESTRUCTIVE"; then
   block "an interpreter running inline code that deletes files"
+fi
+
+# The same thing with no flag at all, because the code arrives on standard input:
+#
+#   python3 <<'PY'
+#   import shutil; shutil.rmtree('/')
+#   PY
+#
+# CODEFLAG above requires -c/-e/--eval, and a heredoc has none, so this shape was
+# never covered. Found on 2026-08-22 while testing the heredoc change above: the
+# body is correctly KEPT (its consumer is an interpreter), and then no rule looked
+# at it. The gap predates that change; the change is only what made it visible.
+HEREDOC_IN='([[:space:]]+-[^[:space:]]+)*[[:space:]]*<<-?'
+if printf '%s' "$hcmd" | grep -Eq "${CMDPOS}${INTERP}${HEREDOC_IN}" \
+   && printf '%s' "$hcmd" | grep -Eq "$DESTRUCTIVE"; then
+  block "an interpreter reading code from a heredoc that deletes files"
 fi
 
 # Anything that can carry bytes off this machine, at command position. `ssh` has
@@ -210,7 +297,7 @@ EGRESS='(curl|wget|nc|ncat|netcat|scp|sftp|rsync|ssh|telnet)([[:space:]]|$)'
 # rather than described in it — .pub keys, .env.example and friends, and
 # known_hosts. Codex flagged these as the false positives that would get this
 # hook unwired.
-scan="$(printf '%s' "$cmd" | sed \
+scan="$(printf '%s' "$hcmd" | sed \
   -e 's/[A-Za-z0-9_./~$-]*\.pub//g' \
   -e 's/\.env\.\(example\|sample\|template\|dist\|defaults\)//g' \
   -e 's/known_hosts//g')"
@@ -218,7 +305,7 @@ SENSITIVE='(\.ssh/id_[A-Za-z0-9_]+|\.aws/credentials|\.netrc|\.gnupg/|\.env([^A-
 
 # A secret and a way off the machine, in one command. Neither half is blocked on
 # its own: reading a key locally is ordinary work, and so is an ordinary fetch.
-if printf '%s' "$cmd" | grep -Eq "${CMDPOS}${EGRESS}" \
+if printf '%s' "$hcmd" | grep -Eq "${CMDPOS}${EGRESS}" \
    && printf '%s' "$scan" | grep -Eq "$SENSITIVE"; then
   block "a secret file and a network command in the same breath"
 fi
@@ -227,15 +314,15 @@ fi
 # confirm, so the file does not have to be a known secret. Every spelling curl
 # and wget accept: separated, attached, and equals forms.
 UPLOAD='(--upload-file|--post-file|-T[[:space:]]*[^[:space:]-]|(--data-binary|--data-urlencode|--data-raw|--data|--form|-d|-F)([[:space:]]*|=)[^[:space:]]*@)'
-if printf '%s' "$cmd" | grep -Eq "${CMDPOS}${EGRESS}" \
-   && printf '%s' "$cmd" | grep -Eq "$UPLOAD"; then
+if printf '%s' "$hcmd" | grep -Eq "${CMDPOS}${EGRESS}" \
+   && printf '%s' "$hcmd" | grep -Eq "$UPLOAD"; then
   block "an upload of a local file to the network"
 fi
 
 # Remote content piped straight into an interpreter — the install-by-curl shape.
 # Anchored at the fetch so that prose describing the pattern does not match.
 PIPE_TO_SHELL="${CMDPOS}"'(curl|wget)[^;&|]*\|[[:space:]]*((env|sudo)[[:space:]]+)*([^[:space:]]*/)?(sh|bash|zsh|ksh|dash|python[0-9.]*|node|perl|ruby|php)([[:space:]]|$)'
-if printf '%s' "$cmd" | grep -Eq "$PIPE_TO_SHELL"; then
+if printf '%s' "$hcmd" | grep -Eq "$PIPE_TO_SHELL"; then
   block "remote content piped straight into an interpreter"
 fi
 

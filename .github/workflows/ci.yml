@@ -86,13 +86,23 @@ jobs:
           # The two positive controls are the reason this matrix exists: they turn
           # "the scan found nothing" into "the scan can still find something". If
           # either is missing, the leak scan is back to being unfalsifiable here.
+          #
+          # The last two rows are here because the self-test job below runs on
+          # ubuntu only, so nothing else proves those rows still WORK on macOS.
+          # Both extract paths with `grep -oE` and `sed -E`, whose BSD and GNU
+          # behaviour differ, which is exactly how the infra scan went blind on
+          # one platform while staying green. Their own fail-closed counts are
+          # the backstop: an extractor that matches nothing reports zero
+          # references and goes red rather than reporting a clean sweep.
           for check in \
             "infra scan positive control" \
             "pre-commit scan positive control" \
             "tracked-content scan" \
             "setup.sh bash-3.2 clean" \
             "shellcheck" \
-            "external references"
+            "external references" \
+            "dangling references" \
+            "README skills inventory"
           do
             if ! grep -qF "$check" /tmp/verify.out; then
               echo "::error::verify.sh did not report '$check' on ${{ matrix.os }} — it did not run"
