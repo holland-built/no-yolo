@@ -175,9 +175,17 @@ A skill is a shortcut command you type, like `/build`. There are six.
 | `/release` | Reads the repo's own `SHIP.md` playbook and runs it |
 | `/whats-next` | Reads the task list, then unfinished work in the repo, then proposes three things |
 
-There were 26 until 2026-08-21. The rebuild kept the six that were used and deleted the rest;
-`docs/DECISIONS.md` records why. Archived commands are not gone: each has a one-line restore
-command in `archive/MANIFEST.md`.
+There were thirteen until 2026-08-21. The rebuild kept the six that were used and deleted the
+rest; `docs/DECISIONS.md` records why. Archived commands are not gone: each has a one-line
+restore command in `archive/MANIFEST.md`.
+
+This sentence said "26" until 2026-08-22, and no commit on this branch ever had 26 skills in
+it. Counted with `git ls-tree -d --name-only <commit>:skills | wc -l` across the last sixty
+commits, the tracked total goes 17, then 18, then 13 on 2026-08-20 when eight commands were
+archived, then 6 at the rebuild. Thirteen is what stood on the day. The likeliest source of
+26 is a count that included the borrowed skills symlinked into `skills/` alongside this
+repo's own, which are gitignored and cannot be recovered from history, so the number that
+replaced it is the one that can be recomputed.
 
 ## The rules that load every session
 
@@ -244,9 +252,16 @@ Make a file at `skills/<name>/SKILL.md` with `user-invocable: true`, and put the
 should trigger it in that same `description`. That is the whole checklist.
 
 There is deliberately no catalogue to update, no lock file to re-seal and no index to
-regenerate. This repo used to have all three, and maintaining them cost more edits than the
-skills themselves, roughly 390 commits against files whose only job was describing other files.
-`/checkup` derives the inventory from the folder at read time instead.
+regenerate. This repo used to have all three, and maintaining them cost real edits: 61 of the
+341 commits reachable from any branch or tag touched a catalogue, index, manifest or lock
+file, which is roughly one commit in six spent on files whose only job was describing other
+files. `/checkup` derives the inventory from the folder at read time instead.
+
+That sentence claimed "roughly 390 commits" until 2026-08-22. There are only 341 commits in
+this repository across every ref (`git rev-list --count --all`), so the figure was larger than
+the entire history it was drawn from. The 61 comes from counting distinct commits touching
+`*CATALOG*`, `*index*`, `*MANIFEST*` and `*lock*` paths; the pattern is deliberately generous
+and still lands nowhere near the old number.
 
 Before adding one, ask whether an existing skill should gain a mode instead. Six commands with
 modes beat twenty-six commands, and that is the entire lesson of this repo's first six weeks.

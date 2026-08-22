@@ -7,7 +7,9 @@ catalogue system that the fresh-start rebuild deleted: eight of its ten steps ca
 `/md-check`, `/update`, `skills/my-skills/`, `skills/my-md/` or `docs/HOOKS.md`, none of which <!-- gone-on-purpose -->
 exist. Two of those were hard blocks, so every release would have stopped forever.
 
-It happened a second time. The 2026-08-21 rebuild cut 26 skills to 6 and replaced the rule
+It happened a second time. The 2026-08-21 rebuild cut 13 skills to 6 (counted from
+`git ls-tree -d --name-only 7fb7448^:skills`; this line said 26 until 2026-08-22, and no
+commit on this branch ever held that many) and replaced the rule
 files, and this playbook was left naming `docs/ANTISLOP.md` and `docs/README_FORMAT.md`, <!-- gone-on-purpose -->
 along with a mockup-pruning script that went with `/design`. All deleted. Three of nine steps,
 two of them hard blocks. Step 4 below is the sweep that should have caught it and did not run,
