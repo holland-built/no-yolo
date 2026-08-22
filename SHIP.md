@@ -201,7 +201,7 @@ Nothing about it looks wrong. If a branch claims to be in sync but GitHub disagr
 ## Stage scope
 
 ```
-git add skills/ docs/ rules/ hooks/ .github/ agents/ README.md INSTALL.md LICENSE \
+git add skills/ docs/ rules/ hooks/ .github/ README.md INSTALL.md LICENSE \
   .gitignore .no-yolo-deny.example.txt setup.sh settings.example.json SHIP.md CLAUDE.md \
   memory/MEMORY.example.md verify.sh verify-selftest.sh
 ```
@@ -226,10 +226,12 @@ repo root. Each of these was omitted once and something silently never shipped:
 - `LICENSE` is the MIT terms the README's licence badge reads: omit it and the badge renders
   "unknown" against a file git never received.
 - `.no-yolo-deny.example.txt` is the tracked template for the gitignored `.no-yolo-deny.txt`.
-- `agents/` (subagent roster) is tracked and must ship. This bullet also named `commands/`
-  until 2026-08-21, when no such directory existed and nothing was tracked under one: the
-  rebuild deleted it and the line outlived it. It was never in the `git add` list above, so
-  nothing ever failed to ship, which is exactly why nobody noticed.
+- `agents/` was in this list until 2026-08-22, holding two borrowed subagent definitions
+  (accessibility-tester, react-specialist) whose text was 78% identical to the pre-rebuild
+  copies. Nothing tracked referenced them beyond this list, so the machinery rebuild removed
+  them rather than rewriting them; a lean local agent can return when a named workflow shows
+  a plugin cannot supply it. This bullet also named `commands/` until 2026-08-21, when no
+  such directory existed: the rebuild deleted it and the line outlived it.
 
 After staging, confirm nothing tracked was left behind: `git status --porcelain | grep -v '^[AMD]'`
 should list only Guard paths and gitignored files. Anything else means the scope above is
