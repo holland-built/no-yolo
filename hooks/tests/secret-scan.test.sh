@@ -1,180 +1,192 @@
-#!/bin/bash
-# Tests for hooks/secret-scan.sh — the single credential scanner.
-# Plain bash asserts, same style as node-shim.test.sh. Picked up automatically by
-# verify.sh check 1b (hooks/tests/*.test.sh). Run: bash hooks/tests/secret-scan.test.sh
+#!/usr/bin/env bash
+# Contract for hooks/secret-scan.sh, the leak scanner both blocking consumers
+# execute.  Run: bash hooks/tests/secret-scan.test.sh
 #
-# BASH-3.2 CLEAN on purpose (stock macOS bash): no mapfile, no readarray, no
-# declare -A, no ${var^^}.
+# Rewritten from a blank page 2026-08-22 (machinery rebuild), AFTER the scanner
+# and judged against it.
 #
-# Every case runs against a COPY of the scanner in a mktemp sandbox, with its own
-# secret-patterns.txt written NEXT TO THE COPY. The scanner resolves its pattern file
-# relative to itself, so the sandbox exercises every failure mode — missing file,
-# gutted file, broken regex, leaked literal — without touching the real one.
+# TWO HALVES, AND BOTH ARE NECESSARY.
 #
-# The synthetic rules (zzruleN...) exist so that no credential-shaped string ever
-# appears in this file's source: committing this test must not trip the very hook it
-# tests. Cases 15 and 16 cover the REAL install, where the real rules live.
+#   SANDBOX cases run a COPY of the scanner in a mktemp directory with their own
+#   rule files written next to the copy. The scanner resolves its rules relative
+#   to itself, so every failure mode — file missing, gutted, uncompilable, a
+#   pasted value where a rule belongs — is exercised without touching the real
+#   ones. The rules there are synthetic (zzrule...), so no credential-shaped
+#   string ever appears in this file's source and committing this test cannot
+#   trip the very hook it tests.
+#
+#   REAL-INSTALL cases run the shipped scanner against the shipped rules. They
+#   are the only ones that prove what actually protects this repo loads, lints
+#   and compiles, and that the rule sets have not quietly shrunk.
+#
+# THE ANCHOR LIST IS THE POINT OF THE WHOLE FILE. A minimum-count floor counts
+# LINES, so duplicating one rule twenty-five times satisfies it while every real
+# vendor format silently vanishes. The anchors pin the COVERAGE itself: each is a
+# fragment of a rule that must still be present. Fixed-string matched, never run
+# as a regex.
+#
+# BASH-3.2 CLEAN (stock macOS): no associative arrays, no line-reading builtins,
+# no case-changing expansions.
 set -uo pipefail
 
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-REAL_SCAN="$REPO/hooks/secret-scan.sh"
-REAL_RULES="$REPO/hooks/secret-patterns.txt"
-REAL_INFRA="$REPO/hooks/infra-patterns.txt"
+REAL_SCANNER="$REPO/hooks/secret-scan.sh"
+REAL_CRED_RULES="$REPO/hooks/secret-patterns.txt"
+REAL_INFRA_RULES="$REPO/hooks/infra-patterns.txt"
 
 fail=0
 results=()
-assert_eq() {
-  local desc="$1" expected="$2" actual="$3"
-  if [ "$expected" = "$actual" ]; then
-    results+=("PASS|$desc")
+check() {  # $1 description, $2 expected, $3 actual
+  if [ "$2" = "$3" ]; then
+    results+=("PASS|$1")
   else
-    results+=("FAIL|$desc (expected [$expected], got [$actual])")
+    results+=("FAIL|$1 (expected [$2], got [$3])")
     fail=1
   fi
 }
 
-SANDBOX="$(mktemp -d)"
-trap 'chmod 644 "$SANDBOX/secret-patterns.txt" 2>/dev/null; rm -rf "$SANDBOX"' EXIT
-cp "$REAL_SCAN" "$SANDBOX/secret-scan.sh"
-chmod 755 "$SANDBOX/secret-scan.sh"
-SCAN="$SANDBOX/secret-scan.sh"
-RULES="$SANDBOX/secret-patterns.txt"
-INFRA_RULES="$SANDBOX/infra-patterns.txt"
+BOX="$(mktemp -d)"
+# The unreadable-file case leaves mode 000 behind if it dies mid-way, which would
+# make the sandbox undeletable.
+trap 'chmod -R u+rwX "$BOX" 2>/dev/null; rm -rf "$BOX"' EXIT
 
-# N synthetic, valid, distinct rules — each carries regex metacharacters, so they clear
-# the "bare literal" lint, and none of them is credential-shaped.
-mkrules() {
-  local want="$1" i=1
-  : > "$RULES"
-  while [ "$i" -le "$want" ]; do
-    printf 'zzrule%d[0-9]{4}\n' "$i" >> "$RULES"
-    i=$((i + 1))
-  done
+cp "$REAL_SCANNER" "$BOX/secret-scan.sh"
+chmod 755 "$BOX/secret-scan.sh"
+SCANNER="$BOX/secret-scan.sh"
+CRED_RULES="$BOX/secret-patterns.txt"
+INFRA_RULES="$BOX/infra-patterns.txt"
+
+# N synthetic, valid, distinct rules. Each carries regex metacharacters so it
+# clears the bare-literal lint, and none is credential-shaped.
+write_cred_rules() {
+  i=1
+  : > "$CRED_RULES"
+  while [ "$i" -le "$1" ]; do printf 'zzrule%d[0-9]{4}\n' "$i" >> "$CRED_RULES"; i=$((i + 1)); done
 }
-
-# The same for the --infra rule set, which the scanner reads from a SECOND file next to
-# itself. Synthetic again: no real LAN address or internal hostname appears in this
-# source, so committing this test cannot trip the very infra scan it tests.
-mkinfrarules() {
-  local want="$1" i=1
+write_infra_rules() {
+  i=1
   : > "$INFRA_RULES"
-  while [ "$i" -le "$want" ]; do
-    printf 'zzinfra%d[0-9]{4}\n' "$i" >> "$INFRA_RULES"
-    i=$((i + 1))
-  done
+  while [ "$i" -le "$1" ]; do printf 'zzinfra%d[0-9]{4}\n' "$i" >> "$INFRA_RULES"; i=$((i + 1)); done
 }
+rc_of() { "$@" >/dev/null 2>&1; echo $?; }
 
-# --- Case 1: no pattern file at all -> cannot scan ---
-rm -f "$RULES"
-"$SCAN" --check >/dev/null 2>&1
-rc=$?
-assert_eq "1. pattern file missing" "2" "$rc"
+# Both sets start valid, so a case that sabotages one is not also tripping the
+# other's floor by accident.
+write_cred_rules 25
+write_infra_rules 6
 
-# --- Case 2: empty pattern file -> zero rules ---
-: > "$RULES"
-"$SCAN" --check >/dev/null 2>&1
-rc=$?
-assert_eq "2. empty pattern file" "2" "$rc"
+# ── refusing to scan: exit 2 is "could not run", never "clean" ───────────────
+# Every one of these must be 2. A scanner that returned 1 (no match) here would
+# report a gutted rule set as a clean bill of health, which is the failure this
+# whole repo is built around.
+rm -f "$CRED_RULES"
+check "rule file missing" "2" "$(rc_of "$SCANNER" --check)"
 
-# --- Case 3: comments only, still zero rules ---
-printf '# just a comment\n#\n\n' > "$RULES"
-"$SCAN" --check >/dev/null 2>&1
-rc=$?
-assert_eq "3. comment-only pattern file" "2" "$rc"
+: > "$CRED_RULES"
+check "rule file empty" "2" "$(rc_of "$SCANNER" --check)"
 
-# --- Case 4: 24 rules, one under the floor -> refuse to scan gutted ---
-mkrules 24
-"$SCAN" --check >/dev/null 2>&1
-rc=$?
-assert_eq "4. 24 rules (below minimum 25)" "2" "$rc"
+printf '# just a comment\n#\n\n' > "$CRED_RULES"
+check "rule file holds only comments" "2" "$(rc_of "$SCANNER" --check)"
 
-# --- Case 5: count is fine but one rule does not compile ---
-mkrules 25
-printf 'zzbroken(\n' >> "$RULES"
-"$SCAN" --check >/dev/null 2>&1
-rc=$?
-assert_eq "5. invalid regex in rule set" "2" "$rc"
+write_cred_rules 24
+check "24 credential rules, one under the floor" "2" "$(rc_of "$SCANNER" --check)"
 
-# --- Case 6: a rule with no metacharacter is a pasted value, not a rule ---
-mkrules 25
-printf 'zzliteralnometachar\n' >> "$RULES"
-"$SCAN" --check >/dev/null 2>&1
-rc=$?
-assert_eq "6. bare literal rule (LINT 1)" "2" "$rc"
+write_cred_rules 25
+printf 'zzbroken(\n' >> "$CRED_RULES"
+check "a rule that does not compile" "2" "$(rc_of "$SCANNER" --check)"
 
-# --- Case 7: a credential-shaped value parked in a COMMENT (LINT 3) ---
-#     Synthetic: rule 1 is zzrule1[0-9]{4}, so zzrule19999 is "credential-shaped"
-#     to this rule set and to nothing else on earth.
-mkrules 25
-printf '# zzrule19999\n' >> "$RULES"
-"$SCAN" --check >/dev/null 2>&1
-rc=$?
-assert_eq "7. value in a comment (LINT 3)" "2" "$rc"
+# A non-comment line with no metacharacter is a pasted VALUE, not a shape.
+write_cred_rules 25
+printf 'zzliteralnometachar\n' >> "$CRED_RULES"
+check "a bare literal where a rule belongs" "2" "$(rc_of "$SCANNER" --check)"
 
-# --- Case 8: stdin match -> 0, and the matching line is passed through ---
-mkrules 25
-out="$(printf 'zzrule19999\n' | "$SCAN")"
-rc=$?
-assert_eq "8. stdin match exit code" "0" "$rc"
-assert_eq "8. stdin match passes the line through" "zzrule19999" "$out"
+# The word-boundary escape is engine-dependent: dead under git grep on macOS,
+# over-eager under GNU grep. It made this scan blind once and is banned outright.
+write_cred_rules 25
+printf '%s\n' 'zzboundary[0-9]{3}\b' >> "$CRED_RULES"
+check "a word-boundary escape in a rule" "2" "$(rc_of "$SCANNER" --check)"
 
-# --- Case 9: stdin, no match -> EXACTLY 1. A valid pattern finding nothing is
-#     the normal, healthy result — not a failure. Callers key off this.
-printf 'nothing of interest here\n' | "$SCAN" >/dev/null
-rc=$?
-assert_eq "9. stdin no-match is exit 1, not failure" "1" "$rc"
+# A real value parked in a COMMENT would hide forever, because these files are
+# excluded from every enforcement scan. zzrule19999 is credential-shaped to this
+# synthetic rule set and to nothing else on earth.
+write_cred_rules 25
+printf '# zzrule19999\n' >> "$CRED_RULES"
+check "a value matching the file's own rules, in a comment" "2" "$(rc_of "$SCANNER" --check)"
 
-# --- Case 10: --files match -> 0, output carries the file:line: prefix ---
-printf 'zzrule19999\n' > "$SANDBOX/hit.txt"
-out="$("$SCAN" --files "$SANDBOX/hit.txt")"
-rc=$?
-assert_eq "10. --files match exit code" "0" "$rc"
-assert_eq "10. --files match file:line: prefix" "$SANDBOX/hit.txt:1:zzrule19999" "$out"
+write_cred_rules 25
+check "an unknown mode is refused, never silently passed through" "2" "$(rc_of "$SCANNER" --bogus)"
 
-# --- Case 11: --files over two clean files -> exactly 1 ---
-printf 'clean one\n' > "$SANDBOX/clean1.txt"
-printf 'clean two\n' > "$SANDBOX/clean2.txt"
-"$SCAN" --files "$SANDBOX/clean1.txt" "$SANDBOX/clean2.txt" >/dev/null
-rc=$?
-assert_eq "11. --files no match over two files" "1" "$rc"
-
-# --- Case 12: a path with a space survives the hand-off to grep ---
-printf 'zzrule19999\n' > "$SANDBOX/has space.txt"
-"$SCAN" --files "$SANDBOX/has space.txt" >/dev/null
-rc=$?
-assert_eq "12. --files path containing a space" "0" "$rc"
-
-# --- Case 13: pattern file present but unreadable -> fail closed, not silently clean.
-#     Skipped as root, where mode 000 is still readable.
+# Skipped as root, where mode 000 is still readable.
 if [ "$(id -u)" -eq 0 ]; then
-  results+=("PASS|13. unreadable pattern file (skipped: running as root)")
+  results+=("PASS|an unreadable rule file (skipped: running as root)")
 else
-  chmod 000 "$RULES"
-  "$SCAN" --check >/dev/null 2>&1
-  rc=$?
-  chmod 644 "$RULES"
-  assert_eq "13. unreadable pattern file" "2" "$rc"
+  chmod 000 "$CRED_RULES"
+  rc="$(rc_of "$SCANNER" --check)"
+  chmod 644 "$CRED_RULES"
+  check "an unreadable rule file" "2" "$rc"
 fi
 
-# --- Case 14: unknown mode -> 2, never a silent pass-through ---
-"$SCAN" --bogus >/dev/null 2>&1
-rc=$?
-assert_eq "14. unknown mode --bogus" "2" "$rc"
+# ── scanning: 0 matched, 1 searched and found nothing ───────────────────────
+write_cred_rules 25
+check "stdin, a match" "0" "$(rc_of sh -c "printf 'zzrule19999\n' | '$SCANNER'")"
+check "stdin, the matching line is passed through" "zzrule19999" \
+  "$(printf 'zzrule19999\n' | "$SCANNER")"
 
-# --- Case 15: REAL INSTALL. Everything above ran on a sandbox copy; this is the only
-#     case that proves the shipped scanner + shipped rules load, lint and compile.
-"$REAL_SCAN" --check >/dev/null 2>&1
-rc=$?
-assert_eq "15. real hooks/secret-scan.sh --check" "0" "$rc"
+# Exit 1 is the NORMAL, healthy result and every caller keys off it. Treating it
+# as failure would abort on every clean commit.
+check "stdin, no match, is exactly 1" "1" \
+  "$(rc_of sh -c "printf 'nothing of interest\n' | '$SCANNER'")"
 
-# --- Case 16: REQUIRED RULES. The minimum-25 floor counts lines, so duplicating one
-#     rule 25 times would satisfy it while every real vendor format quietly vanished.
-#     These anchors pin the coverage itself. Fixed-string match: the anchors are
-#     fragments of the rules, not regexes to run.
+printf 'zzrule19999\n' > "$BOX/hit.txt"
+check "--files, a match" "0" "$(rc_of "$SCANNER" --files "$BOX/hit.txt")"
+check "--files output carries file:line:" "$BOX/hit.txt:1:zzrule19999" \
+  "$("$SCANNER" --files "$BOX/hit.txt")"
+
+printf 'clean one\n' > "$BOX/clean1.txt"
+printf 'clean two\n' > "$BOX/clean2.txt"
+check "--files over two clean files" "1" "$(rc_of "$SCANNER" --files "$BOX/clean1.txt" "$BOX/clean2.txt")"
+
+printf 'zzrule19999\n' > "$BOX/has space.txt"
+check "--files with a path containing a space" "0" "$(rc_of "$SCANNER" --files "$BOX/has space.txt")"
+
+check "--files with no path at all is refused" "2" "$(rc_of "$SCANNER" --files)"
+
+# ── --infra selects the OTHER rule set, with its own floor ──────────────────
+write_infra_rules 5
+check "--infra, 5 rules, one under its floor of 6" "2" "$(rc_of "$SCANNER" --infra --check)"
+
+write_infra_rules 6
+printf 'zzliteralnometachar\n' >> "$INFRA_RULES"
+check "--infra applies the bare-literal lint too" "2" "$(rc_of "$SCANNER" --infra --check)"
+
+write_infra_rules 6
+printf '%s\n' 'zzboundary[0-9]{3}\b' >> "$INFRA_RULES"
+check "--infra applies the word-boundary ban too" "2" "$(rc_of "$SCANNER" --infra --check)"
+
+write_infra_rules 6
+check "--infra stdin, a match" "0" "$(rc_of sh -c "printf 'zzinfra19999\n' | '$SCANNER' --infra")"
+check "--infra stdin, no match, is exactly 1" "1" \
+  "$(rc_of sh -c "printf 'nothing of interest\n' | '$SCANNER' --infra")"
+
+# The two sets must not bleed into each other, or the per-file floors mean
+# nothing and one set could be gutted inside the other's slack.
+write_cred_rules 25
+write_infra_rules 6
+check "--infra ignores the credential rule set" "1" \
+  "$(rc_of sh -c "printf 'zzrule19999\n' | '$SCANNER' --infra")"
+check "the default mode ignores the infra rule set" "1" \
+  "$(rc_of sh -c "printf 'zzinfra19999\n' | '$SCANNER'")"
+
+# ── the REAL install ────────────────────────────────────────────────────────
+check "the shipped credential rules load, lint and compile" "0" "$(rc_of "$REAL_SCANNER" --check)"
+check "the shipped infra rules load, lint and compile" "0" "$(rc_of "$REAL_SCANNER" --infra --check)"
+
+# Coverage, pinned by anchor. Losing any one of these means a whole vendor format
+# stopped being caught while the rule count stayed respectable.
 missing=""
 while IFS= read -r anchor; do
   [ -z "$anchor" ] && continue
-  grep -qF -- "$anchor" "$REAL_RULES" || missing="$missing [$anchor]"
+  grep -qF -- "$anchor" "$REAL_CRED_RULES" || missing="$missing [$anchor]"
 done <<'ANCHORS'
 AKIA
 sk-ant-
@@ -198,75 +210,35 @@ password
 passwd
 apikey
 ANCHORS
-assert_eq "16. required rules present" "" "$missing"
+check "every pinned credential format is still present" "" "$missing"
 
-# The token-prefix rule may be written per-vendor or as one character class.
-if grep -qF -- 'gh[opsru]' "$REAL_RULES" || grep -qF -- 'ghp' "$REAL_RULES"; then
-  rc=0
-else
-  rc=1
-fi
-assert_eq "16. git host token prefix rule present" "0" "$rc"
+# The git-host token prefix may be written per-vendor or as one character class.
+if grep -qF -- 'gh[opsru]' "$REAL_CRED_RULES" || grep -qF -- 'ghp' "$REAL_CRED_RULES"; then rc=0; else rc=1; fi
+check "the git-host token prefix rule is still present" "0" "$rc"
 
-n_real="$(grep -cvE '^[[:space:]]*#|^[[:space:]]*$' "$REAL_RULES")"
-assert_eq "16. real rule count" "26" "$n_real"
+missing=""
+while IFS= read -r anchor; do
+  [ -z "$anchor" ] && continue
+  grep -qF -- "$anchor" "$REAL_INFRA_RULES" || missing="$missing [$anchor]"
+done <<'ANCHORS'
+192\.168\.
+10\.
+172\.
+100\.
+internal
+corp
+lan
+home
+local
+ANCHORS
+check "every pinned infra shape is still present" "" "$missing"
 
-# --- Cases 17-23: --infra, the SECOND rule set. Same executable, same lints, same exit
-#     codes — a different file and a different floor (6, its real rule count; the infra
-#     set is closed, so losing one rule is a regression, not routine growth).
-#     Every lint below is proved to apply to whichever file is loaded, not just the
-#     credential one: that is the whole reason the two sets could be consolidated.
-
-# --- Case 17: 5 infra rules, one under the floor -> refuse to scan gutted ---
-mkinfrarules 5
-"$SCAN" --infra --check >/dev/null 2>&1
-rc=$?
-assert_eq "17. --infra 5 rules (below minimum 6)" "2" "$rc"
-
-# --- Case 18: a rule with no metacharacter is a pasted value, not a rule ---
-mkinfrarules 6
-printf 'zzliteralnometachar\n' >> "$INFRA_RULES"
-"$SCAN" --infra --check >/dev/null 2>&1
-rc=$?
-assert_eq "18. --infra bare literal rule (LINT 1)" "2" "$rc"
-
-# --- Case 19: the word-boundary escape is banned here too. It is the exact
-#     metacharacter that made this scan blind under git grep on macOS, which is why
-#     the character-class form is the one that survived into the rule file. ---
-mkinfrarules 6
-printf '%s\n' 'zzwordboundary[0-9]{3}\b' >> "$INFRA_RULES"
-"$SCAN" --infra --check >/dev/null 2>&1
-rc=$?
-assert_eq "19. --infra word-boundary escape (LINT 2)" "2" "$rc"
-
-# --- Case 20: stdin match -> 0, and the matching line is passed through ---
-mkinfrarules 6
-out="$(printf 'zzinfra19999\n' | "$SCAN" --infra)"
-rc=$?
-assert_eq "20. --infra stdin match exit code" "0" "$rc"
-assert_eq "20. --infra stdin match passes the line through" "zzinfra19999" "$out"
-
-# --- Case 21: stdin, no match -> EXACTLY 1, the healthy result pre-commit keys off ---
-printf 'nothing of interest here\n' | "$SCAN" --infra >/dev/null
-rc=$?
-assert_eq "21. --infra stdin no-match is exit 1, not failure" "1" "$rc"
-
-# --- Case 22: the two rule sets do not bleed into each other. A credential-shaped
-#     value must NOT be caught by --infra, or the per-file floors mean nothing. ---
-mkrules 25
-mkinfrarules 6
-printf 'zzrule19999\n' | "$SCAN" --infra >/dev/null
-rc=$?
-assert_eq "22. --infra ignores the credential rule set" "1" "$rc"
-
-# --- Case 23: REAL INSTALL. The only case that proves the shipped infra rules load,
-#     lint and compile — and that the shipped set has not quietly shrunk. ---
-"$REAL_SCAN" --infra --check >/dev/null 2>&1
-rc=$?
-assert_eq "23. real hooks/infra-patterns.txt --infra --check" "0" "$rc"
-
-n_infra="$(grep -cvE '^[[:space:]]*#|^[[:space:]]*$' "$REAL_INFRA")"
-assert_eq "23. real infra rule count" "6" "$n_infra"
+# The counts are asserted so that ADDING a rule is a deliberate act: a new vendor
+# format should update this number and say so, not slip in unremarked.
+check "the shipped credential rule count" "26" \
+  "$(grep -cvE '^[[:space:]]*#|^[[:space:]]*$' "$REAL_CRED_RULES")"
+check "the shipped infra rule count" "6" \
+  "$(grep -cvE '^[[:space:]]*#|^[[:space:]]*$' "$REAL_INFRA_RULES")"
 
 printf '\n%-6s  %s\n' RESULT CASE
 for r in "${results[@]}"; do printf '%-6s  %s\n' "${r%%|*}" "${r#*|}"; done

@@ -115,7 +115,7 @@ number to trust if these two ever disagree.
 rather than parsing shell quoting. A false block costs one retype; a false allow costs the
 machine.
 
-## Nothing was carried over, except the guards
+## Nothing was carried over
 
 **2026-08-21, the owner's decision.** A previous rebuild copied 12,053 lines forward
 unchanged. The owner named that as the reason it failed to be a rebuild.
@@ -123,28 +123,99 @@ unchanged. The owner named that as the reason it failed to be a rebuild.
 **Consequence:** every rule, doc and skill here was written from a blank page. Names and
 measured evidence crossed over; no text did.
 
-The consequence covers instruction-bearing prose: anything a session reads and follows.
-`hooks/` is the sole exception, and it is an exception to the blank-page requirement only.
-Everything else in this file still applies to a hook, its comments included.
+### The exemption this section used to claim, and why it was wrong
 
-**Measured 2026-08-21**, diffing the whole `hooks/` subtree against the pre-rebuild tree at
-`~/.claude-old-2026-08-05`. Fifteen files are byte-identical, four are edited rather than
-rewritten, and nine were written here:
+**This heading read "Nothing was carried over, except the guards" until 2026-08-22, and the
+section below it said `hooks/` was "the sole exception".** Both were false, and the second
+was false in a way that mattered: it named a boundary narrower than the one actually in
+force, so anyone reading it would conclude that everything outside `hooks/` had been
+rewritten. Measured on 2026-08-22 against the pre-rebuild tree still on disk at
+`~/.claude-old-2026-08-05`, by counting identical non-blank lines shared with each file's
+old counterpart:
 
-| Where | Byte-identical | Edited | Written here |
-|---|---|---|---|
-| `hooks/` | 8 | 3 | 5 |
-| `hooks/tests/` | 7 | 1 | 4 |
+| File | Old lines still present | In `hooks/`? |
+|---|---|---|
+| `hooks/statusline.sh` | 86% | yes |
+| `hooks/secret-scan.sh` | 79% | yes |
+| `agents/*.md` | 78% | **no** |
+| `hooks/pre-commit` | 74% | yes |
+| `settings.example.json` | 69% | **no** |
+| `.gitignore` | 69% | **no** |
+| `hooks/node-shim.sh` | 63% | yes |
+| `hooks/config-protection.js` | 57% | yes |
+| `verify.sh` | 51% | **no** |
+| `.github/workflows/ci.yml` | 40% | **no** |
+| `setup.sh` | 34% | **no** |
+| `verify-selftest.sh` | 29% | **no** |
 
-Two different reasons, and only the first is about tests:
+Fifteen further files were byte-identical, including five test files and both pattern files.
+Against that, the prose the rebuild claimed to have rewritten measured 0% to 6%: `CLAUDE.md`
+and `docs/TESTING.md` share no line at all with their predecessors, and the six skills share
+between 2% and 6%.
 
-**Six carry a test that has been watched failing**, so rewriting them from a blank page would
-discard the failure each was proven to catch: `format-typecheck.js`,
-`literal-mode-tracker.js`, `secret-scan.sh`, `config-protection.js`, `node-shim.sh`,
-`pre-commit`. The pattern files `secret-patterns.txt` and `infra-patterns.txt` are data those
-tests read, exercised through `secret-scan.test.sh` and the two probe fixtures beside it.
+So the rebuild did exactly what it said for the half a reader looks at, and left the half a
+reader trusts. The cost was not theoretical. Every stale `skills/health` reference found and
+deleted on 2026-08-21 and 2026-08-22 was already sitting in that old tree, in three carried
+files: `verify.sh`, `hooks/pre-commit`, `hooks/secret-scan.sh`.
 
-**Three carry no test of any kind:** `statusline.sh`, `literal-statusline.sh`, and the
-25-byte `package.json` that marks the directory as CommonJS. They were kept because they were
-working and nothing asked them to change, which is a weaker reason than the one above and is
-recorded here as such rather than borrowed from it.
+### The machinery rebuild, 2026-08-22
+
+**The owner asked for the start-over to be real, and it was done.** Every file in the table
+above was rewritten from a blank page, along with the five carried test files and the
+deny-list template. The two borrowed agent definitions were deleted rather than rewritten:
+nothing tracked referenced them except SHIP.md's own staging list.
+
+**Order, because the order is the only thing that made it checkable.** A rewritten
+implementation judged by its own rewritten test proves nothing: both are new, and they agree
+with each other by construction. So nothing was ever rewritten alongside its own referee.
+
+| Step | Rewritten | Judged by |
+|---|---|---|
+| 1 | the nine hooks | their existing test suites, untouched |
+| 2 | `verify.sh` | the FROZEN old `verify-selftest.sh`, 24 of 24 sabotages |
+| 3 | `verify-selftest.sh` | the `verify.sh` those 24 cases had just certified |
+| 4 | the five test suites | the hooks rewritten in step 1 |
+
+The suites grew doing it: 59 node tests to 81, and the shell suites gained cases for symlink
+handling, profile isolation, safeword false positives, and a scanner that cannot run.
+
+**What was deliberately NOT re-derived, with its measured overlap, because a rebuild that
+hides its own exceptions is the mistake this section exists to correct.** Every file below is
+DATA, where the content is the configuration rather than a description of it, so re-typing it
+from memory changes behaviour without improving anything:
+
+| File | Still shared | Why it keeps its values |
+|---|---|---|
+| `LICENSE` | 100% | MIT terms. Authorship is not the point of a licence |
+| `hooks/package.json` | 100% | 25 bytes, marking the directory CommonJS |
+| `hooks/tests/infra-scan-probe.sha256` | 100% | hashes of the two fixtures |
+| `hooks/tests/infra-scan-probe.txt` | 93% | the planted values the scan MUST catch |
+| `hooks/secret-patterns.txt` | 92% | the shape of a leaked vendor key |
+| `hooks/tests/infra-scan-clean.txt` | 91% | the near-misses it must NOT catch |
+| `hooks/infra-patterns.txt` | 87% | the shape of a private LAN address |
+| `settings.example.json` | 69% | the permission list IS the setting |
+| `.gitignore` | 55% | the ignore patterns ARE the rules |
+
+The pattern files and fixtures are threat data. Re-typing them risks silently dropping a class
+the scanner used to catch, which is worse than sharing lines with an old file, and
+`secret-scan.test.sh` pins that coverage by anchor so a quiet loss goes red. What WAS rewritten
+in all nine is the surrounding text: every header, every comment, every rationale. The two
+config files were re-decided entry by entry rather than copied; `settings.example.json` lost
+its pinned model in the process, and `.gitignore` was reorganised with each retained-but-quiet
+rule marked LEGACY and named.
+
+Everything else measures between 0% and 38%, and the highest of those are the block messages
+the tests assert on, the guarded-config list, and the hook wiring strings: contract, not
+carried prose.
+
+**Two defects the rebuild produced and the machinery caught**, both worth recording because
+both were caught by running something rather than by reading it:
+
+- The first draft of `.gitignore` annotated eleven retained rules with trailing comments.
+  git supports no such thing: only a line STARTING with `#` is a comment, so all eleven
+  became literal patterns matching nothing, and a `git add -A` staged private mockups
+  carrying a real LAN address. `hooks/pre-commit` refused the commit and named the value.
+- The first draft of `verify-selftest.sh` wrote its sabotage filenames as literals, making
+  the file that tests the dangling-reference row a source of dangling references itself. The
+  names are now assembled at run time, and the file needs no exemption markers at all, where
+  the version before it had needed four.
