@@ -58,6 +58,46 @@ jobs:
         if: runner.os == 'macOS'
         run: brew install shellcheck
 
+      # vale is the prose linter behind the "vale prose lint" row. Same reasoning
+      # as shellcheck above: absent, the row records WARN and WARN never fails a
+      # build, so the check would be quietly missing on whichever runner lacks it.
+      #
+      # NOT `brew install vale` ON UBUNTU. Homebrew IS on the ubuntu-latest image
+      # (Ubuntu2404-Readme.md, checked 2026-08-22: "Homebrew 6.0.17", location
+      # /home/linuxbrew) but that same note says "Homebrew is pre-installed on
+      # image but not added to PATH", so the bare command fails. The official
+      # release tarball is one static Go binary, needs no shellenv eval, and
+      # pins the version, so both runners are testing the same vale.
+      - name: Install vale (macOS)
+        if: runner.os == 'macOS'
+        run: brew install vale
+
+      - name: Install vale (Linux, official release tarball)
+        if: runner.os == 'Linux'
+        env:
+          VALE_VERSION: 3.18.0
+        run: |
+          set -euo pipefail
+          curl -fsSL -o /tmp/vale.tar.gz \
+            "https://github.com/vale-cli/vale/releases/download/v${VALE_VERSION}/vale_${VALE_VERSION}_Linux_64-bit.tar.gz"
+          sudo tar -xzf /tmp/vale.tar.gz -C /usr/local/bin vale
+          vale --version
+
+      # jscpd is the copied-block half of the "dupe-check self-scan" row. Absent,
+      # that row still passes, saying "repeated names only — jscpd absent": a true
+      # label on a half-run check, and CI is the one place the other half has to
+      # run. Both runners have node, so one npm install covers them.
+      #
+      # UNPINNED, DELIBERATELY. hooks/external-check.sh reads the name out of every
+      # tracked install command and requires a matching row in hooks/externals.txt,
+      # which declares `jscpd`; `jscpd@5.0.16` is a different string and reddens the
+      # external-references row. INSTALL.md installs it unpinned for the same reason,
+      # and hooks/dupe-check.sh reads the reported clone COUNT rather than the exit
+      # status, so a minor version bump cannot silently change its verdict. Latest on
+      # 2026-08-22, from `npm view jscpd version`: 5.0.16.
+      - name: Install jscpd
+        run: npm install -g jscpd
+
       # GITHUB_TOKEN raises the API limit from 60 requests/hour per shared
       # runner IP to 1000 per repository. Without it the external-reference row
       # flaps red on a busy hour, and a check that reddens for reasons
@@ -91,6 +131,7 @@ jobs:
             "tracked-content scan" \
             "setup.sh bash-3.2 clean" \
             "shellcheck" \
+            "vale prose lint" \
             "external references" \
             "dangling references" \
             "README skills inventory"
@@ -115,8 +156,10 @@ jobs:
   # UBUNTU ONLY, DELIBERATELY. What the job above tests is platform-sensitive.
   # What THIS tests is whether a row is wired to its own failure, which is a
   # property of the wiring, not the runner. It re-runs the whole suite once per
-  # sabotage (measured 2026-08-21: ~43s a run), and macOS runners bill at ten
-  # times the rate for an assertion that does not vary by platform.
+  # sabotage (measured 2026-08-21: ~43s a run; 2026-08-22, after verify.sh began
+  # running its slow rows together: ~19s a run, 7m47s for the whole self-test
+  # on a Mac), and macOS runners bill at ten times the rate for an assertion
+  # that does not vary by platform.
   selftest:
     runs-on: ubuntu-latest
     # Well above the measured runtime and far below the 6h default: a self-test
@@ -135,6 +178,34 @@ jobs:
       # everything verify.sh needs. shellcheck is one of the rows it sabotages.
       - name: Install shellcheck
         run: sudo apt-get update && sudo apt-get install -y shellcheck
+
+      # Same tarball as the verify job's Linux leg, and for the same reason:
+      # Homebrew on this image is not on PATH. "vale prose lint" is one of the
+      # rows this job sabotages, and a sabotage of a row that WARNed because its
+      # tool is missing proves nothing at all.
+      #
+      # jscpd:ignore-start
+      # The seven lines below are byte-identical to the verify job's Linux leg,
+      # and the duplicate-scan row in verify.sh sees them. Two jobs in one
+      # workflow cannot share a step without a composite action, and one action
+      # file to hold seven lines of curl costs more to read than the copy does.
+      # Both copies pin the same VALE_VERSION, so they move together or not at
+      # all.
+      - name: Install vale
+        env:
+          VALE_VERSION: 3.18.0
+        run: |
+          set -euo pipefail
+          curl -fsSL -o /tmp/vale.tar.gz \
+            "https://github.com/vale-cli/vale/releases/download/v${VALE_VERSION}/vale_${VALE_VERSION}_Linux_64-bit.tar.gz"
+          sudo tar -xzf /tmp/vale.tar.gz -C /usr/local/bin vale
+          vale --version
+      # jscpd:ignore-end
+
+      # "dupe-check self-scan" is one of the rows this job sabotages, and its
+      # copied-block half needs jscpd. Same pin as the verify job.
+      - name: Install jscpd
+        run: npm install -g jscpd
 
       # ONE run, teed to a file. A second step that re-ran the script to
       # summarise it would cost another full pass for a tally the first run

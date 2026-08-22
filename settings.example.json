@@ -82,7 +82,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"$HOME/.claude/hooks/slop-block.sh\""
+            "command": "bash \"$HOME/.claude/hooks/slop-block.sh\"",
+            "timeout": 15
           }
         ]
       }
@@ -106,6 +107,18 @@
             "type": "command",
             "command": "bash \"$HOME/.claude/hooks/node-shim.sh\" \"$HOME/.claude/hooks/format-typecheck.js\"",
             "timeout": 90
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "matcher": "auto",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$HOME/.claude/hooks/precompact-handoff.sh\"",
+            "timeout": 10
           }
         ]
       }

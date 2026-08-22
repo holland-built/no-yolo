@@ -41,7 +41,9 @@ is wrong, and the walk up the tree starts again.
 
 Map the real call graph by grepping the callers. Read the function and the code that calls
 it. Reproduce with a failing test or a logged value, so you have an observed wrong output
-beside the expected one. Read the schema and the types.
+beside the expected one. Read the schema and the types. When the work talks to an MCP server,
+call that server's tools through `npx @modelcontextprotocol/inspector` first, so the
+reproduction runs against the tool surface the server really exposes.
 
 State it as **"function X produces Y because Z"**, with `file:line`.
 

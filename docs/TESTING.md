@@ -53,6 +53,10 @@ TODO. Go to the loop below.
 
 ## Diagnosing
 
+For a bug that resists the loop below, the `systematic-debugging` skill runs the same hunt as
+a gated sequence that holds you to a reproduction and an explanation before a fix. It is one
+of the optional installs in `INSTALL.md`; when it is absent, this section is the whole method.
+
 ### 1. Build the fastest reliable way to observe it
 
 Ranked by how tight the loop is:

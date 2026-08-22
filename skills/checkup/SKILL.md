@@ -47,7 +47,7 @@ bash "$CFG/hooks/external-check.sh" 2>&1
 one, so the word was read as a second path to scan and the command looked like it worked.
 
 Report each tool's own output. A tool that is unavailable, errors, or scans nothing reports
-"did not run, <reason>"; a clean result means it executed and found nothing. `external-check.sh`
+"did not run", followed by the reason; a clean result means it executed and found nothing. `external-check.sh`
 exits 3 for exactly that case, and 3 is not a pass.
 
 ## 3. Nothing said twice

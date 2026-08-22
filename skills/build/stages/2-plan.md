@@ -72,6 +72,15 @@ Approve this plan, or redirect?
 
 ## What launches the moment it is approved
 
+Four things, none of which reads anything a later stage produces:
+
+| Launch | Where it is read |
+|---|---|
+| Codex edge-case tests from the spec, below | End of stage 4 |
+| The Codex rival implementation, when `ui_change` is false and the plan names 3+ files or accepted a blocking finding. Command in `stages/5-build.md`. A UI rival waits for the stage 3 pick | Stage 5, after the build agents return |
+| The reuse search for every symbol the plan introduces (`stages/5-build.md`) | Stage 5 briefs |
+| Briefs for the backend plan steps (`stages/5-build.md`) | Stage 5 dispatch |
+
 Codex writes edge-case tests from the spec. It needs the behaviour list and the public
 interface signatures, never the implementation, so it can run now and be read at the end of
 stage 4.

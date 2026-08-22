@@ -1,0 +1,25 @@
+# docs/PROSE.md, "Vocabulary that reads as machine-written": treated as density,
+# not as a ban. One is nothing; three on a page is the signal.
+#
+# `occurrence` is what encodes density rather than a ban. An `existence` rule
+# would fire on the first word and contradict the standard it claims to
+# transcribe. max: 2 alerts on the third.
+#
+# SCOPE IS THE PARAGRAPH, NOT THE PAGE, and that is a real difference from
+# PROSE.md's wording. Measured 2026-08-22: `scope: document` returns nothing at
+# all on a file carrying four of these words, so occurrence does not implement
+# it; paragraph and text both count per paragraph. Paragraph is therefore the
+# tightest honest scope available. It fires on three in one paragraph and stays
+# quiet on three spread across a page, which makes it strictly narrower than the
+# per-file count in hooks/slop-block.sh rather than a second opinion that could
+# disagree with it. The hook keeps the page-wide count; this catches the cluster.
+#
+# The words PROSE.md keeps stay out: implement, robust, leverage, delve, utilize.
+extends: occurrence
+message: "%d machine-vocabulary words in one paragraph. Say the specific thing instead."
+level: warning
+link: docs/PROSE.md
+scope: paragraph
+ignorecase: true
+max: 2
+token: '\b(?:elevate|seamless|unleash|tapestry|testament|holistic|meticulous(?:ly)?|nuanced|myriad|embark|unlock|underscore|showcasing)\b'

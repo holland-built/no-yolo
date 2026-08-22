@@ -119,8 +119,9 @@ awk "$AWK_FENCE"'
 findings=""
 
 if [ "$balanced" = 0 ]; then
-  findings="${findings}A code fence is opened and never closed, so every rule below ran against
-the whole file rather than its prose. Close the fence.
+  findings="${findings}A code fence is opened and never closed, so every regex rule below ran
+against the whole file rather than its prose. Close the fence. (Vale, at the end,
+parses the file itself and is unaffected.)
 "
 fi
 
@@ -142,6 +143,44 @@ cta=$(grep -nEi 'feel free to (ask|reach)|let me know if you (need|have)|don.t h
 [ -n "$cta" ] && findings="${findings}Closing line with no next action. Name the action, or end:
 ${cta}
 "
+
+# ── Vale, the maintained second opinion ─────────────────────────────────────
+# The rules above are hand-kept regexes. Vale runs styles/NoYolo/*.yml, which
+# transcribe the rest of docs/PROSE.md, and it is a real Markdown parser rather
+# than a fence-stripping awk script.
+#
+# ABSENT MEANS SILENT. No vale on PATH, or no .vale.ini, and this block does
+# nothing and says nothing. A hook that warns about a missing optional tool on
+# every single edit is a hook people turn off, and everything above still runs.
+#
+# THE ORIGINAL FILE, NEVER $PROSE. Vale drops fenced blocks and inline code
+# spans itself. Handing it the stripped copy would filter twice, and the copy's
+# blanked lines would push its column numbers off the real text.
+#
+# 2>&1 ON PURPOSE. Vale exits 0 whether it found warnings or nothing at all, and
+# writes a parse failure (E201 on malformed YAML frontmatter, say) to stderr with
+# exit 2. Both are worth reporting, so the two streams are merged.
+#
+# BUT A BROKEN VALE MUST NOT BLOCK THE EDIT. Exit 2 covers the file's own fault
+# (bad frontmatter) AND vale's (a StylesPath that is not there, a rule file that
+# will not parse). The second kind is true of every file, so blocking on it turns
+# one bad config into a hook that refuses every markdown write until somebody
+# notices. `--output line` prints findings as `<path>:<line>:<col>:...`, so the
+# path being absent from the output is what separates the tool's fault from the
+# file's: that case is reported on stderr and left out of `findings`.
+VALE_INI="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/.vale.ini"
+if command -v vale >/dev/null 2>&1 && [ -f "$VALE_INI" ]; then
+  vale_out=$(vale --config "$VALE_INI" --output line --no-wrap "$f" 2>&1)
+  vale_rc=$?
+  if [ "$vale_rc" -ge 2 ] && ! printf '%s' "$vale_out" | grep -qF "$f"; then
+    printf 'slop-block: vale could not run (exit %s), so its half was not checked:\n%s\n' \
+      "$vale_rc" "$vale_out" >&2
+  elif [ -n "$vale_out" ]; then
+    findings="${findings}Vale:
+${vale_out}
+"
+  fi
+fi
 
 if [ -n "$findings" ]; then
   printf 'Writing check on %s\n\n%s\nRules: docs/PROSE.md\n' "$f" "$findings" >&2

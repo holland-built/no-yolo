@@ -1,0 +1,14 @@
+# docs/PROSE.md, "Punctuation": sentences end with a full stop, a comma, a colon,
+# parentheses, or a rewrite.
+#
+# The character is written here as an escape rather than as itself, because this
+# file is tracked and the rule would otherwise match its own source. Vale's
+# Markdown parser already drops fenced blocks and inline code spans, so a
+# specimen inside backticks never reaches this rule.
+extends: existence
+message: "Long dash in prose. Use a full stop, a comma, or a colon."
+level: warning
+link: docs/PROSE.md
+nonword: true
+raw:
+  - '\x{2014}'

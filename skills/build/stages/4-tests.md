@@ -14,7 +14,14 @@ implementation in a stage that has none.
 **Agree the seam before the test.** Name where you will test (the public function, the HTTP
 boundary, the database adapter) and what you will fake. Get a yes on that. Tests are the
 hardest part of a diff to relocate later, so their level is the owner's call, and their
-answer wins.
+answer wins. When the `codebase-design` skill is installed, put the question in its
+seam-and-adapter vocabulary; absent it, name the place and the fake in plain words.
+
+When stage 3 runs, draft the seam question while the mockups are being judged, and put it to
+the owner in the same turn as the variant gate when the seam does not turn on which variant
+wins (a function or HTTP boundary usually does not; a browser assertion on a layout does).
+Two gates asked one after the other cost the owner two waits for one decision's worth of
+input. The first failing test is written after the answer, beside the sourcing table.
 
 Then write one test for the first behaviour in the plan, run it, and read the failure. It
 goes red because the behaviour is absent, not because of an import error, a typo, or a stale

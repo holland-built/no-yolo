@@ -156,6 +156,42 @@ printf '\nzz_selftest_unused=1\n' >> hooks/statusline.sh
 expect_red "shellcheck" "a shellcheck warning turns the lint row red"
 put_back hooks/statusline.sh
 
+# ── duplicate work ──────────────────────────────────────────────────────────
+# Two new files under hooks/, untracked and so read whole by the gate, carrying
+# one identical block. The repeated FUNCTION NAME is what makes the row fire
+# with git alone, so this case proves the row on a machine with no jscpd too;
+# where jscpd is installed the copied block is reported beside it. Paths are
+# assembled at run time for the same reason as the ghosts above.
+DUPE_A="hooks/zz-$(printf 'selftest')-dupe-a.sh"
+DUPE_B="hooks/zz-$(printf 'selftest')-dupe-b.sh"
+for dupe_f in "$DUPE_A" "$DUPE_B"; do
+  cat > "$dupe_f" <<'SH'
+#!/usr/bin/env bash
+zz_selftest_dupe_fn() {
+  local running=0 step=0
+  for step in 1 2 3 4 5 6 7 8; do
+    running=$((running + step * 3))
+    printf 'step %s of %s, running total %s\n' "$step" 8 "$running"
+  done
+  return 0
+}
+SH
+  save_new "$dupe_f"
+done
+expect_red "dupe-check self-scan" "a block copied into two new files turns the duplicate row red"
+rm -f "$DUPE_A" "$DUPE_B"
+
+# A tell only VALE catches, never the regexes in hooks/slop-block.sh: the hook
+# carries the long dash and the vocabulary count, and this is docs/PROSE.md's
+# "Say the fact, not the adjective". Picking a tell both checks know would leave
+# the row red either way and prove nothing about vale. Written as a plain
+# sentence rather than a table row, because styles/NoYolo/Adjective.yml is
+# scoped ~table so that PROSE.md's own specimen table stays clean.
+save docs/TESTING.md
+printf '\nThis test runner is production-ready.\n' >> docs/TESTING.md
+expect_red "vale prose lint" "an unmeasured adjective in a tracked .md turns the prose row red"
+put_back docs/TESTING.md
+
 save settings.example.json
 printf '{ this is not json' > settings.example.json
 expect_red "settings.example.json parses" "malformed JSON turns the template row red"

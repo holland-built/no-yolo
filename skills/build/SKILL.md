@@ -80,14 +80,24 @@ Read one file when its stage begins. Skip the files for stages this size does no
 
 ## What starts early
 
-Three things are launched before the stage that consumes them, because none reads the
-previous stage's output:
+Each of these is launched before the stage that consumes it, because none reads the previous
+stage's output. The Wait Test in `docs/AGENTS.md` is what put them here:
 
 | Launch at | What | Read at |
 |---|---|---|
 | Plan approved | Codex writes edge-case tests from the spec | End of stage 4 |
+| Plan approved, `ui_change` false | Codex authors a rival implementation, when 3+ files are touched. It reads the plan and nothing later. A UI rival needs the chosen variant, so it launches at the stage 3 pick instead | Stage 5, after the build agents return |
+| Plan approved | The reuse search for the symbols the plan names. Symbols that turn up later, from the variant or from an agent, get the same search the moment they are proposed | Stage 5, when the briefs are written |
+| Plan approved | Briefs for backend plan steps. UI briefs wait for the chosen variant | Stage 5 dispatch |
 | Before the Opus mockup call | Codex authors the slot `rules/mockups.md` assigns it | Stage 3 judging |
-| Start of stage 5 | Codex authors a rival implementation, when 3+ files are touched | End of stage 5 |
+| Stage 3 judging | Drafting stage 4's seam question, asked at the variant gate in the same turn when the seam does not depend on the variant | Stage 4 |
+
+`stages/2-plan.md` carries the approval-time launches as procedure, since that is the file
+open when approval lands.
+
+Two things that look parallel and are not: the standards and spec reviews wait for a green
+suite, because the fix loop rewrites the diff they would read; and stage 6's "Lock it" stashes
+the fix, so it runs after the checks that read the tree, never beside them.
 
 ## Long sessions
 

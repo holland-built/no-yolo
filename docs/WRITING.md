@@ -5,6 +5,11 @@ Read before creating or editing a skill, `CLAUDE.md`, or any rules doc.
 Adapted from `mattpocock/skills` → `writing-for-agents`. The vocabulary below is theirs; the
 examples are from this setup.
 
+For the full treatment, the `writing-for-agents` skill carries that vocabulary at length, and
+its `SKILL-MECHANICS.md` covers frontmatter, invocation choice, and router skills, which this
+file does not. It installs from `mattpocock/skills`; when it is absent, this file is the whole
+standard.
+
 ## The two budgets
 
 Every line you add spends one of two things:
@@ -28,6 +33,11 @@ Three rungs, ranked by how immediately the agent needs the material:
 **The branching test decides the rung.** Inline what every run needs. Push behind a pointer
 what only some runs reach.
 
+**Co-location** decides what sits beside a piece once its rung is settled. A concept's
+definition, its rules, and its caveats belong under one heading, so reading one part brings
+its neighbours along. Scattering a single meaning across a file is its own fault, distinct
+from stating that meaning twice.
+
 **Sprawl** is the failure here: a file so long that attention thins across it, even when
 every line is live. The cure is the ladder, not tighter prose.
 
@@ -47,6 +57,8 @@ Two properties make the ending line work:
 - **Clarity.** Can the agent tell done from not-done? "Understanding reached" cannot be
   checked, so the agent stops early and moves on. Sharpen the wording first. Split the
   sequence only when the wording is genuinely unsharpen-able and you have watched it rush.
+  A split earns its cost across a real context boundary, a handoff or a subagent dispatch;
+  an inline call leaves the later steps sitting in context and hides nothing.
 - **Demand.** How much the wording asks for. "Every changed file accounted for" produces
   digging that "produce a change list" does not.
 
@@ -58,6 +70,10 @@ A leading word is a compact idea already in the model's training that anchors a 
 of behaviour in one token. Used as a token, repeated, never re-explained: *red*, *surgical*,
 *tracer bullet*. A word you coin yourself recruits nothing, so you pay in definitions what a
 known word gives free. Reach for the existing word.
+
+A leading word anchors twice. In the body it steers execution; in a pointer it steers
+invocation, so a word that already lives in the prompts, the docs, and the code brings the
+agent to the material more often than a word used in one place alone.
 
 Hunt for passages that collapse into one: a three-part phrase spelled out at three sites, a
 pointer spending a sentence to gesture at one idea.

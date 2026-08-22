@@ -33,22 +33,107 @@ pass() { rows+=("PASS|$1"); }
 red()  { rows+=("FAIL|$1"); fail=1; }
 warn() { rows+=("WARN|$1"); }   # never sets fail; CI asserts which rows may use it
 
+# ── the slow rows start now, together ───────────────────────────────────────
+# Six of the rows below shell out to something that takes seconds and reads
+# the tree without writing to it: the node suites, each shell suite, shellcheck,
+# the registry check, and the two tracked-content scans. None uses another's
+# result, so they run as background jobs from here and each row below WAITS for
+# its own job where it used to run it. Measured 2026-08-22 before this change:
+# 44s wall at 37% CPU, 34s of it the suites alone, run one after another; and
+# verify-selftest.sh runs this whole file once per sabotage.
+#
+# The rows themselves are unchanged: same labels, same order in the table, same
+# fail-closed reading of exit status. Each job writes its exit status to its own
+# file under $JOBS; a status file that never appears reads as "the job could not
+# run", which is a failure, not a pass. Logs keep their /tmp names because the
+# labels cite them.
+#
+# What does NOT run here: the probe loops and the reference sweep, which are
+# shell loops in this process and cheap; and anything that mutates the tree,
+# which is nothing in this file. The one known collision is with
+# verify-selftest.sh, which sabotages files while a verify.sh run reads them,
+# and that pair stays serial, as it always has.
+JOBS="$(mktemp -d)"
+trap 'rm -rf "$JOBS"' EXIT
+job() {  # $1 name, rest: the command. Status lands in $JOBS/<name>.rc
+  local name="$1"; shift
+  ( "$@"; echo "$?" > "$JOBS/$name.rc" ) &
+}
+# $1 name -> its exit status, or 99 when the job never reported one. A file that
+# is absent, EMPTY, or holds anything but digits all read as 99: a writer killed
+# mid-write leaves a zero-byte .rc, and an empty string fails every numeric test
+# below, which in the tracked-content row falls through to its PASS branch. That
+# is rule 1's exact shape, so the value is validated here rather than at each
+# reader.
+job_rc() {
+  local v=""
+  [ -f "$JOBS/$1.rc" ] && v="$(cat "$JOBS/$1.rc" 2>/dev/null)"
+  case "$v" in
+    ''|*[!0-9]*) echo 99 ;;
+    *) echo "$v" ;;
+  esac
+}
+
+job node bash -c 'node --test "hooks/tests/*.test.js" >/tmp/verify-node.log 2>&1'
+
+shopt -s nullglob
+sh_suites=(hooks/tests/*.test.sh)
+shopt -u nullglob
+for suite in "${sh_suites[@]}"; do
+  # One log per suite, concatenated into the cited /tmp/verify-sh.log once all
+  # have returned, so interleaved output never hides which suite said what.
+  job "sh-$(basename "$suite")" bash -c 'bash "$1" >"$2" 2>&1' _ "$suite" "$JOBS/$(basename "$suite").log"
+done
+
+if command -v shellcheck >/dev/null 2>&1; then
+  job shellcheck bash -c 'git ls-files "*.sh" | xargs shellcheck -S warning >/tmp/verify-shellcheck.log 2>&1'
+fi
+
+job external bash -c '"$1" >/tmp/verify-external.log 2>&1' _ "$ROOT/hooks/external-check.sh"
+
+# The duplicate-work gate, pointed at this repo's own uncommitted work. HEAD is
+# resolved here rather than inside the job so a row cannot silently scan a
+# different tree from the one the other rows read.
+DUPE_HEAD="$(git rev-parse HEAD 2>/dev/null || echo '')"
+if [ -n "$DUPE_HEAD" ]; then
+  job dupe bash -c '"$1" --since "$2" >/tmp/verify-dupe.log 2>&1' _ "$ROOT/hooks/dupe-check.sh" "$DUPE_HEAD"
+fi
+
+# Files excluded from the content scan, and ONLY files that legitimately
+# contain the shapes it hunts: the two pinned fixtures, the two rule files (a
+# file of leak regexes matches its own rules on every line), the deny-list
+# template, this file, and the hook. Mirrors hooks/pre-commit's list; change
+# one, change the other.
+SCAN_EXCLUDE=(
+  ':!hooks/pre-commit' ':!verify.sh' ':!.no-yolo-deny.example.txt'
+  ':!hooks/secret-patterns.txt' ':!hooks/infra-patterns.txt'
+  ':!hooks/tests/infra-scan-probe.txt' ':!hooks/tests/infra-scan-clean.txt'
+)
+# A NUL-safe read loop, never xargs: xargs exits 123 when its child exits
+# 1..125, so "found nothing" (grep 1) and "the scanner blew up" (grep 2) both
+# arrive as 123, which is a fail-open wearing a disguise.
+scan_files=()
+while IFS= read -r -d '' f; do scan_files+=("$f"); done < <(git ls-files -z -- . "${SCAN_EXCLUDE[@]}")
+if [ "${#scan_files[@]}" -gt 0 ]; then
+  job scan-infra bash -c '"$1" --infra --files "${@:2}" >/tmp/verify-scan.log 2>&1' _ "$ROOT/hooks/secret-scan.sh" "${scan_files[@]}"
+  job scan-cred  bash -c '"$1" --files "${@:2}" >/tmp/verify-scan-cred.log 2>&1' _ "$ROOT/hooks/secret-scan.sh" "${scan_files[@]}"
+fi
+
 # ── the hook suites ─────────────────────────────────────────────────────────
 # Two globs, because check 1's is *.test.js only. When the shell suites were
 # added, nothing ran them for weeks: the JS runner silently matched none.
-if node --test 'hooks/tests/*.test.js' >/tmp/verify-node.log 2>&1; then
+wait
+if [ "$(job_rc node)" -eq 0 ]; then
   pass "hook unit tests"
 else
   red "hook unit tests (see /tmp/verify-node.log)"
 fi
 
-shopt -s nullglob
-sh_suites=(hooks/tests/*.test.sh)
-shopt -u nullglob
 sh_ok=1
 : > /tmp/verify-sh.log
 for suite in "${sh_suites[@]}"; do
-  bash "$suite" >>/tmp/verify-sh.log 2>&1 || { echo "FAILED: $suite"; sh_ok=0; }
+  cat "$JOBS/$(basename "$suite").log" >>/tmp/verify-sh.log 2>/dev/null
+  [ "$(job_rc "sh-$(basename "$suite")")" -eq 0 ] || { echo "FAILED: $suite"; sh_ok=0; }
 done
 if [ "${#sh_suites[@]}" -eq 0 ]; then
   red "hook shell tests — none found, which is an empty result and not a clean one"
@@ -105,13 +190,95 @@ fi
 # every push, found real things, and could not fail the build. Nobody read it.
 # Style/info notes stay out: SC2015, SC2016 and SC2013 are deliberate here.
 if command -v shellcheck >/dev/null 2>&1; then
-  if git ls-files '*.sh' | xargs shellcheck -S warning >/tmp/verify-shellcheck.log 2>&1; then
+  if [ "$(job_rc shellcheck)" -eq 0 ]; then
     pass "shellcheck"
   else
     red "shellcheck findings (see /tmp/verify-shellcheck.log)"
   fi
 else
   warn "shellcheck not installed — skipped (CI has it; brew install shellcheck, or apt install shellcheck)"
+fi
+
+# ── duplicate work ──────────────────────────────────────────────────────────
+# hooks/dupe-check.sh over everything this tree has changed since HEAD, tracked
+# and untracked alike: the gate skills/build/stages/5-build.md runs during a
+# build, turned on the repo that ships it.
+#
+# TWO PASSES, TWO FATES, and the row reads them apart. Copied blocks need jscpd;
+# repeated names need git alone. So exit 3 never means "jscpd is missing" — the
+# script prints "jscpd: did not run" and finishes the name pass, which is a real
+# result and passes as one, with the label saying which half ran. Exit 3 is the
+# invocation failing (a ref that is no commit, no repository), and that is red.
+#
+# ZERO FILES IS A REAL ANSWER HERE, not the empty result rule 2 hunts. A fresh
+# checkout has changed nothing since HEAD, so CI's count is 0 every time and the
+# row prints that count rather than claiming a scan it never did.
+#
+# The count is computed here from the same two git commands dupe-check.sh's
+# collect_since uses. It is a second reading of one fact, kept because a row
+# that cannot say how much it examined is the shape rule 2 exists to stop.
+if [ -z "$DUPE_HEAD" ]; then
+  red "dupe-check self-scan — git rev-parse HEAD failed, so nothing was scanned"
+else
+  dupe_n="$( { git diff --name-only --diff-filter=ACMRT "$DUPE_HEAD" --; \
+               git ls-files --others --exclude-standard; } 2>/dev/null | grep -c . )"
+  dupe_rc="$(job_rc dupe)"
+  if [ "$dupe_rc" -eq 0 ]; then
+    if grep -q 'jscpd: did not run' /tmp/verify-dupe.log 2>/dev/null; then
+      pass "dupe-check self-scan ($dupe_n files changed since HEAD, repeated names only — jscpd absent)"
+    else
+      pass "dupe-check self-scan ($dupe_n files changed since HEAD, no copied block or repeated name)"
+    fi
+  elif [ "$dupe_rc" -eq 1 ]; then
+    sed 's/^/    /' /tmp/verify-dupe.log 2>/dev/null
+    red "dupe-check self-scan — a copied block or a repeated name in the uncommitted work (see above; the gate is hooks/dupe-check.sh)"
+  else
+    sed -n '1,10p' /tmp/verify-dupe.log 2>/dev/null | sed 's/^/    /'
+    red "dupe-check self-scan COULD NOT RUN (exit $dupe_rc) — not a clean result (see /tmp/verify-dupe.log)"
+  fi
+fi
+
+# ── vale ────────────────────────────────────────────────────────────────────
+# The second prose check, beside the hand-kept regexes in hooks/slop-block.sh.
+# The hook only ever sees a file an agent just edited; this reaches every
+# tracked .md on every run. Rules live in styles/NoYolo/, .vale.ini says why.
+#
+# RUN INLINE, NOT AS A JOB. Measured 2026-08-22: 0.14s over 34 files, against
+# the seconds each backgrounded row costs. Nothing to overlap.
+#
+# THE EXIT STATUS CANNOT REPORT FINDINGS, so this row does not ask it to.
+# Measured 2026-08-22, all three on vale 3.18.0: a file with five warnings
+# exits 0, a clean file exits 0, and a file that does not exist exits 0 with no
+# output at all. Only a genuine breakdown (a config it cannot read) reaches 2.
+# So findings are read off the OUTPUT, the status is read only for "could not
+# run", and the file count is what separates a clean sweep from a sweep of
+# nothing — which is rule 2, and here it is load-bearing rather than ceremonial.
+#
+# The list is built with -z into an array, never $(git ls-files '*.md'): a path
+# containing a space would split into two nonexistent paths, and vale would
+# then exit 0 in silence on both, reporting this row green for a scan that
+# examined neither.
+md_files=()
+while IFS= read -r -d '' mdf; do md_files+=("$mdf"); done < <(git ls-files -z -- '*.md')
+
+if command -v vale >/dev/null 2>&1; then
+  if [ "${#md_files[@]}" -eq 0 ]; then
+    red "vale prose lint — no tracked .md files found, which is an empty result and not a clean one"
+  else
+    vale_out="$(vale --config "$ROOT/.vale.ini" --no-wrap --output line "${md_files[@]}" 2>&1)"
+    vale_rc=$?
+    if [ "$vale_rc" -ge 2 ]; then
+      printf '%s\n' "$vale_out" | sed 's/^/    /'
+      red "vale prose lint — vale could not run, so nothing was checked (see above)"
+    elif [ -n "$vale_out" ]; then
+      printf '%s\n' "$vale_out" | sed 's/^/    /'
+      red "vale prose lint — findings in tracked .md (see above; rules in styles/NoYolo, standard in docs/PROSE.md)"
+    else
+      pass "vale prose lint (${#md_files[@]} tracked .md files, no findings)"
+    fi
+  fi
+else
+  warn "vale prose lint not installed — skipped (brew install vale)"
 fi
 
 # ── external names ──────────────────────────────────────────────────────────
@@ -124,8 +291,7 @@ fi
 # Exit 3 means COULD NOT REACH the registry, and that is a failure too: an unrun
 # check and a clean check look identical. EXTERNAL_CHECK_OFFLINE downgrades it,
 # opt-in so it cannot become the silent default in CI.
-"$ROOT/hooks/external-check.sh" >/tmp/verify-external.log 2>&1
-case "$?" in
+case "$(job_rc external)" in
   0) pass "external references resolve" ;;
   1) red "external references — a tracked install command names something that does not exist or points elsewhere (see /tmp/verify-external.log)" ;;
   *)
@@ -137,17 +303,6 @@ case "$?" in
 esac
 
 # ── leak scanning ───────────────────────────────────────────────────────────
-# Files excluded from the content scan below, and ONLY files that legitimately
-# contain the shapes it hunts: the two pinned fixtures, the two rule files (a
-# file of leak regexes matches its own rules on every line), the deny-list
-# template, this file, and the hook. Mirrors hooks/pre-commit's list; change
-# one, change the other.
-SCAN_EXCLUDE=(
-  ':!hooks/pre-commit' ':!verify.sh' ':!.no-yolo-deny.example.txt'
-  ':!hooks/secret-patterns.txt' ':!hooks/infra-patterns.txt'
-  ':!hooks/tests/infra-scan-probe.txt' ':!hooks/tests/infra-scan-clean.txt'
-)
-
 # The rule files' only compensating control is the scanner, which lints
 # whichever file it loads on every run and refuses to scan a gutted one. These
 # two rows are where that refusal surfaces.
@@ -254,24 +409,19 @@ else
   fi
 fi
 
-# THE TRACKED CONTENT ITSELF. A NUL-safe read loop, never xargs: xargs exits 123
-# when its child exits 1..125, so "found nothing" (grep 1) and "the scanner blew
-# up" (grep 2) both arrive as 123, which is a fail-open wearing a disguise.
+# THE TRACKED CONTENT ITSELF. The file list and the two scans were launched at
+# the top of this file; this row reads their statuses.
 #
 # Each half's status is captured explicitly. This row used to be
 # `if git grep ...; then FAIL; else PASS; fi`, which routed exit 1 (searched,
 # found nothing) and exit >=2 (the scan ERRORED) into the same PASS branch: the
 # scan breaking looked exactly like the repo being clean.
-scan_files=()
-while IFS= read -r -d '' f; do scan_files+=("$f"); done < <(git ls-files -z -- . "${SCAN_EXCLUDE[@]}")
-
 if [ "${#scan_files[@]}" -eq 0 ]; then
   red "tracked-content scan — git ls-files returned NO files; the result is empty, not clean"
 else
-  "$ROOT/hooks/secret-scan.sh" --infra --files "${scan_files[@]}" >/tmp/verify-scan.log 2>&1
-  infra_rc=$?
-  "$ROOT/hooks/secret-scan.sh" --files "${scan_files[@]}" >>/tmp/verify-scan.log 2>&1
-  cred_rc=$?
+  infra_rc="$(job_rc scan-infra)"
+  cred_rc="$(job_rc scan-cred)"
+  cat /tmp/verify-scan-cred.log >>/tmp/verify-scan.log 2>/dev/null
   if [ "$infra_rc" -ge 2 ] || [ "$cred_rc" -ge 2 ]; then
     red "tracked-content scan COULD NOT RUN (infra $infra_rc, credential $cred_rc) — see /tmp/verify-scan.log"
   elif [ "$infra_rc" -eq 0 ]; then
