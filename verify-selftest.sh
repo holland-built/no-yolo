@@ -99,24 +99,24 @@ else
 fi
 
 # 1. hook unit tests (*.test.js)
-cat > hooks/tests/zz-selftest.test.js <<'EOF'
+cat > hooks/tests/zz-selftest.test.js <<'EOF'  # gone-on-purpose: a sabotage artefact, created and removed inside this run
 const { test } = require('node:test');
 test('deliberate failure injected by verify-selftest.sh', () => {
   throw new Error('selftest sabotage');
 });
 EOF
-track_new hooks/tests/zz-selftest.test.js
+track_new hooks/tests/zz-selftest.test.js  # gone-on-purpose: a sabotage artefact, created and removed inside this run
 assert_red "hook unit tests" "check 1 catches a failing *.test.js"
-rm -f hooks/tests/zz-selftest.test.js
+rm -f hooks/tests/zz-selftest.test.js  # gone-on-purpose: a sabotage artefact, created and removed inside this run
 
 # 1b. hook shell tests (*.test.sh)
-cat > hooks/tests/zz-selftest.test.sh <<'EOF'
+cat > hooks/tests/zz-selftest.test.sh <<'EOF'  # gone-on-purpose: a sabotage artefact, created and removed inside this run
 #!/usr/bin/env bash
 exit 1
 EOF
-track_new hooks/tests/zz-selftest.test.sh
+track_new hooks/tests/zz-selftest.test.sh  # gone-on-purpose: a sabotage artefact, created and removed inside this run
 assert_red "hook shell tests" "check 1b catches a failing *.test.sh"
-rm -f hooks/tests/zz-selftest.test.sh
+rm -f hooks/tests/zz-selftest.test.sh  # gone-on-purpose: a sabotage artefact, created and removed inside this run
 
 # 3. settings.example.json parses
 backup settings.example.json
@@ -147,7 +147,7 @@ import json
 p = "settings.example.json"
 d = json.load(open(p))
 d.setdefault("hooks", {}).setdefault("SessionStart", []).append(
-    {"hooks": [{"type": "command", "command": 'bash "$HOME/.claude/hooks/zz-does-not-exist.sh"'}]}
+    {"hooks": [{"type": "command", "command": 'bash "$HOME/.claude/hooks/zz-does-not-exist.sh"'}]}  # gone-on-purpose: a sabotage artefact, created and removed inside this run
 )
 json.dump(d, open(p, "w"), indent=2)
 EOF
@@ -275,7 +275,7 @@ fi
 #    there, which is precisely how SHIP.md came to cite five deleted files with nothing
 #    noticing. docs/TESTING.md is tracked and carries no scan exclusion.
 backup docs/TESTING.md
-printf '\nSee `docs/zz-selftest-does-not-exist.md` for details.\n' >> docs/TESTING.md
+printf '\nSee `docs/zz-selftest-does-not-exist.md` for details.\n' >> docs/TESTING.md  # gone-on-purpose: the path this sabotage PLANTS; the planted copy in docs/TESTING.md is what row 9 must catch
 assert_red "dangling references" "check 9 catches a tracked .md citing a file that is not on disk"
 restore_one docs/TESTING.md
 

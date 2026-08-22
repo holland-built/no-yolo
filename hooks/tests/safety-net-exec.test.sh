@@ -178,6 +178,77 @@ blocked 'sudo git push --force-with-lease origin main' "the lease form behind su
 allowed 'echo "use git push --force-with-lease instead"' \
         "prose recommending the lease form"
 
+# --- G. Heredoc bodies -----------------------------------------------------------
+# grep applies `^` per LINE, so every line start in a multi-line command looked
+# like a command position, heredoc bodies included. Measured 2026-08-22: this hook
+# refused this repo's own `git commit -F - <<MSG` because the commit message
+# described the force-push regression being fixed. A guard that blocks talking
+# about a command gets unwired, which is the reason the anchoring exists at all.
+allowed 'git commit -F - <<'"'"'MSG'"'"'
+fixed the force-push rule
+git push --force-with-lease origin main used to be allowed
+MSG' "a heredoc commit message describing a force push"
+
+allowed 'gh pr create --body-file - <<'"'"'EOF'"'"'
+Reviewers: note that git push --force rewrites history.
+EOF' "a heredoc PR body naming a force push"
+
+# The body is dropped ONLY when its consumer is not an interpreter. A heredoc fed
+# to a shell or a language runtime is CODE, and dropping it would turn this fix
+# into a bypass: the whole rule set would stop seeing the thing being executed.
+blocked 'bash <<EOF
+git push --force origin main
+EOF' "a force push inside a heredoc fed to bash"
+
+blocked 'sudo sh <<'"'"'X'"'"'
+git clean -fdx
+X' "git clean inside a heredoc fed to sh behind sudo"
+
+# An interpreter reading code from a heredoc takes no -c/-e flag, so CODEFLAG
+# never matched it and this shape went uncovered until 2026-08-22. The gap
+# predates the heredoc change; testing that change is what exposed it.
+blocked 'python3 <<'"'"'PY'"'"'
+import shutil; shutil.rmtree("/")
+PY' "a heredoc-fed interpreter deleting a tree"
+
+blocked 'node <<'"'"'JS'"'"'
+require("fs").rmSync("/etc", {recursive: true})
+JS' "a heredoc-fed node deleting a directory"
+
+# The heredoc ends and ordinary parsing resumes. A real command on a later line
+# must still be caught, or the strip would run to the end of the input.
+blocked 'cat <<'"'"'EOF'"'"' > notes.txt
+just some text
+EOF
+git push --force origin main' "a real force push after the heredoc closes"
+
+# The three constraints below are each here because the first version of the
+# stripper lacked them and a cross-model review found the hole. All three were
+# measured live on 2026-08-22: exit 0 before the fix, exit 2 after.
+
+# ONLY A QUOTED DELIMITER. An unquoted heredoc still performs expansion, so its
+# body is not inert: the command substitution here RUNS.
+blocked 'cat <<EOF
+$(git push --force origin main)
+EOF' "an unquoted heredoc whose body expands a force push"
+
+blocked 'cat <<EOF
+`git push --force origin main`
+EOF' "an unquoted heredoc with a backtick substitution"
+
+# THE OPENER MUST NOT SIT AFTER A #. Otherwise a comment mentioning a heredoc
+# starts a strip that runs to the end of the input.
+blocked ': # <<HIDE
+git push --force origin main' "a fake heredoc opener inside a comment"
+
+blocked ': # <<'"'"'HIDE'"'"'
+git push --force origin main' "a fake quoted opener inside a comment"
+
+# THE TERMINATOR MUST EXIST. An opener with no closing line would otherwise strip
+# everything after it, which is the same hiding place by another route.
+blocked 'cat <<'"'"'NEVERCLOSED'"'"'
+git push --force origin main' "an opener whose delimiter never closes"
+
 if [ "$fail" -eq 0 ]; then
   echo "All $pass asserts passed."
   exit 0

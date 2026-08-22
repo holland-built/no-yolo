@@ -4,7 +4,7 @@
 #   hooks/pre-commit step 2  -> "$(git rev-parse --show-toplevel)/hooks/secret-scan.sh"
 #   hooks/pre-commit step 3  -> the same path, with --infra
 #   verify.sh checks 8/8a/8b -> "$ROOT/hooks/secret-scan.sh" [--infra]   (the CHECKOUT's copy; CI has no $HOME/.claude)
-# A third caller, skills/health/SKILL.md, was listed here until 2026-08-21. The rebuild
+# A third caller, skills/health/SKILL.md, was listed here until 2026-08-21. The rebuild <!-- gone-on-purpose: naming the deleted caller is the point of this note -->
 # deleted that skill and the line outlived it. There is no /health any more, so nothing
 # runs this scanner against OTHER repos: both remaining callers scan THIS one.
 # Rule sets:

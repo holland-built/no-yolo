@@ -149,7 +149,7 @@ esac
 # (i.e. a pasted value, not a rule), \b, a rule count under that file's own floor, a
 # pattern that will not compile, and any string in a COMMENT that matches the file's own
 # rules all make it refuse to scan.
-# `:!skills/health/SKILL.md` sat in this list until 2026-08-21 and in hooks/pre-commit's
+# `:!skills/health/SKILL.md` sat in this list until 2026-08-21 and in hooks/pre-commit's <!-- gone-on-purpose: naming the deleted skill is the point of this note -->
 # matching list beside it. That skill was deleted by the rebuild, so the pathspec matched
 # nothing and excluded nothing: inert, and therefore silent. It is gone from both lists
 # together, because the comment in pre-commit calls them mirrors of each other.
@@ -491,31 +491,75 @@ fi
 #    references is a FAIL, never a clean sweep. The floor is 1 rather than
 #    today's 20, because 20 is a fact about this commit and a floor that tracks
 #    the corpus would have to be updated by hand on every edit.
+#    TWO SOURCE CLASSES, TWO EXTRACTION RULES, BECAUSE THE TWO FILE TYPES CITE
+#    PATHS DIFFERENTLY. Prose puts a path in backticks; shell puts it in quotes,
+#    in a pathspec, or bare after a variable. Requiring backticks everywhere
+#    would read .sh files and find nothing in them, which is worse than not
+#    reading them, because the row's label would then claim a reach it lacks.
+#
+#    Reading .sh and .js is not hypothetical value. `skills/health/SKILL.md` was <!-- gone-on-purpose: naming the deleted skill is the point of this note -->
+#    deleted by the rebuild and stayed referenced in verify.sh's own SCAN_EXCLUDE
+#    pathspec, in hooks/pre-commit's mirror of that list, and in
+#    hooks/secret-scan.sh's caller list. All three are shell. The .md-only version
+#    of this row could not see any of them, and three green CI runs went past.
 dangling=""
 dang_src=0
 dang_refs=0
+scan_refs() {
+  # $1 = source file. Prose: backtick-quoted only, because bare matching in prose
+  # produces a flood of substring hits (the tail of "ingest-docs/SKILL.md" looks
+  # like a docs path). Shell: bare, because nothing is backticked there.
+  case "$1" in
+    *.md)
+      grep -v 'gone-on-purpose' "$1" \
+        | grep -oE '`(docs|rules|skills|hooks|agents)/[A-Za-z0-9._/-]+\.(md|sh|js|py|mjs|json|txt|yml|yaml)`' \
+        | tr -d '`' ;;
+    *)
+      # Two boundaries here that the prose branch gets free from its backticks.
+      #
+      # LEADING: the class excludes [A-Za-z0-9._-] but ALLOWS `/`, because the
+      # commonest real reference in shell is "$ROOT/hooks/secret-scan.sh" and a
+      # boundary that rejected `/` would miss every one of them. Rejecting `-`
+      # and `.` is what matters: without it the substring "ingest-docs/SKILL.md"
+      # yields `docs/SKILL.md`, and "~/.agents/skills/x" yields `agents/skills/x`. <!-- gone-on-purpose: an illustration of a false positive, not a reference -->
+      # Both were produced by the first version of this branch, out of the very
+      # comment two screens up that warns about substring hits.
+      #
+      # TRAILING: the extension must END the token. Without the terminator,
+      # `hooks/tests/infra-scan-probe.sha256` matches as `...probe.sh`, because
+      # `sh` is a prefix of `sha256` — a file that exists, reported as one that
+      # does not.
+      #
+      # An extension is required in this branch and the prose branch requires one
+      # too. Dropping it was tried on 2026-08-22: it caught nothing real and
+      # added three runtime output directories from an archived skill.
+      grep -v 'gone-on-purpose' "$1" \
+        | grep -oE '(^|[^A-Za-z0-9._-])(docs|rules|skills|hooks|agents)/[A-Za-z0-9._/-]+\.(md|sh|js|py|mjs|json|txt|yml|yaml)([^A-Za-z0-9]|$)' \
+        | sed -E 's|^[^A-Za-z]+||; s|[^A-Za-z0-9]$||' ;;
+  esac
+}
 while IFS= read -r src; do
   [ -z "$src" ] && continue
   dang_src=$((dang_src + 1))
   while IFS= read -r p; do
     [ -z "$p" ] && continue
     dang_refs=$((dang_refs + 1))
+    # A trailing separator survives the match when a path ends a sentence.
+    p="${p%.}"; p="${p%,}"; p="${p%:}"
     [ -e "$p" ] || [ -e "$(dirname "$src")/$p" ] || dangling="${dangling}
     DANGLING: $p  (in $src)"
-  done < <(grep -v 'gone-on-purpose' "$src" \
-             | grep -oE '`(docs|rules|skills|hooks|agents)/[A-Za-z0-9._/-]+\.(md|sh|js|py|mjs|json|txt|yml|yaml)`' \
-             | tr -d '`' | sort -u)
-done < <(git ls-files -- '*.md')
+  done < <(scan_refs "$src" | sort -u)
+done < <(git ls-files -- '*.md' '*.sh' '*.js')
 
 if [ "$dang_src" -eq 0 ]; then
-  record FAIL "dangling references — git ls-files listed NO tracked .md to read; the sweep examined nothing, which is empty rather than clean"
+  record FAIL "dangling references — git ls-files listed NO tracked sources to read; the sweep examined nothing, which is empty rather than clean"
 elif [ "$dang_refs" -eq 0 ]; then
-  record FAIL "dangling references — no backticked path was extracted from $dang_src tracked .md files; the extractor is broken, not the corpus empty"
+  record FAIL "dangling references — no path was extracted from $dang_src tracked sources; the extractor is broken, not the corpus empty"
 elif [ -n "$dangling" ]; then
   printf 'tracked files cite paths that are not on disk:%s\n' "$dangling"
-  record FAIL "dangling references — a tracked .md names a doc/skill/hook/script that does not exist (see above)"
+  record FAIL "dangling references — a tracked file names a doc/skill/hook/script that does not exist (see above)"
 else
-  record PASS "dangling references in tracked .md ($dang_refs cited, all resolve)"
+  record PASS "dangling references ($dang_refs cited in $dang_src tracked .md/.sh/.js, all resolve)"
 fi
 
 # 10. README skills inventory — the table in README.md lists exactly the skills
