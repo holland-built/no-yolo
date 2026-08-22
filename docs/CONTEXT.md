@@ -45,6 +45,17 @@ The goal goes first because it is the part that gets lost. A handoff that carrie
 technical detail and loses the goal sends the next session confidently in the wrong
 direction for a day.
 
+## When compaction gets there first
+
+| When | What runs, and what it leaves |
+|---|---|
+| Auto-compaction fires before anyone wrote a handoff | `hooks/precompact-handoff.sh` writes `~/.claude/handoffs/.last-precompact`: date, trigger, cwd, session id, and the path to the pre-compaction transcript. It prints the section order above to stdout, which on `PreCompact` reaches the debug log and not the summariser |
+
+That marker is a breadcrumb, not a handoff. It records that a window compacted and names
+the transcript still holding the owner's own words; the file a fresh session resumes from
+is still written by `/handoff`, whose step 1 reads the marker, quotes from the transcript
+it names, and deletes it afterwards so the next handoff is not sent to a stale one.
+
 ## Resuming
 
 State the goal and the first action back in one line, then wait. A resumed session that

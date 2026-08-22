@@ -108,7 +108,13 @@ plugins/
 # `npx skills` installs land in .agents/ and are symlinked into skills/ so they
 # load in every project. Those symlinks are local install state, not content.
 skills/styleseed
+skills/ss-*
 skills/avoid-ai-writing
+skills/writing-for-agents
+skills/codebase-design
+skills/domain-modeling
+skills/mcp-builder
+skills/systematic-debugging
 skills/archify
 skills/resolving-merge-conflicts
 # LEGACY: the deleted /design skill

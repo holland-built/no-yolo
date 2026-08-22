@@ -40,16 +40,28 @@ Nothing about it looks wrong. If a branch claims to be in sync but GitHub disagr
 
 ## Steps
 
+Steps 1 to 8 read the tree and write nothing, and none needs another's result. Run them as
+one batch: `bash verify.sh` once (steps 4, 6 and 8 are three rows of that one run), with
+`/checkup` and the step 1, 2, 3 and 7 commands beside it, then read all the output together.
+The numbering is for reading, not for ordering. What stays serial is everything after: the
+secrets gate, then staging, then the commit, then the push, then reading the target.
+
 1. **Writing check (warn only):** print `| File | Tell | Excerpt |`; never block.
 
    The hook takes a tool-call payload on standard input, not a filename, because that is how
    Claude Code invokes it. Wrap each path the same way to run it by hand:
 
    ```bash
-   git diff --name-only --cached -- '*.md' | while read -r f; do
+   { git diff --name-only origin/HEAD -- '*.md'; git ls-files --others --exclude-standard -- '*.md'; } \
+     | sort -u | while read -r f; do
      printf '{"tool_input":{"file_path":"%s/%s"}}' "$PWD" "$f" | bash hooks/slop-block.sh
    done
    ```
+
+   The change set is `origin/HEAD` plus untracked `.md`, not `--cached`, for the reason step 7
+   spells out: staging happens after these steps, so a `--cached` list here was empty and a
+   check that read nothing looked like a check that found nothing. It read `--cached` until
+   2026-08-22.
 
    The hook decides only what a program can decide, so read the judgement rules in
    `docs/PROSE.md` against the same files yourself. It already fires on every Write and Edit,
@@ -77,7 +89,7 @@ Nothing about it looks wrong. If a branch claims to be in sync but GitHub disagr
    Nothing else relaxes. Anything with a real local path has to be there, right now.
 
 4. **Dangling-reference sweep (HARD BLOCK), now a `verify.sh` row.** Run `bash verify.sh` and
-   read the `dangling references in tracked .md` row. No tracked `.md` may name a doc, skill,
+   read the `dangling references` row. No tracked `.md`, `.sh` or `.js` may name a doc, skill,
    agent or script that is not on disk.
 
    **This step used to live here and only here, and that was the defect.** It is how SHIP.md
@@ -122,11 +134,12 @@ Nothing about it looks wrong. If a branch claims to be in sync but GitHub disagr
    tracked template beside them, the way `settings.example.json` sits beside `settings.json`.
 
 5. **Outside-tool freshness (warn only: never auto-pull):** run `/checkup` and print its drift
-   rows. It reports how far behind this clone is against GitHub, and which of the five optional
-   tools in `INSTALL.md` are absent. Warn only, and never install anything mid-release: an
-   outside tool that arrives in the middle of a publish has not been watched working.
+   rows. It reports how far behind this clone is against GitHub, and which of the borrowed
+   pieces in `INSTALL.md` are absent. Warn only, and never install anything mid-release: an
+   outside tool that arrives in the middle of a publish has not been watched working. The
+   count lives in `INSTALL.md` alone, so this step cannot name a number that has drifted.
 
-   Whether those five tools are the tools they claim to be is not a judgement call and is not
+   Whether those tools are the tools they claim to be is not a judgement call and is not
    here: `hooks/external-check.sh` resolves every one against the registry on every run of
    `verify.sh`, and a name that does not resolve to the project `hooks/externals.txt` pins is a
    hard failure, not a drift row.
@@ -201,8 +214,9 @@ Nothing about it looks wrong. If a branch claims to be in sync but GitHub disagr
 ## Stage scope
 
 ```
-git add skills/ docs/ rules/ hooks/ .github/ README.md INSTALL.md LICENSE \
-  .gitignore .no-yolo-deny.example.txt setup.sh settings.example.json SHIP.md CLAUDE.md \
+git add skills/ docs/ rules/ hooks/ .github/ archive/ styles/ README.md INSTALL.md LICENSE \
+  .gitignore .no-yolo-deny.example.txt .vale.ini .jscpd.json \
+  setup.sh settings.example.json SHIP.md CLAUDE.md \
   memory/MEMORY.example.md verify.sh verify-selftest.sh
 ```
 
@@ -226,6 +240,12 @@ repo root. Each of these was omitted once and something silently never shipped:
 - `LICENSE` is the MIT terms the README's licence badge reads: omit it and the badge renders
   "unknown" against a file git never received.
 - `.no-yolo-deny.example.txt` is the tracked template for the gitignored `.no-yolo-deny.txt`.
+- `.vale.ini` and `styles/` are the prose linter's config and its rules, and `.jscpd.json` is
+  the duplicate scanner's. Each is read by name: `verify.sh`'s "vale prose lint" row passes
+  `--config "$ROOT/.vale.ini"`, and `hooks/dupe-check.sh` falls back to the `.jscpd.json`
+  beside it. Omit them and CI reddens on a clone for a config that only ever existed here.
+- `archive/` holds skills kept for their text rather than for loading. Tracked, so an edit to
+  one has to ship like any other.
 - `agents/` was in this list until 2026-08-22, holding two borrowed subagent definitions
   (accessibility-tester, react-specialist) whose text was 78% identical to the pre-rebuild
   copies. Nothing tracked referenced them beyond this list, so the machinery rebuild removed

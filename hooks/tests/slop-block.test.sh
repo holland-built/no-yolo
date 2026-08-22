@@ -104,6 +104,51 @@ assert_file 0 j.js 'const x = 1; // simple — really'         "a code file is n
 assert_file 0 k.txt 'Plain text is checked too.'             "plain text is in scope"
 assert_file 2 l.mdx 'The result — it works.'                 "mdx is in scope"
 
+# --- Vale, the maintained second opinion --------------------------------------
+# "production-ready" is docs/PROSE.md's "Say the fact, not the adjective", and it
+# is the half of that standard the regexes above do NOT carry. So it separates
+# the two checks cleanly: red only when vale ran, green when it did not. Using a
+# tell BOTH checks catch would pass either way and prove nothing.
+VALE_ONLY='The release is production-ready.'
+
+if command -v vale >/dev/null 2>&1 && [ -f "$REPO/.vale.ini" ]; then
+  assert_file 2 vale1.md "$VALE_ONLY" "vale catches an adjective the regexes do not"
+else
+  echo "SKIP: vale is not installed, so its finding cannot be proved here."
+fi
+
+# The same file with vale masked off PATH. A stub directory holds symlinks to the
+# tools the hook genuinely needs and no vale, rather than PATH=/usr/bin:/bin,
+# because jq lives in /opt/homebrew/bin on this machine and blanking the PATH
+# would disable the hook itself and make every case below pass for the wrong
+# reason. Two asserts, and the second is the load-bearing one: absent vale must
+# take nothing away from the rules the hook already had.
+STUB="$TMP/stub-bin"
+mkdir -p "$STUB"
+for t in jq awk grep sed mktemp rm cat printf; do
+  p="$(command -v "$t" 2>/dev/null)" && ln -sf "$p" "$STUB/$t"
+done
+
+assert_masked() {
+  local want="$1" name="$2" body="$3" desc="$4" got
+  printf '%s\n' "$body" > "$TMP/$name"
+  printf '{"tool_input":{"file_path":"%s"}}' "$TMP/$name" \
+    | PATH="$STUB:/usr/bin:/bin" bash "$HOOK" >/dev/null 2>&1
+  got=$?
+  if [ "$got" != "$want" ]; then
+    echo "FAIL: $desc — wanted $want, got $got"
+    fail=1
+  else
+    pass=$((pass + 1))
+  fi
+}
+
+if command -v vale >/dev/null 2>&1; then
+  assert_masked 0 vale2.md "$VALE_ONLY" "vale off PATH: its finding goes quiet, not red"
+fi
+assert_masked 2 vale3.md 'The plan is simple — build it.' \
+  "vale off PATH: the hook's own rules still run"
+
 printf '{"tool_input":{"file_path":"%s/does-not-exist.md"}}' "$TMP" | bash "$HOOK" >/dev/null 2>&1
 rc=$?
 if [ "$rc" != 0 ]; then

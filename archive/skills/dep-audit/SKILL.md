@@ -1,6 +1,6 @@
 ---
 name: dep-audit
-description: Use this skill when the user types /dep-audit, says 'audit my dependencies', 'check for vulnerable packages', 'what licences am I using', or 'security scan this app'. npm-only supply-chain pass: leaked keys in both tracked files AND git history, npm advisories, licences, dependency inventory and a small Next.js config checklist, merged into one severity-ranked table. This is NOT a Trivy equivalent. It never scans OS or container packages, builds no SBOM, and reads no infrastructure-as-code.
+description: "Use this skill when the user types /dep-audit, says 'audit my dependencies', 'check for vulnerable packages', 'what licences am I using', or 'security scan this app'. npm-only supply-chain pass: leaked keys in both tracked files AND git history, npm advisories, licences, dependency inventory and a small Next.js config checklist, merged into one severity-ranked table. This is NOT a Trivy equivalent. It never scans OS or container packages, builds no SBOM, and reads no infrastructure-as-code."
 user-invocable: true
 effort: high
 argument-hint: "[repo path, defaults to the current repo]"

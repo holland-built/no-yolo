@@ -17,6 +17,10 @@ Read every target file and its direct imports yourself. Write one brief per agen
 carrying the target path, the exact change quoted from its plan step, the
 `Already exists, do NOT recreate` note, and the blast radius.
 
+Briefs for backend steps are drafted at plan approval, since they read the plan and the
+target files and nothing from stages 3 or 4. UI briefs wait for the chosen variant and its
+sourcing rows. Either way, re-read a brief against the agreed seam before dispatching it.
+
 UI work: the brief names the variant section to match and its sourcing rows. Agents import
 the mapped components rather than hand-rolling them.
 
@@ -25,12 +29,23 @@ Fan independent agents out in one call, five at a time.
 ## Reuse before writing
 
 For every new symbol the build would introduce, search the tree for an existing one with the
-same name or role. A sibling already doing the job means using it.
+same name or role. A sibling already doing the job means using it. The plan names most of
+those symbols, so the search runs at plan approval, over the names the plan proposes:
+
+```bash
+bash "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/dupe-check.sh" --symbols name1 name2
+```
+
+Each `DUPLICATE SYMBOL:` line is a candidate to read before the brief is written. A symbol
+that appears later, from the chosen variant or from an agent mid-build, gets the same search
+the moment it is proposed, not a pass on the grounds that the early search ran.
 
 In a tree bigger than a grep can hold, search by role rather than by name: the symbol you
 would introduce is rarely called what the existing one is called. Read the importers of a
 candidate before reusing it, because a sibling that fits the name and not the job costs more
-than writing the thing.
+than writing the thing. When the `codebase-design` skill is installed, judge the candidate by
+its depth, the behaviour it carries per unit of interface a caller has to learn; absent it,
+the role test above stands on its own.
 
 This paragraph named a package called `cxpak` until 2026-08-21, said it built a dependency
 graph, and told you to run it. No package of that name has ever existed on any registry.
@@ -40,8 +55,13 @@ graph, and told you to run it. No package of that name has ever existed on any r
 Fires when the plan names three or more target files, or when stage 2 accepted a blocking
 finding. Otherwise it does not run.
 
-Launch it before dispatching the build agents, because it authors against the pre-build
-tree, and background it so the briefs get written while it runs:
+Launch it the moment the plan is approved, beside the Codex edge-case job, because it reads
+the plan and nothing later: both fire conditions (file count, a blocking finding) are known at
+approval. The exception is a UI change, whose rival would be authoring against a variant
+nobody has chosen; that one launches at the stage 3 pick, with the variant and the sourcing
+rows named in the prompt. Either way it authors against the pre-build tree; stage 4's one test
+file arrives in between, and `git apply --check` below is what catches a diff that no longer
+fits. Background it so the stages between run while it works:
 
 ```bash
 bash "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/codex.sh" \
@@ -83,13 +103,25 @@ the fix loop instead, since neither reads a test result.
 | Gate | Passes when |
 |---|---|
 | Lint and typecheck | Zero new errors, warnings triaged |
-| Duplicate scan | No new symbol duplicates an existing one |
+| Duplicate scan | `hooks/dupe-check.sh --since <base-ref>` exits 0 |
 | Secret scan | Nothing secret in the diff |
 | Standards review | An agent that has not seen the plan finds no correctness or edge-case defect |
 | Spec review | A separate agent confirms the diff is what was asked for, with no missing requirement and no scope creep |
 
 The last two run as separate agents that cannot see each other. A change passes one and fails
 the other, and merged reviewers hide that.
+
+The duplicate scan is one command, run from the project root with the branch's base ref:
+
+```bash
+bash "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/dupe-check.sh" --since <base-ref>
+```
+
+It makes two passes: jscpd over the touched files for a block copied and edited, and a name
+pass for a new top-level symbol already defined elsewhere in the tree. Its status decides the
+row: 0 passes, 1 is a finding to resolve or waive under **Disagreement** below, and 3 is the
+gate reporting it could not run, which is a flag rather than a pass. A run that prints
+`jscpd: did not run` and exits 0 or 1 is the name pass answering alone; say which half ran.
 
 **When the diff touches it:** auth, routes, secrets, queries or user input get a security
 pass. A UI change gets an accessibility pass. A hot path gets a before-and-after measurement.

@@ -1,0 +1,17 @@
+{
+  "minTokens": 50,
+  "minLines": 5,
+  "reporters": ["console"],
+  "gitignore": true,
+  "absolute": false,
+  "ignore": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/vendor/**",
+    "**/.mockups/**",
+    "**/.xcheck/**",
+    "**/*.min.js",
+    "**/*.lock"
+  ]
+}

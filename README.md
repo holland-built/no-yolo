@@ -81,13 +81,13 @@ protection.
 
 ### Optional extras
 
-Five outside tools make some steps better and none of them is required: every file that
+Thirteen outside pieces make some steps better and none of them is required: every file that
 reaches for one carries a fallback. `INSTALL.md` lists what each one gives you and holds the
 commands that install them.
 
 Every name in that file is pinned to a project in `hooks/externals.txt` and re-checked by
 `verify.sh` on every run, because on 2026-08-21 six of the seven names it listed turned out to
-be wrong and one of them had never existed.
+be wrong and one of them was not a package at all.
 
 The second-model check needs the `codex` CLI. Where it is absent, every step that would use it
 reports itself as "did not run" and carries on. See `rules/codex.md`.
@@ -313,7 +313,7 @@ These are kept out of git on purpose.
 
 ## Uninstall
 
-Remove one tool at a time: `npm uninstall -g agnix @yawlabs/ctxlint` ·
+Remove one tool at a time: `npm uninstall -g agnix @yawlabs/ctxlint jscpd` · `brew uninstall vale` ·
 `npx skills@latest remove <name>` · `/plugin remove <name>` inside Claude Code.
 
 Remove all of it: `rm -rf ~/.claude`. If you used the install command above, your old setup is

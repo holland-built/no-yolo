@@ -1,0 +1,27 @@
+# docs/PROSE.md, "Say the fact, not the adjective". Every token below is one the
+# table there names. The replacement each asks for is the measurement, the
+# command, or the comparison, which is why the message names those rather than a
+# synonym.
+#
+# This rule is the one hooks/slop-block.sh does not carry, so it is the check
+# vale adds rather than repeats.
+extends: existence
+message: "'%s' is an adjective, not a fact. Give the measurement, the command you ran, or what it is faster than."
+level: warning
+link: docs/PROSE.md
+# Everywhere prose runs, and not inside a table cell. docs/PROSE.md's own
+# "Say the fact, not the adjective" table quotes all four of these phrases as
+# the specimens they are, so an unscoped rule flags the standard it transcribes.
+# Measured 2026-08-22 against a file carrying the phrase in five places:
+# `~table` reaches heading, paragraph, list item and blockquote and skips the
+# table cell, while `scope: paragraph` drops list items and headings too, which
+# is most of this repo's prose. A phrase in a rules table is a specimen; the
+# same phrase in a sentence is a claim.
+scope: ~table
+ignorecase: true
+tokens:
+  - blazingly fast
+  - best-in-class
+  - production-ready
+  - production ready
+  - should work now

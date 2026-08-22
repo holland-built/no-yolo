@@ -2,6 +2,16 @@
 
 The metric is the gate. Screenshots and prose are supporting evidence.
 
+## What runs together
+
+The measurement and the words-on-the-page check read the built app and change nothing, so
+they run in one call. The critical path joins them only when it is read-only against the
+state the measurement reads; a money path that creates an order while the measurement counts
+rows makes both answers depend on timing, and in that case the measurement runs first and the
+critical path after. "Lock it" runs after all of them have returned, because it stashes the
+fix to watch the test go red, and a measurement taken while the fix is stashed describes the
+wrong tree.
+
 ## Measure it the way you measured it broken
 
 | Kind | Proof |

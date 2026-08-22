@@ -23,10 +23,18 @@
 npm  agnix              agent-sh/agnix
 npm  @yawlabs/ctxlint   YawLabs/ctxlint
 npm  impeccable         pbakaus/impeccable
+npm  jscpd              kucherenko/jscpd
+npm  @modelcontextprotocol/inspector  modelcontextprotocol/inspector
 
 gh   conorbronsdon/avoid-ai-writing   -
 gh   bitjaru/styleseed               -
 gh   NVIDIA/SkillSpector             -
+gh   mattpocock/skills               -
+gh   anthropics/skills               -
+gh   obra/superpowers                -
+# vale ships as a release tarball from this repo, which is how ci.yml installs it on Linux.
+# errata-ai/vale redirects here; the project moved and the old owner is not the live name.
+gh   vale-cli/vale                   -
 
 # This repo's own clone URL, from README.md. Self-referential and deliberate: rename or move
 # the repository and the install instructions everyone else follows go red here first.

@@ -54,9 +54,15 @@ each alternative and why it lost, and what this makes easy and hard.
 Fewer than three: the brainstorm file is enough. A record for every choice is as useless as
 none.
 
+When the `domain-modeling` skill is installed, its `ADR-FORMAT.md` sets the file's numbering
+and shape; absent it, the sentence above is the shape.
+
 **Glossary.** Every project noun this interview names or sharpens goes into the repo's
 glossary, one line each. Read the existing entries first: when the repo already has a word
 for the thing, use the repo's word.
+
+When the `domain-modeling` skill is installed, its `CONTEXT-FORMAT.md` sets where the
+glossary lives and how an entry reads; absent it, one line per noun is the format.
 
 Both are real files in the diff. Say so, so stage 5 does not rewrite them.
 

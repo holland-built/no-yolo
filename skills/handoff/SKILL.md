@@ -18,6 +18,13 @@ so the goal is written first and read first.
 
 ## 1. Find the goal
 
+**Read `~/.claude/handoffs/.last-precompact` first, if it is there.** `hooks/precompact-handoff.sh`
+writes it when the window compacted before anyone wrote a handoff, and it names the
+pre-compaction transcript, which is where the owner's own words still are: this session's
+visible history may be a summary of them. Quote from that transcript, not from the summary.
+Delete the marker once this handoff is written, so the next one is not sent to a stale
+transcript. No marker means nothing compacted unwritten, which is the ordinary case.
+
 Scroll back to the owner's own words. Quote the sentence where they said what they wanted,
 verbatim, including the messy phrasing. A tidied paraphrase drifts; the raw quote does not.
 
