@@ -6,7 +6,10 @@
 INPUT=$(cat)
 
 # --- literal badge ---
-LIT=$(bash "$HOME/.claude/hooks/literal-statusline.sh" 2>/dev/null)
+# Resolved from this script's own location, not from $HOME. The two scripts ship
+# together, so a sibling lookup is always right; $HOME was wrong under any second
+# config profile, which drew the personal session's mode onto a work bar.
+LIT=$(bash "$(dirname "${BASH_SOURCE[0]}")/literal-statusline.sh" 2>/dev/null)
 
 # --- parse stdin JSON (tab-delimited so paths with spaces survive) ---
 # MODEL_ID/TRANSCRIPT/COST are positional placeholders: unread, but required to

@@ -4,11 +4,14 @@
 #   hooks/pre-commit step 2  -> "$(git rev-parse --show-toplevel)/hooks/secret-scan.sh"
 #   hooks/pre-commit step 3  -> the same path, with --infra
 #   verify.sh checks 8/8a/8b -> "$ROOT/hooks/secret-scan.sh" [--infra]   (the CHECKOUT's copy; CI has no $HOME/.claude)
-#   skills/health/SKILL.md   -> "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/secret-scan.sh"  (/health runs in OTHER repos)
+# A third caller, skills/health/SKILL.md, was listed here until 2026-08-21. The rebuild
+# deleted that skill and the line outlived it. There is no /health any more, so nothing
+# runs this scanner against OTHER repos: both remaining callers scan THIS one.
 # Rule sets:
-#   (default) secret-patterns.txt — credential formats. What /health scans in OTHER repos.
-#   --infra   infra-patterns.txt  — private LAN / internal-infra values. NEVER loaded by
-#             /health: RFC1918 addresses are legitimate content in most other repos.
+#   (default) secret-patterns.txt — credential formats.
+#   --infra   infra-patterns.txt  — private LAN / internal-infra values. Kept a separate
+#             set because RFC1918 addresses are legitimate content in most other repos,
+#             so anything scanning beyond this repo would want the credential set alone.
 # The two sets stay separate files because the two blocking consumers apply them to
 # DIFFERENT inputs (pre-commit's step 2 excludes the pattern-documenting files, step 3
 # does not), and because a single joined pattern would let one set's rules vanish inside
