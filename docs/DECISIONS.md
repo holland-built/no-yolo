@@ -102,8 +102,14 @@ A fourth pass stripped the trailing slash from `/` and turned it into an empty t
 Each was found by running it, never by reading it.
 
 **Consequence:** `INSTALL.md` carries the commands that make each hook refuse, and the guard
-is tested against 17 destructive forms and 10 ordinary ones. A guard nobody has watched fail
-is a belief.
+is tested against 76 destructive forms and 32 ordinary ones, across
+`hooks/tests/safety-net.test.sh` (47 assertions) and `hooks/tests/safety-net-exec.test.sh`
+(62). A guard nobody has watched fail is a belief.
+
+This line read "17 destructive forms and 10 ordinary ones" until 2026-08-22, which was the
+count before the second file existed. Counted with `grep -c '^blocked '` and `grep -c
+'^allowed '` over both files; each suite also prints its own total when run, which is the
+number to trust if these two ever disagree.
 
 **Accepted, not fixed:** `echo "rm -rf /etc"` is blocked, because the script matches tokens
 rather than parsing shell quoting. A false block costs one retype; a false allow costs the
