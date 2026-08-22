@@ -168,7 +168,16 @@ ${cta}
 # notices. `--output line` prints findings as `<path>:<line>:<col>:...`, so the
 # path being absent from the output is what separates the tool's fault from the
 # file's: that case is reported on stderr and left out of `findings`.
-VALE_INI="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/.vale.ini"
+#
+# WHICH .vale.ini. The hook's own directory answers first. This file ships beside
+# the config and the styles it uses, so a checkout anywhere finds them: a CI
+# runner's workspace, or a clone somewhere other than ~/.claude. In a real install
+# that path IS ~/.claude/.vale.ini, so the CLAUDE_CONFIG_DIR fallback below changes
+# nothing there and still covers a hook copied out of the repo. Asking HOME alone
+# left CI silent on a file its own test expected vale to catch.
+HOOK_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." 2>/dev/null && pwd)"
+VALE_INI="${HOOK_DIR:-}/.vale.ini"
+[ -f "$VALE_INI" ] || VALE_INI="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/.vale.ini"
 if command -v vale >/dev/null 2>&1 && [ -f "$VALE_INI" ]; then
   vale_out=$(vale --config "$VALE_INI" --output line --no-wrap "$f" 2>&1)
   vale_rc=$?

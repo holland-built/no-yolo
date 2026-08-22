@@ -133,7 +133,13 @@ sh_ok=1
 : > /tmp/verify-sh.log
 for suite in "${sh_suites[@]}"; do
   cat "$JOBS/$(basename "$suite").log" >>/tmp/verify-sh.log 2>/dev/null
-  [ "$(job_rc "sh-$(basename "$suite")")" -eq 0 ] || { echo "FAILED: $suite"; sh_ok=0; }
+  # The log goes to stdout beside the FAILED line, because a CI runner shows only
+  # what the run printed and /tmp/verify-sh.log stays on the machine that failed.
+  [ "$(job_rc "sh-$(basename "$suite")")" -eq 0 ] || {
+    echo "FAILED: $suite"
+    sed 's/^/    /' "$JOBS/$(basename "$suite").log" 2>/dev/null
+    sh_ok=0
+  }
 done
 if [ "${#sh_suites[@]}" -eq 0 ]; then
   red "hook shell tests — none found, which is an empty result and not a clean one"
