@@ -74,11 +74,20 @@ Nothing about it looks wrong. If a branch claims to be in sync but GitHub disagr
    fail it. For those, check the runner instead: `command -v npx` must succeed, else BLOCK.
    Nothing else relaxes. Anything with a real local path has to be there, right now.
 
-4. **Dangling-reference sweep (HARD BLOCK):** no tracked file may name a doc, skill, agent or
-   script that is not on disk. This is the check the old playbook needed and did not have. It is
-   how SHIP.md itself came to reference five deleted files without anything noticing.
+4. **Dangling-reference sweep (HARD BLOCK), now a `verify.sh` row.** Run `bash verify.sh` and
+   read the `dangling references in tracked .md` row. No tracked `.md` may name a doc, skill,
+   agent or script that is not on disk.
 
-   Three details in the command below are each there because the naive version fails:
+   **This step used to live here and only here, and that was the defect.** It is how SHIP.md
+   came to reference five deleted files with nothing noticing. The sweep that would have caught
+   it ran only when somebody ran a release, and nobody released in between. It moved into
+   `verify.sh` on 2026-08-21, so it now runs on every push and in CI on both platforms, and
+   `verify-selftest.sh` sabotages it to prove it can still go red. What is left here is the
+   pointer and the reasoning; the command itself has one home now.
+
+   The command is kept below because the three details in it are each hard-won and worth
+   reading before anyone edits the row. It is the same code the row runs. If you change one,
+   change the other, or better, change the row and delete this copy.
 
    - **Only backtick-quoted paths count.** This repo cites every real file in backticks. Matching
      bare text instead produces a flood of substring hits, the tail of "ingest-docs/SKILL.md"
@@ -120,12 +129,17 @@ Nothing about it looks wrong. If a branch claims to be in sync but GitHub disagr
    `verify.sh`, and a name that does not resolve to the project `hooks/externals.txt` pins is a
    hard failure, not a drift row.
 
-6. **README count patch:** update the skill count in `README.md` from the live directory.
-   Every skill is now a real directory of this repo's own; the borrowed/symlinked split the
-   old version of this step counted no longer exists.
-   ```bash
-   ls -d skills/*/ | wc -l
-   ```
+6. **README skills inventory (HARD BLOCK), now a `verify.sh` row.** Run `bash verify.sh` and
+   read the `README skills inventory` row. It compares the skill NAMES in README's table
+   against the tracked `skills/*/SKILL.md` in both directions, then checks the spelled number
+   in the sentence above the table against how many it found.
+
+   This step used to be a count patch run by hand, `ls -d skills/*/ | wc -l`, and it was weak
+   in two ways that the row fixes. A count cannot see a swap: rename one skill in the table and
+   the number is still six while two rows are wrong. And `ls -d skills/*/` counts the `npx
+   skills` symlinks that `.gitignore` lists, which exist on this machine and not in a fresh
+   clone, so the local answer and the CI answer could disagree without anything being broken.
+   The row counts what is tracked, because what is tracked is what ships.
 
 7. **README prose sweep (warn only):** step 6 keeps one number honest and nothing reads the
    other 270 lines. Step 4 catches a path that stopped resolving. It cannot catch a sentence
@@ -196,7 +210,10 @@ repo root. Each of these was omitted once and something silently never shipped:
 - `.github/` holds `workflows/ci.yml`, the workflow that runs verify.sh: omitted once, so a
   CI-config fix could never ship.
 - `verify.sh` and `verify-selftest.sh` are tracked and CI runs them: omitted once, so a fix to
-  the verifier itself silently never shipped.
+  the verifier itself silently never shipped. CI ran only the first of the two until
+  2026-08-21, while this line claimed both. The `selftest` job in `.github/workflows/ci.yml`
+  is what made the sentence true; before it existed, every row's proof-of-falsifiability
+  depended on a person remembering to type `bash verify-selftest.sh`.
 - Under `memory/`, exactly one tracked thing ships: `MEMORY.example.md`. Both the real index
   `memory/MEMORY.md` and the `memory/facts/` it lists are gitignored, because both name things
   about the owner. Until 2026-08-21 a compiled view shipped instead; the compiler is gone and

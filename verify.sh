@@ -149,7 +149,11 @@ esac
 # (i.e. a pasted value, not a rule), \b, a rule count under that file's own floor, a
 # pattern that will not compile, and any string in a COMMENT that matches the file's own
 # rules all make it refuse to scan.
-SCAN_EXCLUDE=(':!hooks/pre-commit' ':!verify.sh' ':!skills/health/SKILL.md' ':!.no-yolo-deny.example.txt' ':!hooks/tests/infra-scan-probe.txt' ':!hooks/tests/infra-scan-clean.txt' ':!hooks/secret-patterns.txt' ':!hooks/infra-patterns.txt')
+# `:!skills/health/SKILL.md` sat in this list until 2026-08-21 and in hooks/pre-commit's
+# matching list beside it. That skill was deleted by the rebuild, so the pathspec matched
+# nothing and excluded nothing: inert, and therefore silent. It is gone from both lists
+# together, because the comment in pre-commit calls them mirrors of each other.
+SCAN_EXCLUDE=(':!hooks/pre-commit' ':!verify.sh' ':!.no-yolo-deny.example.txt' ':!hooks/tests/infra-scan-probe.txt' ':!hooks/tests/infra-scan-clean.txt' ':!hooks/secret-patterns.txt' ':!hooks/infra-patterns.txt')
 
 # The two pattern files are the single source for every leak rule in this repo. If either
 # is missing, gutted, or holds an uncompilable rule, the scanner refuses to scan at all —
@@ -439,13 +443,132 @@ elif [ -d .git ]; then
   record WARN "no .git/hooks/pre-commit installed — commits are unscanned locally; run setup.sh"
 fi
 
-# 9. skill coherence — every SKILL.md branches only on terms it also defines,
-#    and refers only to mechanisms it also names.
-#    Catches the de-dup failure mode structure checks are blind to: a pass cut
-#    the lines defining `Found` out of skills/antislop/SKILL.md and left the
-#    filter "rows where Found = yes" consuming it; 14/14 stayed green. The same
-#    pass cut "the approval gate" out from under skills/release/SKILL.md —
-#    prose, no token, which is what [phrase] mode now covers.
+# 9. dangling references — no tracked .md may cite a doc, skill, agent, hook or
+#    script that is not on disk.
+#
+#    THIS CHECK ALREADY EXISTED, AS PROSE. It is step 4 of SHIP.md, written out
+#    there as a shell command with three hard-won details in it, and it runs only
+#    when a human runs a release. SHIP.md says so itself: "Step 4 below is the
+#    sweep that should have caught it and did not run, because nobody released in
+#    between." A gate that fires only when someone remembers to fire it is the
+#    same decoration this file exists to replace, so it moves here and runs on
+#    every push. SHIP.md step 4 now points at this row rather than restating it.
+#
+#    The three details are kept verbatim from SHIP.md, each because the naive
+#    version fails:
+#      - Only backtick-quoted paths count. Bare text produces a flood of
+#        substring hits: the tail of "ingest-docs/SKILL.md" looks like a docs
+#        path, and the tail of "~/.agents/skills/x" looks like an agents path.
+#      - Driven off `git ls-files`, not a directory walk. Only tracked files can
+#        break a release for a stranger, and a walk drags in gitignored
+#        third-party folders nobody edits here.
+#      - The gone-on-purpose marker is filtered PER LINE, before extraction.
+#        `grep -o` prints the match and throws its line away, so a filter applied
+#        afterwards can never see the marker.
+#
+#    Prose that names a deleted file on purpose carries <!-- gone-on-purpose -->
+#    on that line. SHIP.md's own header needs it six times, and its rule holds:
+#    history and rationale only, never to silence a reference something follows.
+#
+#    CI-safe on a fresh clone: every path it can match is tracked, and the two
+#    gitignored-by-design paths (`memory/MEMORY.md`, `memory/facts/`) are outside
+#    the pattern's directory list deliberately, not by luck.
+#    COVERAGE, STATED HONESTLY. This reads tracked `.md` files only, and matches
+#    only backtick-quoted paths under those five directories carrying one of the
+#    extensions below. It does NOT see: references inside .sh/.js/.json, bare
+#    (unbackticked) prose paths, extensionless files such as `hooks/pre-commit`,
+#    or directories such as `docs/raw/`. The extension requirement is what keeps
+#    runtime output directories out, so widening it is not free. The row's label
+#    says "in tracked .md" for that reason — a gate whose name overstates its
+#    reach is the same lie in a different place.
+#
+#    FAILS CLOSED ON AN EMPTY RESULT. The obvious version records PASS whenever
+#    it printed nothing, which is also what it does when `git ls-files` returns
+#    nothing, when the grep pipeline breaks, or when someone edits the pattern
+#    into one that cannot match. That is the exact shape of the leak scan that
+#    went blind on macOS, and rows 8a/8b already count their probe lines for this
+#    reason. So both counts are asserted: zero source files or zero extracted
+#    references is a FAIL, never a clean sweep. The floor is 1 rather than
+#    today's 20, because 20 is a fact about this commit and a floor that tracks
+#    the corpus would have to be updated by hand on every edit.
+dangling=""
+dang_src=0
+dang_refs=0
+while IFS= read -r src; do
+  [ -z "$src" ] && continue
+  dang_src=$((dang_src + 1))
+  while IFS= read -r p; do
+    [ -z "$p" ] && continue
+    dang_refs=$((dang_refs + 1))
+    [ -e "$p" ] || [ -e "$(dirname "$src")/$p" ] || dangling="${dangling}
+    DANGLING: $p  (in $src)"
+  done < <(grep -v 'gone-on-purpose' "$src" \
+             | grep -oE '`(docs|rules|skills|hooks|agents)/[A-Za-z0-9._/-]+\.(md|sh|js|py|mjs|json|txt|yml|yaml)`' \
+             | tr -d '`' | sort -u)
+done < <(git ls-files -- '*.md')
+
+if [ "$dang_src" -eq 0 ]; then
+  record FAIL "dangling references — git ls-files listed NO tracked .md to read; the sweep examined nothing, which is empty rather than clean"
+elif [ "$dang_refs" -eq 0 ]; then
+  record FAIL "dangling references — no backticked path was extracted from $dang_src tracked .md files; the extractor is broken, not the corpus empty"
+elif [ -n "$dangling" ]; then
+  printf 'tracked files cite paths that are not on disk:%s\n' "$dangling"
+  record FAIL "dangling references — a tracked .md names a doc/skill/hook/script that does not exist (see above)"
+else
+  record PASS "dangling references in tracked .md ($dang_refs cited, all resolve)"
+fi
+
+# 10. README skills inventory — the table in README.md lists exactly the skills
+#     that exist, and the sentence above it spells the same number.
+#
+#     THIS IS SHIP.md STEP 6, AND ITS GAP. Step 6 says "update the skill count in
+#     README.md from the live directory" and hands over `ls -d skills/*/ | wc -l`.
+#     Two things are wrong with leaving it there. It runs only at release, like
+#     step 4 did. And a count alone is the weakest possible assertion: swap one
+#     skill for another and the number is still right while both rows are wrong.
+#     So the NAMES are compared, in both directions, and the number falls out of
+#     that rather than being tracked separately.
+#
+#     NO MANIFEST, AND NO THIRD COPY. Both sides are extracted at run time — the
+#     table out of README.md, the truth out of `git ls-files`. Nothing here
+#     records what the answer is supposed to be, so there is no third place to
+#     drift and no line number to go stale.
+#
+#     COUNTED FROM TRACKED SKILL.md, NOT FROM THE DIRECTORY. `ls -d skills/*/`
+#     also counts the `npx skills` symlinks that .gitignore lists (styleseed,
+#     avoid-ai-writing, archify, resolving-merge-conflicts): they are local
+#     install state, present here and absent in a fresh CI clone, so a directory
+#     count makes this row disagree between the two for reasons that are not a
+#     defect. What ships is what is tracked.
+readme_skills="$(grep -oE '^\| `/[a-z0-9-]+`' README.md 2>/dev/null | sed 's/.*`\/\(.*\)`/\1/' | sort -u)"
+real_skills="$(git ls-files 'skills/*/SKILL.md' | awk -F/ '{print $2}' | sort -u)"
+n_real="$(printf '%s\n' "$real_skills" | grep -c . )"
+
+if [ -z "$real_skills" ]; then
+  record FAIL "README skills inventory — git ls-files found NO tracked skills/*/SKILL.md; that is an empty result, not a matching one"
+elif [ -z "$readme_skills" ]; then
+  record FAIL "README skills inventory — no skill rows extracted from README.md; the table moved or the extractor is broken"
+elif [ "$readme_skills" != "$real_skills" ]; then
+  echo "README.md's skills table and the tracked skills disagree:"
+  diff <(printf '%s\n' "$readme_skills") <(printf '%s\n' "$real_skills") \
+    | sed -e 's/^</    ONLY IN README: /' -e 's/^>/    ONLY ON DISK: /' | grep -E 'ONLY'
+  record FAIL "README skills inventory — the table names a skill that does not exist, or omits one that does (see above)"
+else
+  # The spelled number in the sentence introducing the table. Written as a word
+  # ("There are six."), so it is compared as a word; a digit form is accepted too
+  # rather than demanding the prose change to suit the gate.
+  words="zero one two three four five six seven eight nine ten eleven twelve"
+  want="$(printf '%s' "$words" | awk -v n="$n_real" '{print $(n+1)}')"
+  if [ -z "$want" ]; then
+    record WARN "README skills inventory — $n_real skills match the table, but the count is past this row's number-word list, so the sentence went unchecked"
+  elif grep -qE "There are ($want|$n_real)\b" README.md; then
+    record PASS "README skills inventory ($n_real skills, table and count agree)"
+  else
+    echo "README.md says something other than \"There are $want\" ($n_real tracked skills):"
+    grep -nE 'There are [a-z0-9]+' README.md | sed 's/^/    /'
+    record FAIL "README skills inventory — the table is right and the sentence above it names a different number (see above)"
+  fi
+fi
 
 printf '\n%-6s  %s\n' RESULT CHECK
 for r in "${results[@]}"; do printf '%-6s  %s\n' "${r%%|*}" "${r#*|}"; done

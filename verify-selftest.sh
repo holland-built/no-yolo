@@ -271,6 +271,68 @@ else
   results+=("SKIP|check 8c not exercised: no .git/hooks/pre-commit installed (run setup.sh)")
 fi
 
+# 9. dangling references. A tracked .md gains a backticked path to a file that is not
+#    there, which is precisely how SHIP.md came to cite five deleted files with nothing
+#    noticing. docs/TESTING.md is tracked and carries no scan exclusion.
+backup docs/TESTING.md
+printf '\nSee `docs/zz-selftest-does-not-exist.md` for details.\n' >> docs/TESTING.md
+assert_red "dangling references" "check 9 catches a tracked .md citing a file that is not on disk"
+restore_one docs/TESTING.md
+
+# 9-marker. The gone-on-purpose escape must not be a blanket mute. The SAME dangling
+#    reference is added again, on a line that also carries the marker, and the row has to
+#    go GREEN — otherwise the marker does nothing and SHIP.md's history sections, which
+#    need it six times, could never pass. This is the inverse assertion of the one above
+#    and the only one here that proves a green result means something.
+backup docs/TESTING.md
+printf '\nOnce at `docs/zz-selftest-does-not-exist.md`, deleted since. <!-- gone-on-purpose -->\n' >> docs/TESTING.md
+if bash verify.sh 2>&1 | grep -q "^FAIL.*dangling references"; then
+  results+=("BROKEN|the gone-on-purpose marker does not exempt its line — the escape hatch is dead")
+  selftest_fail=1
+else
+  results+=("PASS|check 9 honours <!-- gone-on-purpose --> on the citing line")
+fi
+restore_one docs/TESTING.md
+
+# 10. README skills inventory, names half. The table gains a skill that does not exist.
+#     A count-only check cannot see this: the number goes UP, so a check comparing counts
+#     would have caught this one but not the swap below.
+backup README.md
+python3 - <<'EOF'
+import re, pathlib
+p = pathlib.Path("README.md")
+t = p.read_text()
+t = t.replace("| `/eli5` |", "| `/zz-selftest-not-a-skill` |\n| `/eli5` |", 1)
+p.write_text(t)
+EOF
+assert_red "README skills inventory" "check 10 catches a README table row for a skill that does not exist"
+restore_one README.md
+
+# 10-swap. The case a COUNT cannot catch, and the reason this row compares names. One
+#     real skill is renamed in the table to another name that does not exist. The number
+#     of rows is unchanged, so `ls -d skills/*/ | wc -l` — SHIP.md step 6's check — still
+#     agrees, while two rows of the published table are now wrong.
+backup README.md
+python3 - <<'EOF'
+import pathlib
+p = pathlib.Path("README.md")
+p.write_text(p.read_text().replace("| `/handoff` |", "| `/zz-selftest-renamed` |", 1))
+EOF
+assert_red "README skills inventory" "check 10 catches a swapped skill name that leaves the count correct"
+restore_one README.md
+
+# 10-count. The sentence introducing the table names a different number from the table.
+#     Both halves are asserted because they fail independently: a skill added to the table
+#     and to disk, with the sentence left at "six", is green on names and wrong in prose.
+backup README.md
+python3 - <<'EOF'
+import pathlib
+p = pathlib.Path("README.md")
+p.write_text(p.read_text().replace("There are six.", "There are nine.", 1))
+EOF
+assert_red "README skills inventory" "check 10 catches the spelled count disagreeing with the table"
+restore_one README.md
+
 # final: repo must be green again once everything is restored
 restore_ok=1
 bash verify.sh >/dev/null 2>&1 || restore_ok=0

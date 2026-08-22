@@ -118,12 +118,6 @@ $segments
 EOF
 
 case "$cmd" in
-  *"git push"*"--force"*|*"git push"*" -f "*)
-      block "a force push, which rewrites what others have pulled" ;;
-  *"git reset --hard"*)
-      block "a hard reset, which discards uncommitted work with no undo" ;;
-  *"git clean -"*[fdx]*)
-      block "git clean, which deletes untracked files permanently" ;;
   *"DROP TABLE"*|*"DROP DATABASE"*|*"TRUNCATE "*)
       block "a destructive database statement" ;;
   *"chmod -R 777"*)
@@ -131,5 +125,118 @@ case "$cmd" in
   *" > /dev/sd"*|*"mkfs"*|*"dd if="*"of=/dev/"*)
       block "a raw write to a block device" ;;
 esac
+
+# ---------------------------------------------------------------------------
+# Code execution and data egress.
+#
+# These run against the WHOLE command, not the segments above, and that is not
+# an oversight. The segment split breaks on ; & | ( ), which is exactly what an
+# inline interpreter payload is full of:
+#
+#   python3 -c "import shutil; shutil.rmtree('/')"
+#
+# splits into four pieces with the interpreter in the first and the delete in
+# the second, so no segment ever holds both. The same split separates the two
+# halves of `curl URL | sh` and of `cat ~/.ssh/id_rsa | curl -d @- URL`.
+# Measured 2026-08-21, after a cross-model review of the plan pointed at it.
+#
+# Matching the whole string gives up the anchoring the split was providing, so
+# the command name is anchored here instead: it has to sit at a command
+# position — the start, or just after an operator — with wrappers and VAR=value
+# assignments peeled off. Without that anchor this file's own documentation
+# would block itself, which is not hypothetical: the git rules below match
+# anywhere in the string, and refused a prompt that merely *described* a force
+# push while this section was being written.
+# ---------------------------------------------------------------------------
+
+# Start of string, or just after a shell operator, with `env`/`sudo`-style
+# wrappers and leading VAR=value assignments consumed.
+CMDPOS='(^|[;&|(`]|&&|\|\|)[[:space:]]*((env|sudo|command|nohup|time|stdbuf)[[:space:]]+)*([A-Za-z_][A-Za-z0-9_]*=[^[:space:]]*[[:space:]]+)*'
+
+# Git operations that cannot be undone.
+#
+# These were three fixed-string patterns matched against the whole command until
+# 2026-08-21, when the hook refused a code-review prompt whose TEXT described a
+# force push. The prompt was one quoted argument to an unrelated program. A
+# guard that blocks talking about a command gets unwired, so what fires now is
+# the subcommand at command position: `git commit -m "... reset --hard ..."` is
+# a commit and passes, while every wrapper around a real one is peeled first.
+GIT="${CMDPOS}"'([^[:space:]]*/)?git([[:space:]]+-[^[:space:]]+)*[[:space:]]+'
+
+# `--force-with-lease` is covered explicitly, and its `=<ref>` form with it.
+# The fixed-string pattern this replaced was `*"--force"*`, which caught the
+# lease form as a substring by accident; an anchored alternation ending in
+# `([[:space:]]|$)` does not, because the next character is `-`. Measured
+# 2026-08-21: `git push --force-with-lease origin main` exited 2 against the
+# committed hook and 0 against the rewrite, while all 104 assertions in
+# hooks/tests stayed green, because none of them named it. README.md:229 has
+# promised since it was written that this guard refuses the lease form too.
+# The lease form still rewrites what others have pulled; it only declines to
+# do so when the remote has moved since the last fetch.
+if printf '%s' "$cmd" | grep -Eq "${GIT}push([[:space:]][^;&|]*)?[[:space:]](--force(-with-lease)?(=[^[:space:]]*)?|-f)([[:space:]]|$)"; then
+  block "a force push, which rewrites what others have pulled"
+fi
+if printf '%s' "$cmd" | grep -Eq "${GIT}reset([[:space:]][^;&|]*)?[[:space:]]--hard"; then
+  block "a hard reset, which discards uncommitted work with no undo"
+fi
+if printf '%s' "$cmd" | grep -Eq "${GIT}clean[[:space:]]+-[a-zA-Z]*[fdx]"; then
+  block "git clean, which deletes untracked files permanently"
+fi
+
+# Interpreters by basename, allowing an absolute path and a version suffix.
+INTERP='([^[:space:]]*/)?(python[0-9.]*|node|nodejs|perl|ruby|php|deno|bun)'
+
+# An inline-code flag, with interpreter options allowed to precede it and the
+# equals form allowed: -c, -e, -E, --eval, --eval=CODE, --exec, -p, --print.
+CODEFLAG='([[:space:]]+-[^[:space:]]+)*[[:space:]]*(-c|-e|-E|--eval|--exec|-p|--print)'
+
+# Calls that destroy files, in any of the languages above. Only consulted once
+# an inline-code flag is already present, so an ordinary `python3 -c` that
+# parses JSON is untouched, and prose naming `shutil.rmtree` never reaches here.
+DESTRUCTIVE='(rmtree|unlink|rmSync|rmdirSync|rm_rf|rm_r[^A-Za-z]|rimraf|os\.remove|os\.rmdir|removedirs|rm[[:space:]]+-[a-zA-Z]*[rRf])'
+
+if printf '%s' "$cmd" | grep -Eq "${CMDPOS}${INTERP}${CODEFLAG}" \
+   && printf '%s' "$cmd" | grep -Eq "$DESTRUCTIVE"; then
+  block "an interpreter running inline code that deletes files"
+fi
+
+# Anything that can carry bytes off this machine, at command position. `ssh` has
+# to be followed by whitespace so that `ssh-add`, which is a local key load and
+# nothing else, does not match.
+EGRESS='(curl|wget|nc|ncat|netcat|scp|sftp|rsync|ssh|telnet)([[:space:]]|$)'
+
+# Names that are worth stopping for. Public halves and template files carry no
+# secret and are ordinary working files, so they are removed before the match
+# rather than described in it — .pub keys, .env.example and friends, and
+# known_hosts. Codex flagged these as the false positives that would get this
+# hook unwired.
+scan="$(printf '%s' "$cmd" | sed \
+  -e 's/[A-Za-z0-9_./~$-]*\.pub//g' \
+  -e 's/\.env\.\(example\|sample\|template\|dist\|defaults\)//g' \
+  -e 's/known_hosts//g')"
+SENSITIVE='(\.ssh/id_[A-Za-z0-9_]+|\.aws/credentials|\.netrc|\.gnupg/|\.env([^A-Za-z0-9_.-]|$)|id_rsa|id_ed25519|private[_-]key|\.pem([^A-Za-z0-9]|$))'
+
+# A secret and a way off the machine, in one command. Neither half is blocked on
+# its own: reading a key locally is ordinary work, and so is an ordinary fetch.
+if printf '%s' "$cmd" | grep -Eq "${CMDPOS}${EGRESS}" \
+   && printf '%s' "$scan" | grep -Eq "$SENSITIVE"; then
+  block "a secret file and a network command in the same breath"
+fi
+
+# Uploading a local file, secret or not. Rare in ordinary work and cheap to
+# confirm, so the file does not have to be a known secret. Every spelling curl
+# and wget accept: separated, attached, and equals forms.
+UPLOAD='(--upload-file|--post-file|-T[[:space:]]*[^[:space:]-]|(--data-binary|--data-urlencode|--data-raw|--data|--form|-d|-F)([[:space:]]*|=)[^[:space:]]*@)'
+if printf '%s' "$cmd" | grep -Eq "${CMDPOS}${EGRESS}" \
+   && printf '%s' "$cmd" | grep -Eq "$UPLOAD"; then
+  block "an upload of a local file to the network"
+fi
+
+# Remote content piped straight into an interpreter — the install-by-curl shape.
+# Anchored at the fetch so that prose describing the pattern does not match.
+PIPE_TO_SHELL="${CMDPOS}"'(curl|wget)[^;&|]*\|[[:space:]]*((env|sudo)[[:space:]]+)*([^[:space:]]*/)?(sh|bash|zsh|ksh|dash|python[0-9.]*|node|perl|ruby|php)([[:space:]]|$)'
+if printf '%s' "$cmd" | grep -Eq "$PIPE_TO_SHELL"; then
+  block "remote content piped straight into an interpreter"
+fi
 
 exit 0

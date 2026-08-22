@@ -8,6 +8,13 @@ pins the project each one must resolve to. `hooks/external-check.sh` re-checks t
 run of `verify.sh`, so a name that drifts or was never real fails the build rather than
 reaching a reader.
 
+The `agnix` row said "448 rules" until 2026-08-22. The installed CLI is `agnix 0.49.0` and it
+has no command that lists or counts its rules (`explain` takes one rule ID; there is no
+`list`), so the figure could not be confirmed or refuted from the tool itself. An unverifiable
+number in a table of verified names is the thing this file exists to stop, so it is gone. What
+IS measured is that the binary runs: `agnix ~/.claude/CLAUDE.md` reported "No issues found" on
+2026-08-22.
+
 Two are skills, installed by the `skills` CLI. Two are npm command-line tools:
 
 ```bash
@@ -40,23 +47,45 @@ commands in every session. It also drops a `skills-lock.json` at the repo root.
 Measured on 2026-08-21: 22 doors and a lockfile, from one install.
 
 ```bash
-rm -rf "$HOME/.claude/.claude" "$HOME/.claude/skills-lock.json"
+rm -rf "$HOME/.claude/.claude/skills" "$HOME/.claude/skills-lock.json"
 ```
+
+**This command used to be `rm -rf "$HOME/.claude/.claude"`, removing the whole directory.**
+That was right on the day it was written, when StyleSeed had just created that directory and
+nothing else lived in it. It is not right later: Claude Code writes its own
+`.claude/settings.local.json` there when `~/.claude` is opened as a project, and the broad
+form takes that with it. Checked on 2026-08-22, after the cleanup had already been run once:
+`.claude/skills/` was gone and `.claude/settings.local.json` was the only thing left, so the
+original command would now have deleted a live settings file and nothing else. Only the
+`skills` directory is StyleSeed's, so only that is named.
 
 The skills themselves live in `~/.claude/.agents/skills/` and are untouched by this. Only the
 symlinks that turn them into commands go.
 
-Two details worth knowing before you decide. `styleseed` is a router: its `SKILL.md` dispatches
+One detail worth knowing before you decide. `styleseed` is a router: its `SKILL.md` dispatches
 to the `ss-*` skills, so deleting those from `.agents/skills/` would break it, and the command
-above deliberately does not. And `hooks/safety-net.sh` refuses that `rm` when the path is
-written as `~/.claude/.claude`, because it cannot tell a nested directory from the
-configuration directory itself. Run it with `$HOME` spelled out, as above.
+above deliberately does not.
+
+This passage also claimed that `hooks/safety-net.sh` refuses the `rm` above when the path is
+written `~/.claude/.claude`, and told you to spell `$HOME` out to get past it. That was wrong
+in both halves, and measured wrong on 2026-08-21:
+
+```
+rm -rf ~/.claude/.claude          exit 0   (allowed)
+rm -rf "$HOME/.claude/.claude"    exit 0   (allowed)
+rm -rf ~/.claude                  exit 2   (refused)
+```
+
+The guard matches the configuration directory EXACTLY, as `hooks/safety-net.sh` line 108
+shows, so a nested path under it is not the case it fires on. Either spelling of the cleanup
+command runs. The `$HOME` form is kept above because it is unambiguous, not because the tilde
+form is blocked.
 
 | Piece | Gives | Reached from | Without it |
 |---|---|---|---|
 | `conorbronsdon/avoid-ai-writing` | Audits and rewrites AI writing patterns. Three modes: rewrite, detect, edit in place | `docs/PROSE.md` | That file's own list stands alone, and `hooks/slop-block.sh` still runs |
 | `bitjaru/styleseed` | Design judgement, as a render, score and revise loop | `docs/SCREENS.md` | That file's axes table stands alone |
-| `agnix` | 448 rules validating `CLAUDE.md`, `SKILL.md`, hooks and MCP config | `skills/checkup` | Checkup reports the check as unrun |
+| `agnix` | Validates `CLAUDE.md`, `SKILL.md`, hooks and MCP config | `skills/checkup` | Checkup reports the check as unrun |
 | `@yawlabs/ctxlint` | Lints agent context files against the actual codebase, so a reference to nothing is caught | `skills/checkup` | Same |
 | `NVIDIA/SkillSpector` | Security-scans a skill for prompt injection, exfiltration and supply-chain risk before install | `skills/checkup` | Read the skill yourself first |
 
@@ -67,8 +96,12 @@ consumer in `skills/build/stages/5-build.md`, and no package of that name has ev
 The reuse search that named it uses grep, which is what it always did.
 
 **`claude-code-safety-net` was redundant.** `hooks/safety-net.sh` ships in this repo, needs no
-install, and holds 47 tests. The two projects sharing that name on GitHub do different jobs:
-one is an undo system for edits, not a guard on destructive commands.
+install, and is covered by 109 assertions across two files: 47 in `hooks/tests/safety-net.test.sh`
+for the delete, git and disk rules, and 62 in `hooks/tests/safety-net-exec.test.sh` for the
+code-execution and data-egress rules. Both run on every push, because `verify.sh` row 1b globs
+`hooks/tests/*.test.sh`. This line said "47 tests" until 2026-08-22, which was the count before
+the second file existed. The number is written out here rather than derived, so it will go stale
+again; what stops it going stale silently is that both files print their own totals when run.
 
 ## Versions
 

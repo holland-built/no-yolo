@@ -106,3 +106,62 @@ jobs:
             fi
           done
           echo "every platform-sensitive check ran on ${{ matrix.os }}"
+
+  # WHY THIS JOB EXISTS.
+  #
+  # Until 2026-08-21 nothing automatic ran verify-selftest.sh. The job above proved
+  # that verify.sh reports PASS; nothing proved a PASS meant anything. That is the
+  # entire failure this repo was rebuilt around — it once shipped 14 green rows of
+  # which 8 could not go red — and the self-test written to close it was reachable
+  # only by a human typing it. SHIP.md line 198 said "verify.sh and verify-selftest.sh
+  # are tracked and CI runs them" for weeks while this job did not exist.
+  #
+  # It sabotages each check in turn and asserts verify.sh goes red for that check,
+  # restoring through an EXIT trap. A green verify.sh plus a green self-test is the
+  # pair that means something; either alone does not.
+  #
+  # UBUNTU ONLY, DELIBERATELY. The job above runs on both platforms because the
+  # checks it runs are platform-sensitive — regex engines differ, and stock macOS
+  # bash is 3.2. What THIS job tests is different in kind: whether a check is wired
+  # to its own failure, which is a property of the wiring and not of the runner. It
+  # costs roughly 17 minutes because it re-runs the whole suite once per sabotage
+  # (measured 2026-08-21: ~43s per verify.sh run, 23 cases), and macOS runners bill
+  # at ten times the rate for an assertion that does not vary by platform.
+  selftest:
+    runs-on: ubuntu-latest
+    # Well above the ~17 minutes measured, and far below the 6h default: a self-test
+    # that hangs should fail the build inside the hour, not occupy a runner all day.
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # The self-test runs verify.sh in full on every sabotage, so it needs
+      # everything verify.sh needs. shellcheck is one of the checks it sabotages.
+      - name: Install shellcheck
+        run: sudo apt-get update && sudo apt-get install -y shellcheck
+
+      # ONE run, teed to a file. The obvious second step that re-runs the script to
+      # summarise it costs another full 17 minutes for a tally that the first run
+      # already printed.
+      #
+      # The self-test prints BROKEN for a check that stayed green under sabotage and
+      # SKIP for one it could not exercise, and exits non-zero on BROKEN — so the
+      # failure half is carried by the exit status. SKIP is the half a green exit
+      # hides: .git/hooks/pre-commit does not exist in a CI checkout, so case 8c
+      # legitimately skips here, and a skipped case must never read as a proved one.
+      - name: Run verify-selftest.sh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -uo pipefail
+          bash verify-selftest.sh 2>&1 | tee /tmp/selftest.out
+          rc=${PIPESTATUS[0]}
+          echo "--- cases not proved on this runner ---"
+          grep -E '^(SKIP|BROKEN)' /tmp/selftest.out || echo "none: every case was exercised"
+          exit "$rc"

@@ -7,7 +7,7 @@
 # Every vendor credential FORMAT rule now lives in hooks/secret-patterns.txt, and every
 # private-network / internal-infra rule in hooks/infra-patterns.txt. Both are applied by
 # one executable, hooks/secret-scan.sh (step 2 and step 3 below), which every consumer
-# calls — this hook, verify.sh, skills/health/SKILL.md. Two rule files, one reader, one
+# calls — this hook and verify.sh. Two rule files, one reader, one
 # regex engine, and NO pattern text left in this hook at all: there is nothing to keep in
 # sync by hand and nothing for verify.sh check 8b to parse back out.
 # These five stay local because a shared scan cannot carry them:
@@ -85,14 +85,17 @@ git diff --cached -- . ":!hooks/tests/infra-scan-probe.txt" ":!hooks/tests/infra
 ADDED_NOPROBE=$(grep -E "^\+" "$T/noprobe.diff" | grep -vE "^\+\+\+" | grep -v "\[a-zA-Z" | grep -v "\[a-z0-9")
 
 # The same again, minus every file that legitimately CONTAINS credential formats:
-# the two pinned probe fixtures, plus the six files that document the patterns
-# themselves (this hook, verify.sh, the health skill, the deny-list example, and the
-# two rule files — a file of regexes matches its own rules on every line; their
-# compensating control is secret-scan.sh, which lints whichever file it loads against
-# that file's own patterns and refuses to run on a hit).
+# the two pinned probe fixtures, plus the five files that document the patterns
+# themselves (this hook, verify.sh, the deny-list example, and the two rule files —
+# a file of regexes matches its own rules on every line; their compensating control
+# is secret-scan.sh, which lints whichever file it loads against that file's own
+# patterns and refuses to run on a hit).
 # This list mirrors verify.sh's SCAN_EXCLUDE — change one, change the other.
 # The fixtures are sha256-pinned by verify.sh, so excluding them hides nothing.
-git diff --cached -- . ":!hooks/pre-commit" ":!verify.sh" ":!skills/health/SKILL.md" \
+# ":!skills/health/SKILL.md" was a sixth entry here until 2026-08-21. The rebuild
+# deleted that skill, so the pathspec matched nothing and excluded nothing; it was
+# removed from this list and from verify.sh's in the same edit.
+git diff --cached -- . ":!hooks/pre-commit" ":!verify.sh" \
   ":!.no-yolo-deny.example.txt" ":!hooks/secret-patterns.txt" ":!hooks/infra-patterns.txt" \
   ":!hooks/tests/infra-scan-probe.txt" ":!hooks/tests/infra-scan-clean.txt" \
   > "$T/cred.diff" || { echo "❌ BLOCKED: git diff failed — the scan did not run (fail closed)"; exit 1; }
