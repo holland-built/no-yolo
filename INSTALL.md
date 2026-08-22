@@ -30,6 +30,28 @@ until the first time you try to run it.
 Confirm each landed before relying on it. A tool that is absent gets reported as "did not
 run", never as a clean result.
 
+## StyleSeed leaves two things behind. Clean them up.
+
+The `skills` CLI resolves its output directory against the working directory, so running the
+StyleSeed line from `~/.claude` writes a nested `~/.claude/.claude/skills` holding 22 `ss-*`
+symlinks plus `styleseed`. That path is a real project-skills directory, so all 22 load as
+commands in every session. It also drops a `skills-lock.json` at the repo root.
+
+Measured on 2026-08-21: 22 doors and a lockfile, from one install.
+
+```bash
+rm -rf "$HOME/.claude/.claude" "$HOME/.claude/skills-lock.json"
+```
+
+The skills themselves live in `~/.claude/.agents/skills/` and are untouched by this. Only the
+symlinks that turn them into commands go.
+
+Two details worth knowing before you decide. `styleseed` is a router: its `SKILL.md` dispatches
+to the `ss-*` skills, so deleting those from `.agents/skills/` would break it, and the command
+above deliberately does not. And `hooks/safety-net.sh` refuses that `rm` when the path is
+written as `~/.claude/.claude`, because it cannot tell a nested directory from the
+configuration directory itself. Run it with `$HOME` spelled out, as above.
+
 | Piece | Gives | Reached from | Without it |
 |---|---|---|---|
 | `conorbronsdon/avoid-ai-writing` | Audits and rewrites AI writing patterns. Three modes: rewrite, detect, edit in place | `docs/PROSE.md` | That file's own list stands alone, and `hooks/slop-block.sh` still runs |
