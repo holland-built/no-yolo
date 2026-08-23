@@ -134,5 +134,9 @@ skills/*/_claude_bak/
 # LEGACY: the removed setup.sh --md-only flag
 CLAUDE.md.pre-md-only
 
+# verify-selftest.sh's single-run lock. A dead one is removed with rmdir, and it
+# must never be committed: a checked-in lock would refuse every run everywhere.
+.selftest.lock/
+
 # --- OS -------------------------------------------------------------------
 .DS_Store

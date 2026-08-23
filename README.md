@@ -215,7 +215,7 @@ you don't pay top price for small work.
 | Routing and short lookups | Haiku |
 
 The rule: a planning model writes the plan, then separate agents do the building, never the same
-breath. Swapping in a newer, better planner is expected. The full version is `docs/AGENTS.md`.
+breath. Swapping in a newer, better planner is expected. The full version is `docs/DELEGATION.md`.
 
 ## Keeping your setup up to date
 

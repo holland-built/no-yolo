@@ -2,6 +2,15 @@
 
 Read before dispatching a subagent or splitting work across several.
 
+## What this file is, and what it is not
+
+The mechanics of delegation for this setup: when a second context earns its cost, what a
+brief has to carry, which model does which job, and how to land the results.
+
+It does not grant permission. Whether an agent may be dispatched at all belongs to the owner
+and the harness, and the current session setting is "do not call the Agent tool unless the
+user requested it". Everything below applies once that permission exists, and never before.
+
 ## Decide whether to dispatch at all
 
 An agent costs a fresh context that knows nothing about this session. It earns that cost in
