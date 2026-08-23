@@ -115,6 +115,10 @@ skills/codebase-design
 skills/domain-modeling
 skills/mcp-builder
 skills/systematic-debugging
+# Arrived here on 2026-08-22 from ~/.agents/skills, moved by `npx skills update`.
+# An update can relocate a skill, so a new untracked directory under skills/ is
+# expected after one; check `git status` before staging.
+skills/orca-cli
 skills/archify
 skills/resolving-merge-conflicts
 # LEGACY: the deleted /design skill

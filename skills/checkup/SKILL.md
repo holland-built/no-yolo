@@ -75,6 +75,20 @@ Also check the reverse: a file nobody points at is either unreachable or an orph
 For anything borrowed from outside, compare the local copy against its origin and report how
 far behind it is. Vet anything newly borrowed with `skillspector` before it is installed.
 
+Installed skills carry their source, so one command answers this for all of them:
+
+```bash
+npx --yes skills@latest update -g
+```
+
+Without `-y` it lists what is behind and stops, which is what this command wants. Applying an
+update is the owner's call and belongs outside a read-only pass.
+
+An update can also relocate a skill: on 2026-08-22 `orca-cli` moved from `~/.agents/skills`
+into `~/.claude/skills`, arriving untracked and unignored, where one `git add -A` would have
+published it. Report any new untracked directory under `skills/` as a finding with the
+`.gitignore` line that closes it.
+
 For anything pinned to a version, ask the registry for the current stable release and report
 the gap. See `CLAUDE.md` rule 5 for the read-only queries.
 
