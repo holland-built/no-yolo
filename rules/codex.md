@@ -82,7 +82,7 @@ carries no weight.
 
 ## When it did not run
 
-A missing binary, a timeout, or empty output is reported as "Codex: did not run, <reason>".
+A missing binary, a timeout, or empty output is reported as "Codex: did not run", followed by the reason.
 That is a flag on the check, not a defect in the work, and the work proceeds.
 
 **This applies to the Codex second opinion and to nothing else.** A second opinion that was

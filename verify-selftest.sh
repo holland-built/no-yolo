@@ -374,6 +374,33 @@ PY
 expect_red "README skills inventory" "a spelled count disagreeing with the table turns the row red"
 put_back README.md
 
+# The outside-pieces count, which nothing watched until 2026-08-23. Two shapes,
+# because the two sides go stale independently: the front page keeps yesterday's
+# number, or a piece joins the table and neither sentence is touched. Both had
+# already happened, the second of them for a day.
+save README.md
+python3 - <<'PYEOF'
+import pathlib, re
+p = pathlib.Path("README.md")
+p.write_text(re.sub(r"^\w+ outside pieces", "Nineteen outside pieces", p.read_text(), count=1, flags=re.M))
+PYEOF
+expect_red "README outside-pieces count" "a front page naming a different number of outside pieces turns the row red"
+put_back README.md
+
+save INSTALL.md
+python3 - <<'PYEOF'
+import pathlib
+p = pathlib.Path("INSTALL.md")
+lines = p.read_text().split("\n")
+for i, line in enumerate(lines):
+    if line.startswith("| Piece | Gives |"):
+        lines.insert(i + 2, "| `zz-selftest-piece` | nothing | nowhere | nothing changes |")
+        break
+p.write_text("\n".join(lines))
+PYEOF
+expect_red "README outside-pieces count" "a piece added to the table while both sentences keep the old number turns the row red"
+put_back INSTALL.md
+
 # ── everything back ─────────────────────────────────────────────────────────
 if bash verify.sh >/dev/null 2>&1; then
   results+=("PASS|the tree is green again with every sabotage undone")

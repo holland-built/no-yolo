@@ -135,6 +135,7 @@ jobs:
             "external references" \
             "dangling references" \
             "README skills inventory"
+            "README outside-pieces count"
           do
             if ! grep -qF "$row" /tmp/verify.out; then
               echo "::error::verify.sh did not report '$row' on ${{ matrix.os }} — it did not run"

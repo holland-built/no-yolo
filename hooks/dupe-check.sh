@@ -143,11 +143,46 @@ if [ "$MODE" != symbols ]; then
         < "$FILES" > "$BOX/jscpd.out" 2>&1
       jscpd_rc=$?
       clones="$(grep -oE 'Found [0-9]+ clones' "$BOX/jscpd.out" | tail -1 | tr -dc '0-9')"
+      # A FRAGMENT MATCHING ITSELF IS NOT A COPY. jscpd reports one when a file
+      # holds a long run of similar tokens: measured 2026-08-23 on SHIP.md's
+      # `git add` path list, which came back as a clone of lines 236:1-241:3
+      # against 236:2-241:4, the same lines one column over. Nobody can act on
+      # that, and a gate that cries wolf gets waived by habit and then waived
+      # on the day it was right. Both halves must name the same file AND their
+      # line ranges must overlap; two separate blocks inside one file still
+      # report.
+      #
+      # The range is read out of the brackets rather than by splitting the line
+      # on punctuation. The first version split on [][: and put "1 - 241" in one
+      # field, so it read the END line as 3: it filtered one clone shape and
+      # missed the identical one beside it, which is worse than not filtering.
+      self_overlap="$(awk '
+        function fname(s,   i) { i = index(s, "["); s = substr(s, 1, i - 1)
+          sub(/^ *- */, "", s); sub(/^ +/, "", s); sub(/ +$/, "", s)
+          sub(/:[a-z]+$/, "", s); return s }
+        function lo(s,   i, j, r) { i = index(s, "["); j = index(s, "]")
+          r = substr(s, i + 1, j - i - 1); split(r, q, " - "); split(q[1], t, ":")
+          return t[1] + 0 }
+        function hi(s,   i, j, r) { i = index(s, "["); j = index(s, "]")
+          r = substr(s, i + 1, j - i - 1); split(r, q, " - "); split(q[2], t, ":")
+          return t[1] + 0 }
+        /^ - .*\[.*\]/ {
+          f1 = fname($0); a = lo($0); b = hi($0)
+          if ((getline nxt) > 0 && nxt ~ /\[.*\]/) {
+            f2 = fname(nxt); c = lo(nxt); d = hi(nxt)
+            if (f1 == f2 && c <= b && d >= a) n++
+          }
+        }
+        END {print n + 0}
+      ' "$BOX/jscpd.out" 2>/dev/null)"
+      [ -n "$self_overlap" ] || self_overlap=0
       if [ -n "$clones" ]; then
         jscpd_ran=1
-        if [ "$clones" -gt 0 ]; then
+        if [ "$clones" -gt "$self_overlap" ]; then
           grep -vE '^(💡|🎩|💖|time:|Using config)' "$BOX/jscpd.out"
           findings=1
+        elif [ "$self_overlap" -gt 0 ]; then
+          printf 'jscpd: %s clone(s), all of them a fragment overlapping itself; ignored\n' "$self_overlap"
         fi
       elif [ "$jscpd_rc" -eq 0 ]; then
         # Nothing in a format jscpd analyses. A real answer, and a clean one.

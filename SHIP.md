@@ -149,6 +149,10 @@ secrets gate, then staging, then the commit, then the push, then reading the tar
    against the tracked `skills/*/SKILL.md` in both directions, then checks the spelled number
    in the sentence above the table against how many it found.
 
+   The `README outside-pieces count` row beside it does the same for the other number the
+   front page publishes, holding both sentences against the rows in INSTALL.md's pieces table.
+   That one went stale twice before anything watched it.
+
    This step used to be a count patch run by hand, `ls -d skills/*/ | wc -l`, and it was weak
    in two ways that the row fixes. A count cannot see a swap: rename one skill in the table and
    the number is still six while two rows are wrong. And `ls -d skills/*/` counts the `npx
@@ -201,6 +205,22 @@ secrets gate, then staging, then the commit, then the push, then reading the tar
 
    Warn only, on purpose. Whether a sentence still reads true is a judgement, and a block on a
    judgement gets satisfied by editing the sentence until the gate stops complaining.
+
+   **The acknowledgement.** A judgement cannot be gated, but it can be required to happen. When
+   this release touches `hooks/`, `verify.sh`, `skills/build/stages/` or `INSTALL.md`, print the
+   README lines that describe them and write into the release report either "still true" or the
+   edit made. On 2026-08-22 a release changed 36 files across all four of those paths and README
+   moved by three lines, every one of them a number; nothing asked whether the page still
+   described the setup, because nothing here ever had.
+
+   ```bash
+   base="$(git describe --tags --abbrev=0 2>/dev/null || echo origin/HEAD)"
+   git diff --name-only "$base"..HEAD -- hooks/ verify.sh skills/build/stages/ INSTALL.md \
+     | grep -q . && grep -nE 'hook|verify|gate|stage|piece|tool' README.md
+   ```
+
+   The base falls back to `origin/HEAD` because a shallow CI clone has no tags, and a step that
+   errors into an empty list reads exactly like a step that found nothing to say.
 
 8. **Config template check (HARD BLOCK):** `settings.example.json` must parse
    (`python3 -c "import json;json.load(open('settings.example.json'))"`); its hook command
