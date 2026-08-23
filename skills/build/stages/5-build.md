@@ -1,7 +1,8 @@
 # Stage 5: Build
 
-Dispatch rules, the brief's contents, and the model-per-job table live in `docs/AGENTS.md`.
-This file is the build-specific procedure.
+This file is the build-specific procedure. It runs here unless the owner has asked for
+agents; if they have, the dispatch rules, the brief's contents, and the model-per-job table
+live in `docs/DELEGATION.md`, and the "Before dispatching" section below applies.
 
 ## One slice at a time
 
@@ -11,7 +12,7 @@ reason, write the least code that turns it green, confirm green, then the next o
 
 The loop itself and what makes a test worthless are in `docs/TESTING.md`.
 
-## Before dispatching
+## Before dispatching, when the owner has asked for agents
 
 Read every target file and its direct imports yourself. Write one brief per agent, each
 carrying the target path, the exact change quoted from its plan step, the

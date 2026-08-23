@@ -26,6 +26,53 @@ set -uo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$ROOT" || { echo "cannot cd to $ROOT"; exit 1; }
 
+# ── refuse to run beside anything it could destroy ──────────────────────────
+# This script backs a file up, breaks it, and puts it back from that backup some
+# seconds later. Anything edited inside that window is overwritten by the backup,
+# silently and with no git object to recover from.
+#
+# That is not hypothetical. On 2026-08-23 a run of this script overlapped an
+# editing session in the same checkout and reverted eight tracked files to the
+# contents they had when the run started, including a rename. The work survived
+# only because it was still legible in a transcript.
+#
+# So: a clean tree, and one run at a time. On a clean tree `git status` after a
+# crash names exactly what was planted and nothing else, which is what makes the
+# leftovers recoverable at all.
+#
+# Fail CLOSED. If git cannot answer, the audit this relies on does not exist, so
+# there is no safe way to proceed.
+if ! command -v git >/dev/null 2>&1; then
+  echo "verify-selftest: git not found, and this script needs it to prove the tree came back. Refusing."
+  exit 1
+fi
+if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  echo "verify-selftest: $ROOT is not a git work tree, so sabotage would be unrecoverable. Refusing."
+  exit 1
+fi
+if ! dirty="$(git status --porcelain 2>/dev/null)"; then
+  echo "verify-selftest: 'git status' failed, so the tree state is unknown. Refusing."
+  exit 1
+fi
+if [ -n "$dirty" ] && [ "${SELFTEST_ALLOW_DIRTY:-0}" != 1 ]; then
+  echo "verify-selftest: the working tree is dirty. This script rewrites tracked files from"
+  echo "backups taken at its own start, so anything below would be reverted to its current"
+  echo "contents and any edit made while it runs would be lost outright:"
+  printf '%s\n' "$dirty" | sed 's/^/    /'
+  echo
+  echo "Commit or stash first. To override knowingly: SELFTEST_ALLOW_DIRTY=1 bash verify-selftest.sh"
+  exit 1
+fi
+
+# One at a time. Two overlapping runs back up each other's sabotage and restore
+# it as though it were the real file. mkdir is the atomic test-and-set here.
+LOCK="$ROOT/.selftest.lock"
+if ! mkdir "$LOCK" 2>/dev/null; then
+  echo "verify-selftest: $LOCK exists, so another run is in progress or one died."
+  echo "If nothing is running, remove it: rmdir $LOCK"
+  exit 1
+fi
+
 STASH="$(mktemp -d)"
 touched=()
 
@@ -59,9 +106,54 @@ restore_all() {
     [ -z "$f" ] && continue
     if [ -f "$STASH/$(slot "$f").bak" ]; then put_back "$f"; else rm -f "$f"; fi
   done
-  rm -rf "$STASH"
 }
-trap restore_all EXIT
+
+# Prove the restore worked, rather than assuming it. Checked against the backups
+# and not against `git status`, for two reasons: `.git/hooks/pre-commit` is
+# sabotaged too and lives outside the work tree where git cannot see it, and a
+# file created by a case is untracked, so `git checkout` would never remove it.
+# Only paths this script recorded are judged, so an unrelated edit elsewhere is
+# never mistaken for leftover sabotage.
+audit_restore() {
+  local f leftover=0
+  for f in "${touched[@]:-}"; do
+    [ -z "$f" ] && continue
+    if [ -f "$STASH/$(slot "$f").bak" ]; then
+      if ! cmp -s "$STASH/$(slot "$f").bak" "$f"; then
+        echo "SABOTAGE LEFT BEHIND: $f does not match its backup"
+        leftover=1
+      elif [ -f "$STASH/$(slot "$f").mode" ] && [ "$(mode_of "$f")" != "$(cat "$STASH/$(slot "$f").mode")" ]; then
+        echo "SABOTAGE LEFT BEHIND: $f has the wrong mode"
+        leftover=1
+      fi
+    elif [ -e "$f" ]; then
+      echo "SABOTAGE LEFT BEHIND: $f was planted by a case and still exists"
+      leftover=1
+    fi
+  done
+  return "$leftover"
+}
+
+# ONE finalizer. A second `trap ... EXIT` would silently replace this one and
+# take the restore with it, so everything that must happen on the way out
+# happens here, in order: put the tree back, then check that it went back, then
+# release the lock. The exit status can only get worse, never better: a failed
+# restore turns a green run red, and never masks a failure the run already had.
+finish() {
+  local rc=$?
+  restore_all
+  if ! audit_restore; then
+    echo
+    echo "verify-selftest: the tree did NOT come back clean. The backups are kept at $STASH."
+    echo "Restore the files named above from there, or with 'git checkout --' for tracked ones."
+    rmdir "$LOCK" 2>/dev/null
+    exit 1
+  fi
+  rm -rf "$STASH"
+  rmdir "$LOCK" 2>/dev/null
+  exit "$rc"
+}
+trap finish EXIT
 
 results=()
 broken=0

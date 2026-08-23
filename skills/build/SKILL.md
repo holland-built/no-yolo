@@ -15,8 +15,10 @@ Work: $ARGUMENTS
 One door for everything from a wording change to a new subsystem. This file routes; each
 stage lives in its own file and is read when that stage runs.
 
-**Writing happens in agents.** Planning goes to Fable, implementation to Opus. This file
-reads, decides, and dispatches. See `docs/AGENTS.md`.
+**Writing happens here by default.** The harness setting decides whether agents may run at
+all, and the current one is "do not call the Agent tool unless the user requested it", so
+this file reads, decides, and builds. When the owner does ask for agents, planning goes to
+Fable and implementation to Opus, and `docs/DELEGATION.md` carries the mechanics.
 
 ## Size the job, then say so
 
@@ -54,7 +56,7 @@ Go, or redirect?
 
 ## What runs while that gate waits
 
-Neither of these uses the owner's answer, so both start now rather than after (`docs/AGENTS.md`,
+Neither of these uses the owner's answer, so both start now rather than after (`docs/DELEGATION.md`,
 the Wait Test):
 
 - **Stack detection.** Dev server URL, test command, build command, the project's critical
@@ -81,7 +83,7 @@ Read one file when its stage begins. Skip the files for stages this size does no
 ## What starts early
 
 Each of these is launched before the stage that consumes it, because none reads the previous
-stage's output. The Wait Test in `docs/AGENTS.md` is what put them here:
+stage's output. The Wait Test in `docs/DELEGATION.md` is what put them here:
 
 | Launch at | What | Read at |
 |---|---|---|
