@@ -583,6 +583,56 @@ else
   fi
 fi
 
+# The OTHER number README publishes. Its skills table has been checked since
+# 2026-08-21; the outside-pieces sentence had nothing watching it, and went
+# stale twice: the front page said five while INSTALL.md listed thirteen, and
+# the repository description on GitHub said thirty-one skills against six for
+# weeks. A count is cheap to check and expensive to leave, because it is the
+# first thing a stranger reads and the last thing anyone edits.
+#
+# THE TABLE IS THE LIST; both sentences only quote its size. So the row
+# extracts three values at run time and holds them against each other: no
+# expected number is written here, and there is no third copy to drift.
+#
+# BOUNDED TO ONE TABLE. INSTALL.md holds a second table whose rows also open
+# with a backticked name (the vetting scores), so counting `^| ` across the
+# file reads 16 where the answer is 13. The count starts at the pieces header
+# and stops at the first line that is not a table row.
+pieces_rows="$(awk '
+  /^\| Piece \| Gives \|/ {inside = 1; next}
+  inside && /^\|---/       {next}
+  inside && !/^\|/         {exit}
+  inside && /^\| /         {n++}
+  END {print n + 0}
+' INSTALL.md 2>/dev/null)"
+readme_word="$(grep -oE '^[A-Za-z]+ outside pieces' README.md 2>/dev/null | head -1 | awk '{print tolower($1)}')"
+install_word="$(grep -oE '^[A-Za-z]+ borrowed pieces' INSTALL.md 2>/dev/null | head -1 | awk '{print tolower($1)}')"
+
+# Rule 1 and rule 2 together: an extractor that found nothing is a FAIL, and
+# the label prints all three values so a reader can see what was compared
+# rather than trusting that anything was.
+if [ -z "$pieces_rows" ] || [ "$pieces_rows" -eq 0 ] 2>/dev/null; then
+  red "README outside-pieces count — no rows extracted from INSTALL.md's pieces table; the extractor is broken, not the count agreed"
+elif [ -z "$readme_word" ] || [ -z "$install_word" ]; then
+  red "README outside-pieces count — the sentence is missing from README.md ('${readme_word:-none}') or INSTALL.md ('${install_word:-none}'); one of them was reworded and this row can no longer read it"
+else
+  pieces_want="$(printf '%s' "zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen eighteen nineteen twenty" \
+    | awk -v n="$pieces_rows" '{print $(n+1)}')"
+  if [ -z "$pieces_want" ]; then
+    red "README outside-pieces count — $pieces_rows rows is past this row's number-word list; extend the list rather than leaving the count unwatched"
+  elif [ "$readme_word" != "$pieces_want" ] || [ "$install_word" != "$pieces_want" ]; then
+    echo "the two sentences and the table disagree:"
+    echo "    README.md says   $readme_word outside pieces"
+    echo "    INSTALL.md says  $install_word borrowed pieces"
+    echo "    the table holds  $pieces_rows rows ($pieces_want)"
+    grep -nE '^[A-Za-z]+ outside pieces' README.md | sed 's/^/    README.md:/'
+    grep -nE '^[A-Za-z]+ borrowed pieces' INSTALL.md | sed 's/^/    INSTALL.md:/'
+    red "README outside-pieces count — a sentence names a different number from the table it summarises (see above)"
+  else
+    pass "README outside-pieces count ($pieces_rows in the table, both sentences say $pieces_want)"
+  fi
+fi
+
 printf '\n%-6s  %s\n' RESULT CHECK
 for r in "${rows[@]}"; do printf '%-6s  %s\n' "${r%%|*}" "${r#*|}"; done
 exit "$fail"
