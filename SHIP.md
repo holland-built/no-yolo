@@ -68,14 +68,16 @@ secrets gate, then staging, then the commit, then the push, then reading the tar
    so a clean result here is the expected one, and a finding means a file reached git without
    passing through a hook.
 
-2. **Size check (warn only):** `wc -l ~/.claude/*.md ~/.claude/docs/*.md ~/.claude/rules/*.md
-   ~/.claude/skills/*/SKILL.md`; table any file >200 lines.
+2. **Size check (warn only):** with `CFG="${CLAUDE_CONFIG_DIR:-$HOME/.claude}"`, run
+   `wc -l "$CFG"/*.md "$CFG"/docs/*.md "$CFG"/rules/*.md "$CFG"/skills/*/SKILL.md`; table any
+   file >200 lines.
 
 3. **Stale-external sweep (repo mirrors the machine: HARD BLOCK):** every external tool
    referenced in tracked files (a row in `INSTALL.md`, a `skills/<name>` .gitignore entry, a
    README prerequisite) must exist on THIS machine right now. Check with
-   `ls ~/.agents/skills/<name>`, `ls ~/.claude/.agents/skills/<name>` (newer npx installs land
-   here), `ls skills/<name>`, or `command -v <tool>` for anything installed globally. A
+   `ls ~/.agents/skills/<name>`, `ls "${CLAUDE_CONFIG_DIR:-$HOME/.claude}"/.agents/skills/<name>`
+   (newer npx installs land here), `ls skills/<name>`, or `command -v <tool>` for anything
+   installed globally. A
    reference to something not installed is old shit. Delete the reference, don't ship it.
    Standing rule from a past incident: a tool was uninstalled locally but its 16 references
    shipped for weeks.
