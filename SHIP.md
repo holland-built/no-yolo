@@ -77,8 +77,8 @@ secrets gate, then staging, then the commit, then the push, then reading the tar
    README prerequisite) must exist on THIS machine right now. Check with
    `ls ~/.agents/skills/<name>`, `ls "${CLAUDE_CONFIG_DIR:-$HOME/.claude}"/.agents/skills/<name>`
    (newer npx installs land here), `ls skills/<name>`, or `command -v <tool>` for anything
-   installed globally. A
-   reference to something not installed is old shit. Delete the reference, don't ship it.
+   installed globally. A reference to something not installed is old shit. Delete the
+   reference, don't ship it.
    Standing rule from a past incident: a tool was uninstalled locally but its 16 references
    shipped for weeks.
 
@@ -215,12 +215,20 @@ secrets gate, then staging, then the commit, then the push, then reading the tar
 
 ## Stage scope
 
+The markers below hide this block from `jscpd` only. It shares enough generic git tokens with
+the `git rebase upstream/main` snippet in `README.md` to be reported as a 267-token clone of
+it, though one is a path list and the other pulls upstream changes in. The pair went red the
+first time a change touched both files at once, which was 2026-08-23. Nothing else is
+exempted, and the duplicate gate is otherwise untouched.
+
+<!-- jscpd:ignore-start -->
 ```
 git add skills/ docs/ rules/ hooks/ .github/ archive/ styles/ README.md INSTALL.md LICENSE \
   .gitignore .no-yolo-deny.example.txt .vale.ini .jscpd.json \
   setup.sh settings.example.json SHIP.md CLAUDE.md \
   memory/MEMORY.example.md verify.sh verify-selftest.sh
 ```
+<!-- jscpd:ignore-end -->
 
 Explicit paths: do NOT rely on a `*.md` shell glob, which expands in the CWD rather than the
 repo root. Each of these was omitted once and something silently never shipped:
