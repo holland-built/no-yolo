@@ -254,3 +254,39 @@ The precedence paragraph written during the same pass stays in `CLAUDE.md`, beca
 worth stating regardless of what a linter thinks. It records the one split a linter cannot
 see: whether an agent may be dispatched at all belongs to the owner and the harness, while
 `docs/DELEGATION.md` governs only how to choose and brief one after that permission exists.
+
+## The self-test refuses a dirty tree, 2026-08-23
+
+`verify-selftest.sh` backs a tracked file up, breaks it, asserts the row goes red, and copies
+the backup over it a few seconds later. Anything edited inside that window is overwritten by
+a copy of the file as it stood when the run began. Nothing is staged or committed at any
+point, so git holds no object to recover from.
+
+It happened. A run overlapped an editing session in the same checkout and reverted eight
+tracked files, a `git mv` among them. The work came back only because it was still legible in
+a transcript. The first diagnosis blamed `verify.sh`, and that was wrong twice over:
+`verify.sh` never invokes the self-test, and neither file contains a single `git checkout`,
+`stash`, `restore`, `reset`, `clean` or `worktree` command. Both checked by grep before the
+correction was written.
+
+Three guards, in the order they fire:
+
+| Guard | What it stops |
+|---|---|
+| Refuse a dirty tree | The window cannot contain uncommitted work, because there is none. On a clean tree `git status` after a crash names exactly what was planted |
+| A `.selftest.lock` directory, taken with `mkdir` | Two overlapping runs, where the second backs up the first's sabotage and restores it as though it were the real file |
+| An exit-time audit of every touched path against its backup | A restore that silently failed. Contents and mode are compared, a file a case created must be gone, and a mismatch turns a green run red |
+
+The audit reads the backups rather than `git status`, because `git status` cannot see either
+end of this: `.git/hooks/pre-commit` is sabotaged too and sits outside the work tree, and
+`hooks/tests/zzselftest.test.sh` is planted untracked, so `git checkout` would never remove
+it. Judging only the paths the run recorded also means a concurrent edit somewhere else is
+never misreported as leftover sabotage.
+
+`SELFTEST_ALLOW_DIRTY=1` overrides the first guard and reopens the hole exactly as described.
+It exists because developing a new row against a dirty tree is a real need; it is spelled out
+rather than silent so that using it is a decision.
+
+Not done, and worth knowing: none of this survives `SIGKILL` or a power cut, because no
+finalizer runs at all. The fix for that class is to sabotage a disposable worktree instead of
+this one, which is a larger change than this pass took on.
