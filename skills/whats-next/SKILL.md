@@ -4,7 +4,7 @@ description: Use when the owner types /whats-next, says "what's next", "what sho
 user-invocable: true
 model: haiku
 effort: low
-allowed-tools: [Bash, Read, Grep, Glob, TaskList, TaskUpdate, Agent]
+allowed-tools: [Bash, Read, Grep, Glob, TaskList, TaskUpdate]
 ---
 
 # whats-next
@@ -21,7 +21,7 @@ resumes rather than restarts. Then run it.
 | The task | How it runs |
 |---|---|
 | Names a command (`/build X`) | Invoke that command with those arguments |
-| Describes work to build | Dispatch a Fable agent to plan, then Opus agents to build. See `docs/AGENTS.md` |
+| Describes work to build | Hand it to `/build`, which plans and builds it here. Agents only if the owner asks for them, and `docs/DELEGATION.md` covers the mechanics if they do |
 | Mechanical (rename, move, trim) | Do it here |
 
 Mark it `completed`, report what happened in one line, and list what remains.

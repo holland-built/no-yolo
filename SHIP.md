@@ -68,15 +68,17 @@ secrets gate, then staging, then the commit, then the push, then reading the tar
    so a clean result here is the expected one, and a finding means a file reached git without
    passing through a hook.
 
-2. **Size check (warn only):** `wc -l ~/.claude/*.md ~/.claude/docs/*.md ~/.claude/rules/*.md
-   ~/.claude/skills/*/SKILL.md`; table any file >200 lines.
+2. **Size check (warn only):** with `CFG="${CLAUDE_CONFIG_DIR:-$HOME/.claude}"`, run
+   `wc -l "$CFG"/*.md "$CFG"/docs/*.md "$CFG"/rules/*.md "$CFG"/skills/*/SKILL.md`; table any
+   file >200 lines.
 
 3. **Stale-external sweep (repo mirrors the machine: HARD BLOCK):** every external tool
    referenced in tracked files (a row in `INSTALL.md`, a `skills/<name>` .gitignore entry, a
    README prerequisite) must exist on THIS machine right now. Check with
-   `ls ~/.agents/skills/<name>`, `ls ~/.claude/.agents/skills/<name>` (newer npx installs land
-   here), `ls skills/<name>`, or `command -v <tool>` for anything installed globally. A
-   reference to something not installed is old shit. Delete the reference, don't ship it.
+   `ls ~/.agents/skills/<name>`, `ls "${CLAUDE_CONFIG_DIR:-$HOME/.claude}"/.agents/skills/<name>`
+   (newer npx installs land here), `ls skills/<name>`, or `command -v <tool>` for anything
+   installed globally. A reference to something not installed is old shit. Delete the
+   reference, don't ship it.
    Standing rule from a past incident: a tool was uninstalled locally but its 16 references
    shipped for weeks.
 
@@ -132,6 +134,25 @@ secrets gate, then staging, then the commit, then the push, then reading the tar
    cases: `memory/MEMORY.md` and `memory/facts/`. Neither is matched by the pattern above, and
    that is deliberate rather than lucky, so anything that starts citing them has to name the
    tracked template beside them, the way `settings.example.json` sits beside `settings.json`.
+
+   A third case IS matched by the pattern: the vendored skill directories, which are
+   gitignored per-name near the foot of `.gitignore`. Citing a file inside one in backticks
+   passes here and fails in CI, which is how it was found on 2026-08-23. Name such a file in
+   plain words rather than backticks, and say it is vendored.
+
+   To catch the whole class before pushing, ask whether each cited path is TRACKED rather than
+   merely present:
+
+   ```bash
+   git ls-files -- '*.md' | while read -r src; do
+     grep -v 'gone-on-purpose' "$src" \
+       | grep -oE '`(docs|rules|skills|hooks|agents)/[A-Za-z0-9._/-]+\.(md|sh|js|py|mjs|json)`' \
+       | tr -d '`' | while read -r p; do
+           git ls-files --error-unmatch "$p" >/dev/null 2>&1 \
+             || echo "UNTRACKED BUT CITED: $p  (in $src)"
+         done
+   done | sort -u
+   ```
 
 5. **Outside-tool freshness (warn only: never auto-pull):** run `/checkup` and print its drift
    rows. It reports how far behind this clone is against GitHub, and which of the borrowed
@@ -233,12 +254,20 @@ secrets gate, then staging, then the commit, then the push, then reading the tar
 
 ## Stage scope
 
+The markers below hide this block from `jscpd` only. It shares enough generic git tokens with
+the `git rebase upstream/main` snippet in `README.md` to be reported as a 267-token clone of
+it, though one is a path list and the other pulls upstream changes in. The pair went red the
+first time a change touched both files at once, which was 2026-08-23. Nothing else is
+exempted, and the duplicate gate is otherwise untouched.
+
+<!-- jscpd:ignore-start -->
 ```
 git add skills/ docs/ rules/ hooks/ .github/ archive/ styles/ README.md INSTALL.md LICENSE \
   .gitignore .no-yolo-deny.example.txt .vale.ini .jscpd.json \
   setup.sh settings.example.json SHIP.md CLAUDE.md \
   memory/MEMORY.example.md verify.sh verify-selftest.sh
 ```
+<!-- jscpd:ignore-end -->
 
 Explicit paths: do NOT rely on a `*.md` shell glob, which expands in the CWD rather than the
 repo root. Each of these was omitted once and something silently never shipped:

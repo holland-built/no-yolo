@@ -67,6 +67,16 @@ argument runs in steps. Long answers print in the terminal.
 
 Code, commands, and anything irreversible stay exact.
 
+## Which file wins
+
+This file. Everything under `docs/` and `rules/` is subordinate to it, and to the harness
+settings above it: a session setting beats a rule here, and a rule here beats a doc.
+
+One split is worth stating, because a linter cannot see it. Whether agents may be dispatched
+at all is decided by the owner and the harness, never by a doc or a memory. `docs/DELEGATION.md`
+governs how to choose and brief an agent once that permission exists, and says nothing about
+whether it does.
+
 ## Read when the condition fires
 
 | When | Read |
@@ -75,7 +85,7 @@ Code, commands, and anything irreversible stay exact.
 | Writing prose a person will read | `docs/PROSE.md` |
 | Any UI, screen, mockup, or generated image | `docs/SCREENS.md` |
 | Writing code for a fix or a feature | `docs/TESTING.md` |
-| Handing work to another agent | `docs/AGENTS.md` |
+| Handing work to another agent | `docs/DELEGATION.md` |
 | A session runs long, or context fills | `docs/CONTEXT.md` |
 | Learning something worth keeping | `docs/MEMORY.md` |
 | Asking why a rule above reads the way it does | `docs/DECISIONS.md` |
