@@ -134,7 +134,7 @@ jobs:
             "vale prose lint" \
             "external references" \
             "dangling references" \
-            "README skills inventory"
+            "README skills inventory" \
             "README outside-pieces count"
           do
             if ! grep -qF "$row" /tmp/verify.out; then
