@@ -135,6 +135,25 @@ secrets gate, then staging, then the commit, then the push, then reading the tar
    that is deliberate rather than lucky, so anything that starts citing them has to name the
    tracked template beside them, the way `settings.example.json` sits beside `settings.json`.
 
+   A third case IS matched by the pattern: the vendored skill directories, which are
+   gitignored per-name near the foot of `.gitignore`. Citing a file inside one in backticks
+   passes here and fails in CI, which is how it was found on 2026-08-23. Name such a file in
+   plain words rather than backticks, and say it is vendored.
+
+   To catch the whole class before pushing, ask whether each cited path is TRACKED rather than
+   merely present:
+
+   ```bash
+   git ls-files -- '*.md' | while read -r src; do
+     grep -v 'gone-on-purpose' "$src" \
+       | grep -oE '`(docs|rules|skills|hooks|agents)/[A-Za-z0-9._/-]+\.(md|sh|js|py|mjs|json)`' \
+       | tr -d '`' | while read -r p; do
+           git ls-files --error-unmatch "$p" >/dev/null 2>&1 \
+             || echo "UNTRACKED BUT CITED: $p  (in $src)"
+         done
+   done | sort -u
+   ```
+
 5. **Outside-tool freshness (warn only: never auto-pull):** run `/checkup` and print its drift
    rows. It reports how far behind this clone is against GitHub, and which of the borrowed
    pieces in `INSTALL.md` are absent. Warn only, and never install anything mid-release: an
