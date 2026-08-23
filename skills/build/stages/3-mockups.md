@@ -80,8 +80,18 @@ A hand-built row for something the library already provides is a gate failure.
 Never install a second component library beside an existing one, and never block the build
 on a library.
 
+## What each colour encodes
+
+Beside the sourcing table, emit one row per accent-coloured element in the chosen variant: the
+element, and the fact its colour carries. `docs/SCREENS.md` holds the rule; this is where it is
+written down and read.
+
+A row whose fact is "it looked plain" is a gate failure, and the colour comes out before the
+build starts. The shape that produced this gate was a stat card wearing a rail down one edge in
+the same accent its own number was printed in, which marked nothing and sorted nothing.
+
 ## Done
 
 This stage has finished when the variant set in `rules/mockups.md` exists on one page, the
-survival bar there is met, the screenshot has been shown, the owner has named one variant,
-and the sourcing table is on screen.
+survival bar there is met, the screenshot has been shown, the owner has named one variant, and
+both tables are on screen: what each element is sourced from, and what each colour encodes.

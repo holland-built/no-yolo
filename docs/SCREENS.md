@@ -40,9 +40,32 @@ variant by asking what the shape is doing, not by matching the list.
 - Gradient text on a heading.
 - Emoji standing in for icons.
 - Purple-to-blue gradients, and glassmorphic frosted panels.
+- An accent rail down one edge of a card, in the same colour the card's own value is already
+  printed in. It marks nothing, sorts nothing and links to nothing.
 - Every element the same distance apart, so nothing reads as more important.
 - A component library's starter theme shipped unchanged.
 - Body text under 14px, or grey text on grey background.
+
+## Colour earns its place by encoding something
+
+The rail above is worth its own rule, because it is the shape a model reaches for whenever a
+surface looks flat and it has no fact to make it less so.
+
+**Every use of an accent colour answers "what does this one mean that its neighbours do not?"**
+A status, a category, a threshold crossed, a selected row, a series in a chart: each of those
+is a fact, and the colour is how the fact is read. A stripe applied to every card in the grid
+answers nothing, so it is paint.
+
+Two consequences worth stating, because both were reached for instead:
+
+- **Hierarchy comes from size, weight and space.** A number that should dominate gets to be
+  larger, heavier, or better spaced than what surrounds it. Painting it and then painting a bar
+  beside it says the same thing twice and still has not made it bigger.
+- **One meaning, one channel.** When the value is already in the accent colour, a rail in that
+  colour carries no second reading. Give the rail a different job or take it out.
+
+Checking it: for each coloured element in a variant, name the fact it encodes. Anything whose
+answer is "it looked plain" comes out before the set is shown.
 
 ## Mockup content
 
