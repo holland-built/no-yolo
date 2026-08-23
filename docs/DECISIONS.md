@@ -279,7 +279,7 @@ Three guards, in the order they fire:
 
 The audit reads the backups rather than `git status`, because `git status` cannot see either
 end of this: `.git/hooks/pre-commit` is sabotaged too and sits outside the work tree, and
-`hooks/tests/zzselftest.test.sh` is planted untracked, so `git checkout` would never remove
+`hooks/tests/zzselftest.test.sh` is planted untracked, so `git checkout` would never remove <!-- gone-on-purpose -->
 it. Judging only the paths the run recorded also means a concurrent edit somewhere else is
 never misreported as leftover sabotage.
 
