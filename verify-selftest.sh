@@ -437,6 +437,28 @@ else
   broken=1
 fi
 
+# The pre-push hook, drift and presence, mirroring the two cases above it. A
+# CI checkout has no .git/hooks/pre-push and never pushes, so the drift half
+# reports SKIP there rather than proving nothing quietly.
+INSTALLED_PUSH="$(git rev-parse --git-path hooks/pre-push 2>/dev/null)"
+if [ -n "$INSTALLED_PUSH" ] && [ -f "$INSTALLED_PUSH" ]; then
+  save "$INSTALLED_PUSH"
+  printf '\n# zz-selftest drift\n' >> "$INSTALLED_PUSH"
+  expect_red "installed pre-push matches tracked source" "an installed pre-push that has drifted turns its row red"
+  put_back "$INSTALLED_PUSH"
+  [ -x "$INSTALLED_PUSH" ] || { echo "BROKEN: $INSTALLED_PUSH left non-executable"; broken=1; }
+else
+  results+=("SKIP|pre-push drift not exercised: no hook installed at ${INSTALLED_PUSH:-an unresolvable path} (run setup.sh)")
+fi
+
+push_probe="$(bash verify.sh 2>&1)"
+if printf '%s' "$push_probe" | grep -q 'installed pre-push matches tracked source'; then
+  results+=("PASS|the pre-push row is printed even when it has nothing to compare")
+else
+  results+=("BROKEN|the pre-push row printed NOTHING — it vanished from the table instead of reporting")
+  broken=1
+fi
+
 # ── references and counts ───────────────────────────────────────────────────
 save docs/TESTING.md
 printf '\nSee `%s` for details.\n' "$GHOST_MD" >> docs/TESTING.md

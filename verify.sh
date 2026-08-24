@@ -497,6 +497,24 @@ else
   warn "installed pre-commit matches tracked source — none installed at $installed_hook; commits are unscanned locally, run setup.sh"
 fi
 
+# THE PRE-PUSH HOOK, on the same terms as the pre-commit one above: setup.sh
+# copies it, so the two drift the moment the tracked one is edited. It runs
+# verify.sh and parses the workflow's own shell, which is the check that was
+# missing when a broken line continuation in ci.yml passed every local gate and
+# died on both runners.
+installed_push="$(git rev-parse --git-path hooks/pre-push 2>/dev/null)"
+if [ -z "$installed_push" ]; then
+  warn "installed pre-push matches tracked source — not checked: git could not resolve its hooks directory here"
+elif [ -f "$installed_push" ]; then
+  if cmp -s "$installed_push" hooks/pre-push; then
+    pass "installed pre-push matches tracked source"
+  else
+    red "installed pre-push matches tracked source — it does NOT; your pushes are not running the tracked check; fix: bash setup.sh"
+  fi
+else
+  warn "installed pre-push matches tracked source — none installed at $installed_push; pushes are unchecked locally, run setup.sh"
+fi
+
 # ── references and counts ───────────────────────────────────────────────────
 # No tracked file may name a doc, skill, hook or script that is not on disk.
 #

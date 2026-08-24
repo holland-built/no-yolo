@@ -138,6 +138,13 @@ if [ -f "$CLAUDE_DIR/hooks/pre-commit" ] && git -C "$CLAUDE_DIR" rev-parse --git
   cp "$CLAUDE_DIR/hooks/pre-commit" "$HOOKS_DIR/pre-commit"
   chmod +x "$HOOKS_DIR/pre-commit"
   note "Installed the pre-commit secret scanner into $HOOKS_DIR"
+  # The pre-push companion. Same reasoning: git copies nothing on its own, and a
+  # check that only runs on GitHub turns every finding into a second commit.
+  if [ -f "$CLAUDE_DIR/hooks/pre-push" ]; then
+    cp "$CLAUDE_DIR/hooks/pre-push" "$HOOKS_DIR/pre-push"
+    chmod +x "$HOOKS_DIR/pre-push"
+    note "Installed the pre-push CI check into $HOOKS_DIR"
+  fi
 else
   note "No git dir or hooks/pre-commit, so the scanner install was skipped"
 fi

@@ -1,0 +1,134 @@
+#!/usr/bin/env bash
+# Refuses a push that CI would reject. TRACKED SOURCE: setup.sh copies this into
+# .git/hooks/pre-push, and verify.sh compares the installed copy against this
+# one, the same way it does for pre-commit.
+#
+# WHY IT EXISTS. Seven commits landed after the 2026-08-22 release and most were
+# repairs for something the push itself revealed. One of them, e469497, was a
+# broken line continuation inside .github/workflows/ci.yml: nothing on this
+# machine reads that file's embedded shell, so it parsed fine locally and died
+# on both runners. A check that only runs after the push turns every finding
+# into a second commit, because a push cannot be taken back.
+#
+# WHAT IT RUNS, and what it deliberately does not:
+#   verify.sh          19 seconds, and it is what CI runs. Measured 2026-08-24.
+#   ci.yml run: blocks each one through `bash -n`, which is the check that was
+#                      missing. GitHub Actions runs them with bash; nothing here
+#                      did until now.
+#
+# NOT verify-selftest.sh. It takes about eight minutes and sabotages tracked
+# files while it runs, so it belongs before a RELEASE, where SHIP.md puts it,
+# and never on the path of an ordinary push.
+#
+# THE ESCAPE HATCH IS NAMED, not silent: `git push --no-verify` skips every
+# pre-push hook, and that is git's own flag rather than something invented here.
+set -uo pipefail
+
+# GIT'S OWN ENVIRONMENT IS CLEARED FIRST, and this is the whole reason the hook
+# works. git invokes a hook with GIT_DIR (and friends) exported, and every git
+# command a child process runs then resolves against THAT rather than the
+# working tree. verify.sh shells out to `git ls-files` constantly, so with those
+# left set it saw 3 tracked files instead of 86 and reported the extractor
+# broken and the skills table empty. Measured 2026-08-24: the hook run by hand
+# was green and the same hook run by a real push refused it, on the same tree.
+#
+# git runs a pre-push hook with the working directory already at the top of the
+# working tree, so unsetting these loses nothing: the toplevel below is resolved
+# from where we already are.
+unset GIT_DIR GIT_WORK_TREE GIT_INDEX_FILE GIT_PREFIX GIT_QUARANTINE_PATH \
+      GIT_OBJECT_DIRECTORY GIT_ALTERNATE_OBJECT_DIRECTORIES GIT_COMMON_DIR
+
+ROOT="$(git rev-parse --show-toplevel)"
+cd "$ROOT" || { echo "pre-push: cannot cd to the repo root"; exit 1; }
+
+fail=0
+
+echo "🔍 pre-push: the checks CI will run"
+
+# ── the workflow's own shell ────────────────────────────────────────────────
+# Every `run:` block is bash on the runner. Extracting them needs the YAML
+# indentation, so python3 does it rather than a regex: `run: |` opens a literal
+# block that ends at the first line indented no further than the key.
+WF=".github/workflows"
+if [ -d "$WF" ] && command -v python3 >/dev/null 2>&1; then
+  wf_bad=0
+  wf_n=0
+  while IFS= read -r block; do
+    [ -z "$block" ] && continue
+    wf_n=$((wf_n + 1))
+    if ! bash -n "$block" 2>/tmp/pre-push-wf.err; then
+      echo "❌ a workflow run: block does not parse as bash:"
+      sed 's/^/     /' /tmp/pre-push-wf.err
+      echo "   the block was written to $block"
+      wf_bad=1
+    fi
+  done < <(python3 - "$WF" <<'PY'
+import os, re, sys, tempfile
+root = sys.argv[1]
+out = []
+for dirpath, _, names in os.walk(root):
+    for n in names:
+        if not n.endswith((".yml", ".yaml")):
+            continue
+        path = os.path.join(dirpath, n)
+        lines = open(path, encoding="utf-8", errors="replace").read().split("\n")
+        i = 0
+        while i < len(lines):
+            m = re.match(r"^(\s*)(- )?run: [|>]", lines[i])
+            if not m:
+                i += 1
+                continue
+            indent = len(m.group(1)) + (2 if m.group(2) else 0)
+            i += 1
+            body = []
+            while i < len(lines):
+                ln = lines[i]
+                if ln.strip() and (len(ln) - len(ln.lstrip())) <= indent:
+                    break
+                body.append(ln)
+                i += 1
+            # Actions expressions are substituted before bash ever sees them, so
+            # they are replaced with a placeholder rather than left to be parsed
+            # as shell. ${{ ... }} is not shell syntax and never was.
+            text = re.sub(r"\$\{\{[^}]*\}\}", "GHA_EXPR", "\n".join(body))
+            fd, tmp = tempfile.mkstemp(prefix="pre-push-wf-", suffix=".sh")
+            with os.fdopen(fd, "w") as f:
+                f.write(text + "\n")
+            out.append(tmp)
+print("\n".join(out))
+PY
+  )
+  if [ "$wf_n" -eq 0 ]; then
+    echo "⚠️  no run: blocks found under $WF — the extractor found nothing, which is not the same as clean"
+  elif [ "$wf_bad" = 0 ]; then
+    echo "✅ workflow shell parses ($wf_n run: blocks)"
+  else
+    fail=1
+  fi
+  rm -f /tmp/pre-push-wf-*.sh /tmp/pre-push-wf.err 2>/dev/null
+elif [ -d "$WF" ]; then
+  echo "⚠️  python3 missing, so the workflow shell was NOT checked"
+fi
+
+# ── the suite CI runs ───────────────────────────────────────────────────────
+if [ -f verify.sh ]; then
+  if bash verify.sh > /tmp/pre-push-verify.log 2>&1; then
+    echo "✅ verify.sh green"
+  else
+    echo "❌ verify.sh is red, and CI runs the same rows:"
+    grep -E '^(FAIL|WARN)' /tmp/pre-push-verify.log | sed 's/^/     /'
+    echo "   full output: /tmp/pre-push-verify.log"
+    fail=1
+  fi
+else
+  echo "⚠️  no verify.sh here, so nothing was run"
+fi
+
+if [ "$fail" != 0 ]; then
+  echo ""
+  echo "Push refused. Fix the above, or push anyway with: git push --no-verify"
+  exit 1
+fi
+
+echo "✅ pre-push: clean"
+exit 0
