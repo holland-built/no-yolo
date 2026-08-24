@@ -404,14 +404,31 @@ put_back hooks/secret-scan.sh
 # first needed this row the copy was frozen for weeks and a planted token
 # committed cleanly. A CI checkout has no such file, so the case reports SKIP
 # rather than silently proving nothing.
-if [ -f .git/hooks/pre-commit ]; then
-  save .git/hooks/pre-commit
-  printf '\n# zz-selftest drift\n' >> .git/hooks/pre-commit
+# The path is asked for rather than spelled, for the reason verify.sh's row now
+# gives: inside a worktree `.git` is a file, so the literal path missed a hook
+# that was installed and this case reported SKIP while the row itself printed
+# nothing at all. Two silences that looked like one expected absence.
+INSTALLED_HOOK="$(git rev-parse --git-path hooks/pre-commit 2>/dev/null)"
+if [ -n "$INSTALLED_HOOK" ] && [ -f "$INSTALLED_HOOK" ]; then
+  save "$INSTALLED_HOOK"
+  printf '\n# zz-selftest drift\n' >> "$INSTALLED_HOOK"
   expect_red "installed pre-commit matches tracked source" "an installed hook that has drifted turns its row red"
-  put_back .git/hooks/pre-commit
-  [ -x .git/hooks/pre-commit ] || { echo "BROKEN: .git/hooks/pre-commit left non-executable"; broken=1; }
+  put_back "$INSTALLED_HOOK"
+  [ -x "$INSTALLED_HOOK" ] || { echo "BROKEN: $INSTALLED_HOOK left non-executable"; broken=1; }
 else
-  results+=("SKIP|installed-hook drift not exercised: no .git/hooks/pre-commit here (run setup.sh)")
+  results+=("SKIP|installed-hook drift not exercised: no hook installed at ${INSTALLED_HOOK:-an unresolvable path} (run setup.sh)")
+fi
+
+# THE ROW MUST EXIST WHATEVER IT SAYS. The case above proves the row can go red
+# where a hook is installed; it cannot prove the row was printed at all, and the
+# defect being fixed here was exactly that: no FAIL, no PASS, no WARN, just a
+# table one row shorter than it looked. Asserted by name against an untouched
+# tree, so it holds on a machine with no hook and inside a worktree alike.
+if bash verify.sh 2>&1 | grep -q 'installed pre-commit matches tracked source'; then
+  results+=("PASS|the installed-hook row is printed even when it has nothing to compare")
+else
+  results+=("BROKEN|the installed-hook row printed NOTHING — it vanished from the table instead of reporting")
+  broken=1
 fi
 
 # ── references and counts ───────────────────────────────────────────────────

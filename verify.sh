@@ -470,9 +470,22 @@ fi
 # frozen for weeks: every later edit changed nothing at commit time, and a
 # planted token committed cleanly while the pattern rows stayed green, because
 # they test the tracked PATTERN and never the installed FILE.
-# Local only: a CI checkout has no .git/hooks/pre-commit and never commits.
-if [ -f .git/hooks/pre-commit ]; then
-  if cmp -s .git/hooks/pre-commit hooks/pre-commit; then
+# Local only: a CI checkout has no installed hook and never commits.
+#
+# THE PATH IS ASKED FOR, NOT SPELLED. This tested `.git/hooks/pre-commit`
+# literally until 2026-08-24, and inside a git WORKTREE `.git` is a file holding
+# a gitdir pointer, so `-f` failed and the `-d .git` fallback failed too: the row
+# printed NEITHER outcome and vanished from the table. A row that guards the
+# commit path and can disappear without a word is worse than one that fails,
+# because the table still reads as complete. `git rev-parse --git-path` returns
+# the shared hooks directory from a worktree and the ordinary one elsewhere.
+#
+# EVERY BRANCH EMITS A ROW, including the one where git itself could not answer.
+installed_hook="$(git rev-parse --git-path hooks/pre-commit 2>/dev/null)"
+if [ -z "$installed_hook" ]; then
+  warn "installed pre-commit matches tracked source — not checked: git could not resolve its hooks directory here (not a repository?)"
+elif [ -f "$installed_hook" ]; then
+  if cmp -s "$installed_hook" hooks/pre-commit; then
     pass "installed pre-commit matches tracked source"
   else
     # Opens with the same words as the PASS, deliberately: a row whose two
@@ -480,8 +493,8 @@ if [ -f .git/hooks/pre-commit ]; then
     # asserts every row by name.
     red "installed pre-commit matches tracked source — it does NOT; your commits are not running the tracked scan; fix: bash setup.sh"
   fi
-elif [ -d .git ]; then
-  warn "no .git/hooks/pre-commit installed — commits are unscanned locally; run setup.sh"
+else
+  warn "installed pre-commit matches tracked source — none installed at $installed_hook; commits are unscanned locally, run setup.sh"
 fi
 
 # ── references and counts ───────────────────────────────────────────────────
