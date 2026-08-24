@@ -424,7 +424,13 @@ fi
 # defect being fixed here was exactly that: no FAIL, no PASS, no WARN, just a
 # table one row shorter than it looked. Asserted by name against an untouched
 # tree, so it holds on a machine with no hook and inside a worktree alike.
-if bash verify.sh 2>&1 | grep -q 'installed pre-commit matches tracked source'; then
+# The output is captured before it is searched, never piped into grep. This file
+# runs under `set -o pipefail` and `grep -q` exits the moment it matches, so
+# verify.sh takes SIGPIPE and the PIPELINE reports 141: the assertion failed on
+# its first run for finding what it was looking for. expect_red above captures
+# for the same reason.
+row_probe="$(bash verify.sh 2>&1)"
+if printf '%s' "$row_probe" | grep -q 'installed pre-commit matches tracked source'; then
   results+=("PASS|the installed-hook row is printed even when it has nothing to compare")
 else
   results+=("BROKEN|the installed-hook row printed NOTHING — it vanished from the table instead of reporting")
