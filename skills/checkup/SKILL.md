@@ -75,14 +75,24 @@ Also check the reverse: a file nobody points at is either unreachable or an orph
 For anything borrowed from outside, compare the local copy against its origin and report how
 far behind it is. Vet anything newly borrowed with `skillspector` before it is installed.
 
-Installed skills carry their source, so one command answers this for all of them:
+Installed skills carry their source, so one command lists them and where each came from:
 
 ```bash
-npx --yes skills@latest update -g
+npx --yes skills@latest ls -g
 ```
 
-Without `-y` it lists what is behind and stops, which is what this command wants. Applying an
-update is the owner's call and belongs outside a read-only pass.
+**There is no read-only way to learn which of them are behind.** `skills update -g` is the only
+command that answers it, and it APPLIES what it finds: `-y` skips the scope prompt, not the
+update. This file said the opposite until 2026-08-24, and the checkup run that caught it had
+already updated three skills while claiming to change nothing.
+
+So this step reports what is installed and stops. Print the command, say that running it
+updates rather than reports, and leave it to the owner:
+
+```
+Drift: not measured. `npx --yes skills@latest update -g` is the only check and it applies
+updates, so it is yours to run.
+```
 
 An update can also relocate a skill: on 2026-08-22 `orca-cli` moved from `~/.agents/skills`
 into `~/.claude/skills`, arriving untracked and unignored, where one `git add -A` would have
