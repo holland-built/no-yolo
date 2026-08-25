@@ -170,14 +170,21 @@ A skill is a shortcut command you type, like `/build`. There are six.
 |---|---|
 | `/build` | The whole job: evidence, interview, plan, mockups, tests, build, proof. Sizes itself, so a one-word change does not get the full pipeline |
 | `/checkup` | One read-only pass over this setup: what exists, what is broken, what has drifted |
-| `/eli5` | Explains anything just said in plain words, as a table |
 | `/handoff` | Writes a dying session to a file a fresh session can resume from |
 | `/release` | Reads the repo's own `SHIP.md` playbook and runs it |
+| `/watch` | Downloads a video, reads its subtitles and its frames, and answers from both |
 | `/whats-next` | Reads the task list, then unfinished work in the repo, then proposes three things |
 
 There were thirteen until 2026-08-21. The rebuild kept the six that were used and deleted the
 rest; `docs/DECISIONS.md` records why. Archived commands are not gone: each has a one-line
-restore command in `archive/MANIFEST.md`.
+restore command in `archive/MANIFEST.md`. `watch` is the proof: archived on 2026-08-20,
+restored on 2026-08-25 by running the line the manifest had been holding for it.
+
+`eli5` left the table on 2026-08-25 and did not go to `archive/`. Its rules moved to
+`output-styles/plain.md`, which loads by itself every session. A skill has to be invoked, and
+the owner had said plainly that they cannot remember to invoke anything, so the rules were in
+the one slot least able to reach them. Nothing was lost; the same words now arrive without
+being asked for.
 
 This sentence said "26" until 2026-08-22, and no commit on this branch ever had 26 skills in
 it. Counted with `git ls-tree -d --name-only <commit>:skills | wc -l` across the last sixty
