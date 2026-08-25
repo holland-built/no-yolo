@@ -24,14 +24,11 @@ pointers exist.
 
 **The context budget has a number: 2,200 words.** It covers the four files loaded on every
 session, `CLAUDE.md`, `rules/codex.md`, `rules/mockups.md` and `output-styles/plain.md`, and
-`verify.sh` fails when they exceed it. Until 2026-08-25 this section explained that the budget
-existed and never said what it was, so nothing could be over it and the chain grew from
-nobody's decision.
+`verify.sh` fails when they exceed it.
 
-The number is a ratchet, not a target. It is what the chain measured on the day it was set
-plus a little room, so it stops growth without claiming the current size is right. Lowering it
-means rewriting the two long files, and that is a separate job. A local choice, arrived at by
-measuring this repo, not a published benchmark.
+The number is a ratchet, not a target: it stops growth without claiming the current size is
+right, so an addition means a deletion. It is a local choice measured on this repo, and not a
+published benchmark. What it measured and what it is not, in `docs/DECISIONS.md`.
 
 ## The ladder
 
@@ -117,6 +114,29 @@ and even then it carries the positive target beside it.
   without this line? Settle a disagreement by running it, not by arguing. When a sentence
   fails, delete the sentence whole.
 
+## Adding a skill
+
+Three edits, and they are one action. A skill added without the other two turns `verify.sh`
+red, because the `README skills inventory` row reads the table and the count as the record of
+what exists.
+
+1. Write `skills/<name>/SKILL.md` with `user-invocable: true`, and put the phrases that should
+   trigger it in that same `description`.
+2. Add a row to the skills table in `README.md`.
+3. Update the spelled number in the sentence above that table.
+
+Then prove all three landed:
+
+```bash
+bash verify.sh
+```
+
+The `README skills inventory` row compares names in both directions, so a renamed skill fails
+it even when the count still looks right.
+
+Before adding one, ask whether an existing skill should gain a mode instead. Six commands with
+modes beat twenty-six commands, and `docs/DECISIONS.md` records what the twenty-six cost.
+
 ## Checking your work
 
 Run `agnix` and `@yawlabs/ctxlint` over the file, each taking a path. They read rule files
@@ -126,5 +146,5 @@ the rest.
 
 Naming an outside tool is itself a claim. Query it before you write it (`CLAUDE.md` rule 5),
 add it to `hooks/externals.txt` with the project it resolves to, and `hooks/external-check.sh`
-will hold you to it. This paragraph named a tool as `Ctxlint`, which is neither its package
-name nor its capitalisation, and stood that way from the day it was written.
+will hold you to it on every run of `verify.sh`. This paragraph got one of those two names
+wrong for its whole life, which `docs/DECISIONS.md` records.
