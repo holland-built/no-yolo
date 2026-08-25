@@ -328,28 +328,38 @@ esac
 # who installed a piece before it was retired still needs to be told how to remove
 # it. Matched on the WHOLE identity, never a basename: archive/skills and
 # mattpocock/skills share one, and retiring the first must not condemn the second.
+# The same three exclusions hooks/external-check.sh makes, for the same reasons:
+# archive/ is history that discusses retired tools by name, refs/ is third-party
+# text quoting other projects' install lines, and hooks/tests/ holds fixtures
+# whose whole job is to carry a planted install command. The external-check
+# suite plants an install line for the retired piece on purpose, and this row
+# flagged that fixture on its first run.
+#
+# Built ONCE, outside the loop, and with no process substitution anywhere in this
+# row. The first draft read the file list through `< <( ... )` with these comment
+# lines inside the parentheses. It parsed clean under `bash -n`, died at run time
+# with "bad substitution: no closing )", left the hits variable empty, and the row
+# reported PASS against a tree carrying the very thing it looks for. It took two
+# selftest cases to see it. verify-selftest.sh line 164 records the same trap from
+# a case statement inside $( ), which is how this repo already knew that a clean
+# `bash -n` says nothing about a substitution running.
+retired_sources="$(git ls-files -- '*.md' '*.sh' '*.yml' \
+  | grep -v '^archive/' | grep -v '^refs/' | grep -v '^hooks/tests/')"
+
 retired_hits=""; n_retired=0
 while read -r kind ident _rest; do
   case "$kind" in ''|\#*) continue ;; esac
   [ -z "$ident" ] && continue
   n_retired=$((n_retired + 1))
-  # Install verbs only. Each is the form this repo actually writes in a tracked
-  # file; `skills@latest add` and `skills@latest remove` differ by the word that
-  # decides whether the line is an instruction to acquire or to clean up.
-  while IFS= read -r hit; do
-    [ -n "$hit" ] && retired_hits="${retired_hits}
-    INSTALLS A RETIRED PIECE: $hit"
-  done < <(
-    # The same three exclusions hooks/external-check.sh makes, for the same
-    # reasons: archive/ is history that discusses retired tools by name, refs/ is
-    # third-party text quoting other projects' install lines, and hooks/tests/
-    # holds fixtures whose whole job is to carry a planted install command. The
-    # test suite plants `skills@latest add bitjaru/styleseed` deliberately, and
-    # this row flagged it on its first run.
-    git ls-files -- '*.md' '*.sh' '*.yml' \
-      | grep -v '^archive/' | grep -v '^refs/' | grep -v '^hooks/tests/' \
-      | xargs grep -inE "(skills@latest[[:space:]]+add|npm[[:space:]]+(install|i)[[:space:]]|brew[[:space:]]+install|uv[[:space:]]+tool[[:space:]]+install|cargo[[:space:]]+install).*$ident" 2>/dev/null
-  )
+  # Install verbs only. Each is a form this repo actually writes in a tracked
+  # file. "skills@latest add" and "skills@latest remove" differ by the word that
+  # decides whether the line acquires the piece or cleans it up.
+  hits="$(printf '%s\n' "$retired_sources" \
+    | xargs grep -inE "(skills@latest[[:space:]]+add|npm[[:space:]]+(install|i)[[:space:]]|brew[[:space:]]+install|uv[[:space:]]+tool[[:space:]]+install|cargo[[:space:]]+install).*$ident" 2>/dev/null)"
+  if [ -n "$hits" ]; then
+    retired_hits="${retired_hits}
+    INSTALLS A RETIRED PIECE: ${hits}"
+  fi
   # The pieces table publishes what this setup uses now. A retired row there is
   # counted by the outside-pieces row and read as current by anyone installing.
   if awk -v want="$ident" '

@@ -359,8 +359,17 @@ put_back hooks/externals.txt
 # and a single sabotage would leave two of the three unproven. The shape of each
 # is the one that shipped for real on 2026-08-25: StyleSeed retired and archived,
 # and an install command for it left standing through a green build.
+#
+# The identity is ASSEMBLED, never written whole, for the same reason this file
+# assembles its dangling-reference filenames: a literal here would make the file
+# that tests the row a source of exactly what the row forbids, and the clean tree
+# would be red. Reading it out of the manifest also means these cases follow a
+# rename instead of rotting beside one.
+retired_id="$(awk '$1 == "gh" || $1 == "npm" {print $2; exit}' hooks/retired.txt)"
+[ -n "$retired_id" ] || { echo "verify-selftest: hooks/retired.txt yielded no identity to sabotage with." >&2; exit 1; }
+
 save docs/TESTING.md
-printf '\n```bash\nnpx skills@latest add bitjaru/styleseed -g -y -a claude-code\n```\n' >> docs/TESTING.md
+printf '\n```bash\nnpx skills@latest add %s -g -y -a claude-code\n```\n' "$retired_id" >> docs/TESTING.md
 expect_red "retired pieces" "an install command naming a retired piece turns the row red"
 put_back docs/TESTING.md
 
@@ -369,16 +378,18 @@ put_back docs/TESTING.md
 # it was retired still has it on their machine and still needs to be told how to
 # take it off, so README's Uninstall section must never turn this row red.
 save docs/TESTING.md
-printf '\n```bash\nnpx skills@latest remove bitjaru/styleseed\nnpm uninstall -g bitjaru/styleseed\n```\n' >> docs/TESTING.md
+printf '\n```bash\nnpx skills@latest remove %s\nnpm uninstall -g %s\n```\n' "$retired_id" "$retired_id" >> docs/TESTING.md
 expect_green "retired pieces" "an uninstall command naming a retired piece leaves the row green"
 put_back docs/TESTING.md
 
 # The second claim. A retired row in the pieces table is read as current by anyone
 # installing from this page, and is counted by the outside-pieces row beside it.
 save INSTALL.md
-awk '{print} /^\| Piece \| Gives \| Reached from \| Without it \|$/ {getline sep; print sep;
-      print "| `bitjaru/styleseed` | zz selftest sabotage | `docs/SCREENS.md` | nothing |"}' \
-  INSTALL.md > INSTALL.md.zztmp && mv INSTALL.md.zztmp INSTALL.md
+awk -v id="$retired_id" '{print}
+     /^\| Piece \| Gives \| Reached from \| Without it \|$/ {
+       getline sep; print sep
+       print "| `" id "` | zz selftest sabotage | `docs/SCREENS.md` | nothing |"
+     }' INSTALL.md > INSTALL.md.zztmp && mv INSTALL.md.zztmp INSTALL.md
 expect_red "retired pieces" "a retired piece still listed in the pieces table turns the row red"
 put_back INSTALL.md
 
@@ -534,9 +545,18 @@ put_back docs/TESTING.md
 # Three ways the README inventory can be wrong, and only the first is a count.
 save README.md
 python3 - <<'PY'
-import pathlib
+import pathlib, re, sys
 p = pathlib.Path("README.md")
-p.write_text(p.read_text().replace("| `/eli5` |", "| `/zz-selftest-absent` |\n| `/eli5` |", 1))
+t = p.read_text()
+# Anchored on the SHAPE of a skill row, never on a skill's name. This case read
+# "| `/eli5` |" until 2026-08-25, the day eli5 left the table: the replace then
+# matched nothing, README was never sabotaged, and the selftest reported the ROW
+# as broken when the fault was in this case. A sabotage anchored to a literal
+# somebody may delete tests nothing and accuses the wrong file when it rots.
+m = re.search(r"^\| `/[a-z0-9-]+` \|", t, flags=re.M)
+if not m:
+    sys.exit("selftest: no skill row found in README.md to anchor on")
+p.write_text(t[:m.start()] + "| `/zz-selftest-absent` | planted |\n" + t[m.start():])
 PY
 expect_red "README skills inventory" "a table row for a skill that does not exist turns the row red"
 put_back README.md
@@ -554,9 +574,17 @@ put_back README.md
 
 save README.md
 python3 - <<'PY'
-import pathlib
+import pathlib, re, sys
 p = pathlib.Path("README.md")
-p.write_text(p.read_text().replace("There are six.", "There are nine.", 1))
+t = p.read_text()
+# The number is READ and then changed to a different one, never assumed. This
+# case said "There are six." until the count reached eight, after which it
+# replaced nothing and proved nothing, exactly like the case above it.
+m = re.search(r"There are ([a-z0-9]+)\.", t)
+if not m:
+    sys.exit("selftest: no spelled skill count found in README.md")
+wrong = "nine" if m.group(1) != "nine" else "seven"
+p.write_text(t[:m.start()] + f"There are {wrong}." + t[m.end():])
 PY
 expect_red "README skills inventory" "a spelled count disagreeing with the table turns the row red"
 put_back README.md
