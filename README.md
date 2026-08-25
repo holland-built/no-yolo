@@ -164,10 +164,11 @@ when a skill asks for it.
 
 ## Skills inventory
 
-A skill is a shortcut command you type, like `/build`. There are seven.
+A skill is a shortcut command you type, like `/build`. There are eight.
 
 | Skill | What it does |
 |---|---|
+| `/blast-radius` | After a bug is located, finds every other place the same mistake was made. Runs by itself inside `/build` |
 | `/build` | The whole job: evidence, interview, plan, mockups, tests, build, proof. Sizes itself, so a one-word change does not get the full pipeline |
 | `/checkup` | One read-only pass over this setup: what exists, what is broken, what has drifted |
 | `/design` | Narrows 74 real brand specifications to three, renders them as a page you point at |

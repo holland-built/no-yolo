@@ -68,6 +68,17 @@ The success condition ends in a number or a boolean: `scrollWidth <= clientWidth
 `fn(x) === 17.5`, `endpoint returns 200 with 4 rows`. It carries through to stage 6, where it
 is measured the same way.
 
+## Then run blast-radius, before anything is fixed
+
+Cause path only. A located cause is the trigger, and it is not optional: run
+`skills/blast-radius/SKILL.md` now and append its table to the same diagnosis file.
+
+One bug is rarely one bug. The same wrong assumption gets typed in several places at once,
+and the fix that only knows about the reported site cannot be the shared fix that two sites
+wanted. Searching afterwards searches for a pattern the fix has already erased.
+
+Planning does not start until that table exists, even when it holds a single row.
+
 ## Reading a baseline, for behaviour that does not exist yet
 
 New behaviour has no defect and no cause. It still has a reality the plan must fit, and
@@ -91,8 +102,9 @@ Write it to the same diagnosis file.
 This stage has finished when the file exists, its success condition is checkable, and one of
 these holds:
 
-- **Cause path:** the cause is named with a `file:line` or a measured property, and the
-  reproduction runs on demand.
+- **Cause path:** the cause is named with a `file:line` or a measured property, the
+  reproduction runs on demand, and the blast-radius table is in the file with every search
+  command recorded.
 - **Baseline path:** the seam is named with a `file:line` and the current behaviour there was
   read rather than assumed.
 
