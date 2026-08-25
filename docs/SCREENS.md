@@ -5,15 +5,12 @@ Read before designing, reviewing, or judging any UI, mockup, or generated image.
 This file covers what makes a generated screen recognisably machine-made, and the gates a
 screen passes before it ships.
 
-For the design judgement itself, the `styleseed` skill covers colour, type, spacing and
-motion. It is one of the optional installs in `INSTALL.md`; when it is absent, the axes
-table below is the whole standard.
+The axes table below is the whole standard for design judgement. It used to be the fallback
+for an installed skill; that skill was retired on 2026-08-25 and `docs/DECISIONS.md` records
+why, along with the count this file published wrongly while it was here.
 
-This sentence claimed "74 rules" until 2026-08-22. The installed skill is a 68-line router
-that dispatches to 22 `ss-*` skills, and its rules are generated per project into
-`.styleseed/effective-rules.md` or a per-artifact bundle, so there is no fixed number to
-name. Searched the whole install for the figure on 2026-08-22 and found nothing supporting
-it, so it is gone rather than corrected.
+For a look rather than a judgement, `/design` renders three real brand specifications out of
+`refs/brands/` and you point at one.
 
 ## The look to reach for
 

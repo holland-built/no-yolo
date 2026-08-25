@@ -1,6 +1,6 @@
 # Outside pieces this setup uses
 
-Thirteen borrowed pieces: seven skills, four npm command-line tools (one of them never
+Twelve borrowed pieces: six skills, four npm command-line tools (one of them never
 installed, run on demand), one Python scanner, one prose linter from Homebrew. Each one is
 optional: the file that reaches for it carries a fallback, so a machine with none of these
 installed still works.
@@ -17,11 +17,10 @@ number in a table of verified names is the thing this file exists to stop, so it
 IS measured is that the binary runs: `agnix ~/.claude/CLAUDE.md` reported "No issues found" on
 2026-08-22.
 
-Seven are skills, installed by the `skills` CLI. Three are npm command-line tools:
+Six are skills, installed by the `skills` CLI. Three are npm command-line tools:
 
 ```bash
 npx skills@latest add conorbronsdon/avoid-ai-writing -g -y -a claude-code && \
-npx skills@latest add bitjaru/styleseed -g -y -a claude-code && \
 npx skills@latest add mattpocock/skills -g -y -a claude-code --skill writing-for-agents && \
 npx skills@latest add mattpocock/skills -g -y -a claude-code --skill codebase-design && \
 npx skills@latest add mattpocock/skills -g -y -a claude-code --skill domain-modeling && \
@@ -67,20 +66,17 @@ until the first time you try to run it.
 Confirm each landed before relying on it. A tool that is absent gets reported as "did not
 run", never as a clean result.
 
-## StyleSeed installs 23 doors, and keeps them
+## A skill that installs more than one door
 
-Measured on 2026-08-22: the line above puts real directories at `~/.claude/skills/styleseed`
-and `~/.claude/skills/ss-*`, 22 of the latter, and all 23 load as commands in every session.
+Some of these repos hold a router plus the skills it dispatches to, so one install line
+produces many loaded commands. That is the mechanism and not litter: a router whose siblings
+are missing reaches nothing. Count the directories after installing and expect more than one.
 
-They stay. `styleseed` is a router whose `SKILL.md` dispatches to the `ss-*` skills by name
-through the Skill tool, so a router without them loaded reaches nothing. The 22 are the
-mechanism, not litter.
-
-Earlier versions of this file told you to delete them, which was right for what the earlier
-install command produced. Without `-g -a claude-code`, the `skills` CLI resolved its output
-directory against the working directory: run from `~/.claude`, it wrote a nested
-`~/.claude/.claude/skills` full of symlinks plus a `skills-lock.json` at the repo root. The
-flags in the install block fix that at the source, so there is nothing left to clean up.
+Where an older install left a mess, it was the flags and not the count. Without
+`-g -a claude-code`, the `skills` CLI resolved its output directory against the working
+directory: run from `~/.claude`, it wrote a nested `~/.claude/.claude/skills` full of symlinks
+plus a `skills-lock.json` at the repo root. The flags in the install block fix that at the
+source, so there is nothing left to clean up.
 
 If you have that nested directory from an older install, `rm -rf
 "$HOME/.claude/.claude/skills" "$HOME/.claude/skills-lock.json"` clears it. Name the `skills`
@@ -105,7 +101,6 @@ form is blocked.
 | Piece | Gives | Reached from | Without it |
 |---|---|---|---|
 | `conorbronsdon/avoid-ai-writing` | Audits and rewrites AI writing patterns. Three modes: rewrite, detect, edit in place | `docs/PROSE.md` | That file's own list stands alone, and `hooks/slop-block.sh` still runs |
-| `bitjaru/styleseed` | Design judgement, as a render, score and revise loop | `docs/SCREENS.md` | That file's axes table stands alone |
 | `writing-for-agents` | The two-budget vocabulary at length, plus `SKILL-MECHANICS.md` on frontmatter, invocation choice and router skills | `docs/WRITING.md` | That file is the whole standard, minus the mechanics |
 | `codebase-design` | Deep-module vocabulary: where a seam goes, what a shallow interface costs | `skills/build/stages/4-tests.md`, `5-build.md` | Those stages design without the shared words |
 | `domain-modeling` | Builds a project's domain model, its `CONTEXT.md` and its ADRs | `skills/build/stages/1-interview.md` | The interview asks its own questions |
@@ -121,8 +116,9 @@ form is blocked.
 ## Vetting
 
 Every skill above was run through `skillspector scan --no-llm` on 2026-08-22 before it was
-trusted. Four came back 0/100: `writing-for-agents`, `codebase-design`, `domain-modeling` and
-`styleseed`. Three did not, and all three were then read line by line:
+trusted. Three came back 0/100: `writing-for-agents`, `codebase-design` and `domain-modeling`.
+A fourth clean result belonged to `styleseed`, which was retired on 2026-08-25 and is no longer
+listed here. Three did not come back clean, and all three were then read line by line:
 
 | Skill | Score | What the hits were |
 |---|---|---|
@@ -137,7 +133,18 @@ judgement is a human read of the cited lines rather than the scanner's verdict.
 pattern-matching half alone, and a skill that hides its intent in prose the regexes do not
 match would pass it. Read a skill yourself before you trust it with your machine.
 
-## Two pieces that used to be listed here
+## Three pieces that used to be listed here
+
+**`bitjaru/styleseed` was retired on 2026-08-25**, and this file went on installing it for the
+rest of that day. The session that retired it left six references behind, and a later search
+for an unrelated fault found them: the install line, a pieces row, two pointers sending design
+work to it, and a section headed "and keeps them". It is not on this machine:
+`ls skills/styleseed` and `ls ~/.agents/skills/styleseed` both report no such file. A
+hash-verified snapshot is tracked at `archive/styleseed/` and `docs/BORROWED.md` carries its
+row, so nothing is lost. Why it was retired rather than kept is in `docs/DECISIONS.md`.
+
+Design judgement now rests on the axes table in `docs/SCREENS.md`, which was always the
+documented fallback for this skill's absence.
 
 **`cxpak` was never on npm.** It was published in this file on 2026-08-21 as an npm package with
 a consumer in `skills/build/stages/5-build.md`, and npm has never carried a package of that

@@ -33,8 +33,7 @@ declarations, the colour palette, the spacing scale.
 Either way the variants use these values verbatim. An invented hex code or font name is a
 defect.
 
-For the design judgement itself, read the `styleseed` skill when it is installed. Absent, the
-axes table in `docs/SCREENS.md` is the standard. See `INSTALL.md`.
+For the design judgement itself, the axes table in `docs/SCREENS.md` is the standard.
 
 ## Generate
 
