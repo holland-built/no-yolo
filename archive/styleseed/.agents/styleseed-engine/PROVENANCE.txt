@@ -1,0 +1,6 @@
+source: https://github.com/bitjaru/styleseed
+revision: a2bea1d09d8ad6e2b66ca5215edbc9dfb7325b84
+engine-version: 4.1.0
+vendored: 2026-08-20
+licence: MIT (LICENSE copied alongside)
+what: engine/*.md rule docs only, no scripts

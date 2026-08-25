@@ -26,6 +26,40 @@ in every session, which is the exact thing archiving is meant to stop.
 again. Its row is gone from the table above rather than struck through, because a restore
 command sitting beside a skill that is already restored is a trap for whoever reads it next.
 
+## Archived, third-party and never in git (`archive/styleseed/`)
+
+StyleSeed, archived 2026-08-25. 27 entries, 104 files, 1.2 MB, copied with their
+source-relative paths preserved and hash-verified entry by entry before anything was removed.
+27 of 27 matched.
+
+**This one could not have been recovered by git.** Every path was in `.gitignore`, so a plain
+delete would have been permanent, exactly as it was for the 74 brand specifications lost on
+2026-08-21. The copy is the only reason the removal is reversible.
+
+| What | Where it is now |
+|---|---|
+| `skills/styleseed` and 22 `ss-*` | `archive/styleseed/skills/` |
+| `.agents/skills/styleseed`, `ss-resolve`, `ss-score` | `archive/styleseed/.agents/skills/` |
+| `.agents/styleseed-engine`, 28 files, 372 KB | `archive/styleseed/.agents/styleseed-engine/` |
+
+Restore all of it:
+
+```bash
+cp -R archive/styleseed/skills/. ~/.claude/skills/
+cp -R archive/styleseed/.agents/. ~/.claude/.agents/
+```
+
+Two of the 23 were symlinks into `.agents/skills/`. They are archived as real files, so a
+restore produces directories where links used to be. That works, and `npx skills update` will
+relink them if it is ever run again.
+
+**Why it went.** Codex was asked to rule on keep-versus-delete against evidence rather than
+taste, and found three things. It satisfied neither of the owner's stated requirements: not in
+the repo, and nothing watching it for upstream changes. Its router refuses to act until a
+project contains `.styleseed/project.json`, a file the owner cannot write. And it could not be
+reduced to a smaller core, because that router depends on the separate engine payload above.
+`skills/design` replaces it, reading 74 real brand specifications from `refs/brands/`.
+
 ## Archived, third-party (link removed, payload untouched)
 
 These were symlinks into git-ignored third-party folders. The link is gone; the code

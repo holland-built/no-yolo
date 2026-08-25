@@ -22,6 +22,17 @@ Every line you add spends one of two things:
 Material behind a pointer costs only the pointer's own line. That is the whole reason
 pointers exist.
 
+**The context budget has a number: 2,200 words.** It covers the four files loaded on every
+session, `CLAUDE.md`, `rules/codex.md`, `rules/mockups.md` and `output-styles/plain.md`, and
+`verify.sh` fails when they exceed it. Until 2026-08-25 this section explained that the budget
+existed and never said what it was, so nothing could be over it and the chain grew from
+nobody's decision.
+
+The number is a ratchet, not a target. It is what the chain measured on the day it was set
+plus a little room, so it stops growth without claiming the current size is right. Lowering it
+means rewriting the two long files, and that is a separate job. A local choice, arrived at by
+measuring this repo, not a published benchmark.
+
 ## The ladder
 
 Three rungs, ranked by how immediately the agent needs the material:
