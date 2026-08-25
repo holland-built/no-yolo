@@ -269,7 +269,11 @@ md_files=()
 # not this repo's prose and must not be rewritten to satisfy this repo's style, so vale never
 # sees them. The secret and infra scans above still cover every one of those files: skipping
 # a style check on borrowed text is a judgement call, skipping a leak scan is not.
-while IFS= read -r -d '' mdf; do md_files+=("$mdf"); done < <(git ls-files -z -- '*.md' ':!refs/brands/**')
+# archive/ is excluded alongside it, for the same reason and one more: its contents are
+# retired. Rewriting a dead skill's prose to satisfy a live style rule changes an artefact
+# nobody runs, and it would make the archived copy differ from what was actually removed,
+# which is the one property an archive has to keep.
+while IFS= read -r -d '' mdf; do md_files+=("$mdf"); done < <(git ls-files -z -- '*.md' ':!refs/brands/**' ':!archive/**')
 
 if command -v vale >/dev/null 2>&1; then
   if [ "${#md_files[@]}" -eq 0 ]; then
@@ -682,6 +686,46 @@ else
   else
     pass "README outside-pieces count ($pieces_rows in the table, both sentences say $pieces_want)"
   fi
+fi
+
+# ── always-loaded word budget ───────────────────────────────────────────────
+#
+# docs/WRITING.md has explained since it was written that every always-loaded line costs the
+# model context on every turn. It never named a number, and none of the checks above measured
+# one, so the chain grew from nobody's decision. This row is the number.
+#
+# THE LIMIT IS A RATCHET, NOT A TARGET. 2,200 is today's measured total plus a little room.
+# It stops the chain growing; it does not claim the chain is the right size. A smaller figure
+# would be a better goal and reaching it means rewriting CLAUDE.md and rules/codex.md, which
+# is separate work and is not pretended to be done here.
+#
+# IT IS A LOCAL CHOICE AND NOT A BENCHMARK. A figure of 300 to 350 words per instruction file
+# was quoted at the owner twice during this work as Anthropic's own testing. It came from a
+# video attributing it to Anthropic and was never found on an Anthropic page. Repeating it as
+# a measured fact was wrong, and it is not the basis for this number.
+WORD_LIMIT=2200
+chain=(CLAUDE.md rules/codex.md rules/mockups.md output-styles/plain.md)
+chain_missing=""
+chain_total=0
+for f in "${chain[@]}"; do
+  if [ -f "$ROOT/$f" ]; then
+    n="$(wc -w < "$ROOT/$f" | tr -d '[:space:]')"
+    chain_total=$(( chain_total + n ))
+  else
+    chain_missing="$chain_missing $f"
+  fi
+done
+if [ -n "$chain_missing" ]; then
+  red "always-loaded word budget — these files are named in the chain but missing:$chain_missing"
+elif [ "$chain_total" -gt "$WORD_LIMIT" ]; then
+  echo "the always-loaded chain is over budget:"
+  for f in "${chain[@]}"; do
+    [ -f "$ROOT/$f" ] && printf '    %6s  %s\n' "$(wc -w < "$ROOT/$f" | tr -d '[:space:]')" "$f"
+  done
+  printf '    %6s  total, against a limit of %s\n' "$chain_total" "$WORD_LIMIT"
+  red "always-loaded word budget — $chain_total words against a $WORD_LIMIT limit (see above; the rule is docs/WRITING.md)"
+else
+  pass "always-loaded word budget ($chain_total words of $WORD_LIMIT across ${#chain[@]} files)"
 fi
 
 printf '\n%-6s  %s\n' RESULT CHECK

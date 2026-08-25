@@ -105,10 +105,19 @@ __pycache__/
 # --- other people's code --------------------------------------------------
 plugins/
 .agents/
+# ...but not a copy of one sitting inside archive/. `.agents/` above is a LIVE install path;
+# `archive/styleseed/.agents/` is a hash-verified snapshot taken before a delete, and the
+# whole point of taking it was that those paths were never in git and could not otherwise be
+# restored. Ignoring the snapshot would have left half the archive on one laptop: 52 of its
+# 104 files, including the 372 KB engine the router depends on. Found by checking `git
+# status --ignored` before committing, not after.
+!archive/styleseed/.agents/
+!archive/styleseed/.agents/**
 # `npx skills` installs land in .agents/ and are symlinked into skills/ so they
 # load in every project. Those symlinks are local install state, not content.
-skills/styleseed
-skills/ss-*
+# StyleSeed's 23 entries left this list on 2026-08-25. They are in archive/styleseed/,
+# copied and hash-verified before removal, with archive/MANIFEST.md holding the restore
+# command. They were never in git, so archiving was the only way the removal could be undone.
 skills/avoid-ai-writing
 skills/writing-for-agents
 skills/codebase-design
@@ -121,8 +130,9 @@ skills/systematic-debugging
 skills/orca-cli
 skills/archify
 skills/resolving-merge-conflicts
-# LEGACY: the deleted /design skill
-skills/design/vendor/
+# The /design skill returned on 2026-08-25 and its material is TRACKED this time, in
+# refs/brands/. The old gitignored vendor path is what let 74 brand specifications vanish
+# without anyone noticing. Nothing under skills/design/ is ignored now.
 # LEGACY: scraped third-party design specs
 refs/design-specs/
 
@@ -140,3 +150,7 @@ CLAUDE.md.pre-md-only
 
 # --- OS -------------------------------------------------------------------
 .DS_Store
+
+# Local state for hooks/upstream-watch.sh: the daily stamp, the last seen Claude Code
+# version, and any report waiting to be shown. Machine state, never content.
+.upstream/

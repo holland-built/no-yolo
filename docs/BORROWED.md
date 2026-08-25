@@ -17,6 +17,13 @@ Copied in, tracked here, redistributed under the upstream licence. A fresh clone
 | Name | Upstream | Pinned | Path | Licence | Taken |
 |---|---|---|---|---|---|
 | Brand specifications | `github.com/VoltAgent/awesome-design-md` | `8147538b4226ae41e2487a9179e3bcc1f68e8554` | `refs/brands/` | MIT | 2026-08-25 |
+| StyleSeed, retired | `github.com/bitjaru/styleseed` | `a2bea1d09d8ad6e2b66ca5215edbc9dfb7325b84` | `archive/styleseed/` | MIT | 2026-08-20 |
+
+StyleSeed is listed although it is retired, and the row is deliberate. It sits in `archive/`
+rather than `skills/`, so nothing loads it, but it is tracked and therefore restorable from a
+fresh clone rather than from one laptop. Its own `PROVENANCE.txt` carried the upstream and the
+pinned revision, which is the only reason this row could be filled in honestly. Every skill
+that arrived without one is in the unwatched table below.
 
 Content hash of the 74 `DESIGN.md` files, in sorted path order:
 
@@ -45,8 +52,11 @@ up knows what is missing and where to get it.
 |---|---|---|
 | `avoid-ai-writing`, `writing-for-agents`, `codebase-design`, `domain-modeling`, `mcp-builder`, `systematic-debugging` | `npx skills` installs, landing in `.agents/skills/` | No |
 | `orca-cli` | installed by hand into `~/.agents/skills` | No |
-| StyleSeed: `styleseed` and 22 `ss-*` | installed by hand, with an engine payload at `.agents/styleseed-engine` | No |
 
-Rows without a pinned version or a hash cannot be watched yet. Filling them in is the
-remaining half of this file, and until it is done, an upstream change to any of them will
-pass unnoticed. Saying so here is better than an empty table that implies coverage.
+Seven skills, no pinned version and no hash between them, so **none of them is watched**. An
+upstream change to any one will pass unnoticed, which is the exact thing this file exists to
+prevent. Filling those rows in is the remaining half of the job.
+
+Saying so plainly beats a table that implies coverage it does not have. StyleSeed is the model
+for how they get fixed: it was in this same position until its `PROVENANCE.txt` was read, and
+one file naming an upstream and a revision was enough to move it into the watched table above.
