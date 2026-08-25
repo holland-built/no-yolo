@@ -70,7 +70,7 @@ Read one file when its stage begins. Skip the files for stages this size does no
 
 | Stage | File | Produces |
 |---|---|---|
-| 0 | `stages/0-evidence.md` | The located cause, measured, with a reproduction |
+| 0 | `stages/0-evidence.md` | The located cause, measured, with a reproduction, and every other place the same mistake was made |
 | 1 | `stages/1-interview.md` | Every branch of the decision resolved |
 | 2 | `stages/2-plan.md` | The plan, Codex-checked, owner-approved |
 | 3 | `stages/3-mockups.md` | The variant set from `rules/mockups.md`, judged, one chosen. Runs when stage 2 set `ui_change` |
