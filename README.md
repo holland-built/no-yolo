@@ -24,6 +24,8 @@ Once you do, Claude Code starts working like this:
   would have removed.
 - Writing that sounds machine-made is caught the moment a file is saved and sent back to be
   rewritten, before you ever read it.
+- Answers come back readable: the point first, a table rather than paragraphs, three options
+  at most. A reply too long to read is stopped before it reaches you.
 - Any kind of project works. Nothing is loaded that the job has not asked for.
 
 Copy it to your own GitHub account (that's called a **fork**) and it's yours. Change any file,
@@ -158,7 +160,9 @@ when a skill asks for it.
 | `docs/*.md` | One file per topic, each opened only when its condition fires. `DECISIONS.md` holds the evidence behind every rule |
 | `rules/*.md` | The rules two or more files share, so a change reaches both at once |
 | `skills/` | Your commands, one directory each |
-| `hooks/` | Small scripts that run by themselves: the two guards, the secret scanner, the status bar |
+| `hooks/` | Small scripts that run by themselves: the two guards, the secret scanner, the status bar, the reply-length gate, and the daily check on borrowed code |
+| `output-styles/` | How answers are written to you. Loaded every session, so it cannot be forgotten mid-conversation |
+| `refs/brands/` | 74 real brand specifications, colours and typefaces read off live sites. `/design` renders three of them for you to pick from |
 | `memory/` | Things you asked it to remember. All of it is gitignored except the template |
 | `settings.example.json` | Starter settings with no passwords in them. `setup.sh` copies this to `settings.json` |
 
