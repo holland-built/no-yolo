@@ -83,7 +83,7 @@ protection.
 
 ### Optional extras
 
-Thirteen outside pieces make some steps better and none of them is required: every file that
+Twelve outside pieces make some steps better and none of them is required: every file that
 reaches for one carries a fallback. `INSTALL.md` lists what each one gives you and holds the
 commands that install them.
 

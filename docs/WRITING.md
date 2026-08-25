@@ -74,14 +74,17 @@ The strongest endings are both checkable and exhaustive.
 
 ## Leading words
 
-A leading word is a compact idea already in the model's training that anchors a whole region
-of behaviour in one token. Used as a token, repeated, never re-explained: *red*, *surgical*,
-*tracer bullet*. A word you coin yourself recruits nothing, so you pay in definitions what a
-known word gives free. Reach for the existing word.
+Pick one familiar word for each behaviour and reuse it everywhere: *surgical* for a narrow
+edit, *tracer bullet* for a thin end-to-end slice, *red* for a failing test.
 
-A leading word anchors twice. In the body it steers execution; in a pointer it steers
-invocation, so a word that already lives in the prompts, the docs, and the code brings the
-agent to the material more often than a word used in one place alone.
+**Why a familiar word and not one you invent.** The model has already read a million uses of
+*surgical*, so the word arrives carrying its own instructions and you spend nothing defining
+it. A coined word arrives empty. You pay for its meaning in every file that uses it, and you
+pay again each time one of those definitions drifts.
+
+Use the same word in the body and in the pointer that reaches the file. The body one steers
+execution, the pointer one steers invocation, and a word living in both brings the agent to
+the material more often than a word used in one place.
 
 Hunt for passages that collapse into one: a three-part phrase spelled out at three sites, a
 pointer spending a sentence to gesture at one idea.
