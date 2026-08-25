@@ -164,12 +164,13 @@ when a skill asks for it.
 
 ## Skills inventory
 
-A skill is a shortcut command you type, like `/build`. There are six.
+A skill is a shortcut command you type, like `/build`. There are seven.
 
 | Skill | What it does |
 |---|---|
 | `/build` | The whole job: evidence, interview, plan, mockups, tests, build, proof. Sizes itself, so a one-word change does not get the full pipeline |
 | `/checkup` | One read-only pass over this setup: what exists, what is broken, what has drifted |
+| `/design` | Narrows 74 real brand specifications to three, renders them as a page you point at |
 | `/handoff` | Writes a dying session to a file a fresh session can resume from |
 | `/release` | Reads the repo's own `SHIP.md` playbook and runs it |
 | `/watch` | Downloads a video, reads its subtitles and its frames, and answers from both |
