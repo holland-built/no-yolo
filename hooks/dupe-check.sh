@@ -96,9 +96,13 @@ collect_since() {
   # vendored verbatim, and they repeat each other by design: every one carries a `primary:`,
   # a `canvas:`, a `typography:`. That is the format, not a copied block, and reporting it
   # would bury a real duplicate under 74 false ones.
-  git diff -z --name-only --diff-filter=ACMRT "$base" -- . ':!refs/brands/**' > "$BOX/tracked" \
+  # archive/ is excluded for the reason hooks/external-check.sh already excludes it: it holds
+  # retired and third-party material this repo stores rather than maintains. The 23 archived
+  # StyleSeed skills share boilerplate with each other because they came from one system, and
+  # reporting that would bury a real duplicate in the living tree under dozens of dead ones.
+  git diff -z --name-only --diff-filter=ACMRT "$base" -- . ':!refs/brands/**' ':!archive/**' > "$BOX/tracked" \
     || die "git diff against $base failed"
-  git ls-files -z --others --exclude-standard -- . ':!refs/brands/**' > "$BOX/untracked" \
+  git ls-files -z --others --exclude-standard -- . ':!refs/brands/**' ':!archive/**' > "$BOX/untracked" \
     || die "git ls-files failed"
   cat "$BOX/tracked" "$BOX/untracked" > "$FILES"
   BASE="$base"
