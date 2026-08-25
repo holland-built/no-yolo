@@ -32,8 +32,10 @@ name it. Those stay. This paragraph is the only place the character appears as i
 
 - **Open with the answer.** The first sentence of a reply is the finding, not praise for the
   question and not a restatement of it.
-- **Make a contrast only when the reader proposed the first half.** "It's not X, it's Y"
-  earns its place when someone actually said X.
+- **Make a contrast only when the reader proposed the first half.** `It's not X, it's Y`
+  earns its place when someone actually said X. The specimen is in backticks for the same
+  reason the vocabulary list below is: `styles/NoYolo/FalseContrast.yml` reads this file's
+  rules back over it, and a rule that flags its own statement is a rule nobody keeps.
 - **Give three examples when the third is genuinely different.** Two is a complete list.
 - **Raise a caveat you intend to act on**, and act on it in the same passage.
 - **Close on the next action**, named and specific, or close on nothing.
@@ -53,6 +55,32 @@ These are ordinary engineering words and stay: `implement` `robust` `leverage` `
 The list is written in backticks because `hooks/slop-block.sh` counts these words in any
 `.md` file, and this one holds thirteen of them. Naming a word is not using it, and the
 hook reads code spans as the specimens they are.
+
+## Four shapes a check cannot see
+
+Added 2026-08-25 after reading nine public anti-slop projects against this file. These are the
+rules worth keeping that no regex can decide; the ones that could be decided became
+`styles/NoYolo/CopulaInflation.yml`, `ParticipleGloss.yml`, `SessionResidue.yml` and
+`FalseContrast.yml`.
+
+**The outline test.** Read the first sentence of every paragraph in order. If they form a
+clean summary on their own, the piece was built from an outline rather than an argument, and
+the paragraphs are filling slots. Specs, runbooks and reference tables are exempt: their
+structure is the point.
+
+**One aphorism per document.** The closing one-liner that turns a paragraph into a maxim
+(`a gate that cries wolf gets switched off`) is a real device and stops being one at the
+second use. This file's own author reaches for it constantly, which is how it earned a line
+here rather than a rule file.
+
+**A name repeats.** Once a thing is named, it keeps that name. Cycling through `the scanner`,
+`the tool`, `the mechanism`, `the utility` for one script makes a reader check whether four
+things are being discussed. Repetition is not a fault; elegant variation is.
+
+**Hedges are honest or they are absent.** `probably`, `about`, `roughly` earn their place
+when the number really is uncertain, and this file keeps them for that reason. What it does
+not keep is a stack: `it may be that this could potentially`. One hedge carries the doubt; a
+second only carries fear.
 
 ## Shape
 

@@ -1,0 +1,27 @@
+# A participle clause that tells the reader what the fact they just read means:
+# `, highlighting the importance of`, `, underscoring a broader shift`,
+# `, ensuring seamless integration`. The fact was already stated; the clause adds
+# a verdict nobody measured.
+#
+# docs/PROSE.md asks for the fact and the command that produced it. This shape is
+# the opposite move, and it is the commonest way a paragraph inflates without
+# adding a word of evidence.
+#
+# THE COMMA IS REQUIRED IN THE TOKEN. Without it this fires on ordinary use:
+# "the row highlighting a failure" is a noun phrase, and "a hook ensuring the
+# scan ran" describes what the hook does. Only the trailing-clause form, comma
+# then participle, is the tell.
+extends: existence
+message: "'%s' glosses the fact you just stated. Cut it, or replace it with evidence."
+level: warning
+link: docs/PROSE.md
+ignorecase: true
+nonword: true
+tokens:
+  - ', highlighting'
+  - ', underscoring'
+  - ', reflecting a'
+  - ', ensuring'
+  - ', showcasing'
+  - ', demonstrating the'
+  - ', paving the way'

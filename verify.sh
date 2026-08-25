@@ -464,6 +464,22 @@ if [ -f hooks/pre-commit ] && [ -f "$PROBE_LEAK" ]; then
   fi
 fi
 
+# WHERE THE INSTALLED HOOKS LIVE. `--git-path hooks/x` is the obvious call and
+# it is wrong inside a worktree: hooks belong to the COMMON directory, and from a
+# linked worktree that call answers `.git/hooks/x`, a path relative to a `.git`
+# that is a file there. Both hook rows then reported "none installed" while the
+# hooks sat installed and working. Measured 2026-08-25; git 2.54.0 also fails
+# `--path-format=absolute --git-path hooks` outright for the same reason.
+# --git-common-dir is the call that answers correctly in both places, and it
+# returns a relative `.git` from the main checkout, so it is resolved here.
+hook_path() {  # $1 hook name -> absolute path, or empty when git cannot answer
+  local common
+  common="$(git rev-parse --git-common-dir 2>/dev/null)" || return 0
+  [ -n "$common" ] || return 0
+  case "$common" in /*) : ;; *) common="$ROOT/$common" ;; esac
+  printf '%s/hooks/%s' "$common" "$1"
+}
+
 # THE INSTALLED HOOK IS THE TRACKED HOOK. setup.sh COPIES hooks/pre-commit into
 # .git/hooks, so the two drift the moment the tracked one is edited and nothing
 # re-runs setup.sh. On the machine that first needed this row the copy was
@@ -481,7 +497,7 @@ fi
 # the shared hooks directory from a worktree and the ordinary one elsewhere.
 #
 # EVERY BRANCH EMITS A ROW, including the one where git itself could not answer.
-installed_hook="$(git rev-parse --git-path hooks/pre-commit 2>/dev/null)"
+installed_hook="$(hook_path pre-commit)"
 if [ -z "$installed_hook" ]; then
   warn "installed pre-commit matches tracked source — not checked: git could not resolve its hooks directory here (not a repository?)"
 elif [ -f "$installed_hook" ]; then
@@ -502,7 +518,7 @@ fi
 # verify.sh and parses the workflow's own shell, which is the check that was
 # missing when a broken line continuation in ci.yml passed every local gate and
 # died on both runners.
-installed_push="$(git rev-parse --git-path hooks/pre-push 2>/dev/null)"
+installed_push="$(hook_path pre-push)"
 if [ -z "$installed_push" ]; then
   warn "installed pre-push matches tracked source — not checked: git could not resolve its hooks directory here"
 elif [ -f "$installed_push" ]; then

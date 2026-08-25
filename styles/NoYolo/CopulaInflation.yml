@@ -1,0 +1,22 @@
+# docs/PROSE.md, "Say the fact, not the adjective": a verb that means `is` and
+# costs four more words is the adjective problem wearing a verb.
+#
+# `serves as`, `stands as`, `boasts`, `represents a`, `functions as` all resolve
+# to is or has. They arrive when a sentence feels too plain, which is the same
+# instinct that produces the accent rail in docs/SCREENS.md.
+#
+# NOT `represents` on its own: a chart series legitimately represents a value,
+# and a token represents a user. The article is what marks the inflated form,
+# `represents a significant`, so the token requires it.
+extends: existence
+message: "'%s' means is or has. Write the shorter verb."
+level: warning
+link: docs/PROSE.md
+ignorecase: true
+nonword: false
+tokens:
+  - '\bserves as\b'
+  - '\bstands as\b'
+  - '\bboasts\b'
+  - '\bfunctions as a\b'
+  - '\brepresents a (?:significant|major|key|critical|fundamental)\b'
