@@ -28,10 +28,35 @@
 # basename: `archive/skills` and `mattpocock/skills` share a basename, and retiring one must
 # not condemn the other.
 #
-#   gh   <owner/repo>   <the archive path holding it>
-#   npm  <package>      <the archive path holding it>
+#   gh   <owner/repo>   <the archive path holding it>   <artefacts>
+#   npm  <package>      <the archive path holding it>   <artefacts>
 #
-# Retiring something is a deliberate act. Add the row, move the tree under archive/, delete
-# every install command and pieces row, and leave the prose that says it is gone.
+# THE FOURTH FIELD, added 2026-08-25, is what a retired piece LEFT ON THE MACHINE: a
+# comma-separated list of the skill directories and binaries it installed, or `-` when it
+# installed nothing. verify.sh's "pieces on this machine" row checks each one is GONE.
+#
+# It is written out rather than derived, and that is the correction to how this file was first
+# used. The obvious shortcut is to read the names out of the archive snapshot, since
+# archive/styleseed/.agents/skills/ holds exactly ss-resolve, ss-score and styleseed. It is
+# wrong twice. A snapshot of a retired npm package has no such layout and its package name
+# need not match its binary, so the shortcut covers only one of the two kinds this format
+# documents. And a name taken from the archive is then looked for on disk, where the archive
+# ITSELF is on disk and tracked, so the check reports every retired piece as permanently
+# installed by finding its own snapshot.
+#
+# WHY THE LIST IS NOT THE IDENTITY. `bitjaru/styleseed` never installed a directory called
+# `styleseed`. It installed its skills under their own names. On 2026-08-25 the retirement was
+# cleared by running `ls ~/.agents/skills/styleseed`, which reported no such file and proved
+# nothing at all: ss-resolve and ss-score were still there, still describing themselves as
+# compiling and scoring against StyleSeed rules that by then existed only under archive/.
+# Whoever retires the next piece will reach for the same one-name check, so the names it
+# actually installed are recorded here instead of being guessed at twice.
+#
+# An identity here must NOT also appear in hooks/externals.txt. Nothing can be current and
+# retired at once, and verify.sh goes red when one is in both.
+#
+# Retiring something is a deliberate act. Add the row with its artefacts, move the tree under
+# archive/, delete every install command and pieces row, remove it from hooks/externals.txt
+# and hooks/installed.txt, and leave the prose that says it is gone.
 
-gh   bitjaru/styleseed   archive/styleseed
+gh   bitjaru/styleseed   archive/styleseed   ss-resolve,ss-score,styleseed

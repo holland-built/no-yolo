@@ -138,10 +138,20 @@ match would pass it. Read a skill yourself before you trust it with your machine
 **`bitjaru/styleseed` was retired on 2026-08-25**, and this file went on installing it for the
 rest of that day. The session that retired it left six references behind, and a later search
 for an unrelated fault found them: the install line, a pieces row, two pointers sending design
-work to it, and a section headed "and keeps them". It is not on this machine:
-`ls skills/styleseed` and `ls ~/.agents/skills/styleseed` both report no such file. A
-hash-verified snapshot is tracked at `archive/styleseed/` and `docs/BORROWED.md` carries its
-row, so nothing is lost. Why it was retired rather than kept is in `docs/DECISIONS.md`.
+work to it, and a section headed "and keeps them". A hash-verified snapshot is tracked at
+`archive/styleseed/` and `docs/BORROWED.md` carries its row, so nothing is lost. Why it was
+retired rather than kept is in `docs/DECISIONS.md`.
+
+**It was cleared off the machine later the same day, and the first check said so wrongly.**
+That check was `ls skills/styleseed` and `ls ~/.agents/skills/styleseed`, both reporting no
+such file, and it proved nothing: StyleSeed never installed a directory under its own name. It
+installed its skills under theirs, and `ss-resolve` and `ss-score` were still in
+`~/.agents/skills` describing themselves as compiling and scoring against rules that by then
+existed only under `archive/`. They now sit outside every load path, in
+`~/.agents-retired-2026-08-25/`, kept rather than deleted because the copies on disk had
+updated past the revision the archive pins. `hooks/retired.txt` records the names a retired
+piece leaves behind so the next one is not cleared by looking for the wrong thing, and
+`verify.sh`'s "pieces on this machine" row checks them on every push.
 
 Design judgement now rests on the axes table in `docs/SCREENS.md`, which was always the
 documented fallback for this skill's absence.

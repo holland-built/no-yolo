@@ -386,6 +386,238 @@ else
   pass "retired pieces ($n_retired retired, none installed or listed as current)"
 fi
 
+# ── pieces on this machine ──────────────────────────────────────────────────
+# The gap BOTH rows above leave. external-check asks whether a name resolves at
+# its registry; the retired row asks whether a dead name is still written into a
+# tracked file. Neither has ever looked at the disk, so a piece the pieces table
+# promises can be absent, and a piece this repo retired can still be sitting in
+# ~/.agents/skills, and every row stays green through a published release.
+#
+# Both happened. On 2026-08-25 StyleSeed was retired and the machine was declared
+# clean by running `ls ~/.agents/skills/styleseed`, which reported no such file.
+# It proved nothing: StyleSeed installed its skills under their own names, and
+# ss-resolve and ss-score were still there, still describing themselves as
+# compiling and scoring against rules that by then existed only under archive/.
+# SHIP.md step 3 is a person doing this check by hand at release time, and nobody
+# released between the retirement and the day it was noticed by accident.
+#
+# TWO HALVES, AND ONLY ONE OF THEM NEEDS THIS MACHINE. Whether a manifest row is
+# well formed, and whether one identity is in both manifests, are answerable
+# anywhere. Only the disk probes are local. The first draft of this row wrapped
+# BOTH halves in the hosted-runner escape, so a malformed manifest line reached
+# CI as a WARN nobody reads. They are separated below, and the validation half
+# runs everywhere, always.
+#
+# VERIFY_NO_LOCAL_TOOLS, and not GITHUB_ACTIONS. The escape is set by the
+# workflow that knows its runner has none of these pieces, rather than inferred
+# from an ambient variable: GITHUB_ACTIONS describes an execution context, not a
+# bare machine, and a self-hosted runner or a pre-push that inherited it would
+# silently skip the only check that needs a real disk. Unset, the probes run and
+# can fail, which is the direction this file errs in everywhere else.
+installed_manifest="hooks/installed.txt"
+probe_roots="${INSTALLED_PROBE_ROOTS:-$ROOT/skills:$HOME/.agents/skills:${CLAUDE_CONFIG_DIR:-$HOME/.claude}/.agents/skills}"
+
+# THE SKILL.md AND NOT THE DIRECTORY. An interrupted `npx skills add` leaves the
+# directory behind with nothing in it, and a bare -d test calls that installed.
+skill_present() {  # $1 skill name -> 0 when found under a declared root
+  local name="$1" root
+  local IFS=:
+  for root in $probe_roots; do
+    [ -n "$root" ] || continue
+    [ -r "$root/$name/SKILL.md" ] && return 0
+  done
+  return 1
+}
+
+# ROOTS ARE DECLARED, NEVER SEARCHED FOR. A recursive hunt for a name finds
+# archive/styleseed/.agents/skills/ss-resolve, which is a tracked snapshot that
+# is SUPPOSED to be on disk, and would report every retired piece as installed
+# for ever.
+artefact_present() {  # $1 -> 0 when present as a skill or as a binary
+  skill_present "$1" && return 0
+  command -v "$1" >/dev/null 2>&1 && return 0
+  return 1
+}
+
+pieces_bad=""
+n_installed=0          # rows of hooks/installed.txt that parsed
+n_retired_art=0        # artefacts named across hooks/retired.txt
+installed_probes=0     # disk probes actually performed
+
+# A name that can be typed into either manifest. Anything outside this set is a
+# quoting accident or a pasted table cell, and reading it as a filename is how a
+# probe silently looks for something nobody named.
+valid_name() { case "$1" in ''|*[!A-Za-z0-9._@/-]*) return 1 ;; *) return 0 ;; esac; }
+
+if [ ! -r "$installed_manifest" ]; then
+  red "pieces on this machine — $installed_manifest is missing or unreadable; nothing was probed"
+else
+  # ── validation, which runs everywhere ────────────────────────────────────
+  # EXACTLY THREE FIELDS. `read` into four variables does not enforce four: a
+  # short row leaves $origin empty and a long one silently buries its tail in
+  # $extra. Either is a malformed policy line, and a malformed policy line that
+  # reads as "could not run" is how a manifest quietly stops covering something.
+  installed_rows=""
+  while read -r kind value origin extra; do
+    case "$kind" in ''|\#*) continue ;; esac
+    if [ -z "$value" ] || [ -z "$origin" ] || [ -n "$extra" ]; then
+      pieces_bad="${pieces_bad}
+    MALFORMED ROW (needs exactly three fields): $kind $value $origin $extra"
+      continue
+    fi
+    case "$kind" in
+      skill|cmd|ondemand) : ;;
+      *) pieces_bad="${pieces_bad}
+    UNKNOWN KIND '$kind' (expected skill, cmd or ondemand): $kind $value $origin"
+         continue ;;
+    esac
+    if ! valid_name "$value"; then
+      pieces_bad="${pieces_bad}
+    UNUSABLE NAME in $installed_manifest: '$value'"
+      continue
+    fi
+    n_installed=$((n_installed + 1))
+    installed_rows="${installed_rows}${kind} ${value} ${origin}
+"
+  done < "$installed_manifest"
+
+  # THE COUNTER THIS ROW USED TO GUARD ITSELF WITH WAS SHARED. An emptied
+  # hooks/installed.txt reported "PASS (3 probed)", because the three artefacts
+  # named in hooks/retired.txt kept the count above zero while the manifest that
+  # lists what must be PRESENT covered nothing at all. The counts are separate
+  # now, and this one is asserted on its own.
+  if [ "$n_installed" -eq 0 ]; then
+    pieces_bad="${pieces_bad}
+    NOTHING TO CHECK: no usable row parsed from $installed_manifest"
+  fi
+
+  # EXACTLY FOUR FIELDS IN hooks/retired.txt, for the same reason and with one
+  # extra: `read -r kind ident archive artefacts` absorbs a fifth word into
+  # $artefacts, so `ss-resolve, ss-score` written with a space becomes the single
+  # artefact "ss-resolve," and the one that matters is never looked for. The list
+  # is comma separated with no spaces, and that is enforced rather than tidied.
+  retired_arts=""
+  while read -r kind ident archive artefacts extra; do
+    case "$kind" in ''|\#*) continue ;; esac
+    if [ -z "$ident" ] || [ -z "$archive" ] || [ -n "$extra" ]; then
+      pieces_bad="${pieces_bad}
+    MALFORMED RETIRED ROW (needs exactly four fields, artefacts comma-separated with no spaces): $kind $ident $archive $artefacts $extra"
+      continue
+    fi
+    if [ -z "$artefacts" ]; then
+      pieces_bad="${pieces_bad}
+    RETIRED ROW WITHOUT ARTEFACTS: $ident — add a fourth field naming what it installed, or - for nothing (hooks/retired.txt)"
+      continue
+    fi
+    [ "$artefacts" = "-" ] && continue
+    # SPLIT WITH GLOBBING OFF. Unquoted expansion under IFS=, is still subject to
+    # pathname expansion, so an artefact list containing * would be replaced by
+    # whatever happens to be in the working directory.
+    old_ifs="$IFS"; IFS=,; set -f
+    for art in $artefacts; do
+      if ! valid_name "$art"; then
+        pieces_bad="${pieces_bad}
+    UNUSABLE ARTEFACT NAME for $ident: '$art' (empty entry, stray comma, or a space in the list)"
+        continue
+      fi
+      n_retired_art=$((n_retired_art + 1))
+      retired_arts="${retired_arts}${art} ${ident} ${archive}
+"
+    done
+    set +f; IFS="$old_ifs"
+  done < hooks/retired.txt
+
+  # NOTHING IS CURRENT AND RETIRED AT ONCE. bitjaru/styleseed was in both files
+  # from its retirement until the same day, satisfying externals.txt's definition
+  # of a live dependency while retired.txt called it dead.
+  while read -r rkind rident _rest; do
+    case "$rkind" in ''|\#*) continue ;; esac
+    [ -n "$rident" ] || continue
+    if grep -vE '^\s*(#|$)' hooks/externals.txt \
+      | awk -v n="$rident" 'BEGIN{n=tolower(n)} tolower($2)==n {found=1} END{exit !found}'; then
+      pieces_bad="${pieces_bad}
+    IN BOTH MANIFESTS: $rident is retired and still declared current in hooks/externals.txt"
+    fi
+  done < hooks/retired.txt
+
+  # THE MANIFEST MUST COVER WHAT THE FRONT DOOR PROMISES. Without this the row
+  # trusts hooks/installed.txt to be complete, and deleting any single line from
+  # it leaves the whole suite green while a piece goes unwatched — the same
+  # shape of hole as the one this row was written to close. INSTALL.md's pieces
+  # table is the published list, so it is the thing reconciled against.
+  #
+  # Matched on the row's NAME or on its ORIGIN, because the table and the
+  # manifest do not always spell a piece the same way and neither spelling is
+  # wrong: the table lists `@yawlabs/ctxlint`, which installs a binary called
+  # ctxlint, and `NVIDIA/SkillSpector`, which installs skillspector.
+  table_pieces="$(awk -F'|' '
+      /^\| Piece \| Gives \|/ {inside = 1; next}
+      inside && /^\|---/       {next}
+      inside && !/^\|/         {exit}
+      inside                   {gsub(/[` ]/, "", $2); if ($2 != "") print $2}
+    ' INSTALL.md 2>/dev/null)"
+  n_table=0
+  while read -r piece; do
+    [ -n "$piece" ] || continue
+    n_table=$((n_table + 1))
+    if ! printf '%s' "$installed_rows" \
+      | awk -v p="$piece" 'BEGIN{p=tolower(p)} tolower($2)==p || tolower($3)==p {found=1} END{exit !found}'; then
+      pieces_bad="${pieces_bad}
+    PROMISED BUT UNWATCHED: INSTALL.md's pieces table lists $piece and $installed_manifest has no row for it"
+    fi
+  done <<EOF
+$table_pieces
+EOF
+  if [ "$n_table" -eq 0 ]; then
+    pieces_bad="${pieces_bad}
+    NOTHING TO RECONCILE: no piece parsed out of INSTALL.md's pieces table"
+  fi
+
+  # ── the disk probes, which are the local half ────────────────────────────
+  if [ -n "${VERIFY_NO_LOCAL_TOOLS:-}" ] && [ -z "${INSTALLED_PROBE_ROOTS:-}" ]; then
+    probes_note="not probed: VERIFY_NO_LOCAL_TOOLS is set for a runner that has none of these installed"
+  else
+    probes_note=""
+    while read -r kind value _origin; do
+      [ -n "$kind" ] || continue
+      installed_probes=$((installed_probes + 1))
+      case "$kind" in
+        skill)
+          skill_present "$value" || pieces_bad="${pieces_bad}
+    MISSING SKILL: $value — no SKILL.md under any of $probe_roots" ;;
+        # An on-demand tool is fetched at call time and is never on disk, so only
+        # its runner can be asserted. SHIP.md step 3 carries the same carve-out.
+        cmd|ondemand)
+          command -v "$value" >/dev/null 2>&1 || pieces_bad="${pieces_bad}
+    MISSING COMMAND: $value — not on PATH" ;;
+      esac
+    done <<EOF
+$installed_rows
+EOF
+
+    # THE OTHER DIRECTION, and the one that was red on 2026-08-25.
+    while read -r art ident archive; do
+      [ -n "$art" ] || continue
+      installed_probes=$((installed_probes + 1))
+      if artefact_present "$art"; then
+        pieces_bad="${pieces_bad}
+    RETIRED PIECE STILL INSTALLED: $art (from $ident, archived at $archive) — delete it"
+      fi
+    done <<EOF
+$retired_arts
+EOF
+  fi
+
+  if [ -n "$pieces_bad" ]; then
+    printf 'the repo and this machine disagree:%s\n' "$pieces_bad"
+    red "pieces on this machine — something listed is absent, something retired is still here, or a manifest is malformed (see above)"
+  elif [ -n "$probes_note" ]; then
+    warn "pieces on this machine — $n_installed listed and $n_retired_art retired artefacts validated, $probes_note"
+  else
+    pass "pieces on this machine ($installed_probes probed: $n_installed listed, all present; $n_retired_art retired, none left behind)"
+  fi
+fi
+
 # ── leak scanning ───────────────────────────────────────────────────────────
 # The rule files' only compensating control is the scanner, which lints
 # whichever file it loads on every run and refuses to scan a gutted one. These

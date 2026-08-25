@@ -19,6 +19,19 @@
 # Adding a row is a deliberate act: query the registry first (CLAUDE.md rule 5), then write
 # what you saw. hooks/external-check.sh fails when a tracked install command names anything
 # absent from this file, so an invented name cannot reach a commit.
+#
+# THREE FIELDS, AND NO FOURTH. This file answers one question, "does this name exist and does
+# it still belong to who we said", and hooks/external-check.sh parses it with
+# `read -r kind name want`. A fourth column is swallowed into $want and silently breaks the
+# provenance comparison against an npm package's published repository.url, which is the check
+# that catches a real-but-wrong package. Whether a piece is actually ON THIS MACHINE is a
+# different question with a different granularity, and it lives in hooks/installed.txt:
+# `mattpocock/skills` is one row here and four separate skills there.
+#
+# AN IDENTITY HERE MUST NOT BE IN hooks/retired.txt. Nothing is current and retired at once,
+# and verify.sh goes red when one is in both. `bitjaru/styleseed` sat in both files from its
+# retirement on 2026-08-25 until the same day, current by this file's own definition while
+# retired by the other's.
 
 npm  agnix              agent-sh/agnix
 npm  @yawlabs/ctxlint   YawLabs/ctxlint
@@ -27,7 +40,6 @@ npm  jscpd              kucherenko/jscpd
 npm  @modelcontextprotocol/inspector  modelcontextprotocol/inspector
 
 gh   conorbronsdon/avoid-ai-writing   -
-gh   bitjaru/styleseed               -
 gh   NVIDIA/SkillSpector             -
 gh   mattpocock/skills               -
 gh   anthropics/skills               -
