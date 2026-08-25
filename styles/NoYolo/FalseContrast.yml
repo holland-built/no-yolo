@@ -1,0 +1,19 @@
+# The manufactured pivot: `That's not X. That's Y.`, `It's not just X, it's Y`,
+# `The real question is`. Each announces a reversal the reader did not ask for
+# and did not supply the first half of.
+#
+# docs/PROSE.md already carries the rule this enforces: make a contrast only when
+# the reader proposed the first half. That line has been in the standard from the
+# start with nothing checking it, and it is the shape this file's own author
+# reaches for most.
+extends: existence
+message: "'%s' stages a contrast the reader never proposed. State the finding."
+level: warning
+link: docs/PROSE.md
+ignorecase: true
+nonword: false
+tokens:
+  - "\\b(?:that|this|it)'s not (?:just )?(?:about )?[a-z]+[.,] (?:that|this|it)'s\\b"
+  - '\bthe real question is\b'
+  - "\\bisn't (?:just )?about\\b"
+  - '\bnot merely\b'

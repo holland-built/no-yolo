@@ -109,6 +109,24 @@ the fix loop instead, since neither reads a test result.
 | Standards review | An agent that has not seen the plan finds no correctness or edge-case defect |
 | Spec review | A separate agent confirms the diff is what was asked for, with no missing requirement and no scope creep |
 
+**The standards reviewer reads the whole file, not only the diff.** A hunk can be correct
+line by line and still be wrong for the file it lands in: a helper used once, a wrapper around
+a wrapper, a flag added so one caller can skip the check everything else obeys. None of that
+is visible in a diff, because the thing it clashes with is the code around it. The brief says
+to open each changed file whole and judge the change against the conventions already there.
+
+Its checklist, from reading `boudra/unslop` on 2026-08-25 against these gates and keeping only
+what the duplicate scan cannot see:
+
+| Look for | Because |
+|---|---|
+| A helper with one caller | It is a name and an indirection standing where three lines would read plainly |
+| A coordinator calling a coordinator | Each layer that only forwards is a layer that has to be read |
+| An escape-hatch flag | One caller opting out of the rule the rest obey, which is how a rule dies |
+| `any`, `ts-ignore`, an empty catch | The type or the error was inconvenient, so the information was thrown away |
+| `throw new Error("failed")` | The context the caller needs to act is in the variables, not in the string |
+| A test asserting the implementation | It pins how the code works, so the next refactor breaks a test that found no defect |
+
 The last two run as separate agents that cannot see each other. A change passes one and fails
 the other, and merged reviewers hide that.
 
