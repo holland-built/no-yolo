@@ -48,15 +48,36 @@ Skills that live under `skills/` on this machine but are excluded by `.gitignore
 to 123. A fresh clone gets none of them. They are listed here so that a person setting this
 up knows what is missing and where to get it.
 
-| Name | Where it came from | In this repo |
-|---|---|---|
-| `avoid-ai-writing`, `writing-for-agents`, `codebase-design`, `domain-modeling`, `mcp-builder`, `systematic-debugging` | `npx skills` installs, landing in `.agents/skills/` | No |
-| `orca-cli` | installed by hand into `~/.agents/skills` | No |
+Seven skills sit under `skills/` on this machine and are excluded by `.gitignore`. A fresh
+clone gets none of them, and **none of them is watched**, so an upstream change passes
+unnoticed. One row each, with what to do about it:
 
-Seven skills, no pinned version and no hash between them, so **none of them is watched**. An
-upstream change to any one will pass unnoticed, which is the exact thing this file exists to
-prevent. Filling those rows in is the remaining half of the job.
+| Skill | Comes from | Watched | To fix it |
+|---|---|---|---|
+| `avoid-ai-writing` | `github.com/conorbronsdon/avoid-ai-writing` | No | Run the procedure below. The source is known, so this one is quick |
+| `writing-for-agents` | `github.com/mattpocock/skills` | No | Same. `docs/WRITING.md` already names it as the source |
+| `codebase-design` | `github.com/mattpocock/skills` | No | Same |
+| `domain-modeling` | `github.com/mattpocock/skills` | No | Same |
+| `systematic-debugging` | `github.com/mattpocock/skills` | No | Same |
+| `mcp-builder` | Not recorded anywhere | No | Ask Claude "where did mcp-builder come from" before anything else. A row cannot be written without it |
+| `orca-cli` | Installed by hand, source not recorded | No | Same as above |
 
-Saying so plainly beats a table that implies coverage it does not have. StyleSeed is the model
-for how they get fixed: it was in this same position until its `PROVENANCE.txt` was read, and
-one file naming an upstream and a revision was enough to move it into the watched table above.
+### The procedure, for one skill
+
+Say to Claude: **"start watching `<name>`"**. It runs these four steps and shows you the row.
+
+1. Find the skill on disk (`skills/<name>`, usually a shortcut into `.agents/skills/`).
+2. Read the current upstream commit: `git ls-remote https://github.com/<owner>/<repo> HEAD`.
+3. Hash what is on disk:
+   ```bash
+   find skills/<name> -type f | sort | xargs shasum -a 256 | shasum -a 256
+   ```
+4. Add a row to the watched table at the top of this file with both values and today's date.
+
+**Confirm it worked.** Delete `.upstream/last-run`, start a new session, and the check runs
+again. The name should appear in the watched table above and nowhere in the table on this
+page. If it is still here, step 4 did not happen.
+
+Two of the seven cannot be done at all until somebody remembers where they came from, and
+that is written above rather than left blank. A row with a guess in it is worse than an empty
+one: it would report "unchanged" against the wrong project forever.
