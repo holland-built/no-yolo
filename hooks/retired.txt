@@ -1,0 +1,37 @@
+# Every external piece this repo USED to install and has since retired.
+#
+# WHY THIS FILE EXISTS. On 2026-08-25 StyleSeed was retired and archived to
+# archive/styleseed/. Six tracked files went on treating it as installed: an
+# `npx skills@latest add bitjaru/styleseed` line in INSTALL.md's paste-this-block, a row in
+# INSTALL.md's pieces table, a section headed "StyleSeed installs 23 doors, and keeps them"
+# asserting all 23 loaded every session, and two docs routing design judgement to it. It was
+# not on the machine: `ls skills/styleseed` reported no such file.
+#
+# Nothing caught it. hooks/external-check.sh asks two questions, "is this name declared" and
+# "does it still resolve to the pinned owner", and bitjaru/styleseed answers yes to both
+# because it is still a real GitHub repository. SHIP.md step 3 is a hard block on exactly this
+# case and it is a person reading a step during a release; nobody released in between, so
+# v2026-08-25 shipped with all six references.
+#
+# WHAT THE ROW USING THIS FILE CHECKS. A name here must not appear on a line that also carries
+# an install verb, and must not appear in INSTALL.md's pieces table. It is deliberately NOT a
+# check that the tool is absent from the machine: that answer differs per machine, is red in
+# CI by construction, and belongs to a release rather than to every push.
+#
+# WHAT IT DELIBERATELY ALLOWS. Prose about the retirement, an entry under INSTALL.md's "pieces
+# that used to be listed here", the docs/BORROWED.md row, the archive/ snapshot, and any
+# uninstall or cleanup command. Someone who installed it before it was retired still needs to
+# be told how to remove it, so the uninstall instruction is the one place the name belongs on
+# a command line.
+#
+# FORMAT, one per line. The identity is matched whole and case-insensitively, never by
+# basename: `archive/skills` and `mattpocock/skills` share a basename, and retiring one must
+# not condemn the other.
+#
+#   gh   <owner/repo>   <the archive path holding it>
+#   npm  <package>      <the archive path holding it>
+#
+# Retiring something is a deliberate act. Add the row, move the tree under archive/, delete
+# every install command and pieces row, and leave the prose that says it is gone.
+
+gh   bitjaru/styleseed   archive/styleseed
