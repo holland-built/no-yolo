@@ -72,7 +72,24 @@ CLAUDE_CONFIG_DIR="$d" bash "$HOOK" >/dev/null 2>&1
 upstream_expect "unpinned rows exit 0" 0 "$?"
 rm -rf "$d"
 
-# 6. An unwritable state directory must not take the session down.
+# 6. The portable time bound. `timeout` is GNU coreutils and is absent from a stock Mac:
+#    neither it nor `gtimeout` was on the machine this was written on, so the original code
+#    silently produced no result on every call while claiming to be bounded. Codex found it at
+#    the review gate. This asserts the replacement actually cuts a long command short.
+#    The function is EXTRACTED from the hook rather than copied into this file. A copy drifts,
+#    and then the suite proves a private duplicate works while the shipped one rots.
+fn="$(sed -n '/^bounded() {/,/^}/p' "$HOOK")"
+upstream_expect "bounded() is extractable from the hook" 0 "$([ -n "$fn" ] && echo 0 || echo 1)"
+start="$(date +%s)"
+bounded_rc="$(bash -c "$fn
+  bounded 2 sleep 30; printf '%s' \"\$?\"" 2>/dev/null)"
+bounded_elapsed=$(( $(date +%s) - start ))
+upstream_expect "bounded cuts a 30s command short" 0 "$([ "$bounded_elapsed" -lt 8 ] && echo 0 || echo 1)"
+upstream_expect "bounded reports the kill, not success" 0 "$([ "$bounded_rc" != "0" ] && echo 0 || echo 1)"
+upstream_expect "the hook no longer calls GNU timeout" 0 \
+  "$(grep -qE '(^|[^_[:alnum:]])timeout ' "$HOOK" && echo 1 || echo 0)"
+
+# 7. An unwritable state directory must not take the session down.
 d="$(box)"; mkdir -p "$d/.upstream"; chmod 500 "$d/.upstream" 2>/dev/null
 CLAUDE_CONFIG_DIR="$d" bash "$HOOK" >/dev/null 2>&1
 upstream_expect "unwritable state exits 0" 0 "$?"

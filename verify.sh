@@ -707,10 +707,17 @@ WORD_LIMIT=2200
 chain=(CLAUDE.md rules/codex.md rules/mockups.md output-styles/plain.md)
 chain_missing=""
 chain_total=0
+# Each count is validated as digits before it is added. An unreadable file makes `wc` fail and
+# yields an empty string, which would either add zero and quietly shrink the measured total,
+# or abort the arithmetic depending on the shell options in force. A budget check that reports
+# a smaller number than the truth is worse than no budget check.
 for f in "${chain[@]}"; do
-  if [ -f "$ROOT/$f" ]; then
-    n="$(wc -w < "$ROOT/$f" | tr -d '[:space:]')"
-    chain_total=$(( chain_total + n ))
+  if [ -f "$ROOT/$f" ] && [ -r "$ROOT/$f" ]; then
+    n="$(wc -w < "$ROOT/$f" 2>/dev/null | tr -d '[:space:]')"
+    case "$n" in
+      ''|*[!0-9]*) chain_missing="$chain_missing $f(unreadable)" ;;
+      *)           chain_total=$(( chain_total + n )) ;;
+    esac
   else
     chain_missing="$chain_missing $f"
   fi

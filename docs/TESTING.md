@@ -101,6 +101,29 @@ fail. Run it against the fix and watch it pass. Commit it with the fix.
 
 Stuck at any point: go back to step 1 and make the loop tighter.
 
+## A linter beats a rule, in a language that has one
+
+A rule in `CLAUDE.md` gets forgotten in a long session. A lint rule cannot be: it passes or it
+does not, and it costs no context to enforce.
+
+For TypeScript and JavaScript projects, `dmmulroy/anti-slop` is 16 oxlint rules that reject
+low-evidence code: a chained type assertion that discards the evidence the type rested on, a
+function handing `unknown` back to its caller, a runtime `typeof` standing in for a real check.
+None is a bug by itself. Each is the shape a bug arrives in a week later.
+
+```bash
+npx skills add dmmulroy/anti-slop --skill install-anti-slop
+```
+
+MIT, pinned in `hooks/externals.txt`, queried 2026-08-25. It is a repository, never published
+to npm: `npm view anti-slop` returns 404, and a plan that called it a package was wrong until
+that was run.
+
+**It belongs to the projects, not to this repo.** `~/.claude` is bash, python and markdown, and
+oxlint reads none of them. This repo already has its own version of the same idea, and it
+works: the vale rules behind `hooks/slop-block.sh` rejected a long dash in this file while it
+was being written.
+
 ## Done
 
 A build run's completion contract lives in `skills/build/stages/6-prove.md`. Work outside a
