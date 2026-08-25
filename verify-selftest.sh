@@ -158,6 +158,20 @@ trap finish EXIT
 results=()
 broken=0
 
+# Same resolution verify.sh uses, and for the same reason: hooks live in the
+# common directory, and `--git-path hooks/x` answers a path relative to a `.git`
+# that is a file inside a worktree. Written as a function rather than inlined in
+# a command substitution, because the inline form parsed under `bash -n` and
+# then died at run time on the case statement inside `$( )`.
+hook_path() {  # $1 hook name -> absolute path, or empty when git cannot answer
+  local common
+  common="$(git rev-parse --git-common-dir 2>/dev/null)" || return 0
+  [ -n "$common" ] || return 0
+  case "$common" in /*) : ;; *) common="$ROOT/$common" ;; esac
+  printf '%s/hooks/%s' "$common" "$1"
+}
+
+
 # Assert verify.sh emits a FAIL line containing $1. Rows are matched by NAME,
 # which is why verify.sh's FAIL labels must open with the same words as their
 # PASS labels; a row whose two outcomes read differently cannot be asserted.
@@ -408,7 +422,7 @@ put_back hooks/secret-scan.sh
 # gives: inside a worktree `.git` is a file, so the literal path missed a hook
 # that was installed and this case reported SKIP while the row itself printed
 # nothing at all. Two silences that looked like one expected absence.
-INSTALLED_HOOK="$(git rev-parse --git-path hooks/pre-commit 2>/dev/null)"
+INSTALLED_HOOK="$(hook_path pre-commit)"
 if [ -n "$INSTALLED_HOOK" ] && [ -f "$INSTALLED_HOOK" ]; then
   save "$INSTALLED_HOOK"
   printf '\n# zz-selftest drift\n' >> "$INSTALLED_HOOK"
@@ -440,7 +454,7 @@ fi
 # The pre-push hook, drift and presence, mirroring the two cases above it. A
 # CI checkout has no .git/hooks/pre-push and never pushes, so the drift half
 # reports SKIP there rather than proving nothing quietly.
-INSTALLED_PUSH="$(git rev-parse --git-path hooks/pre-push 2>/dev/null)"
+INSTALLED_PUSH="$(hook_path pre-push)"
 if [ -n "$INSTALLED_PUSH" ] && [ -f "$INSTALLED_PUSH" ]; then
   save "$INSTALLED_PUSH"
   printf '\n# zz-selftest drift\n' >> "$INSTALLED_PUSH"

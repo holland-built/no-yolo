@@ -1,0 +1,30 @@
+# Conversation residue and instruction narration, both of which belong to the
+# session that produced the text and not to the text.
+#
+# RESIDUE is a delivered artifact still talking about the exchange that made it:
+# `as discussed`, `per your request`, `as requested`. The test is whether it
+# reads correctly to someone who never saw the session, and a reader of a
+# committed file never did.
+#
+# NARRATION is worse in this setup than in most, because there are six standing
+# rules to be seen obeying: `as instructed I kept this concise`, `per your
+# request I avoided`. Saying that a rule was followed is not following it, and
+# docs/PROSE.md already asks for the answer rather than the process.
+#
+# BACKWARD REFERENCES that a fresh reader cannot resolve go here too. `as
+# mentioned above` is fine in a page someone reads top to bottom and useless in a
+# file opened at line 400 by a grep, which is how these files are actually read.
+# A named section is the fix, so `see the section on X` does not match.
+extends: existence
+message: "'%s' belongs to the conversation, not to the file. Say the thing itself."
+level: warning
+link: docs/PROSE.md
+ignorecase: true
+nonword: false
+tokens:
+  - '\bas (?:you )?(?:requested|discussed|instructed)\b'
+  - '\bper your (?:request|instructions?|feedback)\b'
+  - '\bas (?:mentioned|noted|described|discussed) (?:above|earlier|previously)\b'
+  - '\bas we (?:saw|discussed|noted)\b'
+  - '\brecall that\b'
+  - '\bhope (?:this|that) helps\b'
