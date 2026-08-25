@@ -262,7 +262,8 @@ exempted, and the duplicate gate is otherwise untouched.
 
 <!-- jscpd:ignore-start -->
 ```
-git add skills/ docs/ rules/ hooks/ .github/ archive/ styles/ README.md INSTALL.md LICENSE \
+git add skills/ docs/ rules/ hooks/ .github/ archive/ styles/ output-styles/ refs/ \
+  README.md INSTALL.md LICENSE \
   .gitignore .no-yolo-deny.example.txt .vale.ini .jscpd.json \
   setup.sh settings.example.json SHIP.md CLAUDE.md \
   memory/MEMORY.example.md verify.sh verify-selftest.sh
@@ -294,7 +295,17 @@ repo root. Each of these was omitted once and something silently never shipped:
   `--config "$ROOT/.vale.ini"`, and `hooks/dupe-check.sh` falls back to the `.jscpd.json`
   beside it. Omit them and CI reddens on a clone for a config that only ever existed here.
 - `archive/` holds skills kept for their text rather than for loading. Tracked, so an edit to
-  one has to ship like any other.
+  one has to ship like any other. From 2026-08-25 it also holds `archive/styleseed/`, which is
+  a hash-verified snapshot of 23 skills that were never in git at all. `.gitignore` un-ignores
+  `archive/styleseed/.agents/` for it, because the blanket `.agents/` rule was swallowing 52 of
+  its 104 files, engine included, and an archive that lives on one laptop is not an archive.
+- `output-styles/` holds how answers are written to the owner. Added 2026-08-25. It is loaded
+  every session by `settings.json`, so omitting it here would ship a repo whose `outputStyle`
+  names a file a fresh clone does not have.
+- `refs/` holds vendored reference data rather than code: today `refs/brands/`, 74 brand
+  specifications under MIT with the licence beside them. It sits at the top level and not under
+  a skill on purpose. The previous copy lived at `skills/design/vendor/`, was gitignored, and
+  vanished with the skill on 2026-08-21 without anything noticing.
 - `agents/` was in this list until 2026-08-22, holding two borrowed subagent definitions
   (accessibility-tester, react-specialist) whose text was 78% identical to the pre-rebuild
   copies. Nothing tracked referenced them beyond this list, so the machinery rebuild removed
