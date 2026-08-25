@@ -32,6 +32,14 @@ gh   NVIDIA/SkillSpector             -
 gh   mattpocock/skills               -
 gh   anthropics/skills               -
 gh   obra/superpowers                -
+# The 74 brand specifications in refs/brands/, vendored at 8147538b. Queried 2026-08-25: MIT,
+# 74 DESIGN.md files, 110k+ stars. Also recorded with a content hash in docs/BORROWED.md.
+gh   VoltAgent/awesome-design-md     -
+# Oxlint rules that reject low-evidence TypeScript and JavaScript, for projects the owner
+# builds. NOT for this repo, which is bash, python and markdown. Queried 2026-08-25: MIT, 16
+# rules, 3.6k stars. It is a repository and was never published to npm; `npm view anti-slop`
+# returns 404, which is why it is a gh row and not an npm one.
+gh   dmmulroy/anti-slop              -
 # vale ships as a release tarball from this repo, which is how ci.yml installs it on Linux.
 # errata-ai/vale redirects here; the project moved and the old owner is not the live name.
 gh   vale-cli/vale                   -

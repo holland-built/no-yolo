@@ -66,6 +66,22 @@ check "malformed json passes"             0 "$(run 'not json at all')"
 check "json without the key passes"       0 "$(run '{"other":"value"}')"
 check "empty reply passes"                0 "$(run '{"last_assistant_message":""}')"
 
+# --- the JSON-newline undercount, found by Codex at the review gate ---
+# A reply arrives JSON-encoded, so a line break is the two characters backslash and n. Left
+# undecoded they glue words together: 200 words on 200 lines counted as ONE and sailed past a
+# 150-word cap. Every real multi-line reply was effectively unchecked.
+nl_body=""
+i=0
+while [ "$i" -lt 200 ]; do nl_body="${nl_body}word\\n"; i=$((i + 1)); done
+check "200 words split over 200 lines blocks" 2 \
+  "$(run "$(printf '{"last_assistant_message":"%s"}' "$nl_body")")"
+check "10 words over 4 lines still passes" 0 \
+  "$(run '{"last_assistant_message":"one\ntwo\nthree\nfour five six seven eight nine ten"}')"
+
+# --- a hostile cap must not wave a reply through ---
+check "non-numeric REPLY_SOFT_CAP falls back and still blocks" 2 \
+  "$(printf '%s' "$(make_payload 200)" | REPLY_SOFT_CAP=abc bash "$HOOK" >/dev/null 2>&1; printf '%s' "$?")"
+
 # --- reads the alternate key names the harness has used ---
 check "assistant_response key is read"    2 "$(run "$(printf '{"assistant_response":"%s"}' "$(make_payload 200 | sed 's/.*message":"//; s/"}$//')")")"
 
