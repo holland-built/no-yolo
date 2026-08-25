@@ -354,6 +354,42 @@ rm hooks/externals.txt
 expect_red "external references" "a missing externals manifest fails closed instead of passing clean"
 put_back hooks/externals.txt
 
+# ── retired pieces ──────────────────────────────────────────────────────────
+# Four cases, because the row makes two separate claims and grants one exemption,
+# and a single sabotage would leave two of the three unproven. The shape of each
+# is the one that shipped for real on 2026-08-25: StyleSeed retired and archived,
+# and an install command for it left standing through a green build.
+save docs/TESTING.md
+printf '\n```bash\nnpx skills@latest add bitjaru/styleseed -g -y -a claude-code\n```\n' >> docs/TESTING.md
+expect_red "retired pieces" "an install command naming a retired piece turns the row red"
+put_back docs/TESTING.md
+
+# The exemption, and it is worth proving because it is the reason the row matches
+# an install VERB rather than every mention. Somebody who installed a piece before
+# it was retired still has it on their machine and still needs to be told how to
+# take it off, so README's Uninstall section must never turn this row red.
+save docs/TESTING.md
+printf '\n```bash\nnpx skills@latest remove bitjaru/styleseed\nnpm uninstall -g bitjaru/styleseed\n```\n' >> docs/TESTING.md
+expect_green "retired pieces" "an uninstall command naming a retired piece leaves the row green"
+put_back docs/TESTING.md
+
+# The second claim. A retired row in the pieces table is read as current by anyone
+# installing from this page, and is counted by the outside-pieces row beside it.
+save INSTALL.md
+awk '{print} /^\| Piece \| Gives \| Reached from \| Without it \|$/ {getline sep; print sep;
+      print "| `bitjaru/styleseed` | zz selftest sabotage | `docs/SCREENS.md` | nothing |"}' \
+  INSTALL.md > INSTALL.md.zztmp && mv INSTALL.md.zztmp INSTALL.md
+expect_red "retired pieces" "a retired piece still listed in the pieces table turns the row red"
+put_back INSTALL.md
+
+# The manifest going missing must fail CLOSED, for the same reason as the one
+# above it: a sweep reporting "nothing retired is installed" because it read no
+# identities at all is the decoration this whole file hunts.
+save hooks/retired.txt
+rm hooks/retired.txt
+expect_red "retired pieces" "a missing retired manifest fails closed instead of passing clean"
+put_back hooks/retired.txt
+
 # ── leak scanning ───────────────────────────────────────────────────────────
 # Each rule file gone must refuse the scan, not scan with nothing loaded.
 save hooks/secret-patterns.txt

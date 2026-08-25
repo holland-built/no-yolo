@@ -316,6 +316,66 @@ case "$(job_rc external)" in
     fi ;;
 esac
 
+# ── retired pieces ──────────────────────────────────────────────────────────
+# The gap the row above cannot see. external-check asks whether a name resolves;
+# a retired project's name resolves perfectly well, because retiring it here does
+# nothing to the repository it came from. On 2026-08-25 StyleSeed was archived and
+# six tracked files went on installing, counting and pointing at it, through a
+# green build and a published release.
+#
+# Matched against an install VERB, not against every mention. The uninstall line
+# in README's own Uninstall section names the same tools on purpose, and someone
+# who installed a piece before it was retired still needs to be told how to remove
+# it. Matched on the WHOLE identity, never a basename: archive/skills and
+# mattpocock/skills share one, and retiring the first must not condemn the second.
+retired_hits=""; n_retired=0
+while read -r kind ident _rest; do
+  case "$kind" in ''|\#*) continue ;; esac
+  [ -z "$ident" ] && continue
+  n_retired=$((n_retired + 1))
+  # Install verbs only. Each is the form this repo actually writes in a tracked
+  # file; `skills@latest add` and `skills@latest remove` differ by the word that
+  # decides whether the line is an instruction to acquire or to clean up.
+  while IFS= read -r hit; do
+    [ -n "$hit" ] && retired_hits="${retired_hits}
+    INSTALLS A RETIRED PIECE: $hit"
+  done < <(
+    # The same three exclusions hooks/external-check.sh makes, for the same
+    # reasons: archive/ is history that discusses retired tools by name, refs/ is
+    # third-party text quoting other projects' install lines, and hooks/tests/
+    # holds fixtures whose whole job is to carry a planted install command. The
+    # test suite plants `skills@latest add bitjaru/styleseed` deliberately, and
+    # this row flagged it on its first run.
+    git ls-files -- '*.md' '*.sh' '*.yml' \
+      | grep -v '^archive/' | grep -v '^refs/' | grep -v '^hooks/tests/' \
+      | xargs grep -inE "(skills@latest[[:space:]]+add|npm[[:space:]]+(install|i)[[:space:]]|brew[[:space:]]+install|uv[[:space:]]+tool[[:space:]]+install|cargo[[:space:]]+install).*$ident" 2>/dev/null
+  )
+  # The pieces table publishes what this setup uses now. A retired row there is
+  # counted by the outside-pieces row and read as current by anyone installing.
+  if awk -v want="$ident" '
+        /^\| Piece \| Gives \|/ {inside = 1; next}
+        inside && /^\|---/       {next}
+        inside && !/^\|/         {exit}
+        inside && tolower($0) ~ tolower(want) {found = 1}
+        END {exit !found}
+      ' INSTALL.md 2>/dev/null; then
+    retired_hits="${retired_hits}
+    STILL IN THE PIECES TABLE: $ident  (INSTALL.md)"
+  fi
+done < hooks/retired.txt
+
+# Zero entries is the file being unreadable or emptied, not a clean result.
+if [ ! -r hooks/retired.txt ]; then
+  red "retired pieces — hooks/retired.txt is missing or unreadable; the sweep examined nothing"
+elif [ "$n_retired" -eq 0 ]; then
+  red "retired pieces — no identity parsed from hooks/retired.txt; the sweep examined nothing"
+elif [ -n "$retired_hits" ]; then
+  printf 'a retired piece is still being installed or listed as current:%s\n' "$retired_hits"
+  red "retired pieces — a tracked file installs or lists something this repo retired (see above)"
+else
+  pass "retired pieces ($n_retired retired, none installed or listed as current)"
+fi
+
 # ── leak scanning ───────────────────────────────────────────────────────────
 # The rule files' only compensating control is the scanner, which lints
 # whichever file it loads on every run and refuses to scan a gutted one. These
