@@ -96,6 +96,5 @@ reads as a menu and gets opened all at once.
 
 ## What lives in this file
 
-Pointers, and the six rules above. A new rule belongs in the doc it governs, with a
-condition line in the table. A skill's description already carries its own triggers, so it
-stays there. When a rule above stops working, rewrite it here.
+The six rules and the pointer table, nothing else. A new rule goes in the doc it governs,
+with a condition line in the table above.
