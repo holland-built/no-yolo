@@ -59,8 +59,8 @@ unnoticed. One row each, with what to do about it:
 | `codebase-design` | `github.com/mattpocock/skills` | No | Same |
 | `domain-modeling` | `github.com/mattpocock/skills` | No | Same |
 | `systematic-debugging` | `github.com/mattpocock/skills` | No | Same |
-| `mcp-builder` | Not recorded anywhere | No | Ask Claude "where did mcp-builder come from" before anything else. A row cannot be written without it |
-| `orca-cli` | Installed by hand, source not recorded | No | Same as above |
+| `orca-cli` | The Orca app, which the owner codes in | Not applicable | Nothing. It arrives and updates with Orca, so a content hash here would report drift every time the app updated itself |
+| `mcp-builder` | Still not recorded anywhere | No | Nothing, by the owner's decision on 2026-08-25. Reopen it by saying "start watching mcp-builder", which will ask for the source first |
 
 ### The procedure, for one skill
 
@@ -78,6 +78,10 @@ Say to Claude: **"start watching `<name>`"**. It runs these four steps and shows
 again. The name should appear in the watched table above and nowhere in the table on this
 page. If it is still here, step 4 did not happen.
 
-Two of the seven cannot be done at all until somebody remembers where they came from, and
-that is written above rather than left blank. A row with a guess in it is worse than an empty
-one: it would report "unchanged" against the wrong project forever.
+Five of the seven are waiting on that procedure and nothing else. The other two were settled on
+2026-08-25 by asking the owner, and they were settled two different ways: `orca-cli` has a
+source and needs no watch, while `mcp-builder` still has no recorded source and the owner chose
+not to pursue one.
+
+Neither row guesses, and the difference between them is deliberate. A row with a guess in it is
+worse than an empty one: it would report "unchanged" against the wrong project forever.

@@ -2,41 +2,18 @@
 
 Repo: `github.com/holland-built/no-yolo`. Run `/release` from anywhere under `~/.claude`.
 
-Rewritten 2026-08-05, and again on 2026-08-21. The 2026-08-05 version was written against the
-catalogue system that the fresh-start rebuild deleted: eight of its ten steps called
-`/md-check`, `/update`, `skills/my-skills/`, `skills/my-md/` or `docs/HOOKS.md`, none of which <!-- gone-on-purpose -->
-exist. Two of those were hard blocks, so every release would have stopped forever.
-
-It happened a second time. The 2026-08-21 rebuild cut 13 skills to 6 (counted from
-`git ls-tree -d --name-only 7fb7448^:skills`; this line said 26 until 2026-08-22, and no
-commit on this branch ever held that many) and replaced the rule
-files, and this playbook was left naming `docs/ANTISLOP.md` and `docs/README_FORMAT.md`, <!-- gone-on-purpose -->
-along with a mockup-pruning script that went with `/design`. All deleted. Three of nine steps,
-two of them hard blocks. Step 4 below is the sweep that should have caught it and did not run,
-because nobody released in between.
-
 **A step belongs here only if the thing it runs is on disk right now.** Check before adding
-one, and check again after any rebuild.
+one, and check again after any rebuild. This playbook twice came to name deleted files, both
+times leaving hard blocks that could never pass; `docs/DECISIONS.md` records both.
 
 ## Environments
 | Env | Branch | Default | Notes |
 |-----|--------|---------|-------|
 | main | `main` | * | the only branch; publishes to no-yolo |
 
-`main` became the rebuilt setup on 2026-08-05. The two histories were unrelated (the rebuild
-started from an empty room), so this was a force-push, not a merge. The pre-rebuild setup is
-kept in two places, per the plan's promise that nothing is destroyed:
-
-| Where | What |
-|---|---|
-| tag `pre-rebuild-2026-08-05` | `main` exactly as it stood before the swap |
-| branch `migrate-wshobson-agents` | the same, plus three commits of in-flight work |
-
-**This repo's remote pointed at its own working directory** until 2026-08-05, so every push from
-it silently went nowhere and the rebuilt setup sat unpublished while looking pushed. A
-self-referencing remote still resolves `origin/*`, still reports "up to date", and still exits 0.
-Nothing about it looks wrong. If a branch claims to be in sync but GitHub disagrees, check
-`git remote -v` before anything else.
+If a branch claims to be in sync but GitHub disagrees, check `git remote -v` before anything
+else. This repo's remote pointed at its own working directory until 2026-08-05, and every push
+silently went nowhere while reporting success.
 
 ## Steps
 
@@ -46,219 +23,180 @@ one batch: `bash verify.sh` once (steps 4, 6 and 8 are three rows of that one ru
 The numbering is for reading, not for ordering. What stays serial is everything after: the
 secrets gate, then staging, then the commit, then the push, then reading the target.
 
-1. **Writing check (warn only):** print `| File | Tell | Excerpt |`; never block.
+### 1. Writing check
 
-   The hook takes a tool-call payload on standard input, not a filename, because that is how
-   Claude Code invokes it. Wrap each path the same way to run it by hand:
+**Warn only.** Print `| File | Tell | Excerpt |`; never block.
 
-   ```bash
-   { git diff --name-only origin/HEAD -- '*.md'; git ls-files --others --exclude-standard -- '*.md'; } \
-     | sort -u | while read -r f; do
-     printf '{"tool_input":{"file_path":"%s/%s"}}' "$PWD" "$f" | bash hooks/slop-block.sh
-   done
-   ```
+```bash
+{ git diff --name-only origin/HEAD -- '*.md'; git ls-files --others --exclude-standard -- '*.md'; } \
+  | sort -u | while read -r f; do
+  printf '{"tool_input":{"file_path":"%s/%s"}}' "$PWD" "$f" | bash hooks/slop-block.sh
+done
+```
 
-   The change set is `origin/HEAD` plus untracked `.md`, not `--cached`, for the reason step 7
-   spells out: staging happens after these steps, so a `--cached` list here was empty and a
-   check that read nothing looked like a check that found nothing. It read `--cached` until
-   2026-08-22.
+The hook takes a tool-call payload on standard input, not a filename, because that is how
+Claude Code invokes it, which is what the `printf` wrapper is for. The change set is
+`origin/HEAD` plus untracked `.md` rather than `--cached`, because staging happens after this
+step and a `--cached` list here would be empty.
 
-   The hook decides only what a program can decide, so read the judgement rules in
-   `docs/PROSE.md` against the same files yourself. It already fires on every Write and Edit,
-   so a clean result here is the expected one, and a finding means a file reached git without
-   passing through a hook.
+**Expected:** nothing. The hook already fires on every Write and Edit, so a finding means a
+file reached git without passing through one.
 
-2. **Size check (warn only):** with `CFG="${CLAUDE_CONFIG_DIR:-$HOME/.claude}"`, run
-   `wc -l "$CFG"/*.md "$CFG"/docs/*.md "$CFG"/rules/*.md "$CFG"/skills/*/SKILL.md`; table any
-   file >200 lines.
+**Risk if skipped:** the hook decides only what a program can decide, so read the judgement
+rules in `docs/PROSE.md` against the same files yourself.
 
-3. **Stale-external sweep (repo mirrors the machine: HARD BLOCK):** every external tool
-   referenced in tracked files (a row in `INSTALL.md`, a `skills/<name>` .gitignore entry, a
-   README prerequisite) must exist on THIS machine right now. Check with
-   `ls ~/.agents/skills/<name>`, `ls "${CLAUDE_CONFIG_DIR:-$HOME/.claude}"/.agents/skills/<name>`
-   (newer npx installs land here), `ls skills/<name>`, or `command -v <tool>` for anything
-   installed globally. A reference to something not installed is old shit. Delete the
-   reference, don't ship it.
-   Standing rule from a past incident: a tool was uninstalled locally but its 16 references
-   shipped for weeks.
+### 2. Size check
 
-   `INSTALL.md` is the one file that may name a tool this machine does not have, because its
-   whole subject is what to install. What it must not do is claim one is present.
+**Warn only.** With `CFG="${CLAUDE_CONFIG_DIR:-$HOME/.claude}"`, run
+`wc -l "$CFG"/*.md "$CFG"/docs/*.md "$CFG"/rules/*.md "$CFG"/skills/*/SKILL.md`; table any
+file >200 lines.
 
-   **One exemption: on-demand npx tools.** A tool that is fetched and run by `npx` at call
-   time (e.g. `npx -y impeccable detect`) is never on disk by design, so `ls` can only ever
-   fail it. For those, check the runner instead: `command -v npx` must succeed, else BLOCK.
-   Nothing else relaxes. Anything with a real local path has to be there, right now.
+**Risk if skipped:** a file grows past the point where attention thins across it, one commit
+at a time, and no single commit looks wrong.
 
-4. **Dangling-reference sweep (HARD BLOCK), now a `verify.sh` row.** Run `bash verify.sh` and
-   read the `dangling references` row. No tracked `.md`, `.sh` or `.js` may name a doc, skill,
-   agent or script that is not on disk.
+### 3. Stale-external sweep
 
-   **This step used to live here and only here, and that was the defect.** It is how SHIP.md
-   came to reference five deleted files with nothing noticing. The sweep that would have caught
-   it ran only when somebody ran a release, and nobody released in between. It moved into
-   `verify.sh` on 2026-08-21, so it now runs on every push and in CI on both platforms, and
-   `verify-selftest.sh` sabotages it to prove it can still go red. What is left here is the
-   pointer and the reasoning; the command itself has one home now.
+**HARD BLOCK.** The repo mirrors the machine: every external tool referenced in tracked files
+(a row in `INSTALL.md`, a `skills/<name>` .gitignore entry, a README prerequisite) must exist
+on THIS machine right now.
 
-   The command is kept below because the three details in it are each hard-won and worth
-   reading before anyone edits the row. It is the same code the row runs. If you change one,
-   change the other, or better, change the row and delete this copy.
+Check with `ls ~/.agents/skills/<name>`,
+`ls "${CLAUDE_CONFIG_DIR:-$HOME/.claude}"/.agents/skills/<name>` (newer npx installs land
+here), `ls skills/<name>`, or `command -v <tool>` for anything installed globally.
 
-   - **Only backtick-quoted paths count.** This repo cites every real file in backticks. Matching
-     bare text instead produces a flood of substring hits, the tail of "ingest-docs/SKILL.md"
-     looks like a docs path, and the tail of "~/.agents/skills/x" looks like an agents path.
-   - **Driven off `git ls-files`, not a directory walk.** Only tracked files can break a release
-     for someone else, and walking directories drags in gitignored third-party folders whose
-     contents are never edited here.
-   - **The marker is filtered per line, before extraction.** `grep -o` prints only the matched
-     path and throws its line away, so filtering afterwards can never see the marker.
-   ```bash
-   git ls-files -- '*.md' | while read -r src; do
-     grep -v 'gone-on-purpose' "$src" \
-       | grep -oE '`(docs|rules|skills|hooks|agents)/[A-Za-z0-9._/-]+\.(md|sh|js|py|mjs|json)`' \
-       | tr -d '`' | while read -r p; do
-           [ -e "$p" ] || [ -e "$(dirname "$src")/$p" ] || echo "DANGLING: $p  (in $src)"
-         done
-   done | sort -u
-   ```
-   Any output → STOP and either restore the file or delete the reference.
+**Expected:** every reference resolves. A reference to something not installed is old shit.
+Delete the reference, don't ship it.
 
-   **Naming something you deliberately deleted.** Prose that discusses a removed file on purpose
-   (this playbook's own header does) would otherwise trip this forever. Put
-   `<!-- gone-on-purpose -->` on that line. Use it only for history and rationale, never to
-   silence a reference something still follows.
+Two carve-outs, and nothing else relaxes:
 
-   Gitignored-by-design paths are the one real gap here, because they exist locally and are
-   absent on a fresh clone, so the check passes for you and fails for a stranger. Two live
-   cases: `memory/MEMORY.md` and `memory/facts/`. Neither is matched by the pattern above, and
-   that is deliberate rather than lucky, so anything that starts citing them has to name the
-   tracked template beside them, the way `settings.example.json` sits beside `settings.json`.
+- **`INSTALL.md` may name a tool this machine does not have,** because its whole subject is
+  what to install. What it must not do is claim one is present.
+- **On-demand npx tools** are fetched and run at call time (e.g. `npx -y impeccable detect`),
+  so they are never on disk by design and `ls` can only ever fail them. Check the runner
+  instead: `command -v npx` must succeed, else BLOCK.
 
-   A third case IS matched by the pattern: the vendored skill directories, which are
-   gitignored per-name near the foot of `.gitignore`. Citing a file inside one in backticks
-   passes here and fails in CI, which is how it was found on 2026-08-23. Name such a file in
-   plain words rather than backticks, and say it is vendored.
+**Risk if skipped:** a tool was once uninstalled locally and its 16 references shipped for
+weeks.
 
-   To catch the whole class before pushing, ask whether each cited path is TRACKED rather than
-   merely present:
+### 4. Dangling-reference sweep
 
-   ```bash
-   git ls-files -- '*.md' | while read -r src; do
-     grep -v 'gone-on-purpose' "$src" \
-       | grep -oE '`(docs|rules|skills|hooks|agents)/[A-Za-z0-9._/-]+\.(md|sh|js|py|mjs|json)`' \
-       | tr -d '`' | while read -r p; do
-           git ls-files --error-unmatch "$p" >/dev/null 2>&1 \
-             || echo "UNTRACKED BUT CITED: $p  (in $src)"
-         done
-   done | sort -u
-   ```
+**HARD BLOCK.** Run `bash verify.sh` and read the `dangling references` row.
 
-5. **Outside-tool freshness (warn only: never auto-pull):** run `/checkup` and print its drift
-   rows. It reports how far behind this clone is against GitHub, and which of the borrowed
-   pieces in `INSTALL.md` are absent. Warn only, and never install anything mid-release: an
-   outside tool that arrives in the middle of a publish has not been watched working. The
-   count lives in `INSTALL.md` alone, so this step cannot name a number that has drifted.
+**Expected:** PASS. No tracked `.md`, `.sh` or `.js` may name a doc, skill, agent or script
+that is not on disk. Any failure names the citing file and the missing path: restore the file
+or delete the reference.
 
-   Whether those tools are the tools they claim to be is not a judgement call and is not
-   here: `hooks/external-check.sh` resolves every one against the registry on every run of
-   `verify.sh`, and a name that does not resolve to the project `hooks/externals.txt` pins is a
-   hard failure, not a drift row.
+The row is the only live copy of this check. It runs on every push and in CI on both
+platforms, and `verify-selftest.sh` sabotages it to prove it can still go red. `SHIP.md`
+carried a second copy until 2026-08-25, under a sentence claiming it was the same code; it was
+not, and `docs/DECISIONS.md` holds it as evidence along with the three details that make the
+live row work.
 
-6. **README skills inventory (HARD BLOCK), now a `verify.sh` row.** Run `bash verify.sh` and
-   read the `README skills inventory` row. It compares the skill NAMES in README's table
-   against the tracked `skills/*/SKILL.md` in both directions, then checks the spelled number
-   in the sentence above the table against how many it found.
+**Writing prose about a file you deliberately deleted.** That would trip this row forever, so
+put `<!-- gone-on-purpose -->` on the same line as the reference. Per line, not per file. Use
+it for history and rationale only, never to silence a reference something still follows.
 
-   The `README outside-pieces count` row beside it does the same for the other number the
-   front page publishes, holding both sentences against the rows in INSTALL.md's pieces table.
-   That one went stale twice before anything watched it.
+**Naming a vendored file.** The vendored skill directories are gitignored per-name, so a
+backticked path inside one passes here and fails in CI. Name such a file in plain words rather
+than backticks, and say it is vendored.
 
-   This step used to be a count patch run by hand, `ls -d skills/*/ | wc -l`, and it was weak
-   in two ways that the row fixes. A count cannot see a swap: rename one skill in the table and
-   the number is still six while two rows are wrong. And `ls -d skills/*/` counts the `npx
-   skills` symlinks that `.gitignore` lists, which exist on this machine and not in a fresh
-   clone, so the local answer and the CI answer could disagree without anything being broken.
-   The row counts what is tracked, because what is tracked is what ships.
+**Risk if skipped:** this is the step whose absence let the playbook ship five references to
+deleted files.
 
-7. **README prose sweep (warn only):** step 6 keeps one number honest and nothing reads the
-   other 270 lines. Step 4 catches a path that stopped resolving. It cannot catch a sentence
-   whose every path resolves and whose description is wrong, which is the whole class that
-   reached publication on 2026-08-21: seven install references whose every surrounding path
-   was valid and six of whose package names were not.
+### 5. Outside-tool freshness
 
-   Print every README line naming a skill or rule this release changes, and read those lines
-   against what the change actually did:
+**Warn only, and never auto-pull.** Run `/checkup` and print its drift rows. It reports how
+far behind this clone is against GitHub, and which of the borrowed pieces in `INSTALL.md` are
+absent.
 
-   ```bash
-   git diff --name-only origin/HEAD -- skills/ rules/ \
-     | awk -F/ '{print $1 "/" $2}' | sort -u \
-     | while IFS= read -r p; do
-         n="$(basename "${p%.md}")"
-         hits="$(grep -nF -- "$n" README.md || true)"
-         if [ -n "$hits" ]; then printf '%s\n' "$hits" | sed "s|^|$n  |"
-         elif [ -e "$p" ]; then echo "$n  NO README MENTION (it exists; the page never introduces it)"
-         else echo "$n  removed, and the page never named it: nothing to re-read"; fi
-       done
-   ```
+**Expected:** drift rows are information, not a gate. Never install anything mid-release: an
+outside tool that arrives in the middle of a publish has not been watched working. The count
+lives in `INSTALL.md` alone, so this step cannot name a number that has drifted.
 
-   Four details, each because the obvious version fails:
+Whether those tools are the tools they claim to be is not a judgement call and is not here:
+`hooks/external-check.sh` resolves every one against the registry on every run of `verify.sh`,
+and a name that does not resolve to the project `hooks/externals.txt` pins is a hard failure,
+not a drift row.
 
-   - **The change set is `origin/HEAD`, not `--cached`.** Staging happens in the Stage scope
-     section below, which runs after this step, so a `--cached` diff here reads empty and a
-     step that examined nothing looks exactly like a step that found nothing. Comparing against
-     the remote covers staged, unstaged and already-committed-but-unpushed alike, which is what
-     this release will actually publish.
-   - **The names come off a pipe, not out of a variable.** The obvious version collects them
-     into `changed` and runs `for n in $changed`, which works in bash and silently does not in
-     zsh: zsh performs no word splitting on an unquoted expansion, so the loop runs once with
-     every name glued into one string and greps for something that cannot match. Reproduced on
-     2026-08-21: the same loop over "a b c" runs once under zsh and three times under bash.
-   - **`grep -nF`, with `|| true`.** Fixed-string, and a no-match exit status is swallowed. A
-     warn-only step whose last name happens to miss must not report failure.
-   - **A removed skill is not a finding.** `[ -e "$p" ]` separates a skill the page never
-     introduced, which is a gap, from one deleted on purpose, which is expected.
+### 6. README inventory rows
 
-   Some names are ordinary English words, so `design` and `release` match prose that is not
-   about them. Read the line, never the count. That noise is the price of a substring match,
-   and a stricter pattern would miss the sentence naming a skill without backticks, which is
-   the sentence this step exists to catch.
+**HARD BLOCK.** Run `bash verify.sh` and read two rows.
 
-   Warn only, on purpose. Whether a sentence still reads true is a judgement, and a block on a
-   judgement gets satisfied by editing the sentence until the gate stops complaining.
+| Row | What it holds together |
+|---|---|
+| `README skills inventory` | The skill NAMES in README's table against tracked `skills/*/SKILL.md`, both directions, plus the spelled number in the sentence above the table |
+| `README outside-pieces count` | Both sentences that publish the outside-pieces number, against the rows in INSTALL.md's pieces table |
 
-   **The acknowledgement.** A judgement cannot be gated, but it can be required to happen. When
-   this release touches `hooks/`, `verify.sh`, `skills/build/stages/` or `INSTALL.md`, print the
-   README lines that describe them and write into the release report either "still true" or the
-   edit made. On 2026-08-22 a release changed 36 files across all four of those paths and README
-   moved by three lines, every one of them a number; nothing asked whether the page still
-   described the setup, because nothing here ever had.
+**Expected:** PASS on both. A failure prints the diff of which side has what.
 
-   ```bash
-   base="$(git describe --tags --abbrev=0 2>/dev/null || echo origin/HEAD)"
-   git diff --name-only "$base"..HEAD -- hooks/ verify.sh skills/build/stages/ INSTALL.md \
-     | grep -q . && grep -nE 'hook|verify|gate|stage|piece|tool' README.md
-   ```
+**Risk if skipped:** the front page publishes two numbers, and both went stale before anything
+watched them. `docs/DECISIONS.md` records why a hand-run count could not do this job.
 
-   The base falls back to `origin/HEAD` because a shallow CI clone has no tags, and a step that
-   errors into an empty list reads exactly like a step that found nothing to say.
+### 7. README prose sweep
 
-8. **Config template check (HARD BLOCK):** `settings.example.json` must parse
-   (`python3 -c "import json;json.load(open('settings.example.json'))"`); its hook command
-   strings must use `$HOME/` not a quoted `~/` (a quoted `~` never expands, hard-fail on any
-   match of `grep -c '"~/.claude/hooks' settings.example.json`, want `0`); and every hook path
-   referenced must exist on disk. Run `bash verify.sh`; the `settings.example.json parses` and
-   `hook paths exist` rows must read PASS. A missing hook script or a quoted-`~` path means
-   fresh installs get a failing hook every turn. Both shipped once
-   (`log-learnings-stop.sh`, quoted-`~` paths); never again.
+**Warn only.** Step 6 keeps two numbers honest and nothing reads the other 270 lines. Step 4
+catches a path that stopped resolving. Neither can catch a sentence whose every path resolves
+and whose description is wrong.
+
+Print every README line naming a skill or rule this release changes, and read those lines
+against what the change actually did:
+
+```bash
+git diff --name-only origin/HEAD -- skills/ rules/ \
+  | awk -F/ '{print $1 "/" $2}' | sort -u \
+  | while IFS= read -r p; do
+      n="$(basename "${p%.md}")"
+      hits="$(grep -nF -- "$n" README.md || true)"
+      if [ -n "$hits" ]; then printf '%s\n' "$hits" | sed "s|^|$n  |"
+      elif [ -e "$p" ]; then echo "$n  NO README MENTION (it exists; the page never introduces it)"
+      else echo "$n  removed, and the page never named it: nothing to re-read"; fi
+    done
+```
+
+Read the line, never the count: some skill names are ordinary English words, so `design` and
+`release` match prose that is not about them. Four further details in that command are each
+there because the obvious version fails, and `docs/DECISIONS.md` explains all four before
+anyone edits it.
+
+Warn only, on purpose. Whether a sentence still reads true is a judgement, and a block on a
+judgement gets satisfied by editing the sentence until the gate stops complaining.
+
+**The acknowledgement, and this part is required.** A judgement cannot be gated, but it can be
+required to happen. When this release touches `hooks/`, `verify.sh`, `skills/build/stages/` or
+`INSTALL.md`, print the README lines that describe them and write into the release report
+either "still true" or the edit made.
+
+```bash
+base="$(git describe --tags --abbrev=0 2>/dev/null || echo origin/HEAD)"
+git diff --name-only "$base"..HEAD -- hooks/ verify.sh skills/build/stages/ INSTALL.md \
+  | grep -q . && grep -nE 'hook|verify|gate|stage|piece|tool' README.md
+```
+
+**Expected:** a line in the release report, in words, for every one of those four paths the
+release touched. An empty acknowledgement is a failed step even though nothing blocks.
+
+**Risk if skipped:** a release once changed 36 files across all four of those paths while
+README moved by three lines, every one of them a number.
+
+### 8. Config template check
+
+**HARD BLOCK.** Run `bash verify.sh`; the `settings.example.json parses` and `hook paths exist`
+rows must read PASS. Three things must hold:
+
+- It parses: `python3 -c "import json;json.load(open('settings.example.json'))"`.
+- Its hook command strings use `$HOME/` and not a quoted `~/`, because a quoted `~` never
+  expands. Hard-fail on any match of `grep -c '"~/.claude/hooks' settings.example.json`, want
+  `0`.
+- Every hook path referenced exists on disk.
+
+**Risk if skipped:** a missing hook script or a quoted-`~` path means fresh installs get a
+failing hook every turn. Both shipped once (`log-learnings-stop.sh`, quoted-`~` paths); never
+again.
 
 ## Stage scope
 
-The markers below hide this block from `jscpd` only. It shares enough generic git tokens with
-the `git rebase upstream/main` snippet in `README.md` to be reported as a 267-token clone of
-it, though one is a path list and the other pulls upstream changes in. The pair went red the
-first time a change touched both files at once, which was 2026-08-23. Nothing else is
-exempted, and the duplicate gate is otherwise untouched.
+Explicit paths. Do NOT rely on a `*.md` shell glob, which expands in the CWD rather than the
+repo root.
 
 <!-- jscpd:ignore-start -->
 ```
@@ -270,48 +208,24 @@ git add skills/ docs/ rules/ hooks/ .github/ archive/ styles/ output-styles/ ref
 ```
 <!-- jscpd:ignore-end -->
 
-Explicit paths: do NOT rely on a `*.md` shell glob, which expands in the CWD rather than the
-repo root. Each of these was omitted once and something silently never shipped:
+| Path | What it is |
+|---|---|
+| `skills/`, `docs/`, `rules/` | The instructions. `rules/` holds what two or more skills share, so one number cannot drift from the other |
+| `hooks/` | The scripts that run by themselves, and their tests |
+| `.github/` | `workflows/ci.yml`, the workflow that runs `verify.sh` |
+| `verify.sh`, `verify-selftest.sh` | The verifier and the file that proves each of its rows can still go red. CI runs both |
+| `archive/` | Skills kept for their text rather than for loading, plus `archive/styleseed/`, a hash-verified snapshot of 23 skills that were never in git |
+| `styles/`, `.vale.ini` | The prose linter's rules and its config. `verify.sh` passes `--config "$ROOT/.vale.ini"` by name |
+| `.jscpd.json` | The duplicate scanner's config. `hooks/dupe-check.sh` falls back to the copy beside it |
+| `output-styles/` | How answers are written to the owner. `settings.json` names it, so a clone without it has a dangling `outputStyle` |
+| `refs/` | Vendored reference data rather than code: 74 brand specifications under MIT. Top level, not under a skill, on purpose |
+| `memory/MEMORY.example.md` | The only tracked thing under `memory/`. The real index and the facts are gitignored, because both name things about the owner |
+| `LICENSE` | The MIT terms the README's licence badge reads |
+| `.no-yolo-deny.example.txt` | The tracked template for the gitignored `.no-yolo-deny.txt` |
 
-- `.github/` holds `workflows/ci.yml`, the workflow that runs verify.sh: omitted once, so a
-  CI-config fix could never ship.
-- `verify.sh` and `verify-selftest.sh` are tracked and CI runs them: omitted once, so a fix to
-  the verifier itself silently never shipped. CI ran only the first of the two until
-  2026-08-21, while this line claimed both. The `selftest` job in `.github/workflows/ci.yml`
-  is what made the sentence true; before it existed, every row's proof-of-falsifiability
-  depended on a person remembering to type `bash verify-selftest.sh`.
-- Under `memory/`, exactly one tracked thing ships: `MEMORY.example.md`. Both the real index
-  `memory/MEMORY.md` and the `memory/facts/` it lists are gitignored, because both name things
-  about the owner. Until 2026-08-21 a compiled view shipped instead; the compiler is gone and
-  the index that replaced it is written by hand (`docs/MEMORY.md`).
-- `rules/` holds the files two or more skills share (`codex.md`, `mockups.md`). A rule that
-  lives in one skill stays in that skill; a rule two files need lives here, and both point at
-  it, so the number in one cannot drift from the number in the other.
-- `LICENSE` is the MIT terms the README's licence badge reads: omit it and the badge renders
-  "unknown" against a file git never received.
-- `.no-yolo-deny.example.txt` is the tracked template for the gitignored `.no-yolo-deny.txt`.
-- `.vale.ini` and `styles/` are the prose linter's config and its rules, and `.jscpd.json` is
-  the duplicate scanner's. Each is read by name: `verify.sh`'s "vale prose lint" row passes
-  `--config "$ROOT/.vale.ini"`, and `hooks/dupe-check.sh` falls back to the `.jscpd.json`
-  beside it. Omit them and CI reddens on a clone for a config that only ever existed here.
-- `archive/` holds skills kept for their text rather than for loading. Tracked, so an edit to
-  one has to ship like any other. From 2026-08-25 it also holds `archive/styleseed/`, which is
-  a hash-verified snapshot of 23 skills that were never in git at all. `.gitignore` un-ignores
-  `archive/styleseed/.agents/` for it, because the blanket `.agents/` rule was swallowing 52 of
-  its 104 files, engine included, and an archive that lives on one laptop is not an archive.
-- `output-styles/` holds how answers are written to the owner. Added 2026-08-25. It is loaded
-  every session by `settings.json`, so omitting it here would ship a repo whose `outputStyle`
-  names a file a fresh clone does not have.
-- `refs/` holds vendored reference data rather than code: today `refs/brands/`, 74 brand
-  specifications under MIT with the licence beside them. It sits at the top level and not under
-  a skill on purpose. The previous copy lived at `skills/design/vendor/`, was gitignored, and
-  vanished with the skill on 2026-08-21 without anything noticing.
-- `agents/` was in this list until 2026-08-22, holding two borrowed subagent definitions
-  (accessibility-tester, react-specialist) whose text was 78% identical to the pre-rebuild
-  copies. Nothing tracked referenced them beyond this list, so the machinery rebuild removed
-  them rather than rewriting them; a lean local agent can return when a named workflow shows
-  a plugin cannot supply it. This bullet also named `commands/` until 2026-08-21, when no
-  such directory existed: the rebuild deleted it and the line outlived it.
+Every path in that list was omitted once, and something silently never shipped each time;
+`docs/DECISIONS.md` records what each omission cost, and why two paths that used to be there
+are not.
 
 After staging, confirm nothing tracked was left behind: `git status --porcelain | grep -v '^[AMD]'`
 should list only Guard paths and gitignored files. Anything else means the scope above is
@@ -339,9 +253,8 @@ Dated GitHub release. Optional, only when the user asks to publish, not on a pla
 - `TAG="v$(date +%Y-%m-%d)"`; if it exists, delete and recreate.
 - Notes = the commit subjects since the previous tag
   (`git log --oneline "$(git describe --tags --abbrev=0 HEAD^)"..HEAD`), rewritten so a stranger
-  understands them. There is no changelog file to read from, the rebuild deleted
-  `docs/DAILY_CHANGELOG.md`, which was the single most-edited file in the repo and the reason <!-- gone-on-purpose -->
-  every change had become five changes.
+  understands them. There is no changelog file to read from, and no plan to add one;
+  `docs/DECISIONS.md` records what the last one cost.
 - `gh release create "$TAG" --repo holland-built/no-yolo --title "$TAG" --notes "$NOTES"`
 - Update the repo description with the current custom-skill count.
 - If `gh` is missing or unauthed: print `⚠️ release skipped: run gh auth login` and continue.

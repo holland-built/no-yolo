@@ -114,36 +114,8 @@ reports itself as "did not run" and carries on. See `rules/codex.md`.
 
 ### Running two accounts from one setup
 
-Claude Code keeps its login in the config folder, so two accounts need two folders. You cannot
-share one. What you *can* share is everything else, and you should, or the two drift apart.
-
-Point each account at its own folder with `CLAUDE_CONFIG_DIR`, as a shell alias:
-
-```sh
-alias cc-home='CLAUDE_CONFIG_DIR="$HOME/.claude" claude'
-alias cc-work='CLAUDE_CONFIG_DIR="$HOME/.claude-work" claude'
-```
-
-Then make the second folder a set of shortcuts back to this one. `~/.claude` is the authority;
-the other folder owns only its login, history and sessions:
-
-```sh
-cd "$HOME/.claude-work"
-for p in skills docs rules hooks agents CLAUDE.md settings.json; do
-  [ -e "$p" ] && [ ! -L "$p" ] && mv "$p" "$p.replaced-$(date +%F)"
-  ln -s "$HOME/.claude/$p" "$p"
-done
-```
-
-**`settings.json` is the one people miss, and it is the one that bites.** Skills and docs are
-usually linked on day one; settings gets copied instead, then edited in one folder and not the
-other. On 2026-08-05 that drift left the work folder pointing at five hooks this repo had
-deleted: two errors on every session start, `MODULE_NOT_FOUND`, and none of the guards the main
-folder had. Link it, don't copy it. Anything you genuinely want to differ per account (a pinned
-model, an extra plugin) belongs in `~/.claude/settings.json` for both, or in neither.
-
-Because `settings.json` is gitignored, cloning this repo cannot recreate those links for you.
-That is why they are written down here.
+Two accounts need two folders, because the login lives in the folder. Everything else is
+shared with symlinks. `docs/MAINTAINING.md` has the aliases and the loop.
 
 ## Set up a new project
 
@@ -181,24 +153,9 @@ A skill is a shortcut command you type, like `/build`. There are eight.
 | `/watch` | Downloads a video, reads its subtitles and its frames, and answers from both |
 | `/whats-next` | Reads the task list, then unfinished work in the repo, then proposes three things |
 
-There were thirteen until 2026-08-21. The rebuild kept the six that were used and deleted the
-rest; `docs/DECISIONS.md` records why. Archived commands are not gone: each has a one-line
-restore command in `archive/MANIFEST.md`. `watch` is the proof: archived on 2026-08-20,
-restored on 2026-08-25 by running the line the manifest had been holding for it.
-
-`eli5` left the table on 2026-08-25 and did not go to `archive/`. Its rules moved to
-`output-styles/plain.md`, which loads by itself every session. A skill has to be invoked, and
-the owner had said plainly that they cannot remember to invoke anything, so the rules were in
-the one slot least able to reach them. Nothing was lost; the same words now arrive without
-being asked for.
-
-This sentence said "26" until 2026-08-22, and no commit on this branch ever had 26 skills in
-it. Counted with `git ls-tree -d --name-only <commit>:skills | wc -l` across the last sixty
-commits, the tracked total goes 17, then 18, then 13 on 2026-08-20 when eight commands were
-archived, then 6 at the rebuild. Thirteen is what stood on the day. The likeliest source of
-26 is a count that included the borrowed skills symlinked into `skills/` alongside this
-repo's own, which are gitignored and cannot be recovered from history, so the number that
-replaced it is the one that can be recomputed.
+There were thirteen until 2026-08-21. Nothing deleted is lost: every archived command carries a
+one-line restore in `archive/MANIFEST.md`, and `watch` came back that way on 2026-08-25. Which
+ones went, why, and two counts this page published wrongly are in `docs/DECISIONS.md`.
 
 ## The rules that load every session
 
@@ -237,80 +194,35 @@ anything and tells you in plain words what is different. Nothing is pulled witho
 
 ## Keeping your fork in sync
 
-A fork is your own copy of this repo on your GitHub account. `/checkup` tells you when the
-original has moved on, without changing anything. To actually pull those changes in:
-
-```bash
-cd ~/.claude
-git remote add upstream https://github.com/holland-built/no-yolo.git 2>/dev/null
-git fetch upstream && git rebase upstream/main
-```
-
-That replays your own changes on top, so nothing you wrote is lost. Publishing the result
-needs a force push, and the destructive-command guard refuses those, including
-`--force-with-lease`. That is the guard working: a force push rewrites history anyone else has
-already pulled. Run it yourself in a terminal outside Claude Code once you have read what it
-would replace:
-
-```bash
-git push --force-with-lease origin main
-```
-
-`--force-with-lease` is the safer of the two. It refuses if someone else has pushed since you
-last fetched, where a plain `--force` would overwrite them.
+`/checkup` tells you when the original repo has moved on, without changing anything. The
+commands that pull those changes in, and the reason publishing them needs a force push you run
+yourself, are in `docs/MAINTAINING.md`.
 
 ## Add a new skill
 
-Make a file at `skills/<name>/SKILL.md` with `user-invocable: true`, and put the phrases that
-should trigger it in that same `description`. That is the whole checklist.
+Make a file at `skills/<name>/SKILL.md` with `user-invocable: true`, add a row to the table
+above, and update the number in the sentence over it. `docs/WRITING.md` has the checklist and
+the one command that proves you did all three.
 
 There is deliberately no catalogue to update, no lock file to re-seal and no index to
-regenerate. This repo used to have all three, and maintaining them cost real edits: 61 of the
-341 commits reachable from any branch or tag touched a catalogue, index, manifest or lock
-file, which is roughly one commit in six spent on files whose only job was describing other
-files. `/checkup` derives the inventory from the folder at read time instead.
-
-That sentence claimed "roughly 390 commits" until 2026-08-22. There are only 341 commits in
-this repository across every ref (`git rev-list --count --all`), so the figure was larger than
-the entire history it was drawn from. The 61 comes from counting distinct commits touching
-`*CATALOG*`, `*index*`, `*MANIFEST*` and `*lock*` paths; the pattern is deliberately generous
-and still lands nowhere near the old number.
-
-Before adding one, ask whether an existing skill should gain a mode instead. Six commands with
-modes beat twenty-six commands, and that is the entire lesson of this repo's first six weeks.
+regenerate. This repo used to have all three, and one commit in six went on files whose only
+job was describing other files. `/checkup` derives the inventory from the folder at read time
+instead.
 
 ## Update memory preferences
 
-**Easy way:** just say "Remember that I use pnpm, not npm", or "Forget what you saved about X".
-It is saved, and it carries over into your next session.
-
-**Where it goes:** one file per fact under `memory/facts/`, plus one line in `memory/MEMORY.md`,
-which is the only part loaded into a session. Both are gitignored, because both name things
-about you, so neither travels to another computer through this repo. The tracked template is
-`memory/MEMORY.example.md`. A check before every commit blocks the private ones as well, so the
-raw notes cannot leave your machine by accident. The rules for what earns a file are
-`docs/MEMORY.md`.
+Just say "Remember that I use pnpm, not npm", or "Forget what you saved about X". It is saved,
+and it carries over into your next session. Nothing you save travels to another computer
+through this repo: the notes are gitignored and a check before every commit blocks them as
+well. What earns a saved fact, and where it lands, is `docs/MEMORY.md`.
 
 ## The status bar (the line at the bottom of Claude Code)
 
-Example: `Opus 5 · 42%ctx · 5h 18% 3h · wk 40% 5d · no-yolo* · ⬢ prod`
+`Opus 5 · 42%ctx · 5h 18% 3h · wk 40% 5d · no-yolo* · ⬢ prod`
 
-| Piece | What it means |
-|---|---|
-| `Opus 5` | which model you are talking to |
-| `42%ctx` | how full Claude's memory of this conversation is. Over 60%, type `/compact` |
-| `5h 18% 3h` | you have used 18% of your 5-hour allowance; it resets in 3 hours |
-| `wk 40% 5d` | 40% of your 7-day allowance used; it resets in 5 days |
-| `no-yolo*` | the folder you are in. The `*` means you have changes not yet saved to git |
-
-It is drawn by `hooks/statusline.sh`. When literal mode is on, a badge for it appears at the
-front.
-
-**Literal mode** is the one thing you can type that is not in the list of six above. Type
-`/literal` and Claude stops offering alternatives and does exactly what you asked; `/literal
-off` ends it, and so does starting a new session. It is not a skill, which is why it has no
-row up there: `hooks/literal-mode-tracker.js` reads what you typed and sets a flag the status
-bar shows.
+Which model, how full this conversation is, what is left of your 5-hour and 7-day allowances,
+and the folder you are in. `docs/MAINTAINING.md` reads each piece, and covers literal mode, the
+one thing you can type that is not in the table above.
 
 ## What's excluded
 

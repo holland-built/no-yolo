@@ -69,3 +69,6 @@ there.
 
 Both `memory/MEMORY.md` and `memory/facts/` are gitignored. They name things about you, so
 they stay on your machine. `memory/MEMORY.example.md` is the tracked template.
+
+Gitignoring them is the first guard and not the only one: `hooks/pre-commit` refuses a commit
+that stages either path, so the raw notes cannot leave the machine through a `git add -A`.
