@@ -25,6 +25,16 @@ fresh clone rather than from one laptop. Its own `PROVENANCE.txt` carried the up
 pinned revision, which is the only reason this row could be filled in honestly. Every skill
 that arrived without one is in the unwatched table below.
 
+**The snapshot is the pin, not the machine, and on 2026-08-25 the two had drifted.** The
+archive was described as taken before a delete; the delete did not happen, so the installed
+copies went on updating past it. `diff -rq` against `~/.agents/skills` found two files changed:
+`ss-resolve/references/catalog.json` carried a later `engineRevision`, and
+`ss-score/scripts/evidence-gate.mjs` had moved from comparing `import.meta.url` against a
+hand-built `file://` string to resolving it through `fileURLToPath`. Neither is in the archive,
+because the archive is honest about being the pinned revision and nothing else. The newer
+copies were moved to `~/.agents-retired-2026-08-25/` rather than deleted, and they are outside
+the repo: a fresh clone restores the pin, not them.
+
 Content hash of the 74 `DESIGN.md` files, in sorted path order:
 
 ```

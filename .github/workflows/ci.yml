@@ -12,6 +12,25 @@ on:
 # defect the whole setup was rebuilt around.
 #
 # Rewritten from a blank page 2026-08-22 (machinery rebuild).
+# A HOSTED RUNNER HAS NONE OF THE PIECES INSTALLED. verify.sh's "pieces on this
+# machine" row probes the disk for every skill and binary INSTALL.md promises,
+# which is a question only the owner's laptop can answer; here it would be red by
+# construction. This variable is what tells it so.
+#
+# Set HERE, by the workflow that knows what its runner is, rather than inferred
+# inside verify.sh from an ambient GITHUB_ACTIONS. That variable describes an
+# execution context and not a bare machine: a self-hosted runner has the tools,
+# and anything that exported it into a local pre-push would have silently turned
+# off the one check that needs a real disk. Unset, the probes run and can fail.
+#
+# It does NOT switch the whole row off. Manifest grammar, the reconciliation
+# against INSTALL.md's pieces table, and the rule that no identity is both
+# current and retired are all answerable anywhere, and they run on both runners.
+# The selftest job below overrides this with INSTALLED_PROBE_ROOTS, which is how
+# the disk probes get exercised, green and red, on a runner that has nothing.
+env:
+  VERIFY_NO_LOCAL_TOOLS: "1"
+
 jobs:
   # WHY BOTH PLATFORMS. Not to test different things per OS: the commands are
   # identical on purpose. It is that the SAME check behaves differently per OS,

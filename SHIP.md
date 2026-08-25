@@ -56,6 +56,17 @@ at a time, and no single commit looks wrong.
 
 ### 3. Stale-external sweep
 
+**Mostly automatic since 2026-08-25.** `verify.sh`'s "pieces on this machine" row runs this
+check on every push, from `hooks/pre-push`, against `hooks/installed.txt` and the artefact
+lists in `hooks/retired.txt`. It reports WARN on a hosted runner, which has none of these
+tools, and answers properly here. What follows is now a confirmation of a row you have already
+seen, plus the two judgements a manifest cannot make: whether a newly added piece was ever
+written into `hooks/installed.txt`, and whether a reference belongs in the repo at all.
+
+This step stayed a human one for a day too long. It is a hard block written for exactly the
+StyleSeed case, and it never fired, because nobody released between the retirement and the day
+the leftovers were found by accident.
+
 **HARD BLOCK.** The repo mirrors the machine: every external tool referenced in tracked files
 (a row in `INSTALL.md`, a `skills/<name>` .gitignore entry, a README prerequisite) must exist
 on THIS machine right now.
