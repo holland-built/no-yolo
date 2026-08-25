@@ -8,10 +8,13 @@
 # a machine can decide without judgement: how many words the reply is. The other five live in
 # the output style, which the model reads and is reminded of mid-session.
 #
-# THREE ESCAPES, all deterministic. A reply is exempt when it holds a fenced code block, a
-# markdown table, or the marker `<!-- long -->`. Code and file contents must stay exact, and
-# tables are the shape the owner asked for by name, so neither should ever be truncated to
-# satisfy a word count.
+# ESCAPES, all deterministic, and they are not all the same strength.
+#   Exempt outright: a fenced code block, or the marker `<!-- long -->`. Code and file
+#     contents must stay exact and can be any length.
+#   Raised to the hard cap: a markdown table. Tables are the shape the owner asked for by
+#     name, so they get room, but not unlimited room. A 900-word table is still a wall.
+# Codex found this comment claiming tables were exempt while the code raised their cap. The
+# code was right and the comment was wrong; the comment is what changed.
 #
 # FAILS OPEN. No input, unparseable input, or a missing reply exits 0. A gate on every single
 # turn that guesses wrong is worse than no gate: it would block work with no way through.
@@ -67,10 +70,21 @@ case "$reply" in
   *'|---'*|*'| ---'*) has_table=1 ;;
 esac
 
-words="$(printf '%s' "$reply" | tr '\n' ' ' | wc -w | tr -d '[:space:]')"
+# The reply arrives JSON-encoded, so a line break inside it is the two characters backslash
+# and n, not an actual newline. Left alone they glue words together and `wc -w` undercounts
+# badly: a measured ten-word, four-line reply counted as seven. Turn the encoded whitespace
+# escapes back into spaces before counting. Found by Codex at the review gate and confirmed by
+# running the extractor against a fixture.
+words="$(printf '%s' "$reply" | sed 's/\\n/ /g; s/\\t/ /g; s/\\r/ /g' | tr '\n' ' ' | wc -w | tr -d '[:space:]')"
 case "$words" in
   ''|*[!0-9]*) exit 0 ;;   # unparseable count, fail open
 esac
+
+# The caps are overridable by environment variable, so they are inputs and get validated like
+# any other. A non-numeric value would reach `-gt`, print a shell error into the session, and
+# wave the reply through while looking like it had been checked.
+case "$SOFT_CAP" in ''|*[!0-9]*) SOFT_CAP=150 ;; esac
+case "$HARD_CAP" in ''|*[!0-9]*) HARD_CAP=600 ;; esac
 
 cap="$SOFT_CAP"
 [ "$has_table" -eq 1 ] && cap="$HARD_CAP"

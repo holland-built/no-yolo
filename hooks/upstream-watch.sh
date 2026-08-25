@@ -38,9 +38,37 @@ fi
 # ── half two: earn the next report, at most once a day ──────────────────────
 today="$(date +%Y-%m-%d 2>/dev/null)" || exit 0
 [ -f "$STAMP" ] && [ "$(cat "$STAMP" 2>/dev/null)" = "$today" ] && exit 0
-printf '%s' "$today" > "$STAMP" 2>/dev/null || exit 0
 
-# Detached, output discarded, never waited on.
+# Claim the day with mkdir, which is atomic on every filesystem that matters. Two sessions
+# opened at once would both pass a plain read-then-write check and both start a fetch. The
+# lock directory is removed as soon as the stamp is written, so a crash costs one skipped day
+# at worst rather than a watcher that never runs again.
+mkdir "$STATE/claim-$today" 2>/dev/null || exit 0
+printf '%s' "$today" > "$STAMP" 2>/dev/null
+rmdir "$STATE/claim-$today" 2>/dev/null
+[ -s "$STAMP" ] || exit 0
+
+# A portable time bound. `timeout` is GNU coreutils and is NOT on a stock Mac: neither
+# `timeout` nor `gtimeout` exists on the machine this was written on, so every call that used
+# it would have failed with "command not found" and produced no result, silently, while the
+# comments claimed the fetch was bounded. Codex caught it at the review gate.
+#
+# TERM first, then KILL, because a process that ignores TERM is exactly the one that needs a
+# hard bound. The watchdog is reaped either way, so no stray sleeper is left behind.
+bounded() {  # $1 seconds, then the command
+  _secs="$1"; shift
+  "$@" &
+  _job=$!
+  ( sleep "$_secs"; kill -TERM "$_job" 2>/dev/null; sleep 2; kill -KILL "$_job" 2>/dev/null ) &
+  _watchdog=$!
+  wait "$_job" 2>/dev/null
+  _rc=$?
+  kill -KILL "$_watchdog" 2>/dev/null
+  wait "$_watchdog" 2>/dev/null
+  return "$_rc"
+}
+
+# Detached from the terminal, output discarded, never waited on.
 (
   exec >/dev/null 2>&1
   out=""
@@ -55,7 +83,7 @@ printf '%s' "$today" > "$STAMP" 2>/dev/null || exit 0
       slug="$(printf '%s' "$repo" | tr -d ' `' | sed 's#.*github.com/##')"
       pinned="$(printf '%s' "$pinned" | tr -d ' `')"
       [ -n "$slug" ] && [ -n "$pinned" ] || continue
-      head="$(timeout 20 git ls-remote "https://github.com/$slug" HEAD 2>/dev/null | cut -f1)"
+      head="$(bounded 20 git ls-remote "https://github.com/$slug" HEAD 2>/dev/null | cut -f1)"
       [ -n "$head" ] || continue
       if [ "$head" != "$pinned" ]; then
         out="$out
@@ -69,7 +97,7 @@ printf '%s' "$today" > "$STAMP" 2>/dev/null || exit 0
   # A version change is a REVIEW CANDIDATE, never a removal. Changelog prose cannot
   # mechanically prove a skill is obsolete, so this only ever says "worth a look".
   if command -v claude >/dev/null 2>&1; then
-    now="$(timeout 15 claude --version 2>/dev/null | awk '{print $1}')"
+    now="$(bounded 15 claude --version 2>/dev/null | awk '{print $1}')"
     was="$(cat "$SEEN_VERSION" 2>/dev/null)"
     if [ -n "$now" ]; then
       printf '%s' "$now" > "$SEEN_VERSION" 2>/dev/null
@@ -87,7 +115,7 @@ printf '%s' "$today" > "$STAMP" 2>/dev/null || exit 0
     printf '## Upstream check, %s\n' "$today"
     printf '%s\n' "$out"
     printf '\nNothing above has been changed for you. Each one waits for your yes.\n'
-  } > "$REPORT" 2>/dev/null
+  } > "$REPORT.$$" 2>/dev/null && mv -f "$REPORT.$$" "$REPORT" 2>/dev/null
 ) </dev/null >/dev/null 2>&1 &
 
 exit 0

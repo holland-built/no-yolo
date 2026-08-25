@@ -89,7 +89,26 @@ repo, and say they need writing from a session opened there.
 Writing them from here counts as doing that project's work in this project's session, and
 that has produced work in the wrong repo before.
 
-## 5. Print one command
+## 5. Have Codex read it before the owner leaves
+
+The one gate this command lacked until 2026-08-25. A handoff is judged by a session that does
+not exist yet, and by then the person who could have said "you left out X" is gone. Nobody
+grades their own work, and a handoff is exactly the artefact where the author cannot see the
+gap: what got omitted is what the author still had in their head.
+
+`rules/codex.md` holds the invocation. Ask for what is MISSING, not for a rewrite:
+
+```bash
+bash "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/codex.sh" "Read this handoff. A fresh session with no memory of the conversation must resume from it alone. No preamble. Output ONLY lines of the form: FINDING <n> | blocking|major|minor | <what a resuming session would not know> | <the line to add>. Maximum 6. If nothing is missing, output: NO FINDINGS. Hunt for: a goal that reads as a paraphrase rather than the owner's own words, a first action needing knowledge the file does not carry, a decision recorded without its reason, and any file or command named but not explained. $(cat <path>)"
+```
+
+Fold in confirmed findings. Record a one-line reason beside any rejected one, in the file.
+
+Codex absent, timed out, or silent is reported as "Codex: did not run" with the reason, and
+the handoff stands. `rules/codex.md` says why that rule belongs to the second opinion alone:
+a second opinion that was unavailable leaves the first opinion intact.
+
+## 6. Print one command
 
 One copy-paste block, nothing around it:
 
@@ -100,5 +119,6 @@ claude "Read <path>. State the goal section and the First action back to me in o
 ## Done
 
 This command has finished when the file exists, its goal section quotes the owner verbatim,
-its first action is doable in under two minutes, and the start command is printed as a
-single block.
+its first action is doable in under two minutes, Codex has read it and every finding is either
+folded in or refused with a reason in the file, and the start command is printed as a single
+block.
