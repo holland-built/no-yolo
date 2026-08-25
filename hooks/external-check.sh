@@ -45,7 +45,11 @@ extract() {
   if [ -n "${1:-}" ]; then
     printf '%s\n' "$1"
   else
-    git ls-files -- . ':!archive' ':!hooks/tests'
+    # refs/brands/ excluded for the same reason as archive/: it is third-party text this repo
+    # only stores. Its brand specifications quote install commands from the sites they
+    # describe, and this repo never runs one of them. Declaring another project's examples in
+    # externals.txt would assert they were checked, which would be a lie.
+    git ls-files -- . ':!archive' ':!hooks/tests' ':!refs/brands/**'
   fi | while IFS= read -r f; do
     [ -f "$f" ] || continue
     python3 - "$f" <<'PY'

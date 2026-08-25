@@ -88,6 +88,7 @@ whether it does.
 | Handing work to another agent | `docs/DELEGATION.md` |
 | A session runs long, or context fills | `docs/CONTEXT.md` |
 | Learning something worth keeping | `docs/MEMORY.md` |
+| Adding, updating, or checking somebody else's code | `docs/BORROWED.md` |
 | Asking why a rule above reads the way it does | `docs/DECISIONS.md` |
 
 The condition comes first and the file second, deliberately. A bare `topic -> file` list

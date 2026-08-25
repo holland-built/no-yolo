@@ -92,9 +92,13 @@ collect_since() {
   # Against the WORKING TREE, not against HEAD. A three-dot diff to HEAD reports nothing for
   # work that is staged or still unsaved, which is exactly the work a build gate is asked
   # about.
-  git diff -z --name-only --diff-filter=ACMRT "$base" -- > "$BOX/tracked" \
+  # refs/brands/ is excluded from both halves. It holds 74 third-party brand specifications
+  # vendored verbatim, and they repeat each other by design: every one carries a `primary:`,
+  # a `canvas:`, a `typography:`. That is the format, not a copied block, and reporting it
+  # would bury a real duplicate under 74 false ones.
+  git diff -z --name-only --diff-filter=ACMRT "$base" -- . ':!refs/brands/**' > "$BOX/tracked" \
     || die "git diff against $base failed"
-  git ls-files -z --others --exclude-standard > "$BOX/untracked" \
+  git ls-files -z --others --exclude-standard -- . ':!refs/brands/**' > "$BOX/untracked" \
     || die "git ls-files failed"
   cat "$BOX/tracked" "$BOX/untracked" > "$FILES"
   BASE="$base"
