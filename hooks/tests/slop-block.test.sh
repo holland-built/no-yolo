@@ -167,6 +167,53 @@ else
   pass=$((pass + 1))
 fi
 
+# --- The report is scoped to what the edit wrote -------------------------------
+#
+# Every assert above passes only `file_path`, which names no new text, so the filter is empty
+# and the whole file is reported. That is the documented fallback and it is why those 28 went
+# on passing when the scoping landed — they do not reach it. These do.
+#
+# The case that bought this: a three-line edit to a 1,130-line design document returned 53
+# long-dash findings, 52 of them about prose written months earlier. A finding you have to
+# search for is a finding people stop reading.
+
+# Write body, then run the hook with an Edit payload whose new_string is `touched`.
+assert_edit() {
+  local want="$1" name="$2" body="$3" touched="$4" desc="$5" got
+  printf '%s\n' "$body" > "$TMP/$name"
+  jq -nc --arg f "$TMP/$name" --arg s "$touched" \
+    '{tool_input:{file_path:$f, old_string:"x", new_string:$s}}' \
+    | bash "$HOOK" >/dev/null 2>&1
+  got=$?
+  if [ "$got" != "$want" ]; then
+    echo "FAIL: $desc — wanted $want, got $got"
+    fail=1
+  else
+    pass=$((pass + 1))
+  fi
+}
+
+DIRTY='Old prose with a dash — right here.
+A clean line nobody is touching.'
+
+assert_edit 0 s1.md "$DIRTY" 'A clean line nobody is touching.' \
+  "a clean line edited in a file that already has a dash elsewhere"
+assert_edit 2 s2.md "$DIRTY" 'Old prose with a dash — right here.' \
+  "the dashed line itself edited, which is the author's to fix"
+assert_edit 2 s3.md "$DIRTY" 'A brand new line — with its own dash.' \
+  "new text carrying a dash, even when it is not yet in the file"
+
+# A Write hands over the whole file as `content`, so all of it was just written and all of it
+# is reported. Nothing is exempt because it is long.
+printf '%s\n' "$DIRTY" > "$TMP/s4.md"
+jq -nc --arg f "$TMP/s4.md" --arg c "$DIRTY" '{tool_input:{file_path:$f, content:$c}}' \
+  | bash "$HOOK" >/dev/null 2>&1
+if [ "$?" != 2 ]; then echo "FAIL: a Write reports the whole file"; fail=1; else pass=$((pass + 1)); fi
+
+# And the fallback itself: no new text named, so nothing can be scoped and everything is said.
+# A filter that cannot tell what changed must not be the thing that decides nothing did.
+assert_file 2 s5.md "$DIRTY" "no new text in the payload reports the whole file"
+
 if [ "$fail" -eq 0 ]; then
   echo "All $pass asserts passed."
   exit 0

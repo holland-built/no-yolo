@@ -13,7 +13,12 @@
 # on 2026-08-21, four of them its own. A guard that cries wolf gets switched off.
 set -uo pipefail
 
-f="$(jq -r '.tool_input.file_path // ""' 2>/dev/null)"
+# Read the payload ONCE. Everything below asks jq about this string rather than about stdin,
+# which can only be consumed once and used to be consumed by the line that finds the file path.
+PAYLOAD="$(cat)"
+ask() { printf '%s' "$PAYLOAD" | jq -r "$1" 2>/dev/null; }
+
+f="$(ask '.tool_input.file_path // ""')"
 [ -z "$f" ] || [ ! -f "$f" ] && exit 0
 
 case "$f" in
@@ -22,7 +27,35 @@ case "$f" in
 esac
 
 PROSE="$(mktemp)"
-trap 'rm -f "$PROSE"' EXIT
+NEWTEXT="$(mktemp)"
+TOUCHED="$(mktemp)"
+trap 'rm -f "$PROSE" "$NEWTEXT" "$TOUCHED"' EXIT
+
+# ── REPORT WHAT THIS EDIT WROTE, NOT WHAT THE FILE CONTAINS ──────────────────────────────
+#
+# This hook used to check the whole file every time, and on a long document that buries the
+# finding it exists to surface. Measured 2026-08-25 on a 1,130-line design document: a
+# three-line edit returned 53 long-dash reports, 52 of them about prose written months earlier
+# by somebody who is not being asked to change it now. Reading 53 findings to learn whether one
+# of them is yours is the cost, every edit, forever — and a check that expensive to read is a
+# check people stop reading, which is the same end state as switching it off.
+#
+# It is NOT solved by exempting the file or softening the rule. Both throw away a standard that
+# is right, to fix a reporting problem. What is scoped is the REPORT: every rule still runs over
+# the whole prose, and a finding is printed only when it sits on a line this tool call wrote.
+#
+# Whole-file coverage is not lost, and was never this hook's job. `.vale.ini` says so in its own
+# words: the hook fires on Write and Edit so it only ever sees a file an agent just touched,
+# while vale runs over every tracked .md from verify.sh and reaches the files nobody edited
+# today. The two reaches were always meant to be different. This makes that true.
+#
+# Matched by line CONTENT rather than by offset, so it holds when an edit shifts every line
+# below it. A Write carries the whole file as `content`, so a Write reports everything, which is
+# right: all of it was just written. When the payload names no new text at all the filter is
+# empty and every finding is printed, because a filter that cannot tell what changed must not
+# decide that nothing did.
+ask '[.tool_input.new_string?, .tool_input.content?, (.tool_input.edits // [])[]?.new_string?]
+     | map(select(type == "string")) | join("\n")' > "$NEWTEXT"
 
 # Shared awk source. Held once so the two passes cannot disagree about what a fence is.
 # Nothing here writes to /dev/stderr or uses a GNU extension: the file is read by BSD awk
@@ -116,6 +149,32 @@ awk "$AWK_FENCE"'
   }
 ' balanced="$balanced" "$f" > "$PROSE"
 
+# The line numbers of $f whose content this tool call wrote. $PROSE is line-aligned with $f, so
+# a number here selects the same line in both. Whitespace is trimmed on both sides of the
+# comparison because an edit's text carries the indentation it was given, not the file's.
+awk '
+  NR == FNR {
+    s = $0; sub(/^[ \t]+/, "", s); sub(/[ \t]+$/, "", s)
+    if (s != "") want[s] = 1
+    next
+  }
+  {
+    s = $0; sub(/^[ \t]+/, "", s); sub(/[ \t]+$/, "", s)
+    if (s != "" && (s in want)) print FNR
+  }
+' "$NEWTEXT" "$f" > "$TOUCHED"
+
+# Keep only the findings on those lines. An empty filter means the payload named no new text,
+# and then every finding is printed: a filter that cannot tell what changed must not be the
+# thing that decides nothing did.
+mine() {
+  if [ ! -s "$TOUCHED" ]; then cat; return; fi
+  # -E and not -F: the patterns below are `^<n>:`, and under -F the caret is a literal
+  # character rather than an anchor, so every one of them matches nothing. Line numbers are
+  # digits, so there is nothing here needing an escape.
+  grep -E -f <(sed 's/^/^/; s/$/:/' "$TOUCHED") || true
+}
+
 findings=""
 
 if [ "$balanced" = 0 ]; then
@@ -126,20 +185,20 @@ parses the file itself and is unaffected.)
 fi
 
 # The em-dash, in prose only.
-dash=$(grep -n '—' "$PROSE" 2>/dev/null || true)
+dash=$(grep -n '—' "$PROSE" 2>/dev/null | mine || true)
 [ -n "$dash" ] && findings="${findings}Long dash in prose. Use a full stop, a comma, or a colon:
 ${dash}
 "
 
 # Vocabulary, counted. One is nothing; three on a page is the signal.
-vocab=$(grep -onEi '\b(elevate|seamless|unleash|tapestry|testament|holistic|meticulous(ly)?|nuanced|myriad|embark|unlock|underscore|showcasing)\b' "$PROSE" 2>/dev/null || true)
+vocab=$(grep -onEi '\b(elevate|seamless|unleash|tapestry|testament|holistic|meticulous(ly)?|nuanced|myriad|embark|unlock|underscore|showcasing)\b' "$PROSE" 2>/dev/null | mine || true)
 n=$(printf '%s' "$vocab" | grep -c . || true)
 [ "${n:-0}" -ge 3 ] && findings="${findings}${n} machine-vocabulary words. Say the specific thing instead:
 ${vocab}
 "
 
 # Sign-offs that add no next step.
-cta=$(grep -nEi 'feel free to (ask|reach)|let me know if you (need|have)|don.t hesitate to' "$PROSE" 2>/dev/null || true)
+cta=$(grep -nEi 'feel free to (ask|reach)|let me know if you (need|have)|don.t hesitate to' "$PROSE" 2>/dev/null | mine || true)
 [ -n "$cta" ] && findings="${findings}Closing line with no next action. Name the action, or end:
 ${cta}
 "
@@ -184,9 +243,14 @@ if command -v vale >/dev/null 2>&1 && [ -f "$VALE_INI" ]; then
   if [ "$vale_rc" -ge 2 ] && ! printf '%s' "$vale_out" | grep -qF "$f"; then
     printf 'slop-block: vale could not run (exit %s), so its half was not checked:\n%s\n' \
       "$vale_rc" "$vale_out" >&2
-  elif [ -n "$vale_out" ]; then
-    findings="${findings}Vale:
-${vale_out}
+  else
+    # Scoped like the rules above. Vale prints `<path>:<line>:<col>:<rule>:<message>`, so the
+    # line number sits in field 2 and the same touched-line filter applies — with the path
+    # stripped off the front first, because it contains colons of its own on no platform this
+    # runs on but is noise in a report about one file.
+    vale_mine=$(printf '%s' "$vale_out" | sed "s|^$f:||" | mine)
+    [ -n "$vale_mine" ] && findings="${findings}Vale:
+${vale_mine}
 "
   fi
 fi
