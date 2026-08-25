@@ -186,6 +186,25 @@ expect_red() {
   fi
 }
 
+# The strict form of the one below. expect_green asserts only that no matching
+# FAIL was printed, which a row that recorded WARN, or that vanished from the
+# table altogether, satisfies just as well. Where a case exists to prove that a
+# correct setup is recognised AS correct, that is not good enough: it would pass
+# against a row that had quietly stopped answering.
+expect_pass() {
+  local label="$1" desc="$2" out
+  out="$(bash verify.sh 2>&1)"
+  if printf '%s' "$out" | grep -q "^PASS.*$label"; then
+    results+=("PASS|$desc")
+  elif printf '%s' "$out" | grep -q "$label"; then
+    results+=("BROKEN|$desc — the row reported something other than PASS")
+    broken=1
+  else
+    results+=("BROKEN|$desc — the row was not printed at all")
+    broken=1
+  fi
+}
+
 # The inverse: the row must stay GREEN. Used only where a green result is itself
 # the claim worth proving, such as an escape hatch that has to keep working.
 expect_green() {
@@ -615,6 +634,151 @@ p.write_text("\n".join(lines))
 PYEOF
 expect_red "README outside-pieces count" "a piece added to the table while both sentences keep the old number turns the row red"
 put_back INSTALL.md
+
+# ── pieces on this machine ──────────────────────────────────────────────────
+# THIS BLOCK IS WHY INSTALLED_PROBE_ROOTS EXISTS. The row it sabotages reads the
+# real disk, so on a hosted runner, which has none of these pieces installed, it
+# can only WARN. Every case below would then report SKIP, pre-push sabotages
+# nothing, and the row would ship with its failure branch never once exercised
+# anywhere. That is not hypothetical here: the retired-pieces row's first draft
+# reported PASS against a tree carrying the exact thing it hunts, and only this
+# file caught it.
+#
+# So the cases build their own tiny world instead of describing this machine.
+# The probe roots point at a fixture directory, hooks/installed.txt is replaced
+# with a manifest naming only skills inside it, and INSTALL.md is replaced with a
+# pieces table listing only the one piece that fixture holds, because the row
+# reconciles the two and a real table against a fixture manifest would be red for
+# a reason no case here is testing.
+#
+# No `cmd` row is faked and PATH is never touched: prepending a directory of stub
+# binaries would put a fake `vale` and a fake `jscpd` in front of every OTHER row
+# in verify.sh, and a self-test that quietly disables the suite it is auditing is
+# worse than none.
+PIECES_FIX="$STASH/pieces-fixture"
+mkdir -p "$PIECES_FIX/present"
+printf -- '---\nname: present\n---\n' > "$PIECES_FIX/present/SKILL.md"
+export INSTALLED_PROBE_ROOTS="$PIECES_FIX"
+
+save hooks/installed.txt
+save INSTALL.md
+cat > INSTALL.md <<'FIXTUREMD'
+# fixture
+
+| Piece | Gives | Reached from | Without it |
+|---|---|---|---|
+| `present` | nothing | nowhere | nothing |
+FIXTUREMD
+
+# A COMPLETE FIXTURE MUST BE GREEN FIRST, and green must mean PASS. Without this
+# every red case below is satisfied by a row that fails unconditionally, which is
+# the failure mode this whole file exists to catch, one level up.
+#
+# expect_pass rather than expect_green, deliberately: expect_green asserts only
+# the ABSENCE of a matching FAIL, which a row that WARNed, or that vanished from
+# the table altogether, satisfies just as well.
+printf 'skill  present  fixture\n' > hooks/installed.txt
+expect_pass "pieces on this machine" "a manifest whose every piece is present reports PASS, not WARN and not nothing"
+
+printf 'skill  present  fixture\nskill  absent   fixture\n' > hooks/installed.txt
+expect_red "pieces on this machine" "a listed skill that is not on this machine turns the row red"
+
+# THE DIRECTORY IS NOT THE SKILL. An interrupted install leaves the directory
+# and no SKILL.md, and a -d test would call that installed.
+mkdir -p "$PIECES_FIX/hollow"
+printf 'skill  present  fixture\nskill  hollow   fixture\n' > hooks/installed.txt
+expect_red "pieces on this machine" "a skill directory with no SKILL.md in it turns the row red"
+rmdir "$PIECES_FIX/hollow"
+
+# AN EMPTY MANIFEST IS NOT A CLEAN SWEEP. This row once reported "PASS (3
+# probed)" against a hooks/installed.txt containing nothing but a comment,
+# because a single counter was shared with the artefacts named in
+# hooks/retired.txt and they kept it above zero. The counts are separate now.
+printf '# nothing at all\n' > hooks/installed.txt
+expect_red "pieces on this machine" "an emptied installed manifest fails closed instead of passing clean"
+
+# EXACTLY THREE FIELDS. The fourth field is hung on the row that is PRESENT, so
+# the case can only go red because the field count was rejected. Hung on an
+# absent skill it would go red as a missing piece even with the grammar check
+# deleted, and prove nothing about the grammar.
+printf 'skill  present  fixture  and-a-fourth\n' > hooks/installed.txt
+expect_red "pieces on this machine" "a manifest row with the wrong number of fields turns the row red"
+
+printf 'skill  present  fixture\nnonsense  other  fixture\n' > hooks/installed.txt
+expect_red "pieces on this machine" "a manifest row with an unrecognised kind turns the row red"
+
+# THE MANIFEST MUST COVER THE PUBLISHED TABLE. Deleting one line from
+# hooks/installed.txt must not leave the suite green while a promised piece goes
+# unwatched, which is the same shape of hole the whole row was written to close.
+printf 'skill  somethingelse  fixture\n' > hooks/installed.txt
+expect_red "pieces on this machine" "a piece in INSTALL.md's table with no row in the installed manifest turns the row red"
+
+# THE OTHER DIRECTION, and the one that was real on 2026-08-25: a piece this
+# repo retired is still sitting in a directory the harness loads from. The
+# fixture root doubles as an install root, so planting the artefact there is
+# exactly what StyleSeed had actually done.
+printf 'skill  present  fixture\n' > hooks/installed.txt
+mkdir -p "$PIECES_FIX/ss-resolve"
+printf -- '---\nname: ss-resolve\n---\n' > "$PIECES_FIX/ss-resolve/SKILL.md"
+expect_red "pieces on this machine" "a retired piece still installed on this machine turns the row red"
+rm -rf "$PIECES_FIX/ss-resolve"
+
+# NOTHING IS CURRENT AND RETIRED AT ONCE. bitjaru/styleseed sat in both
+# manifests from its retirement until the same day, satisfying externals.txt's
+# definition of a live dependency while retired.txt called it dead.
+save hooks/externals.txt
+printf 'gh   bitjaru/styleseed   -\n' >> hooks/externals.txt
+expect_red "pieces on this machine" "an identity in both the current and the retired manifest turns the row red"
+put_back hooks/externals.txt
+
+# A RETIRED ROW THAT NAMES NO ARTEFACTS CHECKS NOTHING, and reads as a clean
+# sweep while doing it. The fourth field is the whole point of the format.
+save hooks/retired.txt
+printf 'gh   zz-selftest/retired   archive/nowhere\n' >> hooks/retired.txt
+expect_red "pieces on this machine" "a retired row with no artefact list turns the row red"
+put_back hooks/retired.txt
+
+# A SPACE IN THE ARTEFACT LIST used to swallow the artefact after it: `read`
+# absorbs the fifth word, so `a, b` became the single name "a," and `b` was never
+# looked for. It is rejected now rather than quietly half-checked.
+save hooks/retired.txt
+printf 'gh   zz-selftest/spaced   archive/nowhere   one, two\n' >> hooks/retired.txt
+expect_red "pieces on this machine" "an artefact list written with a space turns the row red instead of losing an entry"
+put_back hooks/retired.txt
+
+put_back INSTALL.md
+put_back hooks/installed.txt
+unset INSTALLED_PROBE_ROOTS
+rm -rf "$PIECES_FIX"
+
+# THE VALIDATION HALF MUST SURVIVE THE HOSTED-RUNNER ESCAPE. VERIFY_NO_LOCAL_TOOLS
+# turns off the disk probes, and the first draft of the row wrapped the manifest
+# grammar in the same branch, so a malformed policy line reached CI as a WARN
+# nobody reads. CI sets this variable on every job, so this case is the only
+# thing standing between that and a silent hole.
+save hooks/retired.txt
+printf 'gh   zz-selftest/malformed   archive/nowhere   one two three four\n' >> hooks/retired.txt
+pieces_ci="$(VERIFY_NO_LOCAL_TOOLS=1 bash verify.sh 2>&1)"
+if printf '%s' "$pieces_ci" | grep -q "^FAIL.*pieces on this machine"; then
+  results+=("PASS|a malformed manifest is still caught where the disk probes are switched off")
+else
+  results+=("BROKEN|a malformed manifest was NOT caught under VERIFY_NO_LOCAL_TOOLS — validation is hiding behind the probe escape")
+  broken=1
+fi
+put_back hooks/retired.txt
+
+# THE ROW MUST EXIST WHATEVER IT SAYS, asserted against an untouched tree and
+# with no fixture in play, so it holds on this machine and on a hosted runner
+# where the row's only honest answer is WARN. A row that can vanish silently is
+# worse than one that fails, because the table still reads as complete.
+pieces_probe="$(bash verify.sh 2>&1)"
+if printf '%s' "$pieces_probe" | grep -q 'pieces on this machine'; then
+  results+=("PASS|the pieces-on-this-machine row is printed even where it cannot be answered")
+else
+  results+=("BROKEN|the pieces-on-this-machine row printed NOTHING — it vanished from the table instead of reporting")
+  broken=1
+fi
+
 
 # ── everything back ─────────────────────────────────────────────────────────
 if bash verify.sh >/dev/null 2>&1; then
