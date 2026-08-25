@@ -265,7 +265,11 @@ fi
 # then exit 0 in silence on both, reporting this row green for a scan that
 # examined neither.
 md_files=()
-while IFS= read -r -d '' mdf; do md_files+=("$mdf"); done < <(git ls-files -z -- '*.md')
+# refs/brands/ is 74 third-party brand specifications vendored verbatim under MIT. They are
+# not this repo's prose and must not be rewritten to satisfy this repo's style, so vale never
+# sees them. The secret and infra scans above still cover every one of those files: skipping
+# a style check on borrowed text is a judgement call, skipping a leak scan is not.
+while IFS= read -r -d '' mdf; do md_files+=("$mdf"); done < <(git ls-files -z -- '*.md' ':!refs/brands/**')
 
 if command -v vale >/dev/null 2>&1; then
   if [ "${#md_files[@]}" -eq 0 ]; then
