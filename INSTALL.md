@@ -113,6 +113,37 @@ form is blocked.
 | `jscpd` | Finds a block pasted and then edited, which no name search catches | `hooks/dupe-check.sh`, run by `verify.sh` and `skills/build/stages/5-build.md` | The repeated-name pass still runs and the output says "jscpd: did not run, not installed" |
 | `@modelcontextprotocol/inspector` | Drives an MCP server's tools by hand, so a client is written against the tool surface the server really has | `skills/build/stages/0-evidence.md` | Read the server's own source for its tool list |
 
+## Optional connections
+
+**Nothing here is needed to use this repo, and nothing checks for them.** They are tool servers
+that a session attaches at startup, and they are listed because they were wired up on the
+owner's machine and someone reading this should be able to make the same choice deliberately
+rather than by copying a config they cannot see.
+
+They are deliberately absent from the pieces table above and from `hooks/installed.txt`. That
+manifest is what `verify.sh` proves is PRESENT on every push, so putting an optional thing in it
+would hand everyone who clones this a red check for something they chose not to install.
+
+| Server | What it adds | Wire it up |
+|---|---|---|
+| Playwright | Drives a real browser: clicking, filling forms, screenshots | `claude mcp add playwright -s user -- npx -y @playwright/mcp@latest` |
+| Firecrawl | Fetches pages that block a plain request, and the search behind `/last-30` | `claude mcp add firecrawl -s user -e FIRECRAWL_API_URL=<your-instance> -- npx -y firecrawl-mcp` |
+
+Both were registered on 2026-08-26 and both report Connected.
+
+**A tool server attaches when a session STARTS.** Registering one mid-session does not make its
+tools appear in that session, and neither does asking again. Open a new one.
+
+**Firecrawl needs an instance to point at.** The owner self-hosts one; the hosted service takes
+a `FIRECRAWL_API_KEY` instead of a URL. A self-hosted box does not need the key unless it was
+configured to want one. If the first search returns 404, add `/v1` to the URL: builds differ on
+whether they expect the version in the path.
+
+**Firecrawl's own build decides what a caller may send.** The owner's instance rejects
+`includeDomains`, `categories`, `sources` and `highlights`, and one rejected key fails the whole
+call rather than being ignored. `skills/last-30/SKILL.md` records which parameters were measured
+working, and restricts a search by writing `site:<domain>` into the query instead.
+
 ## Vetting
 
 Every skill above was run through `skillspector scan --no-llm` on 2026-08-22 before it was
