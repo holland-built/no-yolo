@@ -28,7 +28,7 @@ secrets gate, then staging, then the commit, then the push, then reading the tar
 **Warn only.** Print `| File | Tell | Excerpt |`; never block.
 
 ```bash
-{ git diff --name-only origin/HEAD -- '*.md'; git ls-files --others --exclude-standard -- '*.md'; } \
+{ git diff --name-only origin/main -- '*.md'; git ls-files --others --exclude-standard -- '*.md'; } \
   | sort -u | while read -r f; do
   printf '{"tool_input":{"file_path":"%s/%s"}}' "$PWD" "$f" | bash hooks/slop-block.sh
 done
@@ -36,8 +36,17 @@ done
 
 The hook takes a tool-call payload on standard input, not a filename, because that is how
 Claude Code invokes it, which is what the `printf` wrapper is for. The change set is
-`origin/HEAD` plus untracked `.md` rather than `--cached`, because staging happens after this
+`origin/main` plus untracked `.md` rather than `--cached`, because staging happens after this
 step and a `--cached` list here would be empty.
+
+**`origin/main` by name, and never `origin/HEAD`.** `origin/HEAD` is a local pointer that is set
+once when a clone is made and is never updated again. On 2026-08-25 it was found aimed at
+`migrate-wshobson-agents`, a branch abandoned long before, so this step diffed against that branch
+and read **300-odd unchanged files** including all of the vendored StyleSeed snapshot: 1.1MB of
+findings about prose nobody in this release had touched, in place of the zero files it should have
+seen. It reports as a wall of warnings rather than as an error, which is the worst way for a gate
+to be wrong. `git remote set-head origin -a` repairs the pointer on one machine; naming the branch
+repairs the playbook everywhere.
 
 **Expected:** nothing. The hook already fires on every Write and Edit, so a finding means a
 file reached git without passing through one.
@@ -153,7 +162,7 @@ Print every README line naming a skill or rule this release changes, and read th
 against what the change actually did:
 
 ```bash
-git diff --name-only origin/HEAD -- skills/ rules/ \
+git diff --name-only origin/main -- skills/ rules/ \
   | awk -F/ '{print $1 "/" $2}' | sort -u \
   | while IFS= read -r p; do
       n="$(basename "${p%.md}")"
@@ -178,7 +187,7 @@ required to happen. When this release touches `hooks/`, `verify.sh`, `skills/bui
 either "still true" or the edit made.
 
 ```bash
-base="$(git describe --tags --abbrev=0 2>/dev/null || echo origin/HEAD)"
+base="$(git describe --tags --abbrev=0 2>/dev/null || echo origin/main)"
 git diff --name-only "$base"..HEAD -- hooks/ verify.sh skills/build/stages/ INSTALL.md \
   | grep -q . && grep -nE 'hook|verify|gate|stage|piece|tool' README.md
 ```
