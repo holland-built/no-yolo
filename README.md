@@ -140,7 +140,7 @@ when a skill asks for it.
 
 ## Skills inventory
 
-A skill is a shortcut command you type, like `/build`. There are eight.
+A skill is a shortcut command you type, like `/build`. There are nine.
 
 | Skill | What it does |
 |---|---|
@@ -149,6 +149,7 @@ A skill is a shortcut command you type, like `/build`. There are eight.
 | `/checkup` | One read-only pass over this setup: what exists, what is broken, what has drifted |
 | `/design` | Narrows 74 real brand specifications to three, renders them as a page you point at |
 | `/handoff` | Writes a dying session to a file a fresh session can resume from |
+| `/last-30` | What is gaining traction on GitHub, Hacker News, Reddit, YouTube and X, in the last 30 days only |
 | `/release` | Reads the repo's own `SHIP.md` playbook and runs it |
 | `/watch` | Downloads a video, reads its subtitles and its frames, and answers from both |
 | `/whats-next` | Reads the task list, then unfinished work in the repo, then proposes three things |
