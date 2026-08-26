@@ -17,14 +17,21 @@ in every session, which is the exact thing archiving is meant to stop.
 
 | Name | What it did | Restore |
 |---|---|---|
-| `last-30` | Trending signal from GitHub, HN, Reddit, YouTube, X, last 30 days | `git mv archive/skills/last-30 skills/last-30` |
 | `better-prompt` | Rewrote a rough prompt against learned conventions | `git mv archive/skills/better-prompt skills/better-prompt` |
 | `ingest-docs` | Converted PDF/Word/PowerPoint in `docs/raw/` into clean context files | `git mv archive/skills/ingest-docs skills/ingest-docs` |
 | `dep-audit` | npm-only supply-chain pass: leaked keys, advisories, licences | `git mv archive/skills/dep-audit skills/dep-audit` |
 
-**Restored since:** `watch` was moved back to `skills/watch` on 2026-08-25 and is live
-again. Its row is gone from the table above rather than struck through, because a restore
-command sitting beside a skill that is already restored is a trap for whoever reads it next.
+**Restored since:** `watch` was moved back to `skills/watch` on 2026-08-25, and `last-30` on
+2026-08-26, and both are live again. Their rows are gone from the table above rather than
+struck through, because a restore command sitting beside a skill that is already restored is a
+trap for whoever reads it next.
+
+`last-30` came back because the owner went looking for it and could not find it. Its Firecrawl
+mode does not work: the skill declares `mcp__firecrawl__firecrawl_search`, and no Firecrawl
+server is registered, so those tools do not exist in a session. The self-hosted box answers on
+its configured address, so what is missing is the registration and not the service. The skill
+falls back to plain web search and its preflight says so out loud, which is why restoring it
+was still worth doing.
 
 ## Archived, third-party and never in git (`archive/styleseed/`)
 
