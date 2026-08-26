@@ -313,7 +313,21 @@ fi
 # Uploading a local file, secret or not. Rare in ordinary work and cheap to
 # confirm, so the file does not have to be a known secret. Every spelling curl
 # and wget accept: separated, attached, and equals forms.
-UPLOAD='(--upload-file|--post-file|-T[[:space:]]*[^[:space:]-]|(--data-binary|--data-urlencode|--data-raw|--data|--form|-d|-F)([[:space:]]*|=)[^[:space:]]*@)'
+#
+# EVERY OPTION NEEDS A LEFT BOUNDARY, and the `-T` branch is why. Written without
+# one it matched the `-T` inside the literal words "Content-Type", so on
+# 2026-08-26 an ordinary `curl -H "Content-Type: application/json"` was blocked
+# as an upload. Extracting the match from the real command returned "-Ty". Every
+# JSON POST this setup could make was blocked, twice in one session, by a rule
+# about files. A gate that cries wolf gets switched off, and this one guards
+# secrets leaving the machine.
+#
+# The boundary accepts a quote and a backslash as well as whitespace, because
+# `curl "-Tsecret.txt"` and `curl \-Tsecret.txt` are the same upload wearing a
+# coat. The attached form `-Tfile` still matches, which is the point of the
+# trailing character class: `-T` alone at the end of a command uploads nothing.
+BOUND='(^|[[:space:]"'"'"'\\])'
+UPLOAD="${BOUND}"'(--upload-file|--post-file|-T([[:space:]]*|=)[^[:space:]-]|(--data-binary|--data-urlencode|--data-raw|--data|--form|-d|-F)([[:space:]]*|=)[^[:space:]]*@)'
 if printf '%s' "$hcmd" | grep -Eq "${CMDPOS}${EGRESS}" \
    && printf '%s' "$hcmd" | grep -Eq "$UPLOAD"; then
   block "an upload of a local file to the network"
