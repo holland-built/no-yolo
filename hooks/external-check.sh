@@ -79,8 +79,24 @@ def operands(tokens):
         t = t.strip("`'\"()")
         if not SPEC.match(t):          # not a package name, so the command ended here
             break
-        out.append(t)
+        out.append(unpin(t))
     return out
+
+def unpin(spec):
+    """`jscpd@latest` -> `jscpd`, `@playwright/mcp@latest` -> `@playwright/mcp`.
+
+    SPEC has always MATCHED a trailing @version, and nothing ever removed it, so the identity
+    carried the tag into the comparison and could never equal a manifest row. It went unseen
+    because no tracked file pinned a version until 2026-08-26, when INSTALL.md documented
+    `npx -y @playwright/mcp@latest` and the scope check demanded a row for a name nobody can
+    sensibly declare: pinning the tag in the manifest would make the row rot the moment the
+    command changed, and would compare a tag against a package name.
+
+    Split on the LAST @, never the first: a scoped package opens with one and it is part of
+    the name.
+    """
+    at = spec.rfind("@")
+    return spec[:at] if at > 0 else spec
 
 # In a shell script, a config file or a .gitignore, a leading # is a comment and whatever it
 # mentions is not run. In markdown it is a heading, and real commands live in fenced blocks
@@ -156,7 +172,11 @@ for raw in joined:
                     if "/" in ref and SPEC.match(ref):
                         print("gh", ref)
             else:
-                print("npm", head if head.startswith("@") else head.split("@")[0])
+                # `head.split("@")[0]` is empty for a SCOPED package, so the whole specifier
+                # used to be printed instead, tag and all: @playwright/mcp@latest never
+                # matched the row declaring @playwright/mcp. unpin splits on the LAST @, which
+                # is right for both shapes.
+                print("npm", unpin(head))
 PY
   done | sort -u
 }

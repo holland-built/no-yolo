@@ -39,6 +39,15 @@ npm  impeccable         pbakaus/impeccable
 npm  jscpd              kucherenko/jscpd
 npm  @modelcontextprotocol/inspector  modelcontextprotocol/inspector
 
+# OPTIONAL tool servers, documented in INSTALL.md's "Optional connections" and deliberately
+# NOT in hooks/installed.txt. Declaring them here is not a claim that they are installed: this
+# file answers "does this name exist and belong to who we said", which is a question about the
+# registry and not about any machine. They are declared because INSTALL.md carries a runnable
+# `claude mcp add ... npx -y <package>` line for each, and hooks/external-check.sh extracts
+# every reference from a runnable form. Both queried 2026-08-26.
+npm  @playwright/mcp    microsoft/playwright-mcp
+npm  firecrawl-mcp      firecrawl/firecrawl-mcp-server
+
 gh   conorbronsdon/avoid-ai-writing   -
 gh   NVIDIA/SkillSpector             -
 gh   mattpocock/skills               -

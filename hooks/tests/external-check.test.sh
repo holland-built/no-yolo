@@ -32,6 +32,28 @@ extracts() {
   fi
 }
 
+# --- A pinned version is not part of the name, fixed 2026-08-26 ---------------
+# SPEC has always MATCHED a trailing @version and nothing removed it, so a pinned install
+# command produced an identity that could never equal a manifest row. For a SCOPED package it
+# was worse: the unscoped path did `head.split("@")[0]`, which is the empty string when a name
+# opens with @, so the branch printed the whole specifier, tag and all.
+#
+# It stayed invisible because no tracked file pinned a version until INSTALL.md documented
+# `npx -y @playwright/mcp@latest` on 2026-08-26. The scope check then demanded a row for
+# "@playwright/mcp@latest", which nobody can sensibly declare: it would rot the moment the
+# command changed, and it compares a tag against a package name.
+extracts pin1.md 'npx -y @playwright/mcp@latest' \
+  'npm @playwright/mcp' "a scoped package keeps its scope and loses its tag"
+
+extracts pin2.md 'npx -y firecrawl-mcp@1.2.3' \
+  'npm firecrawl-mcp' "an unscoped package loses a pinned version"
+
+extracts pin3.md 'npm install -g jscpd@latest' \
+  'npm jscpd' "an install verb loses a pinned version too"
+
+extracts pin4.md 'npx -y @modelcontextprotocol/inspector' \
+  'npm @modelcontextprotocol/inspector' "a scoped package with no tag is unchanged"
+
 # --- POSITIVE: a real install command must be seen -----------------------------
 extracts a.md 'npm install -g agnix' \
   'npm agnix' "a single global install"
