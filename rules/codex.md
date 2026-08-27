@@ -35,29 +35,14 @@ the single source for how the check runs has to carry the settings that decide w
 | Sandbox | `read-only` | The `--sandbox` flag in `hooks/codex.sh`, which overrides the config |
 | Network | none, which `read-only` implies | Not configurable in this mode |
 
-## Why it is read-only, having briefly not been
+## Why it is read-only
 
-The sandbox was widened to `workspace-write` on 2026-08-21 to give Codex a network, because a
-read-only sandbox has none and it had just reviewed seven invented package names without being
-able to look up one of them. Measured, not assumed: under `read-only`, `curl` returns 000 and
-`npm view` returns ENOTFOUND. The `network_access` setting belongs to `workspace-write` alone,
-so the two cannot be separated.
+Codex advises. It never edits, and it has no network. Both follow from `read-only`, and
+neither is negotiable per-call.
 
-Within the hour, during two reviews whose prompts asked for findings and nothing else, Codex
-wrote a new step into `SHIP.md` and rewrote a section of `docs/DECISIONS.md`. Both edits turned
-out to be substantially correct, and neither was requested. An advisor that edits is not an
-advisor, and a review you have to diff afterwards costs more than it returns.
-
-**Verification moved instead of the sandbox.** `hooks/external-check.sh` resolves every
-external name against the registry on every run of `verify.sh`, so the job that needed a
-network now belongs to this repo and runs on every push, rather than to a model that runs only
-when a skill invokes it. Codex is back to what it is good at, which is judgement about a plan
-or a diff, and that needs no network at all.
-
-`danger-full-access` was considered and declined at the same time. It reaches the whole disk,
-including `~/.ssh` and `~/.aws`, and `codex exec` runs with `approval: never`, so nothing would
-sit between a generated command and the filesystem. `hooks/safety-net.sh` is no help there: it
-is a Claude Code hook on Claude's own commands and never sees Codex's.
+Needing a network is a signal that the work belongs to this repo instead. Resolving an
+external name is `hooks/external-check.sh`, which runs on every push. `docs/DECISIONS.md`
+carries what happened when the sandbox was widened, and why `danger-full-access` was declined.
 
 ## The prompt shape
 
