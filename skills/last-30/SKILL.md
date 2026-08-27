@@ -29,6 +29,10 @@ Calculate the 30-day start date: today − 30 days → `YYYY-MM-DD`. State it in
 
 Run these inline, NO subagents, NO Agent tool. Collect up to 5 results per source; skip anything dated before `<start-date>`.
 
+**The preflight probe runs alone, because it decides the mode every source below uses. The five
+sources and the news pass are then one wave**, by `docs/PARALLEL.md`: none reads another's
+hits. Inline means no subagents, and it does not mean one search at a time.
+
 **Preflight. Pick the tool ONCE, up front.** Firecrawl is self-hosted and can be unreachable (LAN down, box off). Do not discover that five times. Run ONE probe: a `firecrawl_search` with `query: "test"`, `limit: 1`. 
 - **Probe succeeds → FIRECRAWL MODE** for every source below.
 - **Probe errors or times out → say WHY before falling back.** A self-hosted Firecrawl usually sits on a private network, reachable from outside only through a VPN, commonly Tailscale with a box on that network advertising it as a subnet route. So "unreachable" usually means the VPN is off, not that the service is down. Run `tailscale status` (1s, no network round trip) and branch:

@@ -24,15 +24,11 @@ three cases:
 
 Work that is one file, already located, and inside your head is faster done here.
 
-## The Wait Test
+## Which agents go out together
 
-Draw the steps. For each one ask: **does this step use the result of the step before it?**
-
-A step that does not is waiting for nothing. Launch it alongside, not after. Run the test
-before writing any multi-step pipeline, and again whenever a pipeline gets slow.
-
-The rule is symmetric. A genuine dependency stays serial: a review needs the code, a fix
-needs the diagnosis, a synthesis needs everything it synthesises.
+`docs/PARALLEL.md` holds the Wait Test and the wave rule, and they decide this as they decide
+any ordered pipeline. Agents add one limit of their own: a wave caps at five, and a longer
+wave runs in rounds.
 
 ## The dispatch brief
 
@@ -48,7 +44,7 @@ Every brief carries:
 | Blast radius | The adjacent functions, files, and behaviours that stay byte-identical |
 | Output cap | About 300 words |
 
-Fan independent agents out in one call. Cap five at a time; beyond that, run in rounds.
+A wave of briefs goes out as parallel calls in one turn.
 
 ## Independence is the point
 

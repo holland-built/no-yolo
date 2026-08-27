@@ -33,6 +33,8 @@ there is no queue file to read.
 
 The list is empty. Work already started outranks anything new:
 
+Both reads are one wave:
+
 ```bash
 git status --short 2>/dev/null
 git log origin/main..HEAD --oneline 2>/dev/null
@@ -44,7 +46,7 @@ Anything uncommitted or unpushed: name it and stop.
 
 ## 3. Three suggestions
 
-The tree is clean. Look before proposing:
+The tree is clean. Look before proposing, all three reads in one wave:
 
 ```bash
 ls -1 2>/dev/null | head -20

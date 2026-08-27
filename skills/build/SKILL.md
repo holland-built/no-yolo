@@ -56,7 +56,7 @@ Go, or redirect?
 
 ## What runs while that gate waits
 
-Neither of these uses the owner's answer, so both start now rather than after (`docs/DELEGATION.md`,
+Neither of these uses the owner's answer, so both start now rather than after (`docs/PARALLEL.md`,
 the Wait Test):
 
 - **Stack detection.** Dev server URL, test command, build command, the project's critical
@@ -83,7 +83,7 @@ Read one file when its stage begins. Skip the files for stages this size does no
 ## What starts early
 
 Each of these is launched before the stage that consumes it, because none reads the previous
-stage's output. The Wait Test in `docs/DELEGATION.md` is what put them here:
+stage's output. The Wait Test in `docs/PARALLEL.md` is what put them here:
 
 | Launch at | What | Read at |
 |---|---|---|

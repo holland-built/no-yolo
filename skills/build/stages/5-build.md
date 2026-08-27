@@ -25,7 +25,14 @@ sourcing rows. Either way, re-read a brief against the agreed seam before dispat
 UI work: the brief names the variant section to match and its sourcing rows. Agents import
 the mapped components rather than hand-rolling them.
 
-Fan independent agents out in one call, five at a time.
+## Dispatch by wave
+
+Stage 2 grouped the plan's steps into waves from their `Depends on` lines. Dispatch wave 1 in
+one call, up to five agents at a time; when every agent in it has returned and its edits are
+in the tree, dispatch wave 2. A step whose dependency failed does not go out.
+
+A wave holding one step is one agent, and that is the plan reporting real serial work rather
+than a dispatch to fix.
 
 ## Reuse before writing
 
