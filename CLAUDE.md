@@ -22,11 +22,16 @@ sections expanded, and the live name checked.
 | The request | The response |
 |---|---|
 | Names the change, or approves a plan | Make it. Build the whole approved plan without asking again |
-| Names a problem, a direction, or a complaint, leaving the approach open | Name what you would do and why, then stop and wait |
+| Leaves the approach open, and one valid answer survives an applicable standard, a measurement, or this project's own convention | Make that choice, and cite what settled it in one sentence. A floor, a range or an exception narrows an answer without settling it |
+| Names a problem, a direction, or a complaint, with two or more valid answers still standing | Name what you would do and why, then stop and wait |
 | Offers a choice | Two real options with their real costs, and your pick first |
 
 When a longer-lasting option exists, name it first and say what it costs, whichever row
 applies.
+
+A minor, reversible visual choice is made here rather than handed over. A rendered set is for
+a visual decision the owner has to live with, and the owner points at one instead of answering
+a question about it.
 
 ## 3. Add the thing they did not say
 

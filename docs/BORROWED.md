@@ -52,6 +52,49 @@ a vendored specification in place. Both are worth stopping for. These files are 
 text stored verbatim: they are excluded from vale, dupe-check and external-check in
 `verify.sh`, and they are deliberately still covered by the secret and infra scans.
 
+## Adapted into this repo's own documents
+
+Neither vendored nor installed. **No upstream file is on disk here.** These are ideas read
+out of somebody else's skill and rewritten into this repo's own prose, in this repo's own
+voice, sitting inside a document this repo maintains. One row per adapted item, because nine
+items came from four projects and a per-project row would hide which of them moved.
+
+Read on 2026-08-26. Nothing was installed, and nothing was executed: every verdict came from
+reading the instruction text. `.reports/2026-08-26-kit-skills-read.md` carries what was read
+and why six other candidates were refused.
+
+| Item taken | Upstream file | Pinned | Landed in | Licence | Quoted or adapted |
+|---|---|---|---|---|---|
+| Exposure gate, six purposes, duration budgets, required refusal list | `emilkowalski/skills/skills/find-animation-opportunities/SKILL.md` | `d23d7f88` | Motion | MIT | Adapted. Tier names and the exposure denominator are ours |
+| The three converged combinations, with `#F4F1EA` | `anthropics/skills/skills/frontend-design/SKILL.md` | `3b3fad96` | The tells | Apache-2.0 | Adapted. The hex code is quoted |
+| The brief outranks the tells | same file | `3b3fad96` | The tells | Apache-2.0 | Adapted |
+| One signature element, cut one thing | same file | `3b3fad96` | Spend the boldness in one place | Apache-2.0 | Adapted. The "record that nothing was cut" branch is ours |
+| Interface copy as design material | same file | `3b3fad96` | The words on the screen | Apache-2.0 | Adapted. The verb-object framing is ours; upstream said active voice |
+| Notation follows the project's tokens | `jakubkrehel/skills/skills/better-colors/SKILL.md` | `ca483852` | Colour | MIT | One sentence quoted, marked as a quotation |
+| One filled action per decision | same file | `ca483852` | Colour | MIT | Adapted, and narrowed to decision surfaces |
+| Read the minus side of the diff | `jakubkrehel/skills/skills/interface-review/SKILL.md` | `ca483852` | Reviewing a change to a screen | MIT | Adapted, one principle of eight |
+| Core Web Vitals, field against lab, Lighthouse 13, the MCP limits | `addyosmani/web-quality-skills/skills/web-quality-audit/SKILL.md` | `afa8da94` | Speed, and what a local run can claim | MIT | Adapted. The field-versus-lab split and the INP refusal are ours |
+| WCAG 2.2 additions | `addyosmani/web-quality-skills/skills/accessibility/SKILL.md` | `afa8da94` | Accessibility | MIT | Adapted. Criterion numbers and thresholds are W3C's, not theirs |
+| Competing actions, form fields, attributable testimonials | `autonnel/autonnel-skills/landing-page-conversion-audit/SKILL.md` | `1a326bf2` | Does it argue? | Apache-2.0 | Adapted. Its funnel-product recommendation was left behind |
+
+**Has the author changed it since we took it?** The pin answers it for these rows, because no
+bytes were copied and a content hash of our own prose would measure our editing rather than
+theirs. Compare a pin against the upstream default branch:
+
+```bash
+gh api repos/<owner>/<repo>/commits/HEAD --jq .sha
+```
+
+A different value means the upstream moved. That is a prompt to re-read the file, not a
+defect: an adapted idea does not go stale the way a copied file does.
+
+**Two of the eleven carry a caveat worth keeping.** The `anthropics/skills` repository has no
+licence at its root; each skill directory carries its own `LICENSE.txt`, and the one covering
+`frontend-design` is Apache-2.0, read on 2026-08-26. And `autonnel/autonnel-skills` had zero
+stars on the day it was read, while the kit that recommended it printed "25.9K installs"
+beside it. Its checks were still sound. Its closing recommendation of the author's own product
+was not taken.
+
 ## Installed alongside, not in this repo
 
 Skills that live under `skills/` on this machine but are excluded by `.gitignore` lines 110
