@@ -13,6 +13,18 @@ Read-only. This command reports and stops; the owner picks what to fix.
 
 Scope is the setup itself, not project code.
 
+## Waves
+
+Resolve the config path first, because every command below reads it:
+
+```bash
+CFG="${CLAUDE_CONFIG_DIR:-$HOME/.claude}"
+```
+
+Pass it to each call rather than relying on a shell that carries it. Then every section, 1
+through 7, is one wave by `docs/PARALLEL.md`: none reads another's output. Section 1's
+"before any judgement" orders the report, not the run.
+
 ## 1. Inventory, before any judgement
 
 The owner has asked what is in these files more often than anything else. Lead with contents.

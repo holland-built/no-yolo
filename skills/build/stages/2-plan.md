@@ -15,8 +15,22 @@ stacking patches at the leaves.
 | Target files | Each with `Already exists, do NOT recreate` |
 | Blast radius | The adjacent files, functions and behaviours that stay byte-identical |
 | Regression pre-mortem | Which existing tests or behaviours this could break, named before any code |
-| Steps | Ordered, smallest-reversible first, each independently checkable |
+| Steps | Numbered, smallest-reversible first, each independently checkable. Every step carries **Depends on**: the step numbers whose output it reads, or `none` |
 | `ui_change` | true or false |
+
+## Waves
+
+`Depends on` groups the steps into waves, by the rule in `docs/PARALLEL.md`. Print them under
+the steps:
+
+```
+Wave 1: 1, 3, 4
+Wave 2: 2, 5      (2 depends on 1; 5 depends on 3)
+Wave 3: 6, 7      (6 depends on 2 and 5; 7 depends on 4, from wave 1)
+```
+
+Stage 5 dispatches a wave, so this grouping decides how much runs at once. A step depending on
+every earlier step was written too big: split it, or say in one line what it shares with them.
 
 ## Two critiques, running together
 
@@ -38,6 +52,8 @@ owner sees what Codex flagged and why anything was rejected.
   for a defect, or an assumed seam for new behaviour.
 - There is no measurable success condition.
 - The blast radius is open-ended.
+- Every step depends on the one before it, with no reason given. That is a serial plan by
+  accident, and it costs the whole build's parallelism.
 - A claim cites an API or a file nobody confirmed exists.
 
 Save to `brainstorms/<slug>-plan-<date>.md`.

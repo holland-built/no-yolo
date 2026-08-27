@@ -90,6 +90,7 @@ whether it does.
 | Writing prose a person will read | `docs/PROSE.md` |
 | Any UI, screen, mockup, or generated image | `docs/SCREENS.md` |
 | Writing code for a fix or a feature | `docs/TESTING.md` |
+| Running an ordered list of steps, calls or commands | `docs/PARALLEL.md` |
 | Handing work to another agent | `docs/DELEGATION.md` |
 | A session runs long, or context fills | `docs/CONTEXT.md` |
 | Learning something worth keeping | `docs/MEMORY.md` |

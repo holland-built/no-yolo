@@ -29,7 +29,8 @@ is already patched.
 The searchable thing is Z. `parseInt` without a radix, a date treated as a string, an unawaited
 promise, a hardcoded `localhost`. Write it as one sentence before searching.
 
-**2. Search at least three ways.** One search finds one spelling. Vary the angle:
+**2. Search at least three ways.** One search finds one spelling. Vary the angle, and send all
+three as one wave, since no angle reads another's hits:
 
 | Angle | Example |
 |---|---|
