@@ -54,6 +54,12 @@ them, a named batch, or one representative route per family. Never trim the list
 
 **5. Audit each route** with steps 1 to 7 below, one ranked list per route.
 
+Routes run one at a time, and so do the passes inside a route. This is the shared-state case in
+`docs/PARALLEL.md`, not an oversight: one browser holds one viewport and one page, so a resize
+or a navigation by one pass changes what another captures, and a Lighthouse run measures
+whatever else is loading the server at the time. Route inventory in step 2 is the exception,
+where the file-convention read and the crawl do run as one wave.
+
 **6. Close with one table**, screens worst-first, blocking counts first, then the routes that
 came back not measured with their reasons.
 

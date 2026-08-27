@@ -29,6 +29,8 @@ exists and the owner has approved it.
 
 ## 2. Check what is going out
 
+All three reads are one wave:
+
 ```bash
 git status --short
 git diff --stat

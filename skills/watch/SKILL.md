@@ -48,6 +48,21 @@ Never write video, audio or frame files into the user's project or home director
 
 ---
 
+## Waves
+
+The phase numbers order the output, not the run. By `docs/PARALLEL.md`:
+
+| Wave | Runs | Reads |
+|---|---|---|
+| 1 | Phase 1's metadata print, Phase 2's caption fetch, Phase 3's video download | The URL, and nothing else |
+| 2 | Phase 3's frame extraction, and Phase 2's Whisper fallback when captions came back empty | The duration from wave 1, and the downloaded file |
+| 3 | Phase 4 onwards | Both the frames and the transcript |
+
+Starting the download in wave 1 is what makes the Whisper fallback cheap: it is already on
+disk by the time the caption fetch reports nothing.
+
+---
+
 ## Phase 1: Metadata
 
 ```bash

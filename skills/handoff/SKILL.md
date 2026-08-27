@@ -70,6 +70,18 @@ answered. They can still redirect after reading the line.
 | Piece | State |
 |---|---|
 
+## The open build
+
+<Only when a /build run is unfinished. Without these four lines the next session re-plans work
+the owner already approved.>
+
+| Line | Holds |
+|---|---|
+| Stage | The one just finished, and the one next |
+| Plan | Path to the approved plan file, and whether it still matches the tree |
+| Waves | Which wave numbers landed, and which steps are left |
+| Flags | Any gate flag still waiting on the owner's yes |
+
 ## Decided in conversation, written nowhere else
 
 <Each decision, with the reason. These are the ones no file records.>
