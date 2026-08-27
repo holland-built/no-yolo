@@ -37,6 +37,9 @@ npm  agnix              agent-sh/agnix
 npm  @yawlabs/ctxlint   YawLabs/ctxlint
 npm  impeccable         pbakaus/impeccable
 npm  jscpd              kucherenko/jscpd
+# The accessibility and speed audit /audit and docs/SCREENS.md both run. Queried 2026-08-26:
+# 13.4.1, repository GoogleChrome/lighthouse.
+npm  lighthouse         GoogleChrome/lighthouse
 npm  @modelcontextprotocol/inspector  modelcontextprotocol/inspector
 
 # OPTIONAL tool servers, documented in INSTALL.md's "Optional connections" and deliberately

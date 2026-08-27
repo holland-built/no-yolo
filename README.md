@@ -140,10 +140,11 @@ when a skill asks for it.
 
 ## Skills inventory
 
-A skill is a shortcut command you type, like `/build`. There are nine.
+A skill is a shortcut command you type, like `/build`. There are ten.
 
 | Skill | What it does |
 |---|---|
+| `/audit` | Judges a screen you already have against `docs/SCREENS.md` and reports what is wrong. `--sweep` walks a whole app, one screen at a time. Never edits your source |
 | `/blast-radius` | After a bug is located, finds every other place the same mistake was made. Runs by itself inside `/build` |
 | `/build` | The whole job: evidence, interview, plan, mockups, tests, build, proof. Sizes itself, so a one-word change does not get the full pipeline |
 | `/checkup` | One read-only pass over this setup: what exists, what is broken, what has drifted |
