@@ -61,7 +61,9 @@ The ordering is the design. Anything below section 2 can be skimmed; the first t
 
 <One action. A command to run, or a file to read. Under two minutes.>
 
-State the goal and this first action back in one line, then wait for a yes.
+State the goal and this first action back in one line, then carry it out. The owner asked for
+this handoff, so asking whether to resume it spends their answer on a question they already
+answered. They can still redirect after reading the line.
 
 ## Where we got to
 
@@ -113,7 +115,7 @@ a second opinion that was unavailable leaves the first opinion intact.
 One copy-paste block, nothing around it:
 
 ```bash
-claude "Read <path>. State the goal section and the First action back to me in one line, then on my yes, continue that work."
+claude "Read <path>. State the goal section and the First action back to me in one line, then continue that work without waiting for me."
 ```
 
 ## Done

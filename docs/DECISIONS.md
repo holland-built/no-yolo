@@ -305,6 +305,36 @@ by the next person who finds it inconvenient, and that is the whole reason this 
 blocks, and one sentence of risk. The incident that produced it lives here with a pointer
 back.
 
+## The Codex sandbox was widened for an hour, 2026-08-21
+
+Moved here from `rules/codex.md` on 2026-08-26, under the rule above. Every measured number
+came across unchanged.
+
+The sandbox was widened to `workspace-write` to give Codex a network, because a read-only
+sandbox has none and it had just reviewed seven invented package names without being able to
+look up one of them. Measured, not assumed: under `read-only`, `curl` returns 000 and
+`npm view` returns ENOTFOUND. The `network_access` setting belongs to `workspace-write`
+alone, so the two cannot be separated.
+
+Within the hour, during two reviews whose prompts asked for findings and nothing else, Codex
+wrote a new step into `SHIP.md` and rewrote a section of this file. Both edits turned out to
+be substantially correct, and neither was requested. An advisor that edits is not an advisor,
+and a review you have to diff afterwards costs more than it returns.
+
+**Verification moved instead of the sandbox.** `hooks/external-check.sh` resolves every
+external name against the registry on every run of `verify.sh`, so the job that needed a
+network now belongs to this repo and runs on every push, rather than to a model that runs
+only when a skill invokes it. Codex is back to what it is good at, which is judgement about a
+plan or a diff, and that needs no network at all.
+
+`danger-full-access` was considered and declined at the same time. It reaches the whole disk,
+including `~/.ssh` and `~/.aws`, and `codex exec` runs with `approval: never`, so nothing
+would sit between a generated command and the filesystem. `hooks/safety-net.sh` is no help
+there: it is a Claude Code hook on Claude's own commands and never sees Codex's.
+
+**Consequence:** `rules/codex.md` states the setting and one sentence of why. The hour that
+produced it lives here.
+
 ## The release playbook twice named files that had been deleted
 
 **2026-08-05.** `SHIP.md` was written against the catalogue system that the fresh-start
