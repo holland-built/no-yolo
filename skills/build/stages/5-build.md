@@ -72,7 +72,7 @@ file arrives in between, and `git apply --check` below is what catches a diff th
 fits. Background it so the stages between run while it works:
 
 ```bash
-bash "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/codex.sh" \
+bash "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/codex.sh" --tier rival \
   "Read brainstorms/<slug>-plan-<date>.md — an approved implementation plan for this repository. Author a rival implementation of its ordered steps as ONE unified diff against the current tree: your own approach, not a guess at another author's. Honour the plan's blast-radius list and end at its success condition. At most 3 files and 200 changed lines; diff only the steps you would do differently if the plan is larger, and say which you skipped. Return only the unified diff, or BLOCKED: <reason>. No preamble." \
   "brainstorms/<slug>-rival-<date>.md" &
 ```

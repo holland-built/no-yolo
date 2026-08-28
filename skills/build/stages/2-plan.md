@@ -115,7 +115,7 @@ implementation is what makes the second opinion share the first one's assumption
 Then, with the file confirmed on disk:
 
 ```bash
-bash "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/codex.sh" \
+bash "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/codex.sh" --tier tests \
   "Read .xcheck/<slug>-spec.md — a spec and public interface. Write edge-case tests the author is likely to miss: boundaries, empty and null, ordering, concurrency, malformed input. Return test code only, max 8 tests, in <framework> syntax. No preamble." \
   ".xcheck/<slug>-tests.out" &
 ```
