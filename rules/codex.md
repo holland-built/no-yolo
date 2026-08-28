@@ -8,11 +8,12 @@ this file.
 One wrapper holds it, so a change reaches every caller at once:
 
 ```bash
-bash "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/codex.sh" "<prompt>" [output-file]
+bash "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/codex.sh" --tier <name> "<prompt>" [output-file]
 ```
 
-Inside it: `codex exec --sandbox read-only --skip-git-repo-check "<prompt>" < /dev/null`.
-Three parts earn their place, each learned by watching it fail on 2026-08-21:
+Inside it: `codex exec --sandbox read-only --skip-git-repo-check -m <model> -c
+model_reasoning_effort=<effort> "<prompt>" < /dev/null`. Three parts earn their place, each
+learned by watching it fail on 2026-08-21:
 
 | Part | Without it |
 |---|---|
@@ -22,23 +23,14 @@ Three parts earn their place, each learned by watching it fail on 2026-08-21:
 
 The prompt is an argument. Piping the file and passing the prompt as well is a usage error.
 
-## What it is actually running
-
-Not stated anywhere until 2026-08-21, which is how it went unnoticed that every review this
-setup had ever run used the lowest reasoning setting the model offers. A file calling itself
-the single source for how the check runs has to carry the settings that decide what comes back.
-
-| Setting | Value | Set in |
-|---|---|---|
-| Model | `gpt-5.6-sol` | `~/.codex/config.toml` |
-| Reasoning effort | `high` | `~/.codex/config.toml` |
-| Sandbox | `read-only` | The `--sandbox` flag in `hooks/codex.sh`, which overrides the config |
-| Network | none, which `read-only` implies | Not configurable in this mode |
-
 ## Why it is read-only
 
 Codex advises. It never edits, and it has no network. Both follow from `read-only`, and
 neither is negotiable per-call.
+
+The model and the effort are set by `--tier`, in the wrapper's flags, which beat
+`~/.codex/config.toml`. Omitting `--tier` gives sol at high. Until 2026-08-21 nothing stated
+these, which is how every review ran at the lowest setting unnoticed.
 
 Needing a network is a signal that the work belongs to this repo instead. Resolving an
 external name is `hooks/external-check.sh`, which runs on every push. `docs/DECISIONS.md`
@@ -77,9 +69,15 @@ identical and the cost of guessing wrong is a published credential.
 
 ## Where it fires
 
-| Stage | What Codex gets |
-|---|---|
-| Plan | The written plan, before any code exists |
-| Mockups | The screenshot of the variant set, plus authorship of the slot `rules/mockups.md` assigns it |
-| Tests | The spec and public interface only, never the implementation |
-| Review | The diff |
+Six jobs, and they are not one job, so each names its tier. Measured against `codex-cli
+0.150.1` on 2026-08-28: every model and effort below is accepted, and a wrong one returns HTTP
+400 with exit status still 0, so empty output reports a failed call, never the code.
+
+| Stage | `--tier` | Model, effort | What Codex gets |
+|---|---|---|---|
+| Plan | `plan` | sol, xhigh | The written plan, before any code exists. The call that catches blockers |
+| Mockups | `mockup` | sol, low | The screenshot of the variant set, plus authorship of the slot `rules/mockups.md` assigns it |
+| Tests | `tests` | luna, high | The spec and public interface only, never the implementation |
+| Review | `review` | terra, high | The diff |
+| Rival | `rival` | terra, medium | The approved plan. Adjudicated hunk by hunk |
+| Handoff | `gaps` | luna, medium | The handoff file, read for what is missing |

@@ -114,6 +114,15 @@ published it. Report any new untracked directory under `skills/` as a finding wi
 For anything pinned to a version, ask the registry for the current stable release and report
 the gap. See `CLAUDE.md` rule 5 for the read-only queries.
 
+**The `codex` CLI is the one to check by name**, because the second-model check in every
+command depends on it and nothing else reports its age. It went four releases behind before
+anyone looked, on 2026-08-28:
+
+```bash
+printf 'installed: '; codex --version 2>/dev/null || echo "absent"
+printf 'published: '; npm view @openai/codex version 2>/dev/null
+```
+
 ## 6. Prose
 
 Read `docs/PROSE.md` and check the setup's own written files against it.

@@ -71,3 +71,4 @@ gh   vale-cli/vale                   -
 # This repo's own clone URL, from README.md. Self-referential and deliberate: rename or move
 # the repository and the install instructions everyone else follows go red here first.
 gh   holland-built/no-yolo           -
+npm  @openai/codex     openai/codex
