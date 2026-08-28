@@ -73,6 +73,20 @@ file-history/
 history.jsonl
 ide/
 metrics/
+# The harness's background daemon and its work queue, found untracked on 2026-08-28
+# while releasing. daemon/control.key is a live credential and jobs/ holds session
+# transcripts, so a single `git add -A` would publish both.
+daemon/
+daemon.lock
+daemon.status.json
+daemon.json
+daemon.log
+jobs/
+# Where the Playwright MCP server drops console logs, page snapshots and
+# screenshots. Output, not configuration: the server itself is configured in
+# settings.json, which is ignored above. Six files, 320K, were found untracked
+# here on 2026-08-27 and removed by hand.
+.playwright-mcp/
 chrome/
 debug/
 .claude/

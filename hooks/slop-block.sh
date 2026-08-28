@@ -21,8 +21,13 @@ ask() { printf '%s' "$PAYLOAD" | jq -r "$1" 2>/dev/null; }
 f="$(ask '.tool_input.file_path // ""')"
 [ -z "$f" ] || [ ! -f "$f" ] && exit 0
 
+# Markdown and a web page are both prose a person reads, and each hides its non-prose
+# somewhere different: markdown behind fences and backticks, a page behind tags, CSS and
+# script. `kind` picks which stripper runs below. Everything after that point is shared,
+# because the rules are about the writing and not about the container.
 case "$f" in
-  *.md|*.txt|*.mdx) ;;
+  *.md|*.txt|*.mdx) kind=md ;;
+  *.html|*.htm)     kind=html ;;
   *) exit 0 ;;
 esac
 
@@ -133,8 +138,38 @@ fences_balanced() {
 # check that can be silenced by a typo is worse than no check. The unterminated fence
 # is reported in its own right below.
 balanced=1
-fences_balanced "$f" || balanced=0
+[ "$kind" = md ] && { fences_balanced "$f" || balanced=0; }
 
+# A page's prose is its text nodes. Tags carry class names, hrefs and colour values that no
+# prose rule has an opinion about, and a `<style>` or `<script>` body is code by definition.
+# Both are blanked, one output line per input line, so the numbers below still point at the
+# real file. Entities are decoded last and for one reason: a page writes its em dash as
+# `&mdash;` far more often than as the character, and the dash rule greps for the character.
+# Without the decode the commonest way to break the rule is the one way it cannot see.
+if [ "$kind" = html ]; then
+  awk '
+    function htmlstrip(s,   out, i, len, c) {
+      out = ""; i = 1; len = length(s)
+      while (i <= len) {
+        c = substr(s, i, 1)
+        if (intag) { if (c == ">") intag = 0; i++; continue }
+        if (c == "<") { intag = 1; i++; continue }
+        out = out c; i++
+      }
+      return out
+    }
+    {
+      low = tolower($0)
+      if (inblock) { if (low ~ /<\/(style|script)/) inblock = 0; print ""; next }
+      if (low ~ /<(style|script)[ >]/) { inblock = 1; print ""; next }
+      t = htmlstrip($0)
+      gsub(/&mdash;|&#8212;|&#x2014;/, "—", t)
+      gsub(/&nbsp;/, " ", t)
+      gsub(/&amp;/, "\\&", t)
+      print t
+    }
+  ' "$f" > "$PROSE"
+else
 awk "$AWK_FENCE"'
   BEGIN { inb = 0 }
   {
@@ -148,6 +183,7 @@ awk "$AWK_FENCE"'
     print strip($0)
   }
 ' balanced="$balanced" "$f" > "$PROSE"
+fi
 
 # The line numbers of $f whose content this tool call wrote. $PROSE is line-aligned with $f, so
 # a number here selects the same line in both. Whitespace is trimmed on both sides of the

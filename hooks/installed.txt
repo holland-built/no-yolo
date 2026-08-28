@@ -80,3 +80,4 @@ cmd       skillspector           NVIDIA/SkillSpector
 
 ondemand  npx                    impeccable
 ondemand  npx                    @modelcontextprotocol/inspector
+cmd       codex                  @openai/codex

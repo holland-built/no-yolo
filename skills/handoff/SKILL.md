@@ -113,7 +113,7 @@ gap: what got omitted is what the author still had in their head.
 `rules/codex.md` holds the invocation. Ask for what is MISSING, not for a rewrite:
 
 ```bash
-bash "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/codex.sh" "Read this handoff. A fresh session with no memory of the conversation must resume from it alone. No preamble. Output ONLY lines of the form: FINDING <n> | blocking|major|minor | <what a resuming session would not know> | <the line to add>. Maximum 6. If nothing is missing, output: NO FINDINGS. Hunt for: a goal that reads as a paraphrase rather than the owner's own words, a first action needing knowledge the file does not carry, a decision recorded without its reason, and any file or command named but not explained. $(cat <path>)"
+bash "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/codex.sh" --tier gaps "Read this handoff. A fresh session with no memory of the conversation must resume from it alone. No preamble. Output ONLY lines of the form: FINDING <n> | blocking|major|minor | <what a resuming session would not know> | <the line to add>. Maximum 6. If nothing is missing, output: NO FINDINGS. Hunt for: a goal that reads as a paraphrase rather than the owner's own words, a first action needing knowledge the file does not carry, a decision recorded without its reason, and any file or command named but not explained. $(cat <path>)"
 ```
 
 Fold in confirmed findings. Record a one-line reason beside any rejected one, in the file.
