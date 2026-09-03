@@ -1,0 +1,8 @@
+{
+  "autoMemoryDirectory": "~/.claude/memory",
+  "hooks": {
+    "Stop": [
+      { "hooks": [ { "type": "command", "command": "bash \"$HOME/.claude/hooks/reply-check.sh\"", "timeout": 5 } ] }
+    ]
+  }
+}
