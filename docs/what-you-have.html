@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>What you have</title>
+<style>
+  :root { --ink:#1a1a1a; --soft:#6b6b6b; --line:#e5e3df; --bg:#faf9f7; --accent:#b4472a; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink);
+    font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif; }
+  main { max-width:34rem; margin:0 auto; padding:3rem 1.25rem 5rem; }
+  h1 { font-size:1.9rem; line-height:1.2; margin:0 0 .4rem; letter-spacing:-.02em; }
+  .sub { color:var(--soft); margin:0 0 1.5rem; }
+  h2 { font-size:.78rem; text-transform:uppercase; letter-spacing:.09em;
+    color:var(--accent); margin:2.2rem 0 .2rem; font-weight:600; }
+  dl { margin:0; }
+  dt { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:.94rem;
+    font-weight:600; }
+  dd { margin:.15rem 0 0; color:var(--soft); }
+  dt.plain { font-family:inherit; font-size:1rem; font-weight:600; }
+  .row { border-top:1px solid var(--line); padding-top:.85rem; margin-top:.85rem; }
+  .row:first-of-type { border-top:0; padding-top:0; }
+  footer { margin-top:3.5rem; padding-top:1.5rem; border-top:1px solid var(--line);
+    color:var(--soft); font-size:.9rem; }
+  a { color:var(--accent); }
+</style>
+</head>
+<body>
+<main>
+  <h1>What you have</h1>
+  <p class="sub">Type any of these into Claude Code.</p>
+
+  <h2>Yours</h2>
+  <dl>
+    <div class="row"><dt>/build</dt><dd>Takes an idea. Asks you questions. Waits for your yes. Codex attacks the plan. Then it builds and tests. It only draws a mockup for web work.</dd></div>
+    <div class="row"><dt>/ship</dt><dd>Codex reads your change and tries to break it, then it pushes to GitHub. It updates docs only where the change made them wrong. If Codex is missing or fails, it says so and ships anyway.</dd></div>
+    <div class="row"><dt>/claude-video</dt><dd>Watches a video. Writes the notes into
+      your Obsidian vault.</dd></div>
+  </dl>
+
+  <h2>When I lose you</h2>
+  <dl>
+    <div class="row"><dt>/wait-what</dt><dd>Say this the moment a message does not land.
+      I explain it again in plain, restricted English.</dd></div>
+    <div class="row"><dt>/grill-me</dt><dd>I interview you until I understand what you
+      want. Use it before any real job.</dd></div>
+  </dl>
+
+  <h2>Doing a job properly</h2>
+  <dl>
+    <div class="row"><dt>/to-spec</dt><dd>Turns the conversation we just had into a
+      written spec.</dd></div>
+    <div class="row"><dt>/to-tickets</dt><dd>Cuts that spec into pieces. One piece is
+      one sitting of work.</dd></div>
+    <div class="row"><dt>/implement</dt><dd>Builds one piece. Writes a failing test
+      first, then makes it pass.</dd></div>
+    <div class="row"><dt>/code-review</dt><dd>Two readers at once. One checks the code
+      against the spec. One checks it against your standards.</dd></div>
+    <div class="row"><dt>/wayfinder</dt><dd>For a job too big to hold in one sitting.
+      Draws a map and works it one decision at a time.</dd></div>
+  </dl>
+
+  <h2>A second opinion</h2>
+  <dl>
+    <div class="row"><dt>/codex:review</dt><dd>OpenAI's model reads your change.</dd></div>
+    <div class="row"><dt>/codex:adversarial-review</dt><dd>The same, but told to break
+      your work rather than agree with it.</dd></div>
+    <div class="row"><dt>/ultrareview</dt><dd>A team of readers attack your branch. A bug must be reproduced twice before you hear about it. It sends your branch to Anthropic's cloud, and after a few free runs it costs money.</dd></div>
+  </dl>
+
+  <h2>Look and feel</h2>
+  <dl>
+    <div class="row"><dt>/frontend-design</dt><dd>Anthropic's taste rules, so a page does
+      not look like every other AI page.</dd></div>
+    <div class="row"><dt>/ui-ux-pro-max</dt><dd>79 styles, 192 colour sets and 74 font
+      pairs to pick from.</dd></div>
+    <div class="row"><dt>/humanizer</dt><dd>Takes the machine sound out of writing.</dd></div>
+    <div class="row"><dt>/skill-creator</dt><dd>Builds a new command, and proves it works
+      by testing with and without it.</dd></div>
+  </dl>
+
+  <h2>Working quietly</h2>
+  <dl>
+    <div class="row"><dt class="plain">Your rules</dt><dd>Answer first. Under ten lines. Say "I don't
+      know" rather than guess.</dd></div>
+    <div class="row"><dt class="plain">The reply blocker</dt><dd>Stops a reply that runs long, names too many files, or excuses something without proof. It also stops me quitting mid-job, but only when I wrote a finish line down first.</dd></div>
+    <div class="row"><dt class="plain">Web rules</dt><dd>One column. One typeface. One accent colour.
+      They only wake up when a web file is open.</dd></div>
+    <div class="row"><dt class="plain">Memory</dt><dd>When you correct me, it is saved. Things you have
+      said plainly change how I work.</dd></div>
+  </dl>
+
+  <footer>
+    Start with <strong>claude --chrome</strong>. It gives me a browser, so I can look at
+    the page I built instead of guessing.
+  </footer>
+</main>
+</body>
+</html>
