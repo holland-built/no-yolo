@@ -17,7 +17,11 @@ while IFS= read -r rel; do
   src="$SRC/$rel"; dst="$DEST/$rel"
   if [ -e "$dst" ]; then
     if cmp -s "$src" "$dst"; then say "same, skipped: $rel"
-    else say "YOURS, kept:   $rel   (theirs at $rel.theirs)"; cp "$src" "$dst.theirs"; fi
+    elif [ -L "$dst" ]; then say "SYMLINK, untouched: $rel"
+    else
+      side="$dst.theirs.$STAMP"
+      cp "$src" "$side"; say "YOURS, kept:   $rel   (mine at $(basename "$side"))"
+    fi
     kept=$((kept+1))
   else
     mkdir -p "$(dirname "$dst")"; cp "$src" "$dst"
@@ -36,17 +40,17 @@ else
   # Deep merge: keep every existing hook event AND every existing Stop entry.
   # Appends our Stop hook only if an identical command is not already present.
   tmp="$(mktemp)"
+  # Never edit an existing Stop entry: a sibling hook or matcher lives in there.
+  # Append a new entry only when no entry anywhere already runs this command.
   jq -s '
     .[0] as $cur | .[1] as $new |
-    ($new.hooks.Stop[0]) as $add |
+    ($new.hooks.Stop[0].hooks[0].command) as $cmd |
+    (($cur.hooks.Stop // []) | any(.hooks // [] | any(.command == $cmd))) as $present |
     $cur
     | .autoMemoryDirectory = ($cur.autoMemoryDirectory // $new.autoMemoryDirectory)
-    | .hooks = (($cur.hooks // {}) as $h |
-        $h | .Stop = (
-          (($h.Stop // []) | map(select(
-              (.hooks // []) | map(.command) | index($add.hooks[0].command) | not
-          ))) + [$add]
-        ))
+    | .hooks = (($cur.hooks // {}) | .Stop = (
+        if $present then (.Stop // []) else ((.Stop // []) + [$new.hooks.Stop[0]]) end
+      ))
   ' "$SET" "$SRC/settings.snippet.json" > "$tmp"
   if jq -e . "$tmp" >/dev/null 2>&1; then
     mv "$tmp" "$SET"; say "merged; existing hook events and Stop entries preserved"
