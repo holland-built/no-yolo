@@ -19,6 +19,17 @@ claude plugin install frontend-design
 claude plugin install skill-creator
 ```
 
+Two more, from their authors' repos:
+
+```bash
+npx skills@latest add blader/humanizer --global
+npx skills@latest add nextlevelbuilder/ui-ux-pro-max-skill --global
+```
+
+The second one brings five extra skills with it (banner, brand, design-system,
+slides, ui-styling). That is more than you asked for — drop the ones you do not want
+from `~/.claude/skills/`.
+
 Then the files:
 
 ```bash
@@ -43,13 +54,15 @@ and `wiki/sources/` there.
 |---|---|---|
 | mattpocock-skills | Matt Pocock | The real work: interviews you, writes specs, TDD, code review |
 | codex | OpenAI | A second model that attacks your work instead of agreeing |
-| frontend-design | Anthropic | Stops every page looking like the same AI template |
+| frontend-design | Anthropic | Taste: stops every page looking like the same AI template |
+| ui-ux-pro-max | nextlevelbuilder | Inventory: 79 styles, 192 palettes, 74 font pairings to pick from |
+| humanizer | blader | Strips the 35 patterns that make writing sound machine-made |
 | skill-creator | Anthropic | Builds skills and proves they work with before/after tests |
 
 | File | Why |
 |---|---|
 | `CLAUDE.md` | Answer first, under 10 lines, say "I don't know" instead of guessing |
-| `hooks/reply-check.sh` | Blocks a reply that is too long **or** names too many files. A rule gets forgotten mid-session; a hook always runs |
+| `hooks/reply-check.sh` | Blocks a reply that is too long, names too many files, **or** excuses something without proving it. A rule gets forgotten mid-session; a hook always runs |
 | `rules/web.md` | Design rules that load only when a web file is open |
 | `skills/build/` | `/build` — asks, mockups, waits for your yes, has Codex attack the plan, builds, tests |
 | `skills/ship/` | `/ship` — Codex reads your diff, docs update, then push |
