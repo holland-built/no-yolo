@@ -22,6 +22,13 @@
 - Give me the task, the guardrails and the exit criteria, then run. Don't ask me to
   specify each step; over-specifying is how this goes wrong.
 
+## When I correct you
+- Save it as a feedback memory before replying, with a confidence line:
+  `0.3` you think you heard me, `0.7` I said it plainly, `0.9` I have said it twice.
+- Only `0.7` and up changes how you behave by default. Below that, suggest and check.
+- I correct the same thing twice, raise it. I contradict it, drop it — don't argue
+  from a memory.
+
 ## This machine
 - Obsidian vault: `$OBSIDIAN_VAULT` (`~/AI/Knowledge Base`)
 - Second model available for review: `codex`

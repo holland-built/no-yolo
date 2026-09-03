@@ -27,6 +27,17 @@ named=$(printf '%s\n' "$prose" \
   | grep -oE '`[^`]+`|\b[A-Za-z0-9_.-]+/[A-Za-z0-9_./-]+\b' \
   | sort -u | grep -c . )
 
+# Rationalization check (idea from ECC's delivery-gate).
+# These phrases are how work gets declared done without being done. The list is
+# deliberately narrow: ECC warns rather than blocks here because loose regex
+# false-positives. A phrase only counts when the reply offers no command as proof.
+rat=$(printf '%s\n' "$prose" | grep -ioE "skip(ping)? (the )?tests? for now|pre-existing (bug|issue|failure)|should (work|be fine)|good enough for now|out of scope for this|will fix (that )?later|leaving that as is|assuming (this|that|it) works" | sort -u | head -3)
+if [ -n "$rat" ] && ! printf '%s\n' "$msg" | grep -qE '^\s*(\$|>|`)?\s*(git|npm|node|python3|bash|jq|pytest|curl|ls|grep) '; then
+  jq -n --arg p "$(printf '%s' "$rat" | tr '\n' ';')" \
+    '{decision:"block", reason:("This reply excuses something without proving it: \"" + $p + "\". Either run the command that settles it and show the output, or say plainly that you did not check. Do not ship the excuse.")}'
+  exit 0
+fi
+
 max_lines=${REPLY_MAX_LINES:-15}
 max_named=${REPLY_MAX_NAMED:-6}
 
