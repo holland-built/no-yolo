@@ -1,0 +1,28 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["verdict", "checked", "findings"],
+  "properties": {
+    "verdict": { "type": "string", "enum": ["ok", "block"] },
+    "checked": {
+      "type": "array", "minItems": 3, "maxItems": 8,
+      "items": { "type": "string" },
+      "description": "What you actually looked at. Required even when the verdict is ok."
+    },
+    "findings": {
+      "type": "array", "maxItems": 6,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["severity", "where", "claim", "test", "fix"],
+        "properties": {
+          "severity": { "type": "string", "enum": ["block", "worth-fixing", "nit"] },
+          "where": { "type": "string", "description": "file:line" },
+          "claim": { "type": "string" },
+          "test": { "type": "string", "description": "A command or concrete step that shows it" },
+          "fix": { "type": "string" }
+        }
+      }
+    }
+  }
+}
