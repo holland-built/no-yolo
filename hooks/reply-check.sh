@@ -57,10 +57,19 @@ fi
 
 # Long sentences. The rule says under 20 words. A sentence is text ending in . ? or !
 # Table rows, list markers and headings are not sentences, so drop those lines first.
-long=$(printf '%s\n' "$prose" \
+sentences=$(printf '%s\n' "$prose" \
   | grep -vE '^[[:space:]]*([|#*+-]|[0-9]+\.)' \
-  | tr '\n' ' ' | sed -E 's/([.?!])[[:space:]]+/\1\n/g' \
-  | awk '{n=NF} n>20 {c++} END{print c+0}')
+  | tr '\n' ' ' | sed -E 's/([.?!])[[:space:]]+/\1\n/g')
+long=$(printf '%s\n' "$sentences" | awk '{if(NF>20)c++} END{print c+0}')
+# Coach, do not just count: show the worst sentence and where to cut it.
+worst=$(printf '%s\n' "$sentences" | awk '{if(NF>n){n=NF;s=$0}} END{print s}')
+worst_n=$(printf '%s' "$worst" | wc -w | tr -d ' ')
+cut_at=$(printf '%s' "$worst" | grep -oiE '\b(and|but|because|so|which|that|while|when)\b' | head -1)
+
+# Bullets with no table. Four facts in a row read better as a table.
+# A bullets-into-a-table check lived here. It was removed. Two versions of it
+# blocked good replies: numbered steps, then any bullet starting "Note:".
+# Whether a list is really a table is a judgement, and a regex cannot make it.
 
 max_lines=${REPLY_MAX_LINES:-15}
 max_named=${REPLY_MAX_NAMED:-6}
@@ -75,8 +84,30 @@ if [ "$long" -gt 0 ]; then
   [ -n "$reason" ] && reason="$reason and "
   reason="${reason}$long sentence(s) over 20 words"
 fi
+
+# Coaching: one line per fault, saying what to do, not just what is wrong.
+coach=""
+add_coach(){ [ -n "$coach" ] && coach="$coach
+"; coach="$coach- $1"; }
+
+[ "$lines" -gt "$max_lines" ] && add_coach "Cut to the answer. Delete the working, the recap and the closing line."
+[ "$named" -gt "$max_named" ] && add_coach "Too many names. Keep the two that matter in prose. Put the rest in one code block."
+if [ "$long" -gt 0 ]; then
+  if [ -n "$cut_at" ]; then
+    add_coach "Longest sentence is $worst_n words. Cut it at \"$cut_at\" and make two sentences."
+  else
+    add_coach "Longest sentence is $worst_n words. Say the main point, then start a new sentence."
+  fi
+  add_coach "It starts: \"$(printf '%s' "$worst" | cut -c1-70)...\""
+fi
+
 shape=""
-[ -n "$reason" ] && shape="Reply is $reason. Rewrite it: answer first, one table, cut the working. Put the extra named files in one place and name it once. Split any sentence over 20 words. Code blocks are free."
+if [ -n "$reason" ]; then
+  shape="Reply is $reason. Fix it:
+$coach
+
+Answer first. Code blocks are free."
+fi
 
 # One message carrying whatever fired, so no check masks another.
 out=""
