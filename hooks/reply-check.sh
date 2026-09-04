@@ -27,16 +27,40 @@ named=$(printf '%s\n' "$prose" \
   | grep -oE '`[^`]+`|\b[A-Za-z0-9_.-]+/[A-Za-z0-9_./-]+\b' \
   | sort -u | grep -c . )
 
+# Unfinished-work gate (the other half of ECC's delivery-gate).
+# A finish line is written when work starts. While it exists and is unmet, I do not
+# get to stop. Deterministic: the file is there or it is not. No inference.
+# Collected, not returned here: firing immediately hid the two checks below for
+# as long as a finish line was armed, and since a hook only blocks once per turn
+# the rewrite then went out unchecked.
+FL="$HOME/.claude/.finish-line"
+finish=""
+if [ -f "$FL" ] && ! grep -q '^DONE:' "$FL" 2>/dev/null; then
+  goal=$(head -c 400 "$FL" | tr '\n' ' ')
+  finish="Work is not finished. The finish line still reads: $goal
+
+Either cross it and append a DONE: line to ~/.claude/.finish-line saying which command proved it, or tell the user plainly what is blocking and ask. Do not stop in the middle."
+fi
+
 # Rationalization check (idea from ECC's delivery-gate).
 # These phrases are how work gets declared done without being done. The list is
 # deliberately narrow: ECC warns rather than blocks here because loose regex
 # false-positives. A phrase only counts when the reply offers no command as proof.
-rat=$(printf '%s\n' "$prose" | grep -ioE "skip(ping)? (the )?tests? for now|pre-existing (bug|issue|failure)|should (work|be fine)|good enough for now|out of scope for this|will fix (that )?later|leaving that as is|assuming (this|that|it) works" | sort -u | head -3)
+# Strip quoted text first: naming a phrase is not using it. This fired on a reply
+# that listed its own trigger words as examples.
+unquoted=$(printf '%s\n' "$prose" | sed -E 's/"[^"]*"//g; s/\u201c[^\u201d]*\u201d//g; s/`[^`]*`//g; s/^>.*$//')
+rat=$(printf '%s\n' "$unquoted" | grep -ioE "skip(ping)? (the )?tests? for now|pre-existing (bug|issue|failure)|should (work|be fine)|good enough for now|out of scope for this|will fix (that )?later|leaving that as is|assuming (this|that|it) works" | sort -u | head -3)
+excuse=""
 if [ -n "$rat" ] && ! printf '%s\n' "$msg" | grep -qE '^\s*(\$|>|`)?\s*(git|npm|node|python3|bash|jq|pytest|curl|ls|grep) '; then
-  jq -n --arg p "$(printf '%s' "$rat" | tr '\n' ';')" \
-    '{decision:"block", reason:("This reply excuses something without proving it: \"" + $p + "\". Either run the command that settles it and show the output, or say plainly that you did not check. Do not ship the excuse.")}'
-  exit 0
+  excuse="This reply excuses something without proving it: \"$(printf '%s' "$rat" | tr '\n' ';')\". Either run the command that settles it and show the output, or say plainly that you did not check. Do not ship the excuse."
 fi
+
+# Long sentences. The rule says under 20 words. A sentence is text ending in . ? or !
+# Table rows, list markers and headings are not sentences, so drop those lines first.
+long=$(printf '%s\n' "$prose" \
+  | grep -vE '^[[:space:]]*([|#*+-]|[0-9]+\.)' \
+  | tr '\n' ' ' | sed -E 's/([.?!])[[:space:]]+/\1\n/g' \
+  | awk '{n=NF} n>20 {c++} END{print c+0}')
 
 max_lines=${REPLY_MAX_LINES:-15}
 max_named=${REPLY_MAX_NAMED:-6}
@@ -47,7 +71,22 @@ if [ "$named" -gt "$max_named" ]; then
   [ -n "$reason" ] && reason="$reason and "
   reason="${reason}$named distinct named things (limit $max_named)"
 fi
-[ -z "$reason" ] && exit 0
+if [ "$long" -gt 0 ]; then
+  [ -n "$reason" ] && reason="$reason and "
+  reason="${reason}$long sentence(s) over 20 words"
+fi
+shape=""
+[ -n "$reason" ] && shape="Reply is $reason. Rewrite it: answer first, one table, cut the working. Put the extra named files in one place and name it once. Split any sentence over 20 words. Code blocks are free."
 
-jq -n --arg r "Reply is $reason. Rewrite it: answer first, one table, cut the working. Put the extra named files in one place and name it once. Code blocks are free." \
-  '{decision:"block", reason:$r}'
+# One message carrying whatever fired, so no check masks another.
+out=""
+for part in "$excuse" "$shape" "$finish"; do
+  [ -z "$part" ] && continue
+  [ -n "$out" ] && out="$out
+
+"
+  out="$out$part"
+done
+[ -z "$out" ] && exit 0
+
+jq -n --arg r "$out" '{decision:"block", reason:$r}'
