@@ -1,6 +1,6 @@
 # no-yolo
 
-A small Claude Code setup: four plugins other people maintain, five files you own.
+A small Claude Code setup: four plugins other people maintain, seven files you own.
 
 It fixes four things Claude does badly out of the box — it talks too much, it makes
 ugly websites, it forgets what you told it, and it marks its own homework. No one
@@ -44,9 +44,10 @@ survives. Run it twice and nothing duplicates. Restart Claude Code when it finis
 
 Needs `git`, `jq`, `node` 20+, `python3`.
 Second opinion: `npm install -g @openai/codex` then `codex login`.
-Videos: `brew install yt-dlp ffmpeg`, and set `OBSIDIAN_VAULT` to your vault path in
-your shell profile — `/claude-video` stops without it, and writes into `raw/videos/`
-and `wiki/sources/` there.
+Set `OBSIDIAN_VAULT` to your vault path in your shell profile. Both `/claude-video`
+and `/claude-doc` stop without it, and both write into `wiki/sources/` there.
+Videos also need `brew install yt-dlp ffmpeg`.
+Documents need markitdown: `python3 -m pip install --upgrade 'markitdown[all]'`.
 
 ## What you get
 
@@ -62,11 +63,15 @@ and `wiki/sources/` there.
 | File | Why |
 |---|---|
 | `CLAUDE.md` | Answer first, under 10 lines, say "I don't know" instead of guessing |
-| `hooks/reply-check.sh` | Blocks a reply that is too long, names too many files, **or** excuses something without proving it. A rule gets forgotten mid-session; a hook always runs |
+| `hooks/reply-check.sh` | Blocks a reply that is too long, names too many files, runs a sentence past 20 words, **or** excuses something without proving it. It says which sentence and where to cut it. A rule gets forgotten mid-session; a hook always runs |
 | `rules/web.md` | Design rules that load only when a web file is open |
 | `skills/build/` | `/build` — asks, mockups, waits for your yes, has Codex attack the plan, builds, tests |
 | `skills/ship/` | `/ship` — Codex reads your diff, docs update, then push |
 | `skills/claude-video/` | `/claude-video` — watch a video, file the notes in Obsidian |
+| `skills/claude-doc/` | `/claude-doc` — read a PDF or Word file, file the notes in Obsidian |
+
+`bash hooks/reply-check.test.sh` proves the hook. It stays in the repo, not in your
+setup.
 
 Small obvious changes skip the pipeline. It is for work where being wrong is expensive.
 
