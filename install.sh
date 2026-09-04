@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Copies the five files into ~/.claude and merges the settings snippet.
+# Copies the seven files into ~/.claude and merges the settings snippet.
 # Never overwrites anything you already have. Safe to run twice.
 set -euo pipefail
 
@@ -29,7 +29,8 @@ while IFS= read -r rel; do
     case "$rel" in *.sh|*.py) chmod +x "$dst" ;; esac
     say "installed:     $rel"; copied=$((copied+1))
   fi
-done < <(cd "$SRC" && find CLAUDE.md rules hooks skills -type f 2>/dev/null)
+# The hook's own test stays in the repo. It is not part of your setup.
+done < <(cd "$SRC" && find CLAUDE.md rules hooks skills -type f ! -name '*.test.sh' 2>/dev/null)
 
 echo "==> settings.json"
 SET="$DEST/settings.json"
