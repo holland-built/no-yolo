@@ -64,6 +64,33 @@ if [ -n "$jargon" ]; then
   jarg="These words need the reader to have read a file: $(printf '%s' "$jargon" | tr '\n' ' '). Say what the thing does instead. Use the real name only if he must type it, and say what it does in the same sentence."
 fi
 
+# Humanizer patterns, from the "Signs of AI writing" list. Only the ones a text
+# check can settle. Judgement calls (passive voice, forced triads) are left out:
+# a text search cannot make that call and the false alarms block good replies.
+# Quoted text and backticks are already stripped, so naming a word is still fine.
+ai_words=$(printf '%s\n' "$unquoted" | grep -ioE "\b(delve|crucial|pivotal|tapestry|testament|underscores?|showcas(e|es|ing)|intricate|intricacies|foster(s|ing)?|garner(s|ed)?|vibrant|enduring|interplay|seamless(ly)?|robust|leverag(e|es|ing)|realm|myriad)\b" | tr 'A-Z' 'a-z' | sort -u | head -4)
+chatbot=$(printf '%s\n' "$unquoted" | grep -ioE "(i hope this helps|of course!|certainly!|great question|you'?re absolutely right|would you like|want me to|should i continue|feel free to|let me know if)" | tr 'A-Z' 'a-z' | sort -u | head -3)
+filler=$(printf '%s\n' "$unquoted" | grep -ioE "(in order to|due to the fact that|at this point in time|in the event that|ha(s|ve) the ability to|it is important to note|it'?s worth noting|needless to say)" | tr 'A-Z' 'a-z' | sort -u | head -3)
+notxy=$(printf '%s\n' "$unquoted" | grep -ioE "(not (just|merely) [a-z ]{1,20},? (it'?s|it is|but)|not only [a-z ]{1,25} but|is not an? [a-z]+,? but an? [a-z]+)" | tr 'A-Z' 'a-z' | sort -u | head -2)
+
+human=""
+[ -n "$ai_words" ] && human="Stock AI words: $(printf '%s' "$ai_words" | tr '\n' ' '). Say the plain word instead."
+if [ -n "$chatbot" ]; then
+  [ -n "$human" ] && human="$human
+"
+  human="${human}Chatbot filler: $(printf '%s' "$chatbot" | tr '\n' ' '). He told you never to ask. State what you did, or do the thing."
+fi
+if [ -n "$filler" ]; then
+  [ -n "$human" ] && human="$human
+"
+  human="${human}Filler: $(printf '%s' "$filler" | tr '\n' ' '). Cut it. The sentence works without it."
+fi
+if [ -n "$notxy" ]; then
+  [ -n "$human" ] && human="$human
+"
+  human="${human}\"Not X but Y\" shape: $(printf '%s' "$notxy" | tr '\n' ' '). Say the claim once, straight."
+fi
+
 # Long sentences. The rule says under 20 words. A sentence is text ending in . ? or !
 # Table rows, list markers and headings are not sentences, so drop those lines first.
 sentences=$(printf '%s\n' "$prose" \
@@ -120,7 +147,7 @@ fi
 
 # One message carrying whatever fired, so no check masks another.
 out=""
-for part in "$excuse" "$jarg" "$shape" "$finish"; do
+for part in "$excuse" "$jarg" "$human" "$shape" "$finish"; do
   [ -z "$part" ] && continue
   [ -n "$out" ] && out="$out
 
