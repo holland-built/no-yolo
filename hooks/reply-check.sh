@@ -62,6 +62,8 @@ fi
 # | do not say | say this |. Rows are read from there, so he edits the list, not
 # this file. The built-in list below is only the fallback if that file is gone.
 CTX="$HOME/.claude/CONTEXT.md"
+# Installed as an add-on, the reader may have no list of their own. Fall back to ours.
+[ -f "$CTX" ] || CTX="${CLAUDE_PLUGIN_ROOT:-}/CONTEXT.md"
 if [ -f "$CTX" ]; then
   ban=$(awk -F'|' '/^\|/ && NF>2 {w=$2; gsub(/^[ \t]+|[ \t]+$/,"",w); if (w!="" && w!~/^-+$/ && tolower(w)!="do not say") print tolower(w)}' "$CTX" | grep -vE '^$' | paste -sd'|' -)
 fi

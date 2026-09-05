@@ -68,6 +68,21 @@ and `/claude-doc` stop without it, and both write into `wiki/sources/` there.
 Videos also need `brew install yt-dlp ffmpeg`.
 Documents need markitdown: `python3 -m pip install --upgrade 'markitdown[all]'`.
 
+## The short way: install just the talking part
+
+If all you want is plain replies, install this as an add-on. One command, three
+parts: the writing rules, the word list, and the check that enforces them.
+
+```bash
+claude plugin marketplace add holland-built/no-yolo
+claude plugin install plain-replies@holland-built
+```
+
+Your own word list wins. Put one at `~/.claude/CONTEXT.md` and it replaces mine.
+Without one, mine is used.
+
+Do not do both this and `install.sh`. The check would run twice on every reply.
+
 ## What you get
 
 | Plugin | By | Why |

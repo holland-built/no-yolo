@@ -1,0 +1,10 @@
+{
+  "name": "plain-replies",
+  "version": "1.0.0",
+  "description": "Makes Claude answer in plain English and blocks the reply if it does not. Short sentences, tables over paragraphs, no jargon, no filler, no chatbot offers.",
+  "author": { "name": "holland-built" },
+  "homepage": "https://github.com/holland-built/no-yolo",
+  "repository": "https://github.com/holland-built/no-yolo",
+  "license": "MIT",
+  "keywords": ["plain english", "output", "writing", "asd-ste100", "hooks"]
+}
