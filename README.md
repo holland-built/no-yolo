@@ -1,6 +1,6 @@
 # no-yolo
 
-A small Claude Code setup: four plugins other people maintain, nine files you own.
+A small Claude Code setup: seven plugins other people maintain, ten files you own.
 
 It fixes four things Claude does badly out of the box — it talks too much, it makes
 ugly websites, it forgets what you told it, and it marks its own homework. No one
@@ -17,6 +17,16 @@ claude plugin install codex@openai-codex
 claude plugin install mattpocock-skills
 claude plugin install frontend-design
 claude plugin install skill-creator
+```
+
+One more, and pick the row for the language you write. This is the only extension
+whose cost goes **down**: it answers "where is this defined" with one line instead of
+a whole file.
+
+```bash
+claude plugin install typescript-lsp   # or: pyright-lsp, gopls-lsp, rust-analyzer-lsp,
+                                       # php-lsp, kotlin-lsp, and seven more —
+                                       # type /plugin to see all thirteen
 ```
 
 Two more, from their authors' repos:
@@ -40,7 +50,18 @@ git clone https://github.com/holland-built/no-yolo.git "$(mktemp -d)/no-yolo" &&
 `install.sh` never overwrites anything you already have. A file of yours that differs
 is kept and mine lands beside it as `.theirs`. Your `settings.json` is backed up with a
 timestamp, then deep-merged so every existing hook event and every existing `Stop` hook
-survives. Run it twice and nothing duplicates. Restart Claude Code when it finishes.
+survives. The merge also compacts the conversation at 75% full instead of 95%, where
+answers are still good, and refuses to read your secrets or force-push. Your own value
+for any of these wins; only what is missing gets added. Run it twice and nothing duplicates. Restart Claude Code when it finishes.
+
+Then start it with a browser attached:
+
+```bash
+claude --chrome
+```
+
+That one flag fixes more of the design problem than any skill. The model can look at
+the page it just built. Without it, it is writing a website blind.
 
 Needs `git`, `jq`, `node` 20+, `python3`.
 Second opinion: `npm install -g @openai/codex` then `codex login`.
@@ -59,6 +80,7 @@ Documents need markitdown: `python3 -m pip install --upgrade 'markitdown[all]'`.
 | ui-ux-pro-max | nextlevelbuilder | Inventory: 79 styles, 192 palettes, 74 font pairings to pick from |
 | humanizer | blader | Strips the 35 patterns that make writing sound machine-made |
 | skill-creator | Anthropic | Builds skills and proves they work with before/after tests |
+| a language server | Anthropic | One per language. Symbol lookup instead of reading files. The only one that makes context cheaper |
 
 | File | Why |
 |---|---|
@@ -71,6 +93,7 @@ Documents need markitdown: `python3 -m pip install --upgrade 'markitdown[all]'`.
 | `skills/claude-video/` | `/claude-video` — watch a video, file the notes in Obsidian |
 | `skills/claude-doc/` | `/claude-doc` — read a PDF or Word file, file the notes in Obsidian |
 | `skills/last-30/` | `/last-30` — what moved in the last 30 days, filed in `research/` |
+| `skills/wait-what/` | `/wait-what` — type it the moment I lose you. Four lines, plain English, no names |
 
 `bash hooks/reply-check.test.sh` proves the hook. It stays in the repo, not in your
 setup.
