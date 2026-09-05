@@ -1,5 +1,17 @@
 {
   "autoMemoryDirectory": "~/.claude/memory",
+  "env": {
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "75"
+  },
+  "permissions": {
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./**/*.pem)",
+      "Bash(git push --force:*)",
+      "Bash(git push -f:*)"
+    ]
+  },
   "hooks": {
     "Stop": [
       {
