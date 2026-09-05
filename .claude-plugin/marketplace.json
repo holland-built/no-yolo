@@ -1,0 +1,7 @@
+{
+  "name": "holland-built",
+  "owner": { "name": "holland-built" },
+  "plugins": [
+    { "source": "./", "name": "plain-replies" }
+  ]
+}

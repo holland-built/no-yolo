@@ -29,8 +29,9 @@ while IFS= read -r rel; do
     case "$rel" in *.sh|*.py) chmod +x "$dst" ;; esac
     say "installed:     $rel"; copied=$((copied+1))
   fi
-# The hook's own test stays in the repo. It is not part of your setup.
-done < <(cd "$SRC" && find CLAUDE.md CONTEXT.md statusline.sh rules hooks skills output-styles -type f ! -name '*.test.sh' ! -name '.DS_Store' 2>/dev/null)
+# The check's own test stays in the project. It is not part of your setup.
+# hooks.json is only for people who install this as an add-on, so skip it here.
+done < <(cd "$SRC" && find CLAUDE.md CONTEXT.md statusline.sh rules hooks skills output-styles -type f ! -name '*.test.sh' ! -name '.DS_Store' ! -name 'hooks.json' 2>/dev/null)
 
 echo "==> settings.json"
 SET="$DEST/settings.json"

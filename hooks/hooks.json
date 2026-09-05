@@ -1,0 +1,11 @@
+{
+  "description": "Plain replies: the writing rules go in at session start, and the check runs before every reply.",
+  "hooks": {
+    "SessionStart": [
+      { "hooks": [ { "type": "command", "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks-handlers/session-start.sh\"" } ] }
+    ],
+    "Stop": [
+      { "hooks": [ { "type": "command", "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/reply-check.sh\"", "timeout": 5 } ] }
+    ]
+  }
+}
