@@ -1,6 +1,6 @@
 # no-yolo
 
-A small Claude Code setup: six plugins other people maintain, eleven files you own.
+A small Claude Code setup: six plugins other people maintain, twelve files you own.
 
 It fixes four things Claude does badly out of the box — it talks too much, it makes
 ugly websites, it forgets what you told it, and it marks its own homework. No one
@@ -111,6 +111,7 @@ every answer.
 | `skills/claude-video/` | `/claude-video` — watch a video, file the notes in Obsidian |
 | `skills/claude-doc/` | `/claude-doc` — read a PDF or Word file, file the notes in Obsidian |
 | `skills/last-30/` | `/last-30` — what moved in the last 30 days, filed in `research/` |
+| `skills/word-list/` | `/word-list` — reads your own sessions, finds the words you never use back, writes the list the check reads |
 
 `bash hooks/reply-check.test.sh` proves the hook. It stays in the repo, not in your
 setup.
