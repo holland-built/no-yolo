@@ -1,6 +1,6 @@
 # no-yolo
 
-A small Claude Code setup: seven plugins other people maintain, ten files you own.
+A small Claude Code setup: seven plugins other people maintain, nine files you own.
 
 It fixes four things Claude does badly out of the box — it talks too much, it makes
 ugly websites, it forgets what you told it, and it marks its own homework. No one
@@ -74,7 +74,7 @@ Documents need markitdown: `python3 -m pip install --upgrade 'markitdown[all]'`.
 
 | Plugin | By | Why |
 |---|---|---|
-| mattpocock-skills | Matt Pocock | The real work: interviews you, writes specs, TDD, code review |
+| mattpocock-skills | Matt Pocock | The real work: interviews you, writes specs, TDD, code review. Also `/wait-what`, for the moment a reply does not land |
 | codex | OpenAI | A second model that attacks your work instead of agreeing |
 | frontend-design | Anthropic | Taste: stops every page looking like the same AI template |
 | ui-ux-pro-max | nextlevelbuilder | Inventory: 79 styles, 192 palettes, 74 font pairings to pick from |
@@ -93,7 +93,6 @@ Documents need markitdown: `python3 -m pip install --upgrade 'markitdown[all]'`.
 | `skills/claude-video/` | `/claude-video` — watch a video, file the notes in Obsidian |
 | `skills/claude-doc/` | `/claude-doc` — read a PDF or Word file, file the notes in Obsidian |
 | `skills/last-30/` | `/last-30` — what moved in the last 30 days, filed in `research/` |
-| `skills/wait-what/` | `/wait-what` — type it the moment I lose you. Four lines, plain English, no names |
 
 `bash hooks/reply-check.test.sh` proves the hook. It stays in the repo, not in your
 setup.
