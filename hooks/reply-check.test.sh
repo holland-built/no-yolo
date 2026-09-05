@@ -61,6 +61,21 @@ check "jargon in backticks passes" pass "" \
 check "plain words pass" pass "" \
   "Done. The add-on is gone."
 
+check "stock AI word blocks" block "Stock AI words" \
+  "This is a crucial change and a testament to the work."
+
+check "chatbot offer blocks" block "Chatbot filler" \
+  "Done. Want me to fix the rest?"
+
+check "filler phrase blocks" block "Filler" \
+  "In order to fix it, I changed the file."
+
+check "not X but Y blocks" block "straight" \
+  "It is not just a check, it is a gate."
+
+check "plain negative passes" pass "" \
+  "That is not the file I changed. Only the check can stop me."
+
 FENCE='```'
 check "long code block passes" pass "" \
   "$(printf 'Here:\n\n%s\n%s\n%s\n' "$FENCE" "$(for i in $(seq 1 30); do echo "code line $i"; done)" "$FENCE")"
