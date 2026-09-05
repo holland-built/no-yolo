@@ -68,6 +68,16 @@ and `/claude-doc` stop without it, and both write into `wiki/sources/` there.
 Videos also need `brew install yt-dlp ffmpeg`.
 Documents need markitdown: `python3 -m pip install --upgrade 'markitdown[all]'`.
 
+`/last-30` is sharper with Firecrawl connected, because it can filter to the last
+month on the server. Without it, `/last-30` falls back to plain web search and
+still runs. Hosted keys come from firecrawl.dev; a self-hosted box works too:
+
+```bash
+claude mcp add firecrawl -s user \
+  -e FIRECRAWL_API_URL=http://<your-host>:3002 \
+  -e FIRECRAWL_API_KEY=self-hosted -- npx -y firecrawl-mcp
+```
+
 ## The short way: just the talking part
 
 Want plain answers and nothing else? Install it as an add-on.
@@ -110,7 +120,7 @@ every answer.
 | `skills/ship/` | `/ship` — Codex reads your diff, docs update, then push |
 | `skills/claude-video/` | `/claude-video` — watch a video, file the notes in Obsidian |
 | `skills/claude-doc/` | `/claude-doc` — read a PDF or Word file, file the notes in Obsidian |
-| `skills/last-30/` | `/last-30` — what moved in the last 30 days, filed in `research/` |
+| `skills/last-30/` | `/last-30` — what moved in the last 30 days, filed in `research/`. Better with Firecrawl connected, works without it |
 | `skills/word-list/` | `/word-list` — reads your own sessions, finds the words you never use back, writes the list the check reads |
 
 `bash hooks/reply-check.test.sh` proves the hook. It stays in the repo, not in your
