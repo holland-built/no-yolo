@@ -58,10 +58,28 @@ fi
 # Jargon check. He told me twice he cannot follow what I say. Short sentences were
 # never the problem; these words were. A word here only counts in plain prose:
 # backticks and quotes are already stripped above, so naming a command is fine.
-jargon=$(printf '%s\n' "$unquoted" | grep -ioE "\\b(marketplace|symlink|frontmatter|subagent|idempotent|deep-merge[ds]?|regex|stdout|stderr|monorepo|tokeni[sz]er|LSP|MCP)\\b" | tr 'A-Z' 'a-z' | sort -u | head -4)
+# The word list is his, not mine. It lives in ~/.claude/CONTEXT.md as a table:
+# | do not say | say this |. Rows are read from there, so he edits the list, not
+# this file. The built-in list below is only the fallback if that file is gone.
+CTX="$HOME/.claude/CONTEXT.md"
+if [ -f "$CTX" ]; then
+  ban=$(awk -F'|' '/^\|/ && NF>2 {w=$2; gsub(/^[ \t]+|[ \t]+$/,"",w); if (w!="" && w!~/^-+$/ && tolower(w)!="do not say") print tolower(w)}' "$CTX" | grep -vE '^$' | paste -sd'|' -)
+fi
+[ -z "${ban:-}" ] && ban="marketplace|symlink|frontmatter|subagent|idempotent|regex|stdout|stderr|monorepo"
+jargon=$(printf '%s\n' "$unquoted" | grep -ioE "\b($ban)\b" | tr 'A-Z' 'a-z' | sort -u | head -4)
 jarg=""
 if [ -n "$jargon" ]; then
-  jarg="These words need the reader to have read a file: $(printf '%s' "$jargon" | tr '\n' ' '). Say what the thing does instead. Use the real name only if he must type it, and say what it does in the same sentence."
+  # Give the replacement, not just the complaint. It is in the second column.
+  swaps=""
+  for w in $jargon; do
+    say=$(awk -F'|' -v w="$w" 'BEGIN{IGNORECASE=1} /^\|/ && NF>2 {k=$2; gsub(/^[ \t]+|[ \t]+$/,"",k); if (tolower(k)==w) {v=$3; gsub(/^[ \t]+|[ \t]+$/,"",v); print v; exit}}' "$CTX" 2>/dev/null)
+    [ -z "$say" ] && say="say what it does"
+    swaps="$swaps
+  - \"$w\" -> $say"
+  done
+  jarg="These words need the reader to have read a file. Use the words on the right:$swaps
+
+A word in backticks does not count, so you can still name a command he types."
 fi
 
 # Humanizer patterns, from the "Signs of AI writing" list. Only the ones a text
