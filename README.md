@@ -1,6 +1,6 @@
 # no-yolo
 
-A small Claude Code setup: six plugins other people maintain, ten files you own.
+A small Claude Code setup: six plugins other people maintain, eleven files you own.
 
 It fixes four things Claude does badly out of the box — it talks too much, it makes
 ugly websites, it forgets what you told it, and it marks its own homework. No one
@@ -82,6 +82,7 @@ Documents need markitdown: `python3 -m pip install --upgrade 'markitdown[all]'`.
 | File | Why |
 |---|---|
 | `CLAUDE.md` | Answer first, under 10 lines, say "I don't know" instead of guessing |
+| `CONTEXT.md` | Your words. The check reads it, so you edit the list, not the check |
 | `output-styles/plain.md` | Plain English on every reply. Say what a thing does, not what it is called |
 | `hooks/reply-check.sh` | Blocks a reply that is too long, names too many files, runs a sentence past 20 words, **or** excuses something without proving it. It says which sentence and where to cut it. A rule gets forgotten mid-session; a hook always runs |
 | `statusline.sh` | The row under the prompt: context used, five-hour budget used, time until it resets |

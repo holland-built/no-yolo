@@ -8,6 +8,17 @@ set -u
 HOOK="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/reply-check.sh"
 SANDBOX="$(mktemp -d)"
 mkdir -p "$SANDBOX/.claude"
+# The word list the check reads. Kept small on purpose: these tests prove the
+# check loads a list from a file, not that the real list has any given row.
+cat > "$SANDBOX/.claude/CONTEXT.md" <<'WORDS'
+| Do not say | Say this |
+|---|---|
+| hook | the check |
+| repo | your project |
+| commit | a saved version |
+| symlink | a shortcut |
+| marketplace | the list add-ons come from |
+WORDS
 trap 'rm -rf "$SANDBOX"' EXIT
 
 pass=0; fail=0
@@ -50,9 +61,9 @@ check "excuse with a command passes" pass "" \
   "$(printf 'Ran it:\n\ngit status --short\n\nIt is a pre-existing bug.')"
 
 check "quoted trigger phrase passes" pass "" \
-  'The hook blocks the phrase "pre-existing bug" on sight.'
+  'The check stops the phrase "pre-existing bug" on sight.'
 
-check "jargon in prose blocks" block "need the reader to have read" \
+check "jargon in prose blocks" block "Use the words on the right" \
   "I removed the symlink from the marketplace."
 
 check "jargon in backticks passes" pass "" \
@@ -75,6 +86,12 @@ check "not X but Y blocks" block "straight" \
 
 check "plain negative passes" pass "" \
   "That is not the file I changed. Only the check can stop me."
+
+check "word from his list blocks" block "Use the words on the right" \
+  "I changed the hook and pushed the commit."
+
+check "his word is offered back" block "the check" \
+  "I changed the hook so it runs first."
 
 FENCE='```'
 check "long code block passes" pass "" \
