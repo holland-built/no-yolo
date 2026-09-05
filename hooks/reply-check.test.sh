@@ -52,6 +52,15 @@ check "excuse with a command passes" pass "" \
 check "quoted trigger phrase passes" pass "" \
   'The hook blocks the phrase "pre-existing bug" on sight.'
 
+check "jargon in prose blocks" block "need the reader to have read" \
+  "I removed the symlink from the marketplace."
+
+check "jargon in backticks passes" pass "" \
+  'I removed the `symlink` and the `marketplace` entry.'
+
+check "plain words pass" pass "" \
+  "Done. The add-on is gone."
+
 FENCE='```'
 check "long code block passes" pass "" \
   "$(printf 'Here:\n\n%s\n%s\n%s\n' "$FENCE" "$(for i in $(seq 1 30); do echo "code line $i"; done)" "$FENCE")"

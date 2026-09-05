@@ -55,6 +55,15 @@ if [ -n "$rat" ] && ! printf '%s\n' "$msg" | grep -qE '^\s*(\$|>|`)?\s*(git|npm|
   excuse="This reply excuses something without proving it: \"$(printf '%s' "$rat" | tr '\n' ';')\". Either run the command that settles it and show the output, or say plainly that you did not check. Do not ship the excuse."
 fi
 
+# Jargon check. He told me twice he cannot follow what I say. Short sentences were
+# never the problem; these words were. A word here only counts in plain prose:
+# backticks and quotes are already stripped above, so naming a command is fine.
+jargon=$(printf '%s\n' "$unquoted" | grep -ioE "\\b(marketplace|symlink|frontmatter|subagent|idempotent|deep-merge[ds]?|regex|stdout|stderr|monorepo|tokeni[sz]er|LSP|MCP)\\b" | tr 'A-Z' 'a-z' | sort -u | head -4)
+jarg=""
+if [ -n "$jargon" ]; then
+  jarg="These words need the reader to have read a file: $(printf '%s' "$jargon" | tr '\n' ' '). Say what the thing does instead. Use the real name only if he must type it, and say what it does in the same sentence."
+fi
+
 # Long sentences. The rule says under 20 words. A sentence is text ending in . ? or !
 # Table rows, list markers and headings are not sentences, so drop those lines first.
 sentences=$(printf '%s\n' "$prose" \
@@ -111,7 +120,7 @@ fi
 
 # One message carrying whatever fired, so no check masks another.
 out=""
-for part in "$excuse" "$shape" "$finish"; do
+for part in "$excuse" "$jarg" "$shape" "$finish"; do
   [ -z "$part" ] && continue
   [ -n "$out" ] && out="$out
 
