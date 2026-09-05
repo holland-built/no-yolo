@@ -39,6 +39,7 @@ if [ ! -f "$SET" ]; then
 else
   cp "$SET" "$SET.bak.$STAMP"; say "backed up to settings.json.bak.$STAMP"
   # Deep merge: keep every existing hook event AND every existing Stop entry.
+  # Also adds env keys and deny rules you do not already have.
   # Appends our Stop hook only if an identical command is not already present.
   tmp="$(mktemp)"
   # Never edit an existing Stop entry: a sibling hook or matcher lives in there.
@@ -50,6 +51,13 @@ else
     $cur
     | .autoMemoryDirectory = ($cur.autoMemoryDirectory // $new.autoMemoryDirectory)
     | .statusLine = ($cur.statusLine // $new.statusLine)
+    # Your value for a key always wins. Only missing keys are added.
+    | .env = (($new.env // {}) * ($cur.env // {}))
+    # Deny rules add up. Yours stay, mine append, order kept, no duplicates.
+    | .permissions = (($cur.permissions // {}) | .deny = (
+        (((.deny // []) + ($new.permissions.deny // []))
+          | reduce .[] as $d ([]; if index($d) then . else . + [$d] end))
+      ))
     | .hooks = (($cur.hooks // {}) | .Stop = (
         if $present then (.Stop // []) else ((.Stop // []) + [$new.hooks.Stop[0]]) end
       ))
