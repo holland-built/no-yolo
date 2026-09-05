@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Copies the seven files into ~/.claude and merges the settings snippet.
+# Copies the nine files into ~/.claude and merges the settings snippet.
 # Never overwrites anything you already have. Safe to run twice.
 set -euo pipefail
 
@@ -30,7 +30,7 @@ while IFS= read -r rel; do
     say "installed:     $rel"; copied=$((copied+1))
   fi
 # The hook's own test stays in the repo. It is not part of your setup.
-done < <(cd "$SRC" && find CLAUDE.md rules hooks skills -type f ! -name '*.test.sh' 2>/dev/null)
+done < <(cd "$SRC" && find CLAUDE.md statusline.sh rules hooks skills -type f ! -name '*.test.sh' 2>/dev/null)
 
 echo "==> settings.json"
 SET="$DEST/settings.json"
@@ -49,6 +49,7 @@ else
     (($cur.hooks.Stop // []) | any(.hooks // [] | any(.command == $cmd))) as $present |
     $cur
     | .autoMemoryDirectory = ($cur.autoMemoryDirectory // $new.autoMemoryDirectory)
+    | .statusLine = ($cur.statusLine // $new.statusLine)
     | .hooks = (($cur.hooks // {}) | .Stop = (
         if $present then (.Stop // []) else ((.Stop // []) + [$new.hooks.Stop[0]]) end
       ))
