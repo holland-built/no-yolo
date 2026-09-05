@@ -43,3 +43,8 @@ these six rules, always, not only when I type `/wait-what`:
 ## This machine
 - Obsidian vault: `$OBSIDIAN_VAULT` (`~/AI/Knowledge Base`)
 - Second model available for review: `codex`
+
+## Short replies
+- The `plain` output style is on. It carries the rules above and shortens them.
+- Codex prompts stay in normal English. This is for what you say to me.
+- Where shortness and clarity disagree, clarity wins.
