@@ -1,6 +1,6 @@
 # no-yolo
 
-A small Claude Code setup: seven plugins other people maintain, nine files you own.
+A small Claude Code setup: six plugins other people maintain, ten files you own.
 
 It fixes four things Claude does badly out of the box — it talks too much, it makes
 ugly websites, it forgets what you told it, and it marks its own homework. No one
@@ -33,12 +33,10 @@ Two more, from their authors' repos:
 
 ```bash
 npx skills@latest add blader/humanizer --global
-npx skills@latest add nextlevelbuilder/ui-ux-pro-max-skill --global
 ```
 
-The second one brings five extra skills with it (banner, brand, design-system,
-slides, ui-styling). That is more than you asked for — drop the ones you do not want
-from `~/.claude/skills/`.
+One design plugin is enough. `frontend-design` above is Anthropic's, and one command
+updates it. Bundles that ship 80 styles also ship six skills you did not ask for.
 
 Then the files:
 
@@ -77,7 +75,6 @@ Documents need markitdown: `python3 -m pip install --upgrade 'markitdown[all]'`.
 | mattpocock-skills | Matt Pocock | The real work: interviews you, writes specs, TDD, code review. Also `/wait-what`, for the moment a reply does not land |
 | codex | OpenAI | A second model that attacks your work instead of agreeing |
 | frontend-design | Anthropic | Taste: stops every page looking like the same AI template |
-| ui-ux-pro-max | nextlevelbuilder | Inventory: 79 styles, 192 palettes, 74 font pairings to pick from |
 | humanizer | blader | Strips the 35 patterns that make writing sound machine-made |
 | skill-creator | Anthropic | Builds skills and proves they work with before/after tests |
 | a language server | Anthropic | One per language. Symbol lookup instead of reading files. The only one that makes context cheaper |
@@ -85,6 +82,7 @@ Documents need markitdown: `python3 -m pip install --upgrade 'markitdown[all]'`.
 | File | Why |
 |---|---|
 | `CLAUDE.md` | Answer first, under 10 lines, say "I don't know" instead of guessing |
+| `output-styles/plain.md` | Plain English on every reply. Say what a thing does, not what it is called |
 | `hooks/reply-check.sh` | Blocks a reply that is too long, names too many files, runs a sentence past 20 words, **or** excuses something without proving it. It says which sentence and where to cut it. A rule gets forgotten mid-session; a hook always runs |
 | `statusline.sh` | The row under the prompt: context used, five-hour budget used, time until it resets |
 | `rules/web.md` | Design rules that load only when a web file is open |
