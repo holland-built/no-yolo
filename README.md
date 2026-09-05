@@ -1,6 +1,6 @@
 # no-yolo
 
-A small Claude Code setup: four plugins other people maintain, seven files you own.
+A small Claude Code setup: four plugins other people maintain, nine files you own.
 
 It fixes four things Claude does badly out of the box — it talks too much, it makes
 ugly websites, it forgets what you told it, and it marks its own homework. No one
@@ -64,11 +64,13 @@ Documents need markitdown: `python3 -m pip install --upgrade 'markitdown[all]'`.
 |---|---|
 | `CLAUDE.md` | Answer first, under 10 lines, say "I don't know" instead of guessing |
 | `hooks/reply-check.sh` | Blocks a reply that is too long, names too many files, runs a sentence past 20 words, **or** excuses something without proving it. It says which sentence and where to cut it. A rule gets forgotten mid-session; a hook always runs |
+| `statusline.sh` | The row under the prompt: context used, five-hour budget used, time until it resets |
 | `rules/web.md` | Design rules that load only when a web file is open |
 | `skills/build/` | `/build` — asks, mockups, waits for your yes, has Codex attack the plan, builds, tests |
 | `skills/ship/` | `/ship` — Codex reads your diff, docs update, then push |
 | `skills/claude-video/` | `/claude-video` — watch a video, file the notes in Obsidian |
 | `skills/claude-doc/` | `/claude-doc` — read a PDF or Word file, file the notes in Obsidian |
+| `skills/last-30/` | `/last-30` — what moved in the last 30 days, filed in `research/` |
 
 `bash hooks/reply-check.test.sh` proves the hook. It stays in the repo, not in your
 setup.

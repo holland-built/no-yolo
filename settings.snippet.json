@@ -2,7 +2,20 @@
   "autoMemoryDirectory": "~/.claude/memory",
   "hooks": {
     "Stop": [
-      { "hooks": [ { "type": "command", "command": "bash \"$HOME/.claude/hooks/reply-check.sh\"", "timeout": 5 } ] }
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$HOME/.claude/hooks/reply-check.sh\"",
+            "timeout": 5
+          }
+        ]
+      }
     ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "~/.claude/statusline.sh",
+    "padding": 0
   }
 }
