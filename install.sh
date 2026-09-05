@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Copies the nine files into ~/.claude and merges the settings snippet.
+# Copies the ten files into ~/.claude and merges the settings snippet.
 # Never overwrites anything you already have. Safe to run twice.
 set -euo pipefail
 
@@ -30,7 +30,7 @@ while IFS= read -r rel; do
     say "installed:     $rel"; copied=$((copied+1))
   fi
 # The hook's own test stays in the repo. It is not part of your setup.
-done < <(cd "$SRC" && find CLAUDE.md statusline.sh rules hooks skills -type f ! -name '*.test.sh' 2>/dev/null)
+done < <(cd "$SRC" && find CLAUDE.md statusline.sh rules hooks skills output-styles -type f ! -name '*.test.sh' ! -name '.DS_Store' 2>/dev/null)
 
 echo "==> settings.json"
 SET="$DEST/settings.json"
@@ -51,6 +51,8 @@ else
     $cur
     | .autoMemoryDirectory = ($cur.autoMemoryDirectory // $new.autoMemoryDirectory)
     | .statusLine = ($cur.statusLine // $new.statusLine)
+    # Your writing style wins if you already set one.
+    | .outputStyle = ($cur.outputStyle // $new.outputStyle)
     # Your value for a key always wins. Only missing keys are added.
     | .env = (($new.env // {}) * ($cur.env // {}))
     # Deny rules add up. Yours stay, mine append, order kept, no duplicates.
