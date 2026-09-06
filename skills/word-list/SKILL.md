@@ -24,8 +24,13 @@ they wrote, and prints the words you lean on that they never use back.
 The first path is where `install.sh` puts it. The second is where it lands if
 they installed the add-on instead.
 
-Two knobs, both optional: `MIN_MINE` (how often you used it, default 4) and
-`MAX_YOURS` (how often they used it, default 0).
+It also reads their own notes. Every `.md` file under `$OBSIDIAN_VAULT` counts
+as their words. Their notes hold far more of their words than anything they
+typed at you, so this drops candidates they actually write themselves.
+
+Three knobs, all optional: `MIN_MINE` (how often you used it, default 4),
+`MAX_YOURS` (how often they used it, default 0), and `NOTES_DIR` (the notes
+folder, default `$OBSIDIAN_VAULT`; set it empty to read sessions only).
 
 If the script finds no sessions, say so and stop. Do not invent a list.
 

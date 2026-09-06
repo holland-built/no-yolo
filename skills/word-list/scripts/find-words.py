@@ -10,7 +10,10 @@ not the same as using a word.
 import json, re, sys, glob, os, collections
 
 HOME = os.path.expanduser("~")
-ROOT = os.path.join(HOME, ".claude", "projects")
+ROOT = os.environ.get("SESSIONS_DIR") or os.path.join(HOME, ".claude", "projects")
+# Your own writing counts as your words too. Your notes hold far more of them
+# than anything you typed at me. Unset or missing, and only sessions are read.
+NOTES = os.environ.get("NOTES_DIR") or os.environ.get("OBSIDIAN_VAULT", "")
 MIN_MINE = int(os.environ.get("MIN_MINE", "4"))     # I used it at least this often
 MAX_YOURS = int(os.environ.get("MAX_YOURS", "0"))   # you used it at most this often
 
@@ -60,7 +63,7 @@ def words_in(text):
 def main():
     files = glob.glob(os.path.join(ROOT, "**", "*.jsonl"), recursive=True)
     if not files:
-        print("No saved sessions found under ~/.claude/projects.", file=sys.stderr)
+        print(f"No saved sessions found under {ROOT}.", file=sys.stderr)
         return 1
     mine, yours = collections.Counter(), collections.Counter()
     for f in files:
@@ -69,11 +72,15 @@ def main():
         for t in texts(f, "user"):
             yours.update(words_in(t))
 
+    notes = sorted(glob.glob(os.path.join(NOTES, "**", "*.md"), recursive=True)) if NOTES else []
+    for n in notes:
+        yours.update(words_in(open(n, errors="ignore").read()))
+
     rows = [(w, c, yours.get(w, 0)) for w, c in mine.items()
             if c >= MIN_MINE and yours.get(w, 0) <= MAX_YOURS and w not in COMMON]
     rows.sort(key=lambda r: -r[1])
 
-    print(f"# sessions read: {len(files)}")
+    print(f"# sessions read: {len(files)}   notes read: {len(notes)}")
     print(f"# my distinct words: {len(mine)}   yours: {len(yours)}")
     print(f"# candidates: words I used {MIN_MINE}+ times that you used {MAX_YOURS} times or fewer")
     print()
