@@ -1,0 +1,31 @@
+{
+  "skillOverrides": {
+    "mattpocock-skills:git-guardrails-claude-code": "user-invocable-only",
+    "mattpocock-skills:setup-pre-commit": "user-invocable-only",
+    "git-guardrails-claude-code": "user-invocable-only",
+    "setup-pre-commit": "user-invocable-only"
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "/Users/sholland/.claude/statusline.sh",
+    "padding": 0
+  },
+  "enabledPlugins": {
+    "codex@openai-codex": true,
+    "mattpocock-skills@claude-plugins-official": true
+  },
+  "extraKnownMarketplaces": {
+    "openai-codex": {
+      "source": {
+        "source": "github",
+        "repo": "openai/codex-plugin-cc"
+      }
+    }
+  },
+  "tui": "fullscreen",
+  "theme": "dark",
+  "inputNeededNotifEnabled": false,
+  "agentPushNotifEnabled": true,
+  "skipDangerousModePermissionPrompt": true,
+  "outputStyle": "Plain"
+}
