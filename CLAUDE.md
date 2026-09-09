@@ -78,79 +78,46 @@ work if the answer came back different.
 
 ## 6. Confer With Codex
 
-**The model that wrote the code is a poor judge of it.** Get a second vendor's opinion at
-the two points where being wrong is expensive.
+**A model is a poor judge of its own work.** Get a second opinion where being wrong is
+expensive: before committing to a plan, and when stuck (`/codex:rescue`). Skip it for small,
+reversible edits - it costs a real round trip.
 
-| When | Run | Why |
-| --- | --- | --- |
-| Before committing to a plan or design | `codex exec` (below) | Catches unmeasured claims before they cost a build |
-| After a substantial build | The Stop gate does this automatically | Fresh eyes that did not write it |
-| Stuck, or a second attempt is needed | `/codex:rescue` | Delegated build work |
+The Stop gate reviews every session automatically. **Its silence is a pass** - it speaks only
+to block.
 
-Do not confer for small, reversible edits. It costs a real round trip.
-
-### Pick the model by size, not by subject
-
-**`medium` is the ceiling. Never go above it.** Effort costs time, not money - astra prices
-flat across every level - but higher is not automatically better, and the ceiling is a
-deliberate choice.
-
-| Input size | Model | Why |
-| --- | --- | --- |
-| Fits in 272k tokens | `gpt-5.6-sol` | Faster. Its own default is `low`, so set `medium` explicitly. |
-| Larger than 272k | `gpt-6-astra` | 1.05M context. The only one that fits a big diff. |
-
-Do not split on "documents versus code". That is a vibe. Size is a number.
+For everything else, call Codex directly:
 
 ```bash
 codex exec --skip-git-repo-check --sandbox read-only \
   -c model=gpt-5.6-sol -c model_reasoning_effort=medium "<the prompt>" < /dev/null
 ```
 
-`--skip-git-repo-check` is needed outside a git repo. `< /dev/null` is needed always, or it
-waits forever for input.
+`< /dev/null` is required, or it waits forever for input. Here, **empty output means it
+failed** - report that, not a pass.
 
-**Reach for a better prompt before more effort.** The plugin's own guidance: *"Do not raise
+### Model and effort
+
+**`medium` is the ceiling.** Size picks the model, not subject matter:
+
+| Input | Model |
+| --- | --- |
+| Under 272k tokens | `gpt-5.6-sol` - its own default is `low`, so set `medium` |
+| Over 272k | `gpt-6-astra` |
+
+Reach for a sharper prompt before more effort. The plugin's own guidance: *"Do not raise
 reasoning or complexity first. Tighten the prompt and verification rules before escalating."*
 
-### What does and does not carry effort
-
-Verified in the plugin source, because two of these fail silently:
-
-| Path | Model | Effort |
-| --- | --- | --- |
-| `codex exec -c ...` | yes | yes |
-| `/codex:rescue` | yes | yes |
-| The Stop gate | no - inherits `config.toml` | no - inherits `config.toml` |
-| `/codex:review` | yes | **never**; the transport has no effort field |
-
-`/codex:review --effort high` is silently ignored. Do not use it and assume it worked.
+`/codex:review` takes `--model` but silently discards `--effort` - its transport has no effort
+field, so it runs at whatever `config.toml` says. `codex exec` and `/codex:rescue` carry both.
+The Stop gate carries neither and inherits `config.toml`.
 
 ### Two rounds, then decide
 
-**Cap the argument at two rounds.** One critique, one revision, one re-check. That is it.
+One critique, one revision, one re-check. If Codex still disagrees, pick the better option
+yourself and say in one line what you overrode. Codex advises; you decide.
 
-If Codex still disagrees after two rounds, stop. Pick the better option yourself, do it, and
-say in one line what you chose and what you overrode. A third round is two models restating
-themselves.
-
-Never hand the decision to Codex. It advises. You decide.
-
-### Silence is not a pass
-
-**A review that returns nothing has not passed. It has not run.**
-
-The plugin records no outcome - its job files never store the model, the effort, or the
-result. So an absent answer looks exactly like a clean one. Never report a review as passed
-unless you read findings. If it timed out, ran out of tokens, or came back empty, say which.
-
-### When Codex hangs
-
-Codex gets stuck. Assume it will and do not let it block the work.
-
-- Check with `/codex:status`. Kill it with `/codex:cancel`. Then carry on without it.
-- Never wait on a Codex job. Do the rest of the task while it runs (rule 5).
-- Two hangs on one task means stop conferring for that task. Note it and move on.
+When it hangs: `/codex:status`, then `/codex:cancel`, then carry on. Two hangs on one task,
+stop conferring for that task.
 
 Two known causes of a hang, both avoidable:
 
