@@ -60,6 +60,20 @@ For multi-step tasks, state a brief plan:
 
 Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
 
+## 5. Never Idle
+
+**Blocked on one thing is not blocked on everything.**
+
+When something stops you - a question you need answered, a permission you don't have, a
+build that's running - do not stop and wait.
+
+- Do every part of the task that does not depend on the blocked thing. Then report.
+- Run independent work at the same time, not one after another.
+- Save the blocked question for the end, in one message, with everything else already done.
+
+Waiting is only correct when carrying on would be unsafe, or would waste real work if the
+answer came back different.
+
 ---
 
 **These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
