@@ -69,10 +69,12 @@ build that's running - do not stop and wait.
 
 - Do every part of the task that does not depend on the blocked thing. Then report.
 - Run independent work at the same time, not one after another.
-- Save the blocked question for the end, in one message, with everything else already done.
+- Ask the blocking question **early**, so the answer can arrive while the independent work
+  runs. Do not save it for the end.
 
-Waiting is only correct when carrying on would be unsafe, or would waste real work if the
-answer came back different.
+**Then stop.** Independent work is finite. When it runs out, wait - do not invent work to
+look busy. Waiting is also correct when carrying on would be unsafe, or would waste real
+work if the answer came back different.
 
 ## 6. Confer With Codex
 
@@ -85,9 +87,22 @@ the two points where being wrong is expensive.
 | After a substantial build | `/codex:review --effort high` | Fresh eyes that did not write it |
 | Stuck, or a second attempt is needed | `/codex:rescue` | Delegated build work; default effort is fine |
 
-**Always pass `--effort high` or `xhigh` for review.** Codex inherits
-`~/.codex/config.toml`, which sits at `medium`. A reviewer thinking less hard than the writer
-is not a review. Effort levels: `none`, `minimal`, `low`, `medium`, `high`, `xhigh`.
+**`/codex:review --effort high` does not work.** Verified in `codex-companion.mjs:712`: the
+review handler parses `base`, `scope`, `model`, `cwd` only. The effort flag is dropped, and
+the review silently runs at whatever `~/.codex/config.toml` says - currently `medium`. A
+reviewer thinking less hard than the writer is not a review.
+
+To actually get high effort, call Codex directly:
+
+```bash
+codex exec --skip-git-repo-check --sandbox read-only \
+  -c model_reasoning_effort=high "<the prompt>" < /dev/null
+```
+
+`--skip-git-repo-check` is needed outside a git repo. `< /dev/null` is needed always, or it
+waits forever for input. Effort levels: `none`, `minimal`, `low`, `medium`, `high`, `xhigh`.
+
+`/codex:rescue` **does** accept `--effort`, because it goes through the task handler.
 
 Do not confer for small, reversible edits. It costs a real round trip.
 
