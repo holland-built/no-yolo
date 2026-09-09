@@ -83,28 +83,48 @@ the two points where being wrong is expensive.
 
 | When | Run | Why |
 | --- | --- | --- |
-| Before committing to a plan or design | `/codex:adversarial-review --effort high` | Catches unmeasured claims and assumptions before they cost a build |
-| After a substantial build | `/codex:review --effort high` | Fresh eyes that did not write it |
-| Stuck, or a second attempt is needed | `/codex:rescue` | Delegated build work; default effort is fine |
+| Before committing to a plan or design | `codex exec` (below) | Catches unmeasured claims before they cost a build |
+| After a substantial build | The Stop gate does this automatically | Fresh eyes that did not write it |
+| Stuck, or a second attempt is needed | `/codex:rescue` | Delegated build work |
 
-**`/codex:review --effort high` does not work.** Verified in `codex-companion.mjs:712`: the
-review handler parses `base`, `scope`, `model`, `cwd` only. The effort flag is dropped, and
-the review silently runs at whatever `~/.codex/config.toml` says - currently `medium`. A
-reviewer thinking less hard than the writer is not a review.
+Do not confer for small, reversible edits. It costs a real round trip.
 
-To actually get high effort, call Codex directly:
+### Pick the model by size, not by subject
+
+**`medium` is the ceiling. Never go above it.** Effort costs time, not money - astra prices
+flat across every level - but higher is not automatically better, and the ceiling is a
+deliberate choice.
+
+| Input size | Model | Why |
+| --- | --- | --- |
+| Fits in 272k tokens | `gpt-5.6-sol` | Faster. Its own default is `low`, so set `medium` explicitly. |
+| Larger than 272k | `gpt-6-astra` | 1.05M context. The only one that fits a big diff. |
+
+Do not split on "documents versus code". That is a vibe. Size is a number.
 
 ```bash
 codex exec --skip-git-repo-check --sandbox read-only \
-  -c model_reasoning_effort=high "<the prompt>" < /dev/null
+  -c model=gpt-5.6-sol -c model_reasoning_effort=medium "<the prompt>" < /dev/null
 ```
 
 `--skip-git-repo-check` is needed outside a git repo. `< /dev/null` is needed always, or it
-waits forever for input. Effort levels: `none`, `minimal`, `low`, `medium`, `high`, `xhigh`.
+waits forever for input.
 
-`/codex:rescue` **does** accept `--effort`, because it goes through the task handler.
+**Reach for a better prompt before more effort.** The plugin's own guidance: *"Do not raise
+reasoning or complexity first. Tighten the prompt and verification rules before escalating."*
 
-Do not confer for small, reversible edits. It costs a real round trip.
+### What does and does not carry effort
+
+Verified in the plugin source, because two of these fail silently:
+
+| Path | Model | Effort |
+| --- | --- | --- |
+| `codex exec -c ...` | yes | yes |
+| `/codex:rescue` | yes | yes |
+| The Stop gate | no - inherits `config.toml` | no - inherits `config.toml` |
+| `/codex:review` | yes | **never**; the transport has no effort field |
+
+`/codex:review --effort high` is silently ignored. Do not use it and assume it worked.
 
 ### Two rounds, then decide
 
@@ -115,6 +135,14 @@ say in one line what you chose and what you overrode. A third round is two model
 themselves.
 
 Never hand the decision to Codex. It advises. You decide.
+
+### Silence is not a pass
+
+**A review that returns nothing has not passed. It has not run.**
+
+The plugin records no outcome - its job files never store the model, the effort, or the
+result. So an absent answer looks exactly like a clean one. Never report a review as passed
+unless you read findings. If it timed out, ran out of tokens, or came back empty, say which.
 
 ### When Codex hangs
 
