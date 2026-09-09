@@ -1,6 +1,6 @@
 ---
 name: claude-video
-description: Watch a YouTube video and ingest it into the Knowledge Base vault - pulls the transcript, writes an immutable raw transcript, a wiki source page, updates topic pages, index.md and log.md. Use when given a YouTube URL to watch, ingest, summarise, or add to the vault. Also handles "just watch" (summarise in chat, write nothing).
+description: Watch a YouTube video and ingest it into the Knowledge Base vault - pulls the transcript, writes an immutable raw transcript, a wiki source page, updates topic pages, index.md and log.md. Use when given a YouTube URL to watch, ingest, summarise, or add to the vault. Also handles "just watch" (summarise in chat and stop).
 ---
 
 # claude-video
@@ -10,23 +10,22 @@ Ingest a YouTube video into `~/AI/Knowledge Base`.
 ## Modes
 
 - **watch** (default) — full ingest: raw transcript + wiki source page + topic updates + index + log.
-- **just watch** — read the transcript, summarise in chat, write **nothing**. Use when the user says "just watch" or "don't save".
+- **just watch** — read the transcript and summarise in chat. The vault ends the run exactly
+  as it started. Use when the user says "just watch" or "don't save".
 
 Ask which only if genuinely unclear. A bare URL means full ingest.
 
-## Vault rules
-
-`~/AI/Knowledge Base/CLAUDE.md` is authoritative for schema, slug prefixes, and the ingest
-workflow. Read it before writing. Everything below is the video-specific part.
-
-Hard rules from that file, repeated because they are the easiest to break:
-- `raw/` is **immutable** — write once, never edit.
-- **Never `[[wikilink]]` a page that does not exist.** Name it as plain text instead.
-- Slugs are `kebab-case`, max 5 words, prefixed `vid-`.
-
 ## Steps
 
-### 1. Get metadata and transcript
+### 1. Read the vault rules
+
+`~/AI/Knowledge Base/CLAUDE.md` owns the page schemas, the topic prefixes, the slug format,
+and the ingest workflow. Read it before writing anything.
+
+Everything below is the video-specific part, including the one naming rule that file does
+not cover: video source pages are slugged `vid-<kebab-case>`, max 5 words.
+
+### 2. Get metadata and transcript
 
 Prefer real captions. Only fall back to Whisper if there are none — it is slow and the
 log records which was used.
@@ -47,7 +46,9 @@ whisper "<id>.mp3" --model small --output_format txt
 ```
 Then `transcript_source: whisper`.
 
-### 2. Write the raw transcript — `raw/videos/vid-<slug>.md`
+### 3. Write the raw transcript — `raw/videos/vid-<slug>.md`
+
+Write this file once. It is immutable.
 
 ```markdown
 ---
@@ -66,11 +67,12 @@ transcript_source: captions | whisper
 [00:05] ...
 ```
 
-### 3. Write the source page — `wiki/sources/vid-<slug>.md`
+### 4. Write the source page — `wiki/sources/vid-<slug>.md`
 
 Follow the source-summary format in the vault's `CLAUDE.md`: frontmatter with
 `type: source`, `raw_path`, `topics`, then `## Summary`, `## Key Claims`,
-`## Connections`, `## Quotes`.
+`## Connections`, `## Quotes`. Link only pages that exist; name everything else as plain
+text.
 
 Two additions that make these pages worth rereading:
 
@@ -83,14 +85,14 @@ Quality bar: be a critical reader, not a transcriber. Promotional sources get th
 checked. Note where a claim contradicts something already in the vault, and say which source
 you find more credible and why.
 
-### 4. Update topics
+### 5. Update topics
 
 Revise the relevant `wiki/topics/{ai,ha}/*.md` pages — overview, key ideas, and any new
 tension in **Debates / Open Questions**. Add the source to that page's `## Sources` list and
 bump `source_count` / `last_updated`. Create a topic page only if the subject genuinely
 recurs across sources.
 
-### 5. Update `index.md`, then append to `log.md`
+### 6. Update `index.md`, then append to `log.md`
 
 ```
 ## [YYYY-MM-DD] video | <Title>
@@ -98,10 +100,9 @@ recurs across sources.
 - <one line: the single most transferable idea, or why it was thin>
 ```
 
-### 6. Report
+### 7. Report
 
 Three lines in chat: what it was, the best idea in it, whether it changed a topic page.
-No wall of text.
 
 ## Cleanup
 
