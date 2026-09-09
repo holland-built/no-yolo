@@ -91,6 +91,33 @@ is not a review. Effort levels: `none`, `minimal`, `low`, `medium`, `high`, `xhi
 
 Do not confer for small, reversible edits. It costs a real round trip.
 
+### Two rounds, then decide
+
+**Cap the argument at two rounds.** One critique, one revision, one re-check. That is it.
+
+If Codex still disagrees after two rounds, stop. Pick the better option yourself, do it, and
+say in one line what you chose and what you overrode. A third round is two models restating
+themselves.
+
+Never hand the decision to Codex. It advises. You decide.
+
+### When Codex hangs
+
+Codex gets stuck. Assume it will and do not let it block the work.
+
+- Check with `/codex:status`. Kill it with `/codex:cancel`. Then carry on without it.
+- Never wait on a Codex job. Do the rest of the task while it runs (rule 5).
+- Two hangs on one task means stop conferring for that task. Note it and move on.
+
+Two known causes of a hang, both avoidable:
+
+```bash
+codex exec --skip-git-repo-check ... < /dev/null
+```
+
+`--skip-git-repo-check` is required outside a git repo. Closing stdin with `< /dev/null` is
+required always, or it sits waiting for input that never comes.
+
 ---
 
 **These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
