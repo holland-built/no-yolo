@@ -18,12 +18,22 @@ cd no-yolo
 **2. Copy the settings into your Claude folder.**
 
 ```bash
+mkdir -p ~/.claude
 cp CLAUDE.md settings.json statusline.sh ~/.claude/
 cp -R skills output-styles ~/.claude/
 chmod +x ~/.claude/statusline.sh
 ```
 
-**3. Install the plugins.**
+**3. Fix the status line path.** `settings.json` points at my home folder.
+Point it at yours:
+
+```bash
+sed -i '' "s|/Users/sholland/.claude|$HOME/.claude|" ~/.claude/settings.json
+```
+
+On Linux, drop the `''` after `-i`.
+
+**4. Install the plugins.**
 
 ```bash
 claude plugin install mattpocock-skills@claude-plugins-official
@@ -31,10 +41,19 @@ claude plugin marketplace add openai/codex-plugin-cc
 claude plugin install codex@openai-codex
 ```
 
-**4. Restart Claude Code.**
+**5. Restart Claude Code.**
 
 The status line should appear at the bottom. Type `/output-style` and pick
 **Plain** if it isn't already on.
+
+**Optional: the memory notes.** These are notes Claude saved about how *I* like
+to work, so they only make sense if you want my habits. They live in a folder
+named after the project path:
+
+```bash
+mkdir -p ~/.claude/projects/$(echo "$HOME/.claude" | sed 's|/|-|g')/memory
+cp memory/*.md ~/.claude/projects/$(echo "$HOME/.claude" | sed 's|/|-|g')/memory/
+```
 
 ## What's in here
 
