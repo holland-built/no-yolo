@@ -22,19 +22,22 @@ there (e.g. `orca-new-features-2026-09-05.md`).
   verify at the source.
 - **Verify numbers you repeat.** Star counts, benchmarks, pricing — check them, and say
   when you could not.
-- **Nothing shipped is a valid answer.** Say so in one line and stop. Do not pad.
+- **Nothing shipped is a valid answer.** Say so in one line and stop.
 
 ## Steps
 
 1. **Fix the window.** `date -v-30d +%Y-%m-%d` → cutoff. State it in the note.
 
-2. **Gather.** Use whatever is available and cheapest first:
-   - `WebSearch` / `WebFetch` for changelogs, releases, blog posts
-   - the firecrawl MCP for pages that need real scraping
-   - `gh api` for GitHub releases and commit ranges, e.g.
-     `gh api repos/<owner>/<repo>/releases --jq '.[] | select(.published_at > "<cutoff>") | "\(.published_at[:10])  \(.tag_name)  \(.name)"'`
+2. **Gather.** Reach for the cheapest source that fits the topic. Roughly in cost order:
    - the local CLI when the topic is a tool that is installed (`<tool> --help`, its
      changelog) — often more current than anything published
+   - `gh api` for GitHub releases and commit ranges, e.g.
+     `gh api repos/<owner>/<repo>/releases --jq '.[] | select(.published_at > "<cutoff>") | "\(.published_at[:10])  \(.tag_name)  \(.name)"'`
+   - `WebSearch` / `WebFetch` for changelogs, releases, blog posts
+   - the firecrawl MCP for pages that need real scraping
+
+   Done when every claim either carries a date or says plainly that it could not be dated.
+   Anything older than the window moves to the "older but I had missed it" section.
 
 3. **Check the vault first.** If `~/AI/Knowledge Base` already covers the topic, read that
    page and report the *delta* against it rather than restating what is already known.
