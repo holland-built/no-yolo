@@ -74,6 +74,23 @@ build that's running - do not stop and wait.
 Waiting is only correct when carrying on would be unsafe, or would waste real work if the
 answer came back different.
 
+## 6. Confer With Codex
+
+**The model that wrote the code is a poor judge of it.** Get a second vendor's opinion at
+the two points where being wrong is expensive.
+
+| When | Run | Why |
+| --- | --- | --- |
+| Before committing to a plan or design | `/codex:adversarial-review --effort high` | Catches unmeasured claims and assumptions before they cost a build |
+| After a substantial build | `/codex:review --effort high` | Fresh eyes that did not write it |
+| Stuck, or a second attempt is needed | `/codex:rescue` | Delegated build work; default effort is fine |
+
+**Always pass `--effort high` or `xhigh` for review.** Codex inherits
+`~/.codex/config.toml`, which sits at `medium`. A reviewer thinking less hard than the writer
+is not a review. Effort levels: `none`, `minimal`, `low`, `medium`, `high`, `xhigh`.
+
+Do not confer for small, reversible edits. It costs a real round trip.
+
 ---
 
 **These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
