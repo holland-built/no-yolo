@@ -15,7 +15,26 @@ behaves the same way it does here.
 | `skills/`         | My own skills                                           |
 | `settings.json`   | Which plugins are on, theme, status line                |
 | `statusline.sh`   | The bar at the bottom of the terminal                   |
-| `docs/agents/`    | Where issues live, and what the triage labels are       |
+| `docs/agents/`    | Settings for Matt Pocock's skills — see below           |
+
+## Matt Pocock's skills
+
+I use a set of skills from Matt Pocock. They are workflows Claude follows:
+write the test first, hunt a bug down, review a branch, research a question,
+grill a plan for holes.
+
+The skills themselves are not in this repo. They install themselves, because
+`settings.json` lists them.
+
+What is in this repo is the three settings files they read:
+
+| File                            | What it tells them                        |
+| ------------------------------- | ----------------------------------------- |
+| `docs/agents/issue-tracker.md`  | My issues live on GitHub                   |
+| `docs/agents/triage-labels.md`  | What my five sorting labels are called     |
+| `docs/agents/domain.md`         | Where my project notes and decisions go    |
+
+Without those three files the skills have to guess. With them they don't.
 
 ## What's deliberately missing
 
