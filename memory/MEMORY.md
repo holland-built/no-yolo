@@ -1,0 +1,3 @@
+- [Prefers short answers](prefers-short-answers.md) — lead with the answer; length must be earned
+- [Check setup before answering](checks-setup-before-answering.md) — read their config, never assume
+- [Act on recommendations](act-on-recommendations.md) — execute the recommendation, stop asking to confirm each step
