@@ -69,8 +69,18 @@ age_seconds() {
 # Exit 0 = found (prints the dir). 1 = readable registry, pid absent.
 # 2 = registry could not be read, so nothing can be concluded.
 state_dir_for_pid() {
-  local pid="$1" f rpid
+  local pid="$1" d f rpid
   [[ -d "$STATE_ROOT" && -r "$STATE_ROOT" && -x "$STATE_ROOT" ]] || return 2
+
+  # A workspace we cannot enter hides its own broker.json from the glob below,
+  # which would read as "this pid is registered nowhere". That is the fail-open
+  # this function must not have, so an unusable workspace makes the whole
+  # lookup unknown.
+  for d in "$STATE_ROOT"/*/; do
+    [[ -e "$d" ]] || continue
+    [[ -d "$d" && -r "$d" && -x "$d" ]] || return 2
+  done
+
   for f in "$STATE_ROOT"/*/broker.json; do
     [[ -e "$f" ]] || continue          # glob matched nothing: empty registry
     [[ -r "$f" ]] || return 2          # present but unreadable: unknown
@@ -89,6 +99,13 @@ state_dir_for_pid() {
 # look idle because a file would not open or parse.
 active_jobs() {
   local dir="$1" out rc
+  # The workspace dir must be readable and traversable first. Without that,
+  # "$dir/jobs does not exist" is indistinguishable from "cannot look", and
+  # believing the first is how a busy workspace reads as idle.
+  if [[ ! -d "$dir" || ! -r "$dir" || ! -x "$dir" ]]; then
+    echo "workspace directory unreadable"
+    return 1
+  fi
   [[ -e "$dir/jobs" ]] || return 0          # no jobs dir at all: nothing running
   if [[ ! -d "$dir/jobs" || ! -r "$dir/jobs" || ! -x "$dir/jobs" ]]; then
     echo "jobs directory unreadable"
@@ -143,9 +160,14 @@ PYJOBS
 # to leave it alone.
 any_workspace_busy() {
   local d
-  [[ -d "$STATE_ROOT" ]] || return 0        # cannot tell: assume busy
+  # Cannot read the root: cannot rule out work anywhere.
+  [[ -d "$STATE_ROOT" && -r "$STATE_ROOT" && -x "$STATE_ROOT" ]] || return 0
   for d in "$STATE_ROOT"/*/; do
-    [[ -d "$d" ]] || continue
+    [[ -e "$d" ]] || continue               # glob matched nothing: empty root
+    # An entry that exists but is not a usable directory is unknown, so busy.
+    if [[ ! -d "$d" || ! -r "$d" || ! -x "$d" ]]; then
+      return 0
+    fi
     active_jobs "$d" >/dev/null || return 0
   done
   return 1
