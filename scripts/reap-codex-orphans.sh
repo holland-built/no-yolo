@@ -223,6 +223,21 @@ while read -r pid sessiondir; do
 
   (( DRY_RUN )) && { STOPPED=$((STOPPED + 1)); continue; }
 
+  # Last look before acting. A job can start between the check above and the
+  # shutdown below; re-reading here narrows that window to the gap between
+  # these two lines. It cannot close it. Closing it needs a "shut down only if
+  # idle" operation inside the broker, which is the plugin's code, not ours.
+  if (( lookup == 0 )); then
+    busy=$(active_jobs "$dir"); idle=$?
+    if (( idle != 0 )); then
+      echo "skip  $pid  work started while we were deciding"
+      SKIPPED=$((SKIPPED + 1)); continue
+    fi
+  elif any_workspace_busy; then
+    echo "skip  $pid  work started while we were deciding"
+    SKIPPED=$((SKIPPED + 1)); continue
+  fi
+
   # Graceful: the same broker/shutdown the SessionEnd hook sends.
   node -e '
     const net = require("node:net");
