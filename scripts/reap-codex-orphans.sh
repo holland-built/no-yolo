@@ -40,7 +40,13 @@ while [[ $# -gt 0 ]]; do
 done
 
 PATTERN="app-server-broker|codex app-server|codex-code-mode-host"
-STATE_ROOT="$HOME/.claude/plugins/data/codex-openai-codex/state"
+STATE_ROOT="${CODEX_REAPER_STATE_ROOT:-$HOME/.claude/plugins/data/codex-openai-codex/state}"
+
+# Every check below reads plugin state. If any of it cannot be read, a broker
+# doing real work looks idle, so refuse to run rather than guess.
+refuse() { echo "refusing to act: $1" >&2; exit 1; }
+command -v python3 >/dev/null 2>&1 || refuse "python3 is needed to read job state"
+command -v node    >/dev/null 2>&1 || refuse "node is needed to send broker/shutdown"
 
 mb() { ps -eo rss,command | grep -E "$PATTERN" | grep -v grep \
         | awk '{s+=$1} END {printf "%.0f", (NR ? s/1024 : 0)}'; }
@@ -59,12 +65,16 @@ age_seconds() {
                       else if (NF==2) print $1*60+$2; else print 0 }'
 }
 
-# The state dir whose broker.json names this pid, if any.
+# The state dir whose broker.json names this pid.
+# Exit 0 = found (prints the dir). 1 = readable registry, pid absent.
+# 2 = registry could not be read, so nothing can be concluded.
 state_dir_for_pid() {
   local pid="$1" f rpid
+  [[ -d "$STATE_ROOT" && -r "$STATE_ROOT" && -x "$STATE_ROOT" ]] || return 2
   for f in "$STATE_ROOT"/*/broker.json; do
-    [[ -f "$f" ]] || continue
-    rpid=$(sed -n 's/.*"pid": *\([0-9]*\).*/\1/p' "$f" | head -1)
+    [[ -e "$f" ]] || continue          # glob matched nothing: empty registry
+    [[ -r "$f" ]] || return 2          # present but unreadable: unknown
+    rpid=$(sed -n 's/.*"pid": *\([0-9]*\).*/\1/p' "$f" | head -1) || return 2
     if [[ "$rpid" == "$pid" ]]; then
       dirname "$f"
       return 0
@@ -73,26 +83,72 @@ state_dir_for_pid() {
   return 1
 }
 
-# Names of queued or running jobs in a state dir.
+# Active (queued or running) jobs in a state dir, printed one per line.
+# Exit 0 = definitely nothing active. 1 = something active, OR state we could
+# not read. Every failure lands on 1, so a broker doing real work can never
+# look idle because a file would not open or parse.
 active_jobs() {
-  local dir="$1"
-  [[ -d "$dir/jobs" ]] || return 0
-  python3 - "$dir/jobs" <<'PY'
+  local dir="$1" out rc
+  [[ -e "$dir/jobs" ]] || return 0          # no jobs dir at all: nothing running
+  if [[ ! -d "$dir/jobs" || ! -r "$dir/jobs" || ! -x "$dir/jobs" ]]; then
+    echo "jobs directory unreadable"
+    return 1
+  fi
+  out=$(python3 - "$dir/jobs" <<'PYJOBS'
 import json, os, sys
+
 d = sys.argv[1]
-for name in sorted(os.listdir(d)):
+try:
+    names = sorted(os.listdir(d))
+except Exception as exc:
+    print(f"cannot list jobs: {exc}")
+    sys.exit(1)
+
+active = []
+for name in names:
     if not name.endswith(".json"):
         continue
     try:
-        job = json.load(open(os.path.join(d, name)))
+        with open(os.path.join(d, name)) as fh:
+            job = json.load(fh)
     except Exception:
-        # Unreadable job file: treat as active. Refusing to act is the safe
-        # direction when we cannot tell.
-        print(f"{name} (unreadable)")
+        active.append(f"{name} (unreadable)")
         continue
-    if job.get("status") in ("queued", "running"):
-        print(f"{job.get('title') or job.get('id') or name} [{job.get('status')}]")
-PY
+    if not isinstance(job, dict):
+        active.append(f"{name} (unexpected shape)")
+        continue
+    status = job.get("status")
+    if status is None:
+        active.append(f"{job.get('id') or name} (no status)")
+    elif status in ("queued", "running"):
+        active.append(f"{job.get('title') or job.get('id') or name} [{status}]")
+
+for line in active:
+    print(line)
+sys.exit(1 if active else 0)
+PYJOBS
+  )
+  rc=$?
+  [[ -n "$out" ]] && printf '%s\n' "$out"
+  # A python crash exits non-zero with no output. Still active, by policy.
+  if (( rc != 0 )) && [[ -z "$out" ]]; then
+    echo "job state could not be read"
+  fi
+  (( rc == 0 )) && return 0
+  return 1
+}
+
+# True when any workspace has active jobs. Used for a broker we cannot attribute
+# to a workspace: with nothing specific to check, work anywhere is reason enough
+# to leave it alone.
+any_workspace_busy() {
+  local d
+  [[ -d "$STATE_ROOT" ]] || return 0        # cannot tell: assume busy
+  for d in "$STATE_ROOT"/*/; do
+    [[ -d "$d" ]] || continue
+    active_jobs "$d" >/dev/null || return 0
+  done
+  return 1
 }
 
 # Every descendant of $1 that is itself a Codex process. The pattern filter is
@@ -121,16 +177,26 @@ while read -r pid sessiondir; do
     SKIPPED=$((SKIPPED + 1)); continue
   fi
 
-  if dir=$(state_dir_for_pid "$pid"); then
-    busy=$(active_jobs "$dir")
-    if [[ -n "$busy" ]]; then
+  dir=$(state_dir_for_pid "$pid"); lookup=$?
+  if (( lookup == 2 )); then
+    echo "skip  $pid  age $age  broker registry could not be read"
+    SKIPPED=$((SKIPPED + 1)); continue
+  fi
+
+  if (( lookup == 0 )); then
+    busy=$(active_jobs "$dir"); idle=$?
+    if (( idle != 0 )); then
       echo "skip  $pid  age $age  $(basename "$dir") has work in flight:"
-      while IFS= read -r line; do echo "        $line"; done <<< "$busy"
+      while IFS= read -r line; do [[ -n "$line" ]] && echo "        $line"; done <<< "$busy"
       SKIPPED=$((SKIPPED + 1)); continue
     fi
     echo "stop  $pid  age $age  $(basename "$dir"), no active jobs"
   else
-    echo "stop  $pid  age $age  registered to no workspace"
+    if any_workspace_busy; then
+      echo "skip  $pid  age $age  registered to no workspace, but Codex has work in flight elsewhere"
+      SKIPPED=$((SKIPPED + 1)); continue
+    fi
+    echo "stop  $pid  age $age  registered to no workspace, and nothing is running"
   fi
 
   (( DRY_RUN )) && { STOPPED=$((STOPPED + 1)); continue; }
