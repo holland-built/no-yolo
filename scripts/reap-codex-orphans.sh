@@ -16,14 +16,27 @@
 #     socket, with a 5 second timeout. There is no idle timeout, so a broker
 #     whose SessionEnd never ran survives forever at roughly 120 MB a group.
 #
-# A broker is left alone if its workspace has any queued or running job, or if
-# it is younger than the age floor (a broker spawned seconds ago may not have
-# written its first job file yet). Everything else is asked to shut down the way
-# the plugin asks: broker/shutdown over the socket. SIGKILL only if it refuses.
+# A broker is stopped only when all four of these hold. Anything unreadable or
+# unknown counts against stopping, never for it:
+#   - it is older than the age floor (a broker spawned seconds ago may not have
+#     written its first job file yet),
+#   - it is registered to a workspace we can name,
+#   - that workspace has no queued or running job,
+#   - and no live `claude` session is sitting in that workspace.
+# The last one is the point. An idle session is the normal resting state, and
+# this script runs from SessionStart, so without it, opening a session in one
+# workspace shuts down the broker of a live session in another.
+# Everything that survives all four is asked to shut down the way the plugin
+# asks: broker/shutdown over the socket. SIGKILL only if it refuses.
+#
+# The workspace path comes from jobs[].workspaceRoot in the state dir's
+# state.json; broker.json does not carry it. A broker that has never run a job
+# therefore has no recoverable workspace, and is left alone forever.
 #
 # broker.log is NOT a liveness signal. It is opened at spawn and never written,
 # so its mtime is just the spawn time. An earlier version of this script used
-# it and would have stopped brokers mid-review.
+# it and would have stopped brokers mid-review. State-dir mtime is no better:
+# an idle session writes nothing, which is the case this script must respect.
 #
 # Usage: reap-codex-orphans.sh [--dry-run] [--min-age-minutes N]   (default 2)
 
@@ -155,22 +168,72 @@ PYJOBS
   return 1
 }
 
-# True when any workspace has active jobs. Used for a broker we cannot attribute
-# to a workspace: with nothing specific to check, work anywhere is reason enough
-# to leave it alone.
-any_workspace_busy() {
-  local d
-  # Cannot read the root: cannot rule out work anywhere.
-  [[ -d "$STATE_ROOT" && -r "$STATE_ROOT" && -x "$STATE_ROOT" ]] || return 0
-  for d in "$STATE_ROOT"/*/; do
-    [[ -e "$d" ]] || continue               # glob matched nothing: empty root
-    # An entry that exists but is not a usable directory is unknown, so busy.
-    if [[ ! -d "$d" || ! -r "$d" || ! -x "$d" ]]; then
-      return 0
-    fi
-    active_jobs "$d" >/dev/null || return 0
+# The workspace root a state dir belongs to, read from its state.json jobs.
+# Exit 0 = found (prints the path). 2 = no job ever recorded one, or the file
+# could not be read. There is deliberately no "this dir has no workspace"
+# answer: a missing root is absence of evidence, not evidence of an orphan.
+workspace_root_for_dir() {
+  local dir="$1" out
+  [[ -r "$dir/state.json" ]] || return 2
+  out=$(python3 - "$dir/state.json" <<'PYROOT'
+import json, sys
+
+try:
+    with open(sys.argv[1]) as fh:
+        state = json.load(fh)
+except Exception:
+    sys.exit(2)
+if not isinstance(state, dict):
+    sys.exit(2)
+roots = [j.get("workspaceRoot") for j in state.get("jobs", [])
+         if isinstance(j, dict) and j.get("workspaceRoot")]
+if not roots:
+    sys.exit(2)
+print(roots[-1])
+PYROOT
+  ) || return 2
+  [[ -n "$out" ]] || return 2
+  printf '%s\n' "$out"
+}
+
+# Is a live Claude Code session sitting in $1?
+# Exit 0 = yes. 1 = definitely none. 2 = could not tell, which callers must
+# treat as yes. Directories are compared by device:inode, so /tmp and
+# /private/tmp are one directory here, not two.
+live_session_in() {
+  local root="$1" want pids pid cwd rc
+  want=$(stat -f '%d:%i' "$root" 2>/dev/null) || return 2
+  [[ -n "$want" ]] || return 2
+  command -v lsof >/dev/null 2>&1 || return 2
+
+  # pgrep matches comm exactly, so the desktop app's "Claude" processes are not
+  # in here; only `claude` CLI sessions are. Exit 1 is a real "none running".
+  pids=$(pgrep -x claude 2>/dev/null); rc=$?
+  (( rc > 1 )) && return 2
+  (( rc == 1 )) && return 1
+
+  for pid in $pids; do
+    cwd=$(lsof -a -p "$pid" -d cwd -Fn 2>/dev/null | sed -n 's/^n//p' | head -1)
+    [[ -n "$cwd" ]] || continue             # this one will not say; keep looking
+    [[ "$(stat -f '%d:%i' "$cwd" 2>/dev/null)" == "$want" ]] && return 0
   done
   return 1
+}
+
+# A broker whose workspace still has a live session is not an orphan, however
+# idle it looks: a session with no queued job is the normal resting state, and
+# this script runs from SessionStart in some other workspace.
+# Exit 0 = safe to stop. 1 = leave alone, and print why.
+owned_by_live_session() {
+  local dir="$1" root
+  root=$(workspace_root_for_dir "$dir") || {
+    echo "workspace unknown, so it cannot be shown to be an orphan"; return 1; }
+  live_session_in "$root"
+  case $? in
+    0) echo "a live Claude session is sitting in $root"; return 1 ;;
+    2) echo "could not tell whether a session is in $root"; return 1 ;;
+  esac
+  return 0
 }
 
 # Every descendant of $1 that is itself a Codex process. The pattern filter is
@@ -205,21 +268,24 @@ while read -r pid sessiondir; do
     SKIPPED=$((SKIPPED + 1)); continue
   fi
 
-  if (( lookup == 0 )); then
-    busy=$(active_jobs "$dir"); idle=$?
-    if (( idle != 0 )); then
-      echo "skip  $pid  age $age  $(basename "$dir") has work in flight:"
-      while IFS= read -r line; do [[ -n "$line" ]] && echo "        $line"; done <<< "$busy"
-      SKIPPED=$((SKIPPED + 1)); continue
-    fi
-    echo "stop  $pid  age $age  $(basename "$dir"), no active jobs"
-  else
-    if any_workspace_busy; then
-      echo "skip  $pid  age $age  registered to no workspace, but Codex has work in flight elsewhere"
-      SKIPPED=$((SKIPPED + 1)); continue
-    fi
-    echo "stop  $pid  age $age  registered to no workspace, and nothing is running"
+  if (( lookup != 0 )); then
+    echo "skip  $pid  age $age  registered to no workspace, so it cannot be shown to be an orphan"
+    SKIPPED=$((SKIPPED + 1)); continue
   fi
+
+  busy=$(active_jobs "$dir"); idle=$?
+  if (( idle != 0 )); then
+    echo "skip  $pid  age $age  $(basename "$dir") has work in flight:"
+    while IFS= read -r line; do [[ -n "$line" ]] && echo "        $line"; done <<< "$busy"
+    SKIPPED=$((SKIPPED + 1)); continue
+  fi
+
+  owner=$(owned_by_live_session "$dir") || {
+    echo "skip  $pid  age $age  $(basename "$dir"): $owner"
+    SKIPPED=$((SKIPPED + 1)); continue
+  }
+
+  echo "stop  $pid  age $age  $(basename "$dir"), no active jobs and no live session"
 
   (( DRY_RUN )) && { STOPPED=$((STOPPED + 1)); continue; }
 
@@ -227,16 +293,15 @@ while read -r pid sessiondir; do
   # shutdown below; re-reading here narrows that window to the gap between
   # these two lines. It cannot close it. Closing it needs a "shut down only if
   # idle" operation inside the broker, which is the plugin's code, not ours.
-  if (( lookup == 0 )); then
-    busy=$(active_jobs "$dir"); idle=$?
-    if (( idle != 0 )); then
-      echo "skip  $pid  work started while we were deciding"
-      SKIPPED=$((SKIPPED + 1)); continue
-    fi
-  elif any_workspace_busy; then
+  busy=$(active_jobs "$dir"); idle=$?
+  if (( idle != 0 )); then
     echo "skip  $pid  work started while we were deciding"
     SKIPPED=$((SKIPPED + 1)); continue
   fi
+  owner=$(owned_by_live_session "$dir") || {
+    echo "skip  $pid  a session appeared while we were deciding: $owner"
+    SKIPPED=$((SKIPPED + 1)); continue
+  }
 
   # Graceful: the same broker/shutdown the SessionEnd hook sends.
   node -e '
