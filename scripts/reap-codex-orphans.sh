@@ -201,7 +201,7 @@ PYROOT
 # treat as yes. Directories are compared by device:inode, so /tmp and
 # /private/tmp are one directory here, not two.
 live_session_in() {
-  local root="$1" want pids pid cwd rc
+  local root="$1" want pids pid cwd got rc unknown=0
   want=$(stat -f '%d:%i' "$root" 2>/dev/null) || return 2
   [[ -n "$want" ]] || return 2
   command -v lsof >/dev/null 2>&1 || return 2
@@ -212,11 +212,18 @@ live_session_in() {
   (( rc > 1 )) && return 2
   (( rc == 1 )) && return 1
 
+  # A session we cannot inspect is not a session we have ruled out. Keep looking
+  # for a definite match, but remember that the sweep was incomplete: ending on
+  # "no match" after failing to read one of them would be the fail-open that
+  # stops a live session's broker.
   for pid in $pids; do
     cwd=$(lsof -a -p "$pid" -d cwd -Fn 2>/dev/null | sed -n 's/^n//p' | head -1)
-    [[ -n "$cwd" ]] || continue             # this one will not say; keep looking
-    [[ "$(stat -f '%d:%i' "$cwd" 2>/dev/null)" == "$want" ]] && return 0
+    if [[ -z "$cwd" ]]; then unknown=1; continue; fi
+    got=$(stat -f '%d:%i' "$cwd" 2>/dev/null) || { unknown=1; continue; }
+    [[ -n "$got" ]] || { unknown=1; continue; }
+    [[ "$got" == "$want" ]] && return 0
   done
+  (( unknown )) && return 2
   return 1
 }
 
