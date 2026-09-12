@@ -75,23 +75,21 @@ Type the slash command. Or just say the word — both work.
 <table>
 <tr>
 <td width="50%" valign="top">
-<table>
-<tr><th>Command</th><th>Use it when</th></tr>
-<tr><td><code>/build</code></td><td>You want something new made</td></tr>
-<tr><td><code>/fix</code></td><td>Something is broken or slow</td></tr>
-<tr><td><code>/grill</code></td><td>You want your plan attacked</td></tr>
-<tr><td><code>/map</code></td><td>The job is too big to see</td></tr>
-<tr><td><code>/handoff</code></td><td>You're stopping halfway</td></tr>
-</table>
+<ul>
+<li><code>/build</code> — you want something new made</li>
+<li><code>/fix</code> — something is broken or slow</li>
+<li><code>/grill</code> — you want your plan attacked</li>
+<li><code>/map</code> — the job is too big to see</li>
+<li><code>/handoff</code> — you're stopping halfway</li>
+</ul>
 </td>
 <td width="50%" valign="top">
-<table>
-<tr><th>Command</th><th>Use it when</th></tr>
-<tr><td><code>/writing</code></td><td>You're writing rules for an AI</td></tr>
-<tr><td><code>/site-design</code></td><td>You need a page designed</td></tr>
-<tr><td><code>/last-30</code></td><td>You want to know what changed</td></tr>
-<tr><td><code>/claude-video</code></td><td>Summarise a YouTube video</td></tr>
-</table>
+<ul>
+<li><code>/writing</code> — you're writing rules for an AI</li>
+<li><code>/site-design</code> — you need a page designed</li>
+<li><code>/last-30</code> — what changed lately</li>
+<li><code>/claude-video</code> — summarise a YouTube video</li>
+</ul>
 </td>
 </tr>
 </table>
@@ -104,18 +102,18 @@ Type the slash command. Or just say the word — both work.
 
 <h3>Make a website</h3>
 
-<pre><code>/site-design a landing page for my bakery</code></pre>
+<p><code>/site-design a landing page for a bakery</code></p>
 
 <p>Claude builds three versions and shows them side by side. Pick one.</p>
 
-<pre><code>/build it, using version 2</code></pre>
+<p><code>/build it, using version 2</code></p>
 
 </td>
 <td width="50%" valign="top">
 
 <h3>Fix something broken</h3>
 
-<pre><code>/fix the login page throws a 500 on submit</code></pre>
+<p><code>/fix the login page throws a 500</code></p>
 
 <p>Claude reproduces the error first, shows you the cause, fixes it, then shows
 it working. No guessing.</p>
@@ -127,7 +125,7 @@ it working. No guessing.</p>
 
 <h3>Big scary job</h3>
 
-<pre><code>/map I want to rebuild this whole app</code></pre>
+<p><code>/map I want to rebuild this whole app</code></p>
 
 <p>Claude writes the decisions down one at a time instead of charging in. Then
 build them one by one.</p>
@@ -137,7 +135,7 @@ build them one by one.</p>
 
 <h3>Before something expensive</h3>
 
-<pre><code>/grill I'm rewriting the API in Go</code></pre>
+<p><code>/grill I'm rewriting the API in Go</code></p>
 
 <p>Claude argues with you on purpose. Better now than after three weeks.</p>
 
