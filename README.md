@@ -183,12 +183,57 @@ you don't re-explain anything.
 | `statusline.sh` | The bar at the bottom |
 | `scripts/` | Tidies up stray Codex processes at session start |
 
-**The rules, in one line each:** think before coding · write the least code that
-works · change only what was asked · decide up front how you'll know it worked ·
-don't sit idle when blocked · get a second opinion before anything expensive.
+## How it talks to you
 
-**The Plain style, in one line:** when I say "wait, what?", Claude's next answer
-is the right one.
+`output-styles/plain.md` caps every reply. Normal answer: six sentences. If you
+asked it to explain something: twelve. Bullets and table rows count as one each.
+Over the cap, it deletes sentences — it does not rewrite them shorter.
+
+It also drops the padding: no sentence telling you what it is about to do, no
+offer of what you might want next, no hedging about its own confidence.
+
+<table>
+<tr>
+<td width="50%" valign="top">
+<h4>Without this</h4>
+<p><em>"Great question! Let me take a look at your configuration files to
+understand the current setup. I'll start by examining the settings and then
+walk through the various options available to you. There are a few different
+approaches we could take here, each with their own tradeoffs…"</em></p>
+</td>
+<td width="50%" valign="top">
+<h4>With this</h4>
+<p><em>"Your status line file is not executable. That is why the bar is
+missing. One line fixes it:"</em></p>
+<p><code>chmod +x ~/.claude/statusline.sh</code></p>
+</td>
+</tr>
+</table>
+
+Four things it will never shorten: commands, file paths, error text, and any
+warning about deleting or overwriting your data.
+
+The rule underneath all of it: when you say <em>"wait, what?"</em>, the next
+answer is the right one — written first, without the version you would have to
+ask about.
+
+## The rules it follows
+
+`CLAUDE.md` is seven short sections. What each one actually stops:
+
+| Rule | What it stops |
+| --- | --- |
+| **Think before coding** | Guessing what you meant. If your request could mean two different things, it shows you both before building either. |
+| **Simplicity first** | Features you did not ask for, wrappers around one call, settings nobody requested, handling for cases that cannot happen. |
+| **Surgical changes** | Tidying code next to the thing you asked about. It matches the style already there, even style it would do differently. |
+| **Goal-driven execution** | "Make it work" as a finish line. It says up front what test or command will prove it, then runs that check. |
+| **Never idle** | Sitting waiting. Blocked on one thing, it finishes everything that does not depend on it, then reports. |
+| **Confer with Codex** | Trusting its own plan. Before anything expensive, a second AI attacks the plan first. |
+| **Read before describing** | Describing your setup from memory. It opens the file first. |
+
+Two rounds, then it decides: one critique from Codex, one revision, one
+re-check. If they still disagree it picks and tells you what it overrode in one
+line.
 
 <details>
 <summary><strong>For me: syncing my machine back to this repo</strong></summary>
