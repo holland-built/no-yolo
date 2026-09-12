@@ -5,7 +5,7 @@
 <p align="center">
 <a href="LICENSE"><img alt="MIT licence" src="https://img.shields.io/badge/licence-MIT-blue"></a>
 <img alt="macOS and Linux" src="https://img.shields.io/badge/macOS%20%7C%20Linux-supported-green">
-<img alt="nine skills" src="https://img.shields.io/badge/skills-9-8A2BE2">
+<img alt="ten skills" src="https://img.shields.io/badge/skills-10-8A2BE2">
 </p>
 
 Claude Code is an AI that writes code for you in your terminal. Out of the box
@@ -58,6 +58,20 @@ claude plugin install codex@openai-codex
 </details>
 
 <details>
+<summary><strong>Optional: add <code>/archify</code>, the diagram drawer</strong></summary>
+
+It is someone else's project and it updates itself, so it is not copied into this
+repo. Install it straight from the source:
+
+```bash
+git clone https://github.com/tt-a1i/archify.git ~/.claude/skills/archify
+```
+
+MIT, by tt-a1i.
+
+</details>
+
+<details>
 <summary><strong>Uninstall</strong></summary>
 
 ```bash
@@ -68,7 +82,7 @@ cp -R ~/.claude-backup/. ~/.claude/   # if you made a backup
 
 </details>
 
-## The nine commands
+## The ten commands
 
 Type the slash command. Or just say the word — both work.
 
@@ -89,6 +103,7 @@ Type the slash command. Or just say the word — both work.
 <li><code>/site-design</code> — you need a page designed</li>
 <li><code>/last-30</code> — what changed lately</li>
 <li><code>/claude-video</code> — summarise a YouTube video</li>
+<li><code>/archify</code> — draw a diagram of a system</li>
 </ul>
 </td>
 </tr>
@@ -151,7 +166,7 @@ you don't re-explain anything.
 | File | What it does |
 | --- | --- |
 | `CLAUDE.md` | Rules Claude follows on every task |
-| `skills/` | The nine commands above |
+| `skills/` | Nine of the ten commands above |
 | `output-styles/plain.md` | Makes answers short and plain |
 | `memory/` | Notes on how I like to work |
 | `settings.json` | Plugins, theme, status line |
