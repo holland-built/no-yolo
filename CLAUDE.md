@@ -4,27 +4,38 @@ Behavioral guidelines to reduce common LLM coding mistakes. Merge with project-s
 
 **Tradeoff:** These guidelines bias toward caution over speed. For trivial tasks, use judgment.
 
+## 0. This machine
+
+**Read the setup before describing it.** Before answering anything about Sholland's config,
+installed tools, or files, open them. Describing `~/.claude` from assumption has been wrong
+every time it was tried.
+
+**Act on your own recommendation.** Once you have stated a recommendation and the direction is
+clear, execute it. Do not stop to confirm each step. Reserve a blocking question for a choice
+that is irreversible, or where being wrong would waste real work.
+
 ## 1. Think Before Coding
 
-**Don't assume. Don't hide confusion. Surface tradeoffs.**
+Sholland is not a programmer, so a wrong assumption reaches him as a working thing that does
+the wrong job, and he finds out late. Say what you are assuming, in the reply, where he can
+correct it.
 
-Before implementing:
-- State your assumptions explicitly. If uncertain, ask.
-- If multiple interpretations exist, present them - don't pick silently.
-- If a simpler approach exists, say so. Push back when warranted.
-- If something is unclear, stop. Name what's confusing. Ask.
+When a request could mean several materially different things, present those interpretations
+before building any of them. Surface the tradeoffs you can see, and when a simpler approach
+exists, say so — including when it means less work than he asked for. Push back when
+warranted.
+
+Ask before building on a guess. Once he has answered and the direction is clear, §0 applies:
+carry on without checking back at each step.
 
 ## 2. Simplicity First
 
-**Minimum code that solves the problem. Nothing speculative.**
+Write the least code that does the job. Everything speculative — a feature he did not ask
+for, a wrapper around one call site, a setting nobody requested, handling for a case that
+cannot happen — is code he will maintain later without you there to explain it.
 
-- No features beyond what was asked.
-- No abstractions for single-use code.
-- No "flexibility" or "configurability" that wasn't requested.
-- No error handling for impossible scenarios.
-- If you write 200 lines and it could be 50, rewrite it.
-
-Ask yourself: "Would a senior engineer say this is overcomplicated?" If yes, simplify.
+Some jobs genuinely need a lot of code, so length is not the test. Before you show it to him,
+read it back: if it is longer or more complicated than the job requires, simplify it first.
 
 ## 3. Surgical Changes
 
@@ -51,14 +62,16 @@ Transform tasks into verifiable goals:
 - "Fix the bug" -> "Write a test that reproduces it, then make it pass"
 - "Refactor X" -> "Ensure tests pass before and after"
 
-For multi-step tasks, state a brief plan:
-```
-1. [Step] -> verify: [check]
-2. [Step] -> verify: [check]
-3. [Step] -> verify: [check]
-```
+Say how you will both know the work is finished, before starting, in terms that can be
+checked: a test that fails now and passes after, a command whose output changes, the thing
+running. "Make it work" is not one of those.
 
-Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
+For multi-step work, say the steps and how each one gets checked, then run the check after
+each rather than only at the end. When a check fails, fix it and run it again — that loop is
+the job, not an extra.
+
+The definition of done is also the scope limit: finish it, and stop there. Cleaning up what
+your own change left unused is part of finishing, not scope creep — that is §3.
 
 ## 5. Never Idle
 
@@ -69,6 +82,11 @@ build that's running - do not stop and wait.
 
 - Do every part of the task that does not depend on the blocked thing. Then report.
 - Run independent work at the same time, not one after another.
+- When the independent parts do not need each other's results, send them to subagents in
+  one message so they run together. Reading, searching and checking are the good cases.
+- **A subagent reads and reports. It does not install, write, or commit.** Subagents here
+  have twice installed things nobody approved. Bring their findings back and make the
+  change yourself, so one thread owns every edit.
 - Ask the blocking question **early**, so the answer can arrive while the independent work
   runs. Do not save it for the end.
 
@@ -97,12 +115,34 @@ failed** - report that, not a pass.
 
 ### Model and effort
 
-**`medium` is the ceiling.** Size picks the model, not subject matter:
+**`medium` is the ceiling.** Role picks the model, not input size:
 
-| Input | Model |
-| --- | --- |
-| Under 272k tokens | `gpt-5.6-sol` - its own default is `low`, so set `medium` |
-| Over 272k | `gpt-6-astra` |
+`gpt-5.6-sol` for routine second opinions and the automatic review. Escalate explicitly for
+consequential architecture, ambiguous debugging, or escalated review.
+
+### Which model for which job
+
+Treat models as colleagues and match them to roles. This is not a ranking, and a task is not
+a leaderboard. Source: `vid-fable-vs-astra-app-build` in the vault, one practitioner's
+current practice, n=1.
+
+| Job | Reach for | Second choice |
+|---|---|---|
+| Thinking a problem through, design | Fable 5.1 | `gpt-6-astra` for structure |
+| Structure, speed, computer use, spreadsheets | `gpt-6-astra` | Fable for the design half |
+| Cheap bulk work under supervision | Haiku 4.5 in a subagent | Always inspected by a stronger model |
+| Second opinion on a plan or a diff | `gpt-5.6-sol` at medium | Astra only when undoing it means rewriting |
+
+Haiku 4.5 is `claude-haiku-4-5-20251001`. Use it through the Agent tool's `model` override
+for read-and-report work — searching, checking, listing — never for work that writes.
+
+When the shape of a thing is undecided, run the same brief past two models. The divergence is
+the deliverable: it shows you what you had not decided.
+
+Most models default to a 272k window (`max_context_window` 872k, raisable), so input size
+rarely separates them; `gpt-5.3-codex-spark` is the exception at 128k. Check `codex debug
+models` for what is actually available - **not** `~/.codex/models_cache.json`, which is
+written per-client-version and has already been wrong once.
 
 Reach for a sharper prompt before more effort. The plugin's own guidance: *"Do not raise
 reasoning or complexity first. Tighten the prompt and verification rules before escalating."*
@@ -131,19 +171,3 @@ required always, or it sits waiting for input that never comes.
 ---
 
 **These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
-
----
-
-## Agent skills
-
-### Issue tracker
-
-Issues live as GitHub issues in this repo, driven by the `gh` CLI. See `docs/agents/issue-tracker.md`.
-
-### Triage labels
-
-The five canonical labels, each named after its role. See `docs/agents/triage-labels.md`.
-
-### Domain docs
-
-Single-context: one `CONTEXT.md` and `docs/adr/` at the repo root. See `docs/agents/domain.md`.

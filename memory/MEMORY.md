@@ -1,3 +1,3 @@
 - [Prefers short answers](prefers-short-answers.md) — lead with the answer; length must be earned
-- [Check setup before answering](checks-setup-before-answering.md) — read their config, never assume
-- [Act on recommendations](act-on-recommendations.md) — execute the recommendation, stop asking to confirm each step
+- [Fix it, do not report it](fix-it-dont-report-it.md) — never hand over a status line saying something is stale; fix it first
+- [Offer a handoff at 40% context](offer-handoff-at-40-percent.md) — also on topic changes; offer in one line, do not wait
