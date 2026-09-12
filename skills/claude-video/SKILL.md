@@ -1,6 +1,6 @@
 ---
 name: claude-video
-description: Watch a YouTube video and ingest it into the Knowledge Base vault - pulls the transcript, writes an immutable raw transcript, a wiki source page, updates topic pages, index.md and log.md. Use when given a YouTube URL to watch, ingest, summarise, or add to the vault. Also handles "just watch" (summarise in chat and stop).
+description: Watch a YouTube video and ingest it into the Knowledge Base vault - pulls the transcript, writes an immutable raw transcript, a wiki source page, updates topic pages and log.md. Use when given a YouTube URL to watch, ingest, summarise, or add to the vault. Also handles "just watch" (summarise in chat and stop).
 ---
 
 # claude-video
@@ -92,7 +92,10 @@ tension in **Debates / Open Questions**. Add the source to that page's `## Sourc
 bump `source_count` / `last_updated`. Create a topic page only if the subject genuinely
 recurs across sources.
 
-### 6. Update `index.md`, then append to `log.md`
+### 6. Append to `log.md`
+
+`index.md` needs no edit — its Sources and Topics tables are Dataview queries that pick the
+page up from its frontmatter.
 
 ```
 ## [YYYY-MM-DD] video | <Title>
