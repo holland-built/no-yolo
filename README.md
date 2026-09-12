@@ -9,15 +9,14 @@
 </p>
 
 Claude Code is an AI that writes code for you in your terminal. Out of the box
-it guesses, writes too much, and buries the answer in waffle.
-
-These files fix that. Install takes two minutes.
+it guesses, writes too much, and buries the answer in waffle. These files fix that, and
+installing them takes two minutes.
 
 ## Install
 
 Needs [Claude Code](https://claude.com/claude-code), Git and Node.js. macOS or Linux.
 
-**Back up anything you already have** — this overwrites `~/.claude` files:
+**Back up anything you already have.** This overwrites files in `~/.claude`:
 
 ```bash
 cp -R ~/.claude ~/.claude-backup 2>/dev/null
@@ -68,7 +67,7 @@ claude mcp add firecrawl -s user -e FIRECRAWL_API_KEY=your-key -- npx -y firecra
 
 Windows is not supported.
 
-Restart Claude Code. **You should now see** a status bar along the bottom. Try:
+Restart Claude Code. You should see a status bar along the bottom. Try:
 
 ```
 /fix
@@ -100,27 +99,27 @@ cp -R ~/.claude-backup/. ~/.claude/
 
 ## The eleven commands
 
-Type the slash command. Or just say the word — both work.
+Type the slash command, or just say the word. Both work.
 
 <table>
 <tr>
 <td width="50%" valign="top">
 <ul>
-<li><code>/build</code> — you want something new made</li>
-<li><code>/fix</code> — something is broken or slow</li>
-<li><code>/grill</code> — you want your plan attacked</li>
-<li><code>/map</code> — the job is too big to see</li>
-<li><code>/handoff</code> — you're stopping halfway</li>
+<li><code>/build</code>: you want something new made</li>
+<li><code>/fix</code>: something is broken or slow</li>
+<li><code>/grill</code>: you want your plan attacked</li>
+<li><code>/map</code>: the job is too big to see</li>
+<li><code>/handoff</code>: you're stopping halfway</li>
 </ul>
 </td>
 <td width="50%" valign="top">
 <ul>
-<li><code>/writing</code> — you're writing rules for an AI</li>
-<li><code>/humanizer</code> — your writing sounds like an AI wrote it</li>
-<li><code>/site-design</code> — you need a page designed</li>
-<li><code>/last-30</code> — what changed lately</li>
-<li><code>/claude-video</code> — summarise a YouTube video</li>
-<li><code>/archify</code> — draw a diagram of a system</li>
+<li><code>/writing</code>: you're writing rules for an AI</li>
+<li><code>/humanizer</code>: your writing sounds like an AI wrote it</li>
+<li><code>/site-design</code>: you need a page designed</li>
+<li><code>/last-30</code>: what changed lately</li>
+<li><code>/claude-video</code>: summarise a YouTube video</li>
+<li><code>/archify</code>: draw a diagram of a system</li>
 </ul>
 </td>
 </tr>
@@ -148,7 +147,7 @@ Type the slash command. Or just say the word — both work.
 <p><code>/fix the login page throws a 500</code></p>
 
 <p>Claude reproduces the error first, shows you the cause, fixes it, then shows
-it working. No guessing.</p>
+it working.</p>
 
 </td>
 </tr>
@@ -169,7 +168,7 @@ build them one by one.</p>
 
 <p><code>/grill I'm rewriting the API in Go</code></p>
 
-<p>Claude argues with you on purpose. Better now than after three weeks.</p>
+<p>Claude argues with you on purpose, so the holes turn up now instead of three weeks in.</p>
 
 </td>
 </tr>
@@ -185,7 +184,7 @@ you don't re-explain anything.
 | `CLAUDE.md` | Rules Claude follows on every task |
 | `skills/` | Nine of the eleven commands above. `/humanizer` and `/archify` install from their own repos |
 | `output-styles/plain.md` | Makes answers short and plain |
-| `memory/` | Notes Claude keeps on how I like to work |
+| `memory/` | Notes Claude keeps on how you like to work |
 | `settings.json` | Plugins, theme, status line |
 | `statusline.sh` | The bar at the bottom |
 | `scripts/` | Tidies up stray Codex processes at session start |
@@ -197,8 +196,8 @@ asked it to explain something: twelve. Bullets and table rows count as one each.
 Over the cap, it cuts what you don't need first. It would rather run long than
 leave out a step you need. Steps you have to follow in order don't count.
 
-It also drops the padding: no sentence telling you what it is about to do, no
-general offer of what you might want next, no reflex hedging. A real doubt stays.
+It also skips announcing what it's about to do and offering things you didn't ask for. It
+drops reflex hedging but still tells you when it has a real doubt.
 
 <table>
 <tr>
@@ -221,9 +220,8 @@ missing. One line fixes it:"</em></p>
 Four things it will never shorten: commands, file paths, error text, and any
 warning about deleting or overwriting your data.
 
-The rule underneath all of it: when you say <em>"wait, what?"</em>, the next
-answer is the right one — written first, without the version you would have to
-ask about.
+The rule underneath all of it: when you say <em>"wait, what?"</em>, it writes
+the answer you would have needed anyway, first time.
 
 ## The rules it follows
 
@@ -249,7 +247,7 @@ line.
 ```bash
 cp ~/.claude/CLAUDE.md ~/.claude/statusline.sh .
 cp -R ~/.claude/output-styles/. output-styles/
-cp -R ~/.claude/skills/. skills/
+rsync -a --exclude humanizer --exclude archify ~/.claude/skills/ skills/
 git add -A && git commit -m "Sync" && git push
 ```
 
