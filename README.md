@@ -1,161 +1,127 @@
 # no-yolo
 
-A setup for **Claude Code** that stops the AI from guessing.
+Makes Claude stop guessing.
 
-"Vibe coding" is letting an AI write whatever it wants and hoping it works. The
-name of this repo is the opposite of that. With these files installed, Claude
-says what it is assuming before it writes anything, keeps its changes small, and
-shows you the thing working instead of telling you it works.
+Claude Code is an AI that writes code for you in your terminal. Out of the box it
+guesses, writes too much, and buries the answer in waffle. These files fix that.
 
-Copy it onto a new machine in about two minutes.
-
-## New to all this? Read this bit first
-
-**Claude Code** is a program you run in your terminal. You type what you want in
-plain English, and it reads and writes files on your computer for you.
-
-It looks in a folder called `~/.claude` for instructions on how to behave. The
-`~` means your home folder, so on a Mac that is `/Users/yourname/.claude`.
-
-This repo is just a copy of that folder. Installing it means copying these
-files into `~/.claude`.
-
-Three words that show up below:
-
-| Word | What it means |
-| --- | --- |
-| **Skill** | A saved recipe. You type `/build` and Claude follows the steps in `skills/build/SKILL.md`. |
-| **Output style** | How Claude talks to you — long and chatty, or short and plain. |
-| **Memory** | Short notes Claude keeps about how you like to work, so you don't repeat yourself. |
-
-You need Claude Code installed first: https://claude.com/claude-code
+Install takes two minutes.
 
 ## Install
 
-**1. Clone this repo.**
+Need Claude Code first: https://claude.com/claude-code
 
 ```bash
 git clone https://github.com/holland-built/no-yolo.git
 cd no-yolo
-```
-
-**2. Copy the files into your Claude folder.**
-
-```bash
 mkdir -p ~/.claude
 cp CLAUDE.md settings.json statusline.sh ~/.claude/
 cp -R skills output-styles ~/.claude/
 chmod +x ~/.claude/statusline.sh
-```
-
-**3. Point the status line at your own home folder.**
-
-`settings.json` still has my path in it. This swaps in yours:
-
-```bash
 sed -i '' "s|/Users/sholland/.claude|$HOME/.claude|" ~/.claude/settings.json
 ```
 
-On Linux, drop the `''` straight after `-i`.
+Linux: drop the `''` after `-i`.
 
-**4. Install the Codex plugin.**
+Restart Claude Code. Done.
 
-Codex is a second AI (OpenAI's) that reviews Claude's plans and catches its
-mistakes. Several of the skills here ask it for a second opinion.
+Optional — a second AI (OpenAI's Codex) that checks Claude's work:
 
 ```bash
 claude plugin marketplace add openai/codex-plugin-cc
 claude plugin install codex@openai-codex
 ```
 
-You can skip this. The skills still work; they just stop double-checking.
+## The nine commands
 
-**5. Restart Claude Code.**
+Type the slash command. Or just say the word — both work.
 
-A status bar appears at the bottom. If replies are still long and chatty, type
-`/output-style` and pick **Plain**.
+| Command | Use it when |
+| --- | --- |
+| `/build` | You want something new made |
+| `/fix` | Something is broken or slow |
+| `/grill` | You want your plan attacked |
+| `/map` | The job is too big to see |
+| `/handoff` | You're stopping halfway |
+| `/writing` | You're writing rules for an AI |
+| `/site-design` | You need a page designed |
+| `/last-30` | You want to know what changed lately |
+| `/claude-video` | You want a YouTube video summarised |
 
-**Optional — the memory notes.** These are notes about how *I* like to work, so
-only copy them if you want my habits too:
+## Workflows
 
-```bash
-mkdir -p ~/.claude/projects/$(echo "$HOME/.claude" | sed 's|/|-|g')/memory
-cp memory/*.md ~/.claude/projects/$(echo "$HOME/.claude" | sed 's|/|-|g')/memory/
+**Make a website**
+
+```
+/site-design a landing page for my bakery
+```
+Claude builds three versions and shows them side by side. Pick one.
+```
+/build it, using version 2
 ```
 
-## The nine skills
+**Fix something broken**
 
-Type the slash command, or just say the word in a sentence — both work.
+```
+/fix the login page throws a 500 when I submit
+```
+Claude reproduces the error first, shows you the cause, fixes it, shows it working.
 
-| Type this | Use it when | Example |
-| --- | --- | --- |
-| `/build` | You want something new made | `/build a script that renames my photos by date` |
-| `/fix` | Something is broken, erroring, or slow | `/fix the login page throws a 500 on submit` |
-| `/grill` | You have a plan and want it attacked | `/grill I'm going to rewrite the whole API in Go` |
-| `/map` | The job is too big to see the shape of | `/map I want to redo this entire repo` |
-| `/handoff` | A session is ending unfinished | `/handoff` |
-| `/writing` | You're writing instructions for an AI | `/writing my CLAUDE.md isn't working` |
-| `/site-design` | You need a page or screen designed | `/site-design a landing page for my bakery` |
-| `/last-30` | You want to know what changed recently | `/last-30 what's new in Next.js` |
-| `/claude-video` | You want a YouTube video summarised | `/claude-video https://youtu.be/...` |
+**Big scary job**
 
-### Which one do I want?
+```
+/map I want to rebuild this whole app
+```
+Claude writes the decisions down one at a time instead of charging in. Then:
+```
+/build step 1
+```
 
-- **Making a new thing** → `/build`. For a web page, run `/site-design` first to
-  settle how it looks, then `/build` to build it.
-- **Something is wrong** → `/fix`. It reproduces the problem first, so it fixes
-  the real cause instead of the first thing it sees.
-- **A big or foggy idea** → `/map`. It writes the decisions down one at a time
-  instead of charging at a rewrite.
-- **About to commit to something expensive** → `/grill`. It argues with you on
-  purpose.
+**Before you commit to something expensive**
+
+```
+/grill I'm going to rewrite the API in Go
+```
+Claude argues with you on purpose. Better now than after three weeks.
+
+**Running out of time**
+
+```
+/handoff
+```
+Writes down where you got to, so tomorrow you don't re-explain anything.
 
 ## What's in here
 
-| File or folder | What it does |
+| File | What it does |
 | --- | --- |
-| `CLAUDE.md` | The rules Claude follows on every single task |
-| `skills/` | The nine recipes above |
-| `output-styles/plain.md` | Makes Claude answer short and in plain words |
-| `memory/` | Notes about how I like to work |
-| `settings.json` | Which plugins are on, the theme, the status line |
-| `statusline.sh` | The bar along the bottom of the terminal |
-| `scripts/` | Small helpers — status line installer, Codex tidy-up |
+| `CLAUDE.md` | Rules Claude follows on every task |
+| `skills/` | The nine commands above |
+| `output-styles/plain.md` | Makes answers short and plain |
+| `memory/` | Notes on how I like to work |
+| `settings.json` | Plugins, theme, status line |
+| `statusline.sh` | The bar at the bottom |
+| `scripts/` | Small helpers |
 
-### The Plain output style
+**The rules, in one line each:** think before coding · write the least code that
+works · change only what was asked · decide up front how you'll know it worked ·
+don't sit idle when blocked · get a second opinion before anything expensive.
 
-The one that changes the most. It stops Claude burying the answer in a wall of
-text. The rule at the heart of it:
+**The Plain style, in one line:** when I say "wait, what?", Claude's next answer
+is the right one.
 
-> When I say "wait, what?", Claude's next answer is always the right one.
-> Write that answer first.
+## Not in here
 
-### The rules in CLAUDE.md
+Your chat history and logins stay on your machine. `.gitignore` blocks them.
 
-Six short sections. In plain terms they say: think before coding, write the
-least code that does the job, change only what you were asked to change, decide
-up front how you'll know it worked, don't sit idle when you're blocked on one
-thing, and get a second opinion before anything expensive.
-
-## What's deliberately missing
-
-My chat history, my typed commands, and my login details are **not** in this
-repo. They stay on my machine. `.gitignore` blocks them.
-
-The plugins aren't here either — step 4 installs Codex fresh.
-
-## Updating it
-
-Edit the files and push. Nothing is generated.
+## Updating
 
 ```bash
 cp ~/.claude/CLAUDE.md ~/.claude/settings.json ~/.claude/statusline.sh .
 cp -R ~/.claude/output-styles ~/.claude/skills .
-git add -A && git commit -m "Sync settings" && git push
+git add -A && git commit -m "Sync" && git push
 ```
 
 ## Licence
 
-No licence file yet. These are my own working files — take them and change them
-freely. Some started life from other people's public skills before being
-rewritten; if you plan to redistribute them, add a licence first.
+No licence file yet. Take them, change them. Add a licence before redistributing.
