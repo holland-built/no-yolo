@@ -1,6 +1,6 @@
 ---
 name: writing
-description: Write or edit a file that an AI reads as instructions - a SKILL.md, CLAUDE.md, an output style, or a memory file. Use when creating or changing any of those, or when Sholland says the instructions are not working.
+description: Write or edit a file that an AI reads as instructions - a SKILL.md, CLAUDE.md, an output style, or a memory file. Use when creating or changing any of those, or when the user says the instructions are not working.
 ---
 
 # writing
@@ -28,7 +28,7 @@ failure it names. Keep a prohibition when the failure it prevents has actually h
 and write the incident beside it, so the next person can tell whether it still applies.
 
 **Give the reason with every rule.** On any real task there are dozens of small unstated
-decisions, and the reason is what lets the model make them the way Sholland would. A rule with
+decisions, and the reason is what lets the model make them the way the user would. A rule with
 no "because" is a rule that gets applied in the wrong place.
 
 **Say when to stop.** These models expand scope on their own, and the fix is an explicit
@@ -40,9 +40,9 @@ the chain of thought and can return an outright refusal — a real API error, no
 
 **Frontmatter is routing, and routing is allowed to be keen.** The `description` decides
 whether the skill is reached for at all, and skills under-trigger more often than they
-over-trigger. Name the situations plainly, including the words Sholland actually uses.
+over-trigger. Name the situations plainly, including the words the user actually uses.
 
-**Match the house style.** Everything he reads is governed by `~/.claude/output-styles/plain.md`
+**Match the house style.** Everything the user reads is governed by `~/.claude/output-styles/plain.md`
 — everyday words, short sentences, say who does what. An instruction file that ignores it
 teaches the model to ignore it.
 
@@ -50,7 +50,7 @@ teaches the model to ignore it.
 
 Ask what each line is doing before cutting it, and sort it into one of two piles. **Context
 stays** — the audience, the environment, the quality bar, tool mechanics, and the reason
-behind any rule, because only Sholland knows those. **Behaviour goes** when the model would do
+behind any rule, because only the user knows those. **Behaviour goes** when the model would do
 it unprompted anyway. Length is not the test, and when a line could plausibly sit in either
 pile, it stays.
 

@@ -31,8 +31,8 @@ again — an empty route hides the faults a populated one exposes.
 
 Never lorem ipsum. Never invented sample text.
 
-Fake content hides that the layout does not fit the real thing. Use the user's own copy, their
-real records, their longest title and their emptiest state.
+Fake content hides that the layout does not fit the real thing. Use the user's own copy, real
+records, longest title and emptiest state.
 
 ## Judge, pick, delete
 

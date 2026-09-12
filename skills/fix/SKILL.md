@@ -1,6 +1,6 @@
 ---
 name: fix
-description: Something is broken, throwing, failing, or slow - reproduce it, show the cause, correct it, and show it working. Use when Sholland says fix, broken, failing, erroring, crashed, or slow.
+description: Something is broken, throwing, failing, or slow - reproduce it, show the cause, correct it, and show it working. Use when the user says fix, broken, failing, erroring, crashed, or slow.
 ---
 
 # fix
@@ -37,7 +37,7 @@ cause requires — not the smallest possible patch, and not a tidy-up of the cod
 fix buried inside a cleanup cannot be reviewed.
 
 **Show it working.** The reproduction going green, pasted. Then the real thing running — the
-script, the page, the command he actually uses — pasted too.
+script, the page, the command the user actually runs — pasted too.
 
 ## Done
 
