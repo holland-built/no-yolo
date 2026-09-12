@@ -144,8 +144,6 @@ repo. They stay on my machine. `.gitignore` blocks them.
 
 The plugins aren't here either — step 4 installs Codex fresh.
 
-`docs/agents/` is left over from a plugin I no longer use. Ignore it.
-
 ## Updating it
 
 Edit the files and push. Nothing is generated.
