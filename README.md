@@ -15,7 +15,7 @@ These files fix that. Install takes two minutes.
 
 ## Install
 
-Needs [Claude Code](https://claude.com/claude-code) and Git. macOS or Linux.
+Needs [Claude Code](https://claude.com/claude-code), Git and Node.js. macOS or Linux.
 
 **Back up anything you already have** — this overwrites `~/.claude` files:
 
@@ -34,11 +34,36 @@ mkdir -p ~/.claude/skills ~/.claude/output-styles
 cp -R skills/. ~/.claude/skills/
 cp -R output-styles/. ~/.claude/output-styles/
 chmod +x ~/.claude/statusline.sh
-git clone https://github.com/blader/humanizer.git ~/.claude/skills/humanizer
 ```
 
-The last line installs [Humanizer](https://github.com/blader/humanizer) (MIT, by blader).
-It makes Claude's writing sound less like an AI wrote it.
+Then the two skills that come from other people's projects. They update themselves, so they
+install from their own repos instead of being copied here:
+
+```bash
+npx skills add blader/humanizer --global
+npx skills add tt-a1i/archify --global
+```
+
+- [Humanizer](https://github.com/blader/humanizer) (MIT, by blader) makes Claude's writing
+  sound less like an AI wrote it.
+- [Archify](https://github.com/tt-a1i/archify) (MIT, by tt-a1i) draws diagrams of a system.
+
+Then Codex, a second AI from OpenAI that attacks Claude's plans before any code exists. It
+needs an OpenAI account:
+
+```bash
+npm install -g @openai/codex
+codex login
+claude plugin marketplace add openai/codex-plugin-cc
+claude plugin install codex@openai-codex
+```
+
+Then Firecrawl, which lets Claude search and read the web. Get a key at
+[firecrawl.dev](https://firecrawl.dev) and put it where it says `your-key`:
+
+```bash
+claude mcp add firecrawl -s user -e FIRECRAWL_API_KEY=your-key -- npx -y firecrawl-mcp
+```
 
 Windows is not supported.
 
@@ -51,38 +76,15 @@ Restart Claude Code. **You should now see** a status bar along the bottom. Try:
 Claude should ask you what's broken instead of guessing.
 
 <details>
-<summary><strong>Optional: add a second AI that checks Claude's work</strong></summary>
-
-Codex is OpenAI's model. Some skills ask it to attack a plan before any code exists.
-
-```bash
-claude plugin marketplace add openai/codex-plugin-cc
-claude plugin install codex@openai-codex
-```
-
-</details>
-
-<details>
-<summary><strong>Optional: add <code>/archify</code>, the diagram drawer</strong></summary>
-
-It is someone else's project and it updates itself, so it is not copied into this
-repo. Install it straight from the source:
-
-```bash
-git clone https://github.com/tt-a1i/archify.git ~/.claude/skills/archify
-```
-
-MIT, by tt-a1i.
-
-</details>
-
-<details>
 <summary><strong>Uninstall</strong></summary>
 
 Removes only what this repo installed. Your own skills stay.
 
 ```bash
-cd ~/.claude/skills && rm -rf build claude-video fix grill handoff humanizer last-30 map site-design writing
+cd ~/.claude/skills && rm -rf build claude-video fix grill handoff last-30 map site-design writing humanizer archify
+rm -rf ~/.agents/skills/humanizer ~/.agents/skills/archify
+claude plugin uninstall codex@openai-codex
+claude mcp remove firecrawl -s user
 rm -f ~/.claude/output-styles/plain.md
 rm -f ~/.claude/CLAUDE.md ~/.claude/settings.json ~/.claude/statusline.sh
 ```
