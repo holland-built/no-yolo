@@ -1,6 +1,6 @@
 ---
 name: humanize
-description: Edit prose so it stops reading like a model wrote it - removes five structural tells while keeping meaning and voice. Use when writing or revising a document people read, such as a README, a report, an email or a post, or when Sholland says humanize, de-AI, sounds like AI, or make it sound like me.
+description: Edit prose so it stops reading like a model wrote it - removes five structural tells while keeping meaning and voice. Use when writing or revising a document people read, such as a README, a report, an email or a post, or when the user says humanize, de-AI, sounds like AI, or make it sound like me.
 ---
 
 # humanize
@@ -26,8 +26,9 @@ point.
 
 ## The constraints
 
-**Match his voice, not a style guide.** He uses dashes and short sentences, so keep both. When
-a sample of his writing is at hand, it outranks anything here.
+**Match the writer's voice, not a style guide.** Keep the writer's own habits, such as dashes
+or short sentences. When a sample of the writer's own writing is at hand, it outranks anything
+here.
 
 **Leave code, commands, file paths, headings and identifiers exactly as they are.** Changing
 one breaks something the reader will copy.
@@ -45,4 +46,4 @@ than a changed fact.
 - None of the five tells remain, judged by reading, not by a search
 - Every fact, limit and exception in the original is still there
 - Code, commands, paths, headings and identifiers are unchanged
-- It still sounds like him
+- It still sounds like the writer

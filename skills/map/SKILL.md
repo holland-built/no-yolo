@@ -1,6 +1,6 @@
 ---
 name: map
-description: Chart a piece of work too big for one session as a map of decisions in MAP.md, then settle them one at a time until the way forward is clear. Use when Sholland has a large or foggy idea and it is not yet clear what building it even involves.
+description: Chart a piece of work too big for one session as a map of decisions in MAP.md, then settle them one at a time until the way forward is clear. Use when the user has a large or foggy idea and it is not yet clear what building it even involves.
 ---
 
 # map
@@ -14,7 +14,7 @@ at the destination.
 decision, not a slice of work to execute. When you feel the pull to just build it, that is
 the signal the map is finished and it is time to hand off to `/build`.
 
-**The map is one file: `MAP.md` in the project folder.** No issue tracker — Sholland works
+**The map is one file: `MAP.md` in the project folder.** No issue tracker — the user works
 alone and does not keep one. The map is an index: it names the destination, lists the
 decisions already settled in one line each, and holds the open questions. Detail lives with
 the question it belongs to, written once.
@@ -28,7 +28,7 @@ getting it wrong is expensive and getting it vague is worse.
 another open question waits. Settling one usually reveals two more — that is the map working,
 not the map failing.
 
-**Settle a question by grilling it, not by deciding it for him.** Use `/grill` on the open
+**Settle a question by grilling it, not by deciding it on the user's behalf.** Use `/grill` on the open
 question: numbered, with your recommendation on each. Write the answer into `MAP.md` as one
 line, and move the detail under the question it settled.
 
