@@ -34,10 +34,9 @@ mkdir -p ~/.claude/skills ~/.claude/output-styles
 cp -R skills/. ~/.claude/skills/
 cp -R output-styles/. ~/.claude/output-styles/
 chmod +x ~/.claude/statusline.sh
-sed -i '' "s|/Users/sholland/.claude|$HOME/.claude|" ~/.claude/settings.json
 ```
 
-Linux: drop the `''` after `-i`. Windows is not supported.
+Windows is not supported.
 
 Restart Claude Code. **You should now see** a status bar along the bottom. Try:
 
@@ -241,7 +240,7 @@ line.
 <summary><strong>For me: syncing my machine back to this repo</strong></summary>
 
 ```bash
-cp ~/.claude/CLAUDE.md ~/.claude/settings.json ~/.claude/statusline.sh .
+cp ~/.claude/CLAUDE.md ~/.claude/statusline.sh .
 cp -R ~/.claude/output-styles/. output-styles/
 cp -R ~/.claude/skills/. skills/
 git add -A && git commit -m "Sync" && git push
