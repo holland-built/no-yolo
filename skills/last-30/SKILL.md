@@ -9,7 +9,7 @@ Answer one question: **what actually changed in <topic> in the last 30 days, and
 it matter to me?**
 
 Output goes to `~/AI/research/<topic-slug>-<YYYY-MM-DD>.md`, matching the existing notes
-there (e.g. `orca-new-features-2026-09-05.md`).
+there (e.g. `claude-code-new-features-2026-09-05.md`).
 
 ## Rules that make this worth reading
 
