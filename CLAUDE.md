@@ -123,6 +123,9 @@ reversible edits - it costs a real round trip.
 The Stop gate reviews every session automatically. **Its silence is a pass** - it speaks only
 to block.
 
+If `codex` is not installed, skip every Codex step, here and in skills, and say once that the
+second opinion was skipped. The rest of the work carries on.
+
 For everything else, call Codex directly:
 
 ```bash

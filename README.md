@@ -49,7 +49,8 @@ npx skills add tt-a1i/archify --global
 - [Archify](https://github.com/tt-a1i/archify) (MIT, by tt-a1i) draws diagrams of a system.
 
 Then Codex, a second AI from OpenAI that attacks Claude's plans before any code exists. It
-needs an OpenAI account:
+needs an OpenAI account. **No account? Skip this block.** Everything else still works; Claude
+skips the Codex checks and tells you it did.
 
 ```bash
 npm install -g @openai/codex
