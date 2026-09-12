@@ -30,7 +30,9 @@ git clone https://github.com/holland-built/no-yolo.git
 cd no-yolo
 mkdir -p ~/.claude
 cp CLAUDE.md settings.json statusline.sh ~/.claude/
-cp -R skills output-styles ~/.claude/
+mkdir -p ~/.claude/skills ~/.claude/output-styles
+cp -R skills/. ~/.claude/skills/
+cp -R output-styles/. ~/.claude/output-styles/
 chmod +x ~/.claude/statusline.sh
 sed -i '' "s|/Users/sholland/.claude|$HOME/.claude|" ~/.claude/settings.json
 ```
@@ -74,10 +76,18 @@ MIT, by tt-a1i.
 <details>
 <summary><strong>Uninstall</strong></summary>
 
+Removes only what this repo installed. Your own skills stay.
+
 ```bash
-rm -rf ~/.claude/skills ~/.claude/output-styles
+cd ~/.claude/skills && rm -rf build claude-video fix grill handoff last-30 map site-design writing
+rm -f ~/.claude/output-styles/plain.md
 rm -f ~/.claude/CLAUDE.md ~/.claude/settings.json ~/.claude/statusline.sh
-cp -R ~/.claude-backup/. ~/.claude/   # if you made a backup
+```
+
+Then put your old config back, if you took the backup:
+
+```bash
+cp -R ~/.claude-backup/. ~/.claude/
 ```
 
 </details>
@@ -138,7 +148,7 @@ it working. No guessing.</p>
 <tr>
 <td width="50%" valign="top">
 
-<h3>Big scary job</h3>
+<h3>A job too big to start</h3>
 
 <p><code>/map I want to rebuild this whole app</code></p>
 
@@ -168,10 +178,10 @@ you don't re-explain anything.
 | `CLAUDE.md` | Rules Claude follows on every task |
 | `skills/` | Nine of the ten commands above |
 | `output-styles/plain.md` | Makes answers short and plain |
-| `memory/` | Notes on how I like to work |
+| `memory/` | Notes Claude keeps on how I like to work |
 | `settings.json` | Plugins, theme, status line |
 | `statusline.sh` | The bar at the bottom |
-| `scripts/` | Small helpers |
+| `scripts/` | Tidies up stray Codex processes at session start |
 
 **The rules, in one line each:** think before coding · write the least code that
 works · change only what was asked · decide up front how you'll know it worked ·
@@ -185,7 +195,8 @@ is the right one.
 
 ```bash
 cp ~/.claude/CLAUDE.md ~/.claude/settings.json ~/.claude/statusline.sh .
-cp -R ~/.claude/output-styles ~/.claude/skills .
+cp -R ~/.claude/output-styles/. output-styles/
+cp -R ~/.claude/skills/. skills/
 git add -A && git commit -m "Sync" && git push
 ```
 
