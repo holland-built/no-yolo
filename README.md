@@ -5,7 +5,7 @@
 <p align="center">
 <a href="LICENSE"><img alt="MIT licence" src="https://img.shields.io/badge/licence-MIT-blue"></a>
 <img alt="macOS and Linux" src="https://img.shields.io/badge/macOS%20%7C%20Linux-supported-green">
-<img alt="ten skills" src="https://img.shields.io/badge/skills-10-8A2BE2">
+<img alt="eleven skills" src="https://img.shields.io/badge/skills-11-8A2BE2">
 </p>
 
 Claude Code is an AI that writes code for you in your terminal. Out of the box
@@ -79,7 +79,7 @@ MIT, by tt-a1i.
 Removes only what this repo installed. Your own skills stay.
 
 ```bash
-cd ~/.claude/skills && rm -rf build claude-video fix grill handoff last-30 map site-design writing
+cd ~/.claude/skills && rm -rf build claude-video fix grill handoff humanize last-30 map site-design writing
 rm -f ~/.claude/output-styles/plain.md
 rm -f ~/.claude/CLAUDE.md ~/.claude/settings.json ~/.claude/statusline.sh
 ```
@@ -92,7 +92,7 @@ cp -R ~/.claude-backup/. ~/.claude/
 
 </details>
 
-## The ten commands
+## The eleven commands
 
 Type the slash command. Or just say the word — both work.
 
@@ -110,6 +110,7 @@ Type the slash command. Or just say the word — both work.
 <td width="50%" valign="top">
 <ul>
 <li><code>/writing</code> — you're writing rules for an AI</li>
+<li><code>/humanize</code> — your writing sounds like an AI wrote it</li>
 <li><code>/site-design</code> — you need a page designed</li>
 <li><code>/last-30</code> — what changed lately</li>
 <li><code>/claude-video</code> — summarise a YouTube video</li>
@@ -176,7 +177,7 @@ you don't re-explain anything.
 | File | What it does |
 | --- | --- |
 | `CLAUDE.md` | Rules Claude follows on every task |
-| `skills/` | Nine of the ten commands above |
+| `skills/` | Ten of the eleven commands above |
 | `output-styles/plain.md` | Makes answers short and plain |
 | `memory/` | Notes Claude keeps on how I like to work |
 | `settings.json` | Plugins, theme, status line |
@@ -187,10 +188,11 @@ you don't re-explain anything.
 
 `output-styles/plain.md` caps every reply. Normal answer: six sentences. If you
 asked it to explain something: twelve. Bullets and table rows count as one each.
-Over the cap, it deletes sentences — it does not rewrite them shorter.
+Over the cap, it cuts what you don't need first. It would rather run long than
+leave out a step you need. Steps you have to follow in order don't count.
 
 It also drops the padding: no sentence telling you what it is about to do, no
-offer of what you might want next, no hedging about its own confidence.
+general offer of what you might want next, no reflex hedging. A real doubt stays.
 
 <table>
 <tr>

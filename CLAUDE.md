@@ -14,6 +14,10 @@ every time it was tried.
 clear, execute it. Do not stop to confirm each step. Reserve a blocking question for a choice
 that is irreversible, or where being wrong would waste real work.
 
+**Run `/humanize` on prose you write for people** — a README, report, email or post — before
+showing it. Never on `CLAUDE.md`, `plain.md`, a `SKILL.md` or a memory note, where sentence
+shape carries the rule.
+
 ## 1. Think Before Coding
 
 Sholland is not a programmer, so a wrong assumption reaches him as a working thing that does
@@ -34,6 +38,16 @@ Write the least code that does the job. Everything speculative — a feature he 
 for, a wrapper around one call site, a setting nobody requested, handling for a case that
 cannot happen — is code he will maintain later without you there to explain it.
 
+When choosing how to build what he asked for, prefer, in this order: a pattern the project
+already uses, then the standard library or the platform's own feature, then a dependency that
+is already installed, then the smallest clear new code. Each step down adds something he has to
+learn or maintain. Prefer clear code over clever short code, because he reads it later without
+you. Leaving out speculative work never means refusing work he actually asked for.
+
+Simplicity never justifies weakening what he explicitly asked for, input checks where outside
+data enters, protection against losing data, security, or accessibility. Those fail silently,
+so he would not notice they were cut until it cost him.
+
 Some jobs genuinely need a lot of code, so length is not the test. Before you show it to him,
 read it back: if it is longer or more complicated than the job requires, simplify it first.
 
@@ -46,6 +60,11 @@ When editing existing code:
 - Don't refactor things that aren't broken.
 - Match existing style, even if you'd do it differently.
 - If you notice unrelated dead code, mention it - don't delete it.
+
+When a bug sits in code that other places share, search for its callers and the paths beside
+it before fixing. Then fix it at the narrowest level that matches the real rule being broken.
+The defect is not always in the shared function, and a text search can miss dynamic calls,
+aliases and generated code.
 
 When your changes create orphans:
 - Remove imports/variables/functions that YOUR changes made unused.
