@@ -14,7 +14,7 @@ every time it was tried.
 clear, execute it. Do not stop to confirm each step. Reserve a blocking question for a choice
 that is irreversible, or where being wrong would waste real work.
 
-**Run `/humanize` on prose you write for people** — a README, report, email or post — before
+**Run `/humanizer` on prose you write for people** — a README, report, email or post — before
 showing it. Never on `CLAUDE.md`, `plain.md`, a `SKILL.md` or a memory note, where sentence
 shape carries the rule.
 

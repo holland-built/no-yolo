@@ -34,7 +34,11 @@ mkdir -p ~/.claude/skills ~/.claude/output-styles
 cp -R skills/. ~/.claude/skills/
 cp -R output-styles/. ~/.claude/output-styles/
 chmod +x ~/.claude/statusline.sh
+git clone https://github.com/blader/humanizer.git ~/.claude/skills/humanizer
 ```
+
+The last line installs [Humanizer](https://github.com/blader/humanizer) (MIT, by blader).
+It makes Claude's writing sound less like an AI wrote it.
 
 Windows is not supported.
 
@@ -78,7 +82,7 @@ MIT, by tt-a1i.
 Removes only what this repo installed. Your own skills stay.
 
 ```bash
-cd ~/.claude/skills && rm -rf build claude-video fix grill handoff humanize last-30 map site-design writing
+cd ~/.claude/skills && rm -rf build claude-video fix grill handoff humanizer last-30 map site-design writing
 rm -f ~/.claude/output-styles/plain.md
 rm -f ~/.claude/CLAUDE.md ~/.claude/settings.json ~/.claude/statusline.sh
 ```
@@ -109,7 +113,7 @@ Type the slash command. Or just say the word — both work.
 <td width="50%" valign="top">
 <ul>
 <li><code>/writing</code> — you're writing rules for an AI</li>
-<li><code>/humanize</code> — your writing sounds like an AI wrote it</li>
+<li><code>/humanizer</code> — your writing sounds like an AI wrote it</li>
 <li><code>/site-design</code> — you need a page designed</li>
 <li><code>/last-30</code> — what changed lately</li>
 <li><code>/claude-video</code> — summarise a YouTube video</li>
@@ -176,7 +180,7 @@ you don't re-explain anything.
 | File | What it does |
 | --- | --- |
 | `CLAUDE.md` | Rules Claude follows on every task |
-| `skills/` | Ten of the eleven commands above |
+| `skills/` | Nine of the eleven commands above. `/humanizer` and `/archify` install from their own repos |
 | `output-styles/plain.md` | Makes answers short and plain |
 | `memory/` | Notes Claude keeps on how I like to work |
 | `settings.json` | Plugins, theme, status line |
