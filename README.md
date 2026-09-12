@@ -1,15 +1,29 @@
-# no-yolo
+<h1 align="center">no-yolo</h1>
 
-Makes Claude stop guessing.
+<p align="center"><strong>Makes Claude stop guessing.</strong></p>
 
-Claude Code is an AI that writes code for you in your terminal. Out of the box it
-guesses, writes too much, and buries the answer in waffle. These files fix that.
+<p align="center">
+<a href="LICENSE"><img alt="MIT licence" src="https://img.shields.io/badge/licence-MIT-blue"></a>
+<img alt="macOS and Linux" src="https://img.shields.io/badge/macOS%20%7C%20Linux-supported-green">
+<img alt="nine skills" src="https://img.shields.io/badge/skills-9-8A2BE2">
+</p>
 
-Install takes two minutes.
+Claude Code is an AI that writes code for you in your terminal. Out of the box
+it guesses, writes too much, and buries the answer in waffle.
+
+These files fix that. Install takes two minutes.
 
 ## Install
 
-Need Claude Code first: https://claude.com/claude-code
+Needs [Claude Code](https://claude.com/claude-code) and Git. macOS or Linux.
+
+**Back up anything you already have** — this overwrites `~/.claude` files:
+
+```bash
+cp -R ~/.claude ~/.claude-backup 2>/dev/null
+```
+
+Then:
 
 ```bash
 git clone https://github.com/holland-built/no-yolo.git
@@ -21,75 +35,118 @@ chmod +x ~/.claude/statusline.sh
 sed -i '' "s|/Users/sholland/.claude|$HOME/.claude|" ~/.claude/settings.json
 ```
 
-Linux: drop the `''` after `-i`.
+Linux: drop the `''` after `-i`. Windows is not supported.
 
-Restart Claude Code. Done.
+Restart Claude Code. **You should now see** a status bar along the bottom. Try:
 
-Optional — a second AI (OpenAI's Codex) that checks Claude's work:
+```
+/fix
+```
+
+Claude should ask you what's broken instead of guessing.
+
+<details>
+<summary><strong>Optional: add a second AI that checks Claude's work</strong></summary>
+
+Codex is OpenAI's model. Some skills ask it to attack a plan before any code exists.
 
 ```bash
 claude plugin marketplace add openai/codex-plugin-cc
 claude plugin install codex@openai-codex
 ```
 
+</details>
+
+<details>
+<summary><strong>Uninstall</strong></summary>
+
+```bash
+rm -rf ~/.claude/skills ~/.claude/output-styles
+rm -f ~/.claude/CLAUDE.md ~/.claude/settings.json ~/.claude/statusline.sh
+cp -R ~/.claude-backup/. ~/.claude/   # if you made a backup
+```
+
+</details>
+
 ## The nine commands
 
 Type the slash command. Or just say the word — both work.
 
-| Command | Use it when |
-| --- | --- |
-| `/build` | You want something new made |
-| `/fix` | Something is broken or slow |
-| `/grill` | You want your plan attacked |
-| `/map` | The job is too big to see |
-| `/handoff` | You're stopping halfway |
-| `/writing` | You're writing rules for an AI |
-| `/site-design` | You need a page designed |
-| `/last-30` | You want to know what changed lately |
-| `/claude-video` | You want a YouTube video summarised |
+<table>
+<tr>
+<td width="50%" valign="top">
+<table>
+<tr><th>Command</th><th>Use it when</th></tr>
+<tr><td><code>/build</code></td><td>You want something new made</td></tr>
+<tr><td><code>/fix</code></td><td>Something is broken or slow</td></tr>
+<tr><td><code>/grill</code></td><td>You want your plan attacked</td></tr>
+<tr><td><code>/map</code></td><td>The job is too big to see</td></tr>
+<tr><td><code>/handoff</code></td><td>You're stopping halfway</td></tr>
+</table>
+</td>
+<td width="50%" valign="top">
+<table>
+<tr><th>Command</th><th>Use it when</th></tr>
+<tr><td><code>/writing</code></td><td>You're writing rules for an AI</td></tr>
+<tr><td><code>/site-design</code></td><td>You need a page designed</td></tr>
+<tr><td><code>/last-30</code></td><td>You want to know what changed</td></tr>
+<tr><td><code>/claude-video</code></td><td>Summarise a YouTube video</td></tr>
+</table>
+</td>
+</tr>
+</table>
 
 ## Workflows
 
-**Make a website**
+<table>
+<tr>
+<td width="50%" valign="top">
 
-```
-/site-design a landing page for my bakery
-```
-Claude builds three versions and shows them side by side. Pick one.
-```
-/build it, using version 2
-```
+<h3>Make a website</h3>
 
-**Fix something broken**
+<pre><code>/site-design a landing page for my bakery</code></pre>
 
-```
-/fix the login page throws a 500 when I submit
-```
-Claude reproduces the error first, shows you the cause, fixes it, shows it working.
+<p>Claude builds three versions and shows them side by side. Pick one.</p>
 
-**Big scary job**
+<pre><code>/build it, using version 2</code></pre>
 
-```
-/map I want to rebuild this whole app
-```
-Claude writes the decisions down one at a time instead of charging in. Then:
-```
-/build step 1
-```
+</td>
+<td width="50%" valign="top">
 
-**Before you commit to something expensive**
+<h3>Fix something broken</h3>
 
-```
-/grill I'm going to rewrite the API in Go
-```
-Claude argues with you on purpose. Better now than after three weeks.
+<pre><code>/fix the login page throws a 500 on submit</code></pre>
 
-**Running out of time**
+<p>Claude reproduces the error first, shows you the cause, fixes it, then shows
+it working. No guessing.</p>
 
-```
-/handoff
-```
-Writes down where you got to, so tomorrow you don't re-explain anything.
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+
+<h3>Big scary job</h3>
+
+<pre><code>/map I want to rebuild this whole app</code></pre>
+
+<p>Claude writes the decisions down one at a time instead of charging in. Then
+build them one by one.</p>
+
+</td>
+<td width="50%" valign="top">
+
+<h3>Before something expensive</h3>
+
+<pre><code>/grill I'm rewriting the API in Go</code></pre>
+
+<p>Claude argues with you on purpose. Better now than after three weeks.</p>
+
+</td>
+</tr>
+</table>
+
+**Running out of time?** `/handoff` writes down where you got to, so tomorrow
+you don't re-explain anything.
 
 ## What's in here
 
@@ -110,11 +167,8 @@ don't sit idle when blocked · get a second opinion before anything expensive.
 **The Plain style, in one line:** when I say "wait, what?", Claude's next answer
 is the right one.
 
-## Not in here
-
-Your chat history and logins stay on your machine. `.gitignore` blocks them.
-
-## Updating
+<details>
+<summary><strong>For me: syncing my machine back to this repo</strong></summary>
 
 ```bash
 cp ~/.claude/CLAUDE.md ~/.claude/settings.json ~/.claude/statusline.sh .
@@ -122,6 +176,8 @@ cp -R ~/.claude/output-styles ~/.claude/skills .
 git add -A && git commit -m "Sync" && git push
 ```
 
+</details>
+
 ## Licence
 
-No licence file yet. Take them, change them. Add a licence before redistributing.
+[MIT](LICENSE). Take it, change it, ship it.
