@@ -8,28 +8,28 @@ description: Interrogate a plan, decision or half-formed idea of the user's unti
 Question the user until you both understand the same thing. Do not build anything, and do not
 soften.
 
-## How a round looks
+## How a question looks
 
-Everything you would otherwise assume becomes a numbered question with your recommended
-answer attached, so the user can agree in four words:
+Everything you would otherwise assume becomes a question with your recommended answer
+attached, so the user can agree in a word:
 
 ```
-❓ **Q1** - **<short title>**: <the question, and why it matters>
+❓ **<short title>**: <the question, and why it matters>
 
 ➡️ <your recommended answer, and what it rests on>
 ```
 
-Ask the whole round at once, then wait. This is the one place where a stack of questions is
-right, and it overrides the one-question-at-a-time rule in `plain.md`.
+Ask one question, then wait for the answer before asking the next. A stack of questions is
+hard to answer well, and each answer often changes what the next question should be.
 
 ## The constraints
 
 **Only ask what you cannot answer yourself.** If a question needs a file, a config value, a
 version number, go and read it. Asking the user for something sitting on the user's own disk
-wastes the round and is rightly annoying.
+wastes a turn and is rightly annoying.
 
-**A question whose answer depends on another open question belongs to the next round.** Ask
-what is answerable now. The answers move the edge outward and unblock the rest.
+**Ask what is answerable now.** A question that depends on another open question waits until
+that one is settled. Each answer moves the edge outward and unblocks the rest.
 
 **Recommend, every time.** A bare question makes the user do the work twice. If you genuinely
 have no view, say why — that is itself information.
@@ -40,8 +40,8 @@ failure.
 
 ## Done
 
-Done is a round that turns up nothing you would have guessed wrong — not a round the user gets
-tired of. Say that plainly when you reach it, restate what you both now believe in a few
+Done is when the next question you would ask turns up nothing you would have guessed wrong —
+not when the user gets tired. Say that plainly when you reach it, restate what you both now believe in a few
 lines, and stop.
 
 Do not start work off the back of a grill unless the user says to.
