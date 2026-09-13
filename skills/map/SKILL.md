@@ -29,7 +29,7 @@ another open question waits. Settling one usually reveals two more — that is t
 not the map failing.
 
 **Settle a question by grilling it, not by deciding it on the user's behalf.** Use `/grill` on the open
-question: numbered, with your recommendation on each. Write the answer into `MAP.md` as one
+question: one question at a time, each with your recommendation. Write the answer into `MAP.md` as one
 line, and move the detail under the question it settled.
 
 **Record what is out of scope, and never revisit it.** Also record the fog — the parts you
