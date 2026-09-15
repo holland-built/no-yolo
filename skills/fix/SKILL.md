@@ -36,8 +36,24 @@ codex exec --skip-git-repo-check --sandbox read-only \
 cause requires — not the smallest possible patch, and not a tidy-up of the code around it. A
 fix buried inside a cleanup cannot be reviewed.
 
+Inside that limit, write the least code that corrects it. Prefer what the project already
+uses, then the standard library, then a dependency already installed. Never cut input checks,
+data safety, security or accessibility to make the fix smaller — those fail silently. When the
+bug sits in shared code, search its callers before changing it. Leave nearby code, comments and
+formatting alone; mention unrelated dead code rather than deleting it. This is here because
+evals run without `~/.claude/CLAUDE.md`, so the skill has to carry it.
+
+**Never make the reproduction pass by changing the reproduction.** Loosening a test or its
+expected output hides the bug instead of fixing it. If the check itself was wrong, say so and
+show why before touching it.
+
+**Stop after three attempts at the same cause.** Say what each attempt showed and hand it to
+the user, or get the Codex read above. More attempts past that rarely add evidence.
+
 **Show it working.** The reproduction going green, pasted. Then the real thing running — the
-script, the page, the command the user actually runs — pasted too.
+script, the page, the command the user actually runs — pasted too. If you could not run it,
+or ran it and could not tell whether it worked, it is not fixed yet: say "unverified" or
+"couldn't tell" and why, and never call it fixed, even with a caveat attached.
 
 ## Done
 

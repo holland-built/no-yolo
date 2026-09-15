@@ -46,15 +46,37 @@ model only when undoing the decision later would mean rewriting rather than edit
 **Codex reviews the final diff** — after your last change, not before. If it finds something
 and you change the code, it reviews the new diff too.
 
+New files are invisible to `git diff` until marked, so mark them first, and check the diff file
+is not empty before sending it. If `codex` is missing or fails, say "Codex review: couldn't
+tell" and why, and finish without it — never report a review that did not happen.
+
 ```bash
+git add -N .
 git diff <base> > /tmp/build-review.diff
 codex exec --skip-git-repo-check --sandbox read-only \
   -c model=gpt-5.6-sol -c model_reasoning_effort=medium \
   "Review the diff at /tmp/build-review.diff. Only defects that would crash it or make it do the wrong thing. Ignore style. None is a valid answer." < /dev/null
 ```
 
+**Write the least code that does the job, and touch only what the job needs.** The user
+maintains it later without you, and cannot tell speculative code from needed code. Prefer, in
+order: a pattern the project already uses, the standard library or platform, a dependency
+already installed, then the smallest clear new code. Skip features, settings and wrappers
+nobody asked for. Never cut input checks, data safety, security or accessibility to get there —
+those fail silently. Leave nearby code, comments and formatting alone; mention unrelated dead
+code rather than deleting it, and remove only what your own change left unused. This is here
+because evals run without `~/.claude/CLAUDE.md`, so the skill has to carry it.
+
 **Run it and paste what happened** — the real command and its real output. A passing test is
 not the thing working. If it draws a page, open the page.
+
+**Every check ends as passed, failed, or couldn't tell.** Report "couldn't tell" as that, never
+as a pass — a guessed pass is how a broken thing gets called done. Never weaken a check,
+loosen a test, or change what it expects so that it passes; fix the code or report the failure.
+
+**Stop after three attempts at the same failure.** Say what you tried and what each attempt
+showed, then hand it to the user. Past that point retries rarely add evidence and burn the
+user's time.
 
 ## Where the plan lives
 
