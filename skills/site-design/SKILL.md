@@ -40,6 +40,13 @@ Show all three. The user picks one, or takes parts from each. Delete the rest.
 
 A variant is throwaway code that answered a question. It is not a deliverable.
 
+The variant that stays becomes real code the user maintains alone. Write it with the least code
+that does the job: reuse the page's existing components and styles before adding new ones, and
+add no settings or features nobody asked for. Never cut accessibility or input checks to get
+there — those fail silently. Touch only the page being designed, and when the variants are
+deleted, remove anything that only they used. This is here because evals run without
+`~/.claude/CLAUDE.md`, so the skill has to carry it.
+
 ## When all three look the same
 
 This is the failure mode, and it is the one comparison cannot catch. Three generic variants still
