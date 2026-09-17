@@ -5,7 +5,7 @@
 <p align="center">
 <a href="LICENSE"><img alt="MIT licence" src="https://img.shields.io/badge/licence-MIT-blue"></a>
 <img alt="macOS and Linux" src="https://img.shields.io/badge/macOS%20%7C%20Linux-supported-green">
-<img alt="eleven skills" src="https://img.shields.io/badge/skills-11-8A2BE2">
+<img alt="twelve skills" src="https://img.shields.io/badge/skills-12-8A2BE2">
 </p>
 
 Claude Code is an AI that writes code for you in your terminal. Out of the box
@@ -81,7 +81,7 @@ Claude should ask you what's broken instead of guessing.
 Removes only what this repo installed. Your own skills stay.
 
 ```bash
-cd ~/.claude/skills && rm -rf build claude-video fix grill handoff last-30 map site-design writing humanizer archify
+cd ~/.claude/skills && rm -rf build claude-video fix github-readme grill handoff last-30 map site-design writing humanizer archify
 rm -rf ~/.agents/skills/humanizer ~/.agents/skills/archify
 claude plugin uninstall codex@openai-codex
 claude mcp remove firecrawl -s user
@@ -97,7 +97,7 @@ cp -R ~/.claude-backup/. ~/.claude/
 
 </details>
 
-## The eleven commands
+## The twelve commands
 
 Type the slash command, or just say the word. Both work.
 
@@ -110,6 +110,7 @@ Type the slash command, or just say the word. Both work.
 <li><code>/grill</code>: you want your plan attacked</li>
 <li><code>/map</code>: the job is too big to see</li>
 <li><code>/handoff</code>: you're stopping halfway</li>
+<li><code>/github-readme</code>: tidy a repo and its README for GitHub</li>
 </ul>
 </td>
 <td width="50%" valign="top">
@@ -182,7 +183,7 @@ you don't re-explain anything.
 | File | What it does |
 | --- | --- |
 | `CLAUDE.md` | Rules Claude follows on every task |
-| `skills/` | Nine of the eleven commands above. `/humanizer` and `/archify` install from their own repos |
+| `skills/` | Ten of the twelve commands above. `/humanizer` and `/archify` install from their own repos |
 | `output-styles/plain.md` | Makes answers short and plain |
 | `memory/` | Notes Claude keeps on how you like to work |
 | `settings.json` | Plugins, theme, status line |
