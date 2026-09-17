@@ -47,6 +47,12 @@ there — those fail silently. Touch only the page being designed, and when the 
 deleted, remove anything that only they used. This is here because evals run without
 `~/.claude/CLAUDE.md`, so the skill has to carry it.
 
+Accessibility here means the page still works for someone who cannot see it or use a mouse:
+every control is a real `<button>` or `<a>` with a visible focus ring, every input and icon-only
+button has a label, images have `alt`, zoom is never disabled, and motion respects
+`prefers-reduced-motion`. These are spelled out because a model trims them first when asked for
+less code, and nobody notices until a reader hits one.
+
 ## When all three look the same
 
 This is the failure mode, and it is the one comparison cannot catch. Three generic variants still
@@ -58,3 +64,10 @@ anything of the subject.
 The fix is one move. Name a detail that could appear on **this page and no other** — its real
 units, its real vocabulary, its real numbers, the convention its own field uses. Put that detail
 in, and rebuild the variants around it.
+
+## Done
+
+The user has picked a variant, and it works on a narrow screen, with the longest real content,
+and in its empty, loading and error states, because those are where a layout that looked fine
+side by side breaks. Its controls pass the accessibility list above. The other variants and
+anything only they used are deleted, and nothing outside the designed page changed.
