@@ -5,7 +5,7 @@ import { defineConfig } from "oxlint";
 // review pass, not a build gate.
 //
 // Off on purpose (the author's taste, and they fight this code):
-//   require-readable-spacing  - blank lines between statements, 6,169 hits on Wayfinder
+//   require-readable-spacing  - blank lines between statements; thousands of hits on a normal React codebase
 //   no-runtime-typeof         - typeof is how plain JS narrows
 //   no-object-parameters      - React props are objects
 const rules = [
