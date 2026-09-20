@@ -17,12 +17,16 @@ installing them takes two minutes.
 Needs [Claude Code](https://claude.com/claude-code), Git, Node.js and `jq`, which the status
 line reads its values with. macOS or Linux. Windows is not supported.
 
-Two commands. The script backs up your old `~/.claude` first, copies the rules, style and
-skills in, installs `gitleaks`, switches the secret guard on, and downloads the `/slop` linter.
+The script copies the rules, the style and the skills into `~/.claude`, installs `gitleaks`,
+switches the secret guard on, and downloads the linter behind `/slop`. It backs up whatever
+you already have before it copies anything, and it tells you what it did at each step. If git
+on this machine already has a hooks folder of its own, it leaves that alone and prints the one
+line to run instead.
 
 ```bash
-# download this repo to the path the settings expect, then set everything up
+# download this repo to the path the settings expect
 mkdir -p ~/AI && git clone https://github.com/holland-built/no-yolo.git ~/AI/no-yolo
+# set everything up on this machine
 ~/AI/no-yolo/install.sh
 ```
 
@@ -30,8 +34,12 @@ Then **restart Claude Code** and type `/fix`. It should ask what is broken inste
 
 > [!WARNING]
 > The script replaces files in `~/.claude`. A skill of your own with the same name as one here
-> is overwritten, and so are `CLAUDE.md`, `settings.json` and `statusline.sh`. It writes a dated
-> backup folder first, and that backup is the only way back.
+> is overwritten, and so are `CLAUDE.md`, `settings.json` and `statusline.sh`. The dated backup
+> folder it writes first is the only way back.
+>
+> The secret guard also stops any hook of your own in a repo's `.git/hooks` from running,
+> because git uses one hooks folder at a time for the whole machine. Undo that with
+> `git config --global --unset core.hooksPath`.
 
 <details>
 <summary><strong>Do the same by hand instead</strong></summary>
@@ -136,13 +144,13 @@ claude mcp add firecrawl -s user -e FIRECRAWL_API_KEY=your-key -- npx -y firecra
 
 ## Update
 
-The repo changes. Take the latest with the same script: it is safe to run again. Nothing is
-deleted, but a file here replaces the one on your machine, including a skill of yours that
-shares a name.
+Run the same script again to take a newer version of this repo. Nothing is deleted, but a file
+here replaces the one on your machine, including a skill of yours that shares a name.
 
 ```bash
-# from your clone of this repo, take the latest and apply it
+# take the latest version of this repo
 cd ~/AI/no-yolo && git pull
+# apply it to this machine
 ./install.sh
 ```
 
