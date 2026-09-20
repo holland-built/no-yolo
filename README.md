@@ -5,7 +5,7 @@
 <p align="center">
 <a href="LICENSE"><img alt="MIT licence" src="https://img.shields.io/badge/licence-MIT-blue"></a>
 <img alt="macOS and Linux" src="https://img.shields.io/badge/macOS%20%7C%20Linux-supported-green">
-<img alt="twelve skills" src="https://img.shields.io/badge/skills-12-8A2BE2">
+<img alt="thirteen skills" src="https://img.shields.io/badge/skills-13-8A2BE2">
 </p>
 
 Claude Code is an AI that writes code for you in your terminal. Out of the box
@@ -33,6 +33,24 @@ mkdir -p ~/.claude/skills ~/.claude/output-styles
 cp -R skills/. ~/.claude/skills/
 cp -R output-styles/. ~/.claude/output-styles/
 chmod +x ~/.claude/statusline.sh
+```
+
+Then the secret guard. It refuses any commit holding a password or an API key, on every repo
+on the machine. Without `gitleaks` the guard does nothing, so install that first.
+
+```bash
+# the scanner the guard calls
+brew install gitleaks          # macOS. Linux: apk add gitleaks, or apt install gitleaks
+# point git at this repo's hooks folder, for every repo on this machine
+git config --global core.hooksPath "$PWD/hooks"
+chmod +x hooks/pre-commit
+```
+
+Then the code checker behind `/slop`, which needs its linter downloaded once:
+
+```bash
+cp -R tools ~/.claude/
+cd ~/.claude/tools/anti-slop && npm install --save-exact oxlint@1.83.0 @oxlint/plugins@1.83.0 && cd -
 ```
 
 Then the two skills that come from other people's projects. They update themselves, so they
@@ -67,6 +85,29 @@ claude mcp add firecrawl -s user -e FIRECRAWL_API_KEY=your-key -- npx -y firecra
 
 Windows is not supported.
 
+## Update
+
+The repo changes. To take the latest, pull and copy again. Nothing is deleted, files are
+replaced, and your own skills are untouched.
+
+```bash
+# from your clone of this repo
+git pull
+cp CLAUDE.md settings.json statusline.sh ~/.claude/
+cp -R skills/. ~/.claude/skills/
+cp -R output-styles/. ~/.claude/output-styles/
+cp -R tools/anti-slop/src tools/anti-slop/slop.config.ts ~/.claude/tools/anti-slop/
+```
+
+The guard needs nothing: it runs from your clone, so `git pull` updates it.
+
+Check what you have matches the repo:
+
+```bash
+# lists any file that differs; silence means you are up to date
+diff -rq skills ~/.claude/skills; diff -q CLAUDE.md ~/.claude/CLAUDE.md
+```
+
 Restart Claude Code. You should see a status bar along the bottom. Try:
 
 ```
@@ -81,7 +122,7 @@ Claude should ask you what's broken instead of guessing.
 Removes only what this repo installed. Your own skills stay.
 
 ```bash
-cd ~/.claude/skills && rm -rf build claude-video fix github-readme grill handoff last-30 map site-design writing humanizer archify
+cd ~/.claude/skills && rm -rf build claude-video fix github-readme grill handoff last-30 map site-design slop writing humanizer archify
 rm -rf ~/.agents/skills/humanizer ~/.agents/skills/archify
 claude plugin uninstall codex@openai-codex
 claude mcp remove firecrawl -s user
@@ -97,7 +138,7 @@ cp -R ~/.claude-backup/. ~/.claude/
 
 </details>
 
-## The twelve commands
+## The thirteen commands
 
 Type the slash command, or just say the word. Both work.
 
@@ -118,6 +159,7 @@ Type the slash command, or just say the word. Both work.
 <li><code>/writing</code>: you're writing rules for an AI</li>
 <li><code>/humanizer</code>: your writing sounds like an AI wrote it</li>
 <li><code>/site-design</code>: you need a page designed</li>
+<li><code>/slop</code>: check code for the patterns AI writes and humans do not</li>
 <li><code>/last-30</code>: what changed lately</li>
 <li><code>/claude-video</code>: summarise a YouTube video</li>
 <li><code>/archify</code>: draw a diagram of a system</li>
@@ -183,12 +225,14 @@ you don't re-explain anything.
 | File | What it does |
 | --- | --- |
 | `CLAUDE.md` | Rules Claude follows on every task |
-| `skills/` | Ten of the twelve commands above. `/humanizer` and `/archify` install from their own repos |
+| `skills/` | Eleven of the thirteen commands above. `/humanizer` and `/archify` install from their own repos |
 | `output-styles/plain.md` | Makes answers short and plain |
 | `memory/` | Notes Claude keeps on how you like to work |
 | `settings.json` | Plugins, theme, status line |
 | `statusline.sh` | The bar at the bottom |
 | `scripts/` | Tidies up stray Codex processes at session start |
+| `hooks/` | The pre-commit guard that refuses a commit holding a secret |
+| `tools/anti-slop/` | The rules behind `/slop` |
 
 ## How it talks to you
 
