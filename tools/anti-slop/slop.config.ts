@@ -10,7 +10,7 @@ import { defineConfig } from "oxlint";
 //   no-object-parameters      - React props are objects
 //
 // Off on purpose (ceremony, not defects). These accounted for 1,612 of the 1,674
-// hits on Wayfinder, and a second opinion from Codex judged every one of them
+// hits on a React codebase, and a second opinion from Codex judged every one of them
 // noise against real, well-documented code:
 //   require-safety-comment-for-type-assertion - 878 hits. A comment does not make
 //     a cast safe, and the rule cannot see the typeof / Array.isArray guard that
