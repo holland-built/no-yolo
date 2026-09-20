@@ -92,6 +92,29 @@ The search covers what is being committed now. Older commits are not rewritten: 
 already holds something identifying, say so and let the user decide, because rewriting history
 changes every clone and a leaked secret needs rotating either way.
 
+## Secrets: run gitleaks as well
+
+The grep above finds the words `token` and `password`, but a real key rarely carries either.
+`gitleaks` matches the shapes themselves — `AKIA…`, `ghp_…`, `xoxb-…`, several hundred more —
+and it reads every commit, which the grep cannot. The two find different things, so run both.
+
+```bash
+# every commit in this repo, not just what is about to be committed
+gitleaks git --redact --no-banner .
+# and the files on disk, including anything not yet staged
+gitleaks dir --redact --no-banner .
+```
+
+A hit in the working tree is fixed before the repo goes public. A hit in history is the user's
+call: say which commit and which file, and say plainly that the key must be replaced whether or
+not the history is rewritten, because a published key is already gone.
+
+If `gitleaks` is not installed, say so in one line and carry on with the grep. A scan that did
+not run is "couldn't tell", never a clean result. It is `brew install gitleaks`.
+
+This does not replace the identity search above: gitleaks looks for keys and knows nothing
+about the user's name, home path, customers or hosts.
+
 ## .gitignore
 
 Every repo has one. It covers real config files (a `.example` copy is committed instead),
@@ -142,6 +165,8 @@ the commit local and say so.
 - The identifying-detail search over tracked files, staged diff and commit message was shown
   to the user and returns nothing real.
 - `git status --ignored` shows real config and secrets ignored and none of them tracked.
+- `gitleaks` ran over both the history and the working tree, its output was shown, and any hit
+  in history was named to the user with the advice to replace the key.
 - The root folder holds only README, entry command, config example, LICENSE and dotfiles, and
   the tests pass after any move.
 - The prose has been through `/humanizer` and has no em dashes.
