@@ -18,7 +18,10 @@ fi
 # 1. Back up, so there is a way back from the copy below.
 if [ -d "$CLAUDE" ]; then
   BACKUP="$HOME/.claude-backup-$(date +%Y%m%d-%H%M%S)"
-  cp -R "$CLAUDE" "$BACKUP"
+  # copy the contents, not the folder: ~/.claude is sometimes a link, and copying
+  # the link would give you a backup pointing at the files about to be replaced.
+  mkdir -p "$BACKUP"
+  cp -R "$CLAUDE/." "$BACKUP/"
   say "Backed up your old setup to $BACKUP"
 fi
 
@@ -35,11 +38,13 @@ say "Copied the rules, style, skills and checker into $CLAUDE"
 if command -v gitleaks >/dev/null 2>&1; then
   say "gitleaks already installed: $(gitleaks version 2>&1 | head -1)"
 elif command -v brew >/dev/null 2>&1; then
-  brew install gitleaks
+  brew install gitleaks || say "brew could not install gitleaks. The guard stays off until it is."
 elif command -v apk >/dev/null 2>&1; then
-  apk add gitleaks
+  # these need root, and this script does not ask for it. A failure here must not
+  # stop the rest of the setup, so say what to run and carry on.
+  apk add gitleaks || say "Installing gitleaks needs root. Run: sudo apk add gitleaks"
 elif command -v apt-get >/dev/null 2>&1; then
-  apt-get install -y gitleaks
+  apt-get install -y gitleaks || say "Installing gitleaks needs root. Run: sudo apt-get install gitleaks"
 else
   say "Could not install gitleaks: no brew, apk or apt-get here."
   say "Take the binary for your machine from https://github.com/gitleaks/gitleaks/releases"
@@ -55,12 +60,18 @@ else
   git config --global core.hooksPath "$REPO/hooks"
   chmod +x "$REPO/hooks/pre-commit"
   say "Every repo on this machine now refuses a commit holding a secret."
+  say "This also stops any hook of your own in a repo's .git/hooks from running,"
+  say "because git uses one hooks folder at a time. Undo with:"
+  say "  git config --global --unset core.hooksPath"
 fi
 
 # 5. Download the linter the /slop rules run on.
 if command -v npm >/dev/null 2>&1; then
-  (cd "$CLAUDE/tools/anti-slop" && npm install --silent --save-exact oxlint@1.83.0 @oxlint/plugins@1.83.0)
-  say "Installed the linter behind /slop"
+  if (cd "$CLAUDE/tools/anti-slop" && npm install --silent --save-exact oxlint@1.83.0 @oxlint/plugins@1.83.0); then
+    say "Installed the linter behind /slop"
+  else
+    say "npm could not install the linter, so /slop has no linter yet."
+  fi
 else
   say "No npm here, so /slop has no linter. Install Node.js, then run this script again."
 fi
