@@ -14,81 +14,114 @@ installing them takes two minutes.
 
 ## Install
 
-Needs [Claude Code](https://claude.com/claude-code), Git and Node.js. macOS or Linux.
+Needs [Claude Code](https://claude.com/claude-code), Git, Node.js and `jq`, which the status
+line reads its values with. macOS or Linux. Windows is not supported.
 
-**Back up anything you already have.** This overwrites files in `~/.claude`:
+> [!WARNING]
+> Step 2 replaces files in `~/.claude`. A skill of your own with the same name as one here is
+> overwritten, and so are `CLAUDE.md`, `settings.json` and `statusline.sh`. Take the backup in
+> step 1 first, because there is no undo.
+
+1. **Back up what you have.** The date in the name means a second run never writes into the
+   first backup.
+
+   ```bash
+   # keep a dated copy of your current setup, in case you want it back
+   cp -R ~/.claude ~/.claude-backup-$(date +%Y%m%d-%H%M%S) 2>/dev/null
+   ```
+
+2. **Copy the rules, the style and the skills in.** Clone into `~/AI/no-yolo`, because
+   `settings.json` looks for the repo's scripts there.
+
+   ```bash
+   # download this repo to the path the settings expect, then step into it
+   mkdir -p ~/AI && git clone https://github.com/holland-built/no-yolo.git ~/AI/no-yolo && cd ~/AI/no-yolo
+   # put the rules, settings and status line where Claude reads them
+   mkdir -p ~/.claude/skills ~/.claude/output-styles
+   cp CLAUDE.md settings.json statusline.sh ~/.claude/
+   # add the skills and the plain speaking style
+   cp -R skills/. ~/.claude/skills/
+   cp -R output-styles/. ~/.claude/output-styles/
+   # let the status line run
+   chmod +x ~/.claude/statusline.sh
+   ```
+
+3. **Switch on the secret guard.** It refuses any commit holding a password or an API key, in
+   every repo on the machine. Without `gitleaks` the guard does nothing, so install that first.
+
+   ```bash
+   # the scanner the guard calls. Linux: apk add gitleaks, or apt install gitleaks
+   brew install gitleaks
+   # if this prints a path, you already have hooks set up: write it down before the next line
+   git config --global --get core.hooksPath
+   # tell git to run this repo's hooks for every repo on this machine
+   git config --global core.hooksPath "$PWD/hooks"
+   # let the guard run
+   chmod +x hooks/pre-commit
+   ```
+
+4. **Add the code checker behind `/slop`.**
+
+   ```bash
+   # copy the rules in, then download the linter they run on
+   cp -R tools ~/.claude/
+   cd ~/.claude/tools/anti-slop && npm install --save-exact oxlint@1.83.0 @oxlint/plugins@1.83.0 && cd -
+   ```
+
+5. **Restart Claude Code**, then type `/fix`. It should ask what is broken instead of guessing.
+
+<details>
+<summary><strong>Two skills that install from their own repos</strong></summary>
+
+They update themselves, so they are not copied into this repo.
 
 ```bash
-cp -R ~/.claude ~/.claude-backup 2>/dev/null
-```
-
-Then:
-
-```bash
-git clone https://github.com/holland-built/no-yolo.git
-cd no-yolo
-mkdir -p ~/.claude
-cp CLAUDE.md settings.json statusline.sh ~/.claude/
-mkdir -p ~/.claude/skills ~/.claude/output-styles
-cp -R skills/. ~/.claude/skills/
-cp -R output-styles/. ~/.claude/output-styles/
-chmod +x ~/.claude/statusline.sh
-```
-
-Then the secret guard. It refuses any commit holding a password or an API key, on every repo
-on the machine. Without `gitleaks` the guard does nothing, so install that first.
-
-```bash
-# the scanner the guard calls
-brew install gitleaks          # macOS. Linux: apk add gitleaks, or apt install gitleaks
-# point git at this repo's hooks folder, for every repo on this machine
-git config --global core.hooksPath "$PWD/hooks"
-chmod +x hooks/pre-commit
-```
-
-Then the code checker behind `/slop`, which needs its linter downloaded once:
-
-```bash
-cp -R tools ~/.claude/
-cd ~/.claude/tools/anti-slop && npm install --save-exact oxlint@1.83.0 @oxlint/plugins@1.83.0 && cd -
-```
-
-Then the two skills that come from other people's projects. They update themselves, so they
-install from their own repos instead of being copied here:
-
-```bash
+# makes Claude's writing sound less like an AI wrote it
 npx skills add blader/humanizer --global
+# draws diagrams of a system
 npx skills add tt-a1i/archify --global
 ```
 
-- [Humanizer](https://github.com/blader/humanizer) (MIT, by blader) makes Claude's writing
-  sound less like an AI wrote it.
-- [Archify](https://github.com/tt-a1i/archify) (MIT, by tt-a1i) draws diagrams of a system.
+- [Humanizer](https://github.com/blader/humanizer), MIT, by blader.
+- [Archify](https://github.com/tt-a1i/archify), MIT, by tt-a1i.
 
-Then Codex, a second AI from OpenAI that attacks Claude's plans before any code exists. It
-needs an OpenAI account. **No account? Skip this block.** Everything else still works; Claude
-skips the Codex checks and tells you it did.
+</details>
+
+<details>
+<summary><strong>Codex: a second AI that attacks the plan</strong></summary>
+
+Codex is OpenAI's coding AI. Claude asks it to find holes in a plan before any code is written.
+It needs an OpenAI account. **No account? Skip this.** Everything else still works, and Claude
+says once that it skipped the Codex checks.
 
 ```bash
+# install Codex and sign in
 npm install -g @openai/codex
 codex login
+# let Claude call it
 claude plugin marketplace add openai/codex-plugin-cc
 claude plugin install codex@openai-codex
 ```
 
-Then Firecrawl, which lets Claude search and read the web. Get a key at
-[firecrawl.dev](https://firecrawl.dev) and put it where it says `your-key`:
+</details>
+
+<details>
+<summary><strong>Firecrawl: let Claude search and read the web</strong></summary>
+
+Get a key at [firecrawl.dev](https://firecrawl.dev), then put it where it says `your-key`.
 
 ```bash
+# connect the web search tool to Claude
 claude mcp add firecrawl -s user -e FIRECRAWL_API_KEY=your-key -- npx -y firecrawl-mcp
 ```
 
-Windows is not supported.
+</details>
+
 
 ## Update
 
-The repo changes. To take the latest, pull and copy again. Nothing is deleted, files are
-replaced, and your own skills are untouched.
+The repo changes. To take the latest, pull and copy again. Nothing is deleted, but a file here
+replaces the one on your machine, including a skill of yours that shares a name.
 
 ```bash
 # from your clone of this repo
@@ -101,39 +134,39 @@ cp -R tools/anti-slop/src tools/anti-slop/slop.config.ts ~/.claude/tools/anti-sl
 
 The guard needs nothing: it runs from your clone, so `git pull` updates it.
 
-Check what you have matches the repo:
+Check what you have matches the repo. Silence means you are up to date.
 
 ```bash
-# lists any file that differs; silence means you are up to date
+# lists any file on this machine that no longer matches the repo
 diff -rq skills ~/.claude/skills; diff -q CLAUDE.md ~/.claude/CLAUDE.md
 ```
-
-Restart Claude Code. You should see a status bar along the bottom. Try:
-
-```
-/fix
-```
-
-Claude should ask you what's broken instead of guessing.
 
 <details>
 <summary><strong>Uninstall</strong></summary>
 
-Removes only what this repo installed. Your own skills stay.
+This removes the skills by name. A skill of your own that shares a name with one here goes
+too, and so do Humanizer, Archify, Codex and Firecrawl even if you installed them yourself.
+Your dated backup is the way back.
 
 ```bash
+# take out the skills this repo installed, leaving your own alone
 cd ~/.claude/skills && rm -rf build claude-video fix github-readme grill handoff last-30 map site-design slop writing humanizer archify
 rm -rf ~/.agents/skills/humanizer ~/.agents/skills/archify
 claude plugin uninstall codex@openai-codex
 claude mcp remove firecrawl -s user
 rm -f ~/.claude/output-styles/plain.md
 rm -f ~/.claude/CLAUDE.md ~/.claude/settings.json ~/.claude/statusline.sh
+# take out the code checker
+rm -rf ~/.claude/tools/anti-slop
+# stop git using the secret guard. Had your own hooks path before? Set it back instead
+git config --global --unset core.hooksPath
 ```
 
-Then put your old config back, if you took the backup:
+Then put your old config back, naming the backup folder you made in step 1:
 
 ```bash
-cp -R ~/.claude-backup/. ~/.claude/
+# restore the setup you had before
+cp -R ~/.claude-backup-<date>/. ~/.claude/
 ```
 
 </details>
@@ -290,6 +323,7 @@ line.
 <summary><strong>For me: syncing my machine back to this repo</strong></summary>
 
 ```bash
+# copy this machine's live setup back into the repo, then publish it
 cp ~/.claude/CLAUDE.md ~/.claude/statusline.sh .
 cp -R ~/.claude/output-styles/. output-styles/
 rsync -a --exclude humanizer --exclude archify ~/.claude/skills/ skills/
