@@ -17,10 +17,24 @@ installing them takes two minutes.
 Needs [Claude Code](https://claude.com/claude-code), Git, Node.js and `jq`, which the status
 line reads its values with. macOS or Linux. Windows is not supported.
 
+Two commands. The script backs up your old `~/.claude` first, copies the rules, style and
+skills in, installs `gitleaks`, switches the secret guard on, and downloads the `/slop` linter.
+
+```bash
+# download this repo to the path the settings expect, then set everything up
+mkdir -p ~/AI && git clone https://github.com/holland-built/no-yolo.git ~/AI/no-yolo
+~/AI/no-yolo/install.sh
+```
+
+Then **restart Claude Code** and type `/fix`. It should ask what is broken instead of guessing.
+
 > [!WARNING]
-> Step 2 replaces files in `~/.claude`. A skill of your own with the same name as one here is
-> overwritten, and so are `CLAUDE.md`, `settings.json` and `statusline.sh`. Take the backup in
-> step 1 first, because there is no undo.
+> The script replaces files in `~/.claude`. A skill of your own with the same name as one here
+> is overwritten, and so are `CLAUDE.md`, `settings.json` and `statusline.sh`. It writes a dated
+> backup folder first, and that backup is the only way back.
+
+<details>
+<summary><strong>Do the same by hand instead</strong></summary>
 
 1. **Back up what you have.** The date in the name means a second run never writes into the
    first backup.
@@ -69,6 +83,8 @@ line reads its values with. macOS or Linux. Windows is not supported.
    ```
 
 5. **Restart Claude Code**, then type `/fix`. It should ask what is broken instead of guessing.
+
+</details>
 
 <details>
 <summary><strong>Two skills that install from their own repos</strong></summary>
@@ -120,16 +136,14 @@ claude mcp add firecrawl -s user -e FIRECRAWL_API_KEY=your-key -- npx -y firecra
 
 ## Update
 
-The repo changes. To take the latest, pull and copy again. Nothing is deleted, but a file here
-replaces the one on your machine, including a skill of yours that shares a name.
+The repo changes. Take the latest with the same script: it is safe to run again. Nothing is
+deleted, but a file here replaces the one on your machine, including a skill of yours that
+shares a name.
 
 ```bash
-# from your clone of this repo
-git pull
-cp CLAUDE.md settings.json statusline.sh ~/.claude/
-cp -R skills/. ~/.claude/skills/
-cp -R output-styles/. ~/.claude/output-styles/
-cp -R tools/anti-slop/src tools/anti-slop/slop.config.ts ~/.claude/tools/anti-slop/
+# from your clone of this repo, take the latest and apply it
+cd ~/AI/no-yolo && git pull
+./install.sh
 ```
 
 The guard needs nothing: it runs from your clone, so `git pull` updates it.
@@ -263,6 +277,7 @@ you don't re-explain anything.
 | `memory/` | Notes Claude keeps on how you like to work |
 | `settings.json` | Plugins, theme, status line |
 | `statusline.sh` | The bar at the bottom |
+| `install.sh` | Sets this repo up on a machine, or updates one that already has it |
 | `scripts/` | Tidies up stray Codex processes at session start |
 | `hooks/` | The pre-commit guard that refuses a commit holding a secret |
 | `tools/anti-slop/` | The rules behind `/slop` |
