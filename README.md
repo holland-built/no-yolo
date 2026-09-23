@@ -106,6 +106,13 @@ npx skills add blader/humanizer --global
 npx skills add tt-a1i/archify --global
 ```
 
+To take their newest versions later:
+
+```bash
+# update every skill installed from someone else's repo
+npx skills update -g
+```
+
 - [Humanizer](https://github.com/blader/humanizer), MIT, by blader.
 - [Archify](https://github.com/tt-a1i/archify), MIT, by tt-a1i.
 
@@ -354,7 +361,7 @@ line.
 # copy this machine's live setup back into the repo, then publish it (skips third-party and personal skills)
 cp ~/.claude/CLAUDE.md ~/.claude/statusline.sh .
 cp -R ~/.claude/output-styles/. output-styles/
-rsync -a --exclude humanizer --exclude archify --exclude find-skills --exclude tasks ~/.claude/skills/ skills/
+rsync -a --exclude humanizer --exclude archify --exclude find-skills --exclude tasks --exclude model-update ~/.claude/skills/ skills/
 git add -A && git commit -m "Sync" && git push
 ```
 
