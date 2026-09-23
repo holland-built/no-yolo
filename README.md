@@ -281,7 +281,7 @@ you don't re-explain anything.
 | --- | --- |
 | `CLAUDE.md` | Rules Claude follows on every task |
 | `skills/` | Eleven of the thirteen commands above. `/humanizer` and `/archify` install from their own repos |
-| `output-styles/plain.md` | Makes answers short and plain |
+| `output-styles/plain.md` | Makes answers short and plain, next step first |
 | `memory/` | Notes Claude keeps on how you like to work |
 | `settings.json` | Plugins, theme, status line |
 | `statusline.sh` | The bar at the bottom |
@@ -297,8 +297,13 @@ asked it to explain something: twelve. Bullets and table rows count as one each.
 Over the cap, it cuts what you don't need first. It would rather run long than
 leave out a step you need. Steps you have to follow in order don't count.
 
-It also skips announcing what it's about to do and offering things you didn't ask for. It
-drops reflex hedging but still tells you when it has a real doubt.
+The first line is the answer, or the one thing you can do next. When you have a choice to
+make, it ranks the options, puts its pick first, and gives each one a real time: "10 minutes",
+"an afternoon". On a long job it opens each progress update with where things stand
+("step 3 of 5 done"), so you don't have to remember where things stand.
+
+It skips offering things you didn't ask for. It drops reflex hedging but still tells you when
+it has a real doubt.
 
 <table>
 <tr>
@@ -346,10 +351,10 @@ line.
 <summary><strong>For me: syncing my machine back to this repo</strong></summary>
 
 ```bash
-# copy this machine's live setup back into the repo, then publish it
+# copy this machine's live setup back into the repo, then publish it (skips third-party and personal skills)
 cp ~/.claude/CLAUDE.md ~/.claude/statusline.sh .
 cp -R ~/.claude/output-styles/. output-styles/
-rsync -a --exclude humanizer --exclude archify ~/.claude/skills/ skills/
+rsync -a --exclude humanizer --exclude archify --exclude find-skills --exclude tasks ~/.claude/skills/ skills/
 git add -A && git commit -m "Sync" && git push
 ```
 
