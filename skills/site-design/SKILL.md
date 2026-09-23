@@ -59,7 +59,9 @@ This is the failure mode, and it is the one comparison cannot catch. Three gener
 produce a winner, and it is still generic.
 
 The cause is always the same: every variant came from the same defaults, so none of them carries
-anything of the subject.
+anything of the subject. On this model those defaults are usually a cream or off-white
+background, italic accent words in headlines, numbered "01 / 02 / 03" section labels, monospace
+labels and pill-shaped buttons. A variant built from them is a default, not a direction.
 
 The fix is one move. Name a detail that could appear on **this page and no other** — its real
 units, its real vocabulary, its real numbers, the convention its own field uses. Put that detail

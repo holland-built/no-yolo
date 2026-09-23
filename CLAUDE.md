@@ -163,9 +163,9 @@ When the shape of a thing is undecided, run the same brief past two models. The 
 the deliverable: it shows you what you had not decided.
 
 Most models default to a 272k window (`max_context_window` 872k, raisable), so input size
-rarely separates them; `gpt-5.3-codex-spark` is the exception at 128k. Check `codex debug
-models` for what is actually available - **not** `~/.codex/models_cache.json`, which is
-written per-client-version and has already been wrong once.
+rarely separates them. Check `codex debug models` for what is actually available - **not**
+`~/.codex/models_cache.json`, which is written per-client-version and has already been wrong
+once.
 
 Reach for a sharper prompt before more effort. The plugin's own guidance: *"Do not raise
 reasoning or complexity first. Tighten the prompt and verification rules before escalating."*

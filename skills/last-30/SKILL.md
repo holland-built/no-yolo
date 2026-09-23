@@ -9,7 +9,7 @@ Answer one question: **what actually changed in <topic> in the last 30 days, and
 it matter to me?**
 
 Output goes to `~/AI/research/<topic-slug>-<YYYY-MM-DD>.md`, matching the existing notes
-there (e.g. `claude-code-new-features-2026-09-05.md`).
+there (e.g. `codex-cli-2026-09-09.md`).
 
 ## Rules that make this worth reading
 
@@ -28,7 +28,11 @@ there (e.g. `claude-code-new-features-2026-09-05.md`).
 
 1. **Fix the window.** `date -v-30d +%Y-%m-%d` → cutoff. State it in the note.
 
-2. **Gather.** Reach for the cheapest source that fits the topic. Roughly in cost order:
+2. **Check the vault.** If `~/AI/Knowledge Base` already covers the topic, read that
+   page first, so the note reports the *delta* against it rather than restating what is
+   already known.
+
+3. **Gather.** Reach for the cheapest source that fits the topic. Roughly in cost order:
    - the local CLI when the topic is a tool that is installed (`<tool> --help`, its
      changelog) — often more current than anything published
    - `gh api` for GitHub releases and commit ranges, e.g.
@@ -38,9 +42,6 @@ there (e.g. `claude-code-new-features-2026-09-05.md`).
 
    Done when every claim either carries a date or says plainly that it could not be dated.
    Anything older than the window moves to the "older but I had missed it" section.
-
-3. **Check the vault first.** If `~/AI/Knowledge Base` already covers the topic, read that
-   page and report the *delta* against it rather than restating what is already known.
 
 4. **Write the note.**
 
@@ -63,7 +64,7 @@ Window: <cutoff> to <today>. Sources: <how you looked>.
 - <things that looked new but were not, so future-me does not re-chase them>
 ```
 
-5. **Report in chat**: the two or three items that actually matter. Not the whole table.
+5. **Report in chat** only the items that matter, with the note's path for the rest.
 
 ## Vault handoff
 

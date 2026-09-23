@@ -5,9 +5,9 @@ metadata:
   type: feedback
 ---
 
-If a report would contain "stale", "broken", "needs a fix", "not done yet" or "never been
-run", do not write that line. Go and fix the thing, then write the report describing the
-fixed state.
+When a report would list your own work as stale, broken, unfinished or never run, fix it first
+and report the fixed state. Anything you could not fix still goes in the report, stated once,
+with what blocked it.
 
 **Why:** the user asked for exactly this: "if you're going to print something that says stale
 or broken or needs a fix or hasn't done this, just don't do it. Just fix it and then reprint

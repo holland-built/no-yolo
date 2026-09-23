@@ -11,8 +11,8 @@ at the destination.
 ## The constraints
 
 **This is planning, not building.** Every item on the map is a question whose answer is a
-decision, not a slice of work to execute. When you feel the pull to just build it, that is
-the signal the map is finished and it is time to hand off to `/build`.
+decision, not a slice of work to execute. When the pull to just build it arrives, check Done
+below: if Open or Fog still has anything in it, the pull is early.
 
 **The map is one file: `MAP.md` in the project folder.** No issue tracker — the user works
 alone and does not keep one. The map is an index: it names the destination, lists the
