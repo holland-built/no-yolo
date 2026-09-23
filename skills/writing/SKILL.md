@@ -24,8 +24,9 @@ responsive to instructions, so emphasis over-applies and an anxious file produce
 hedging model. Say the constraint plainly and say why it exists.
 
 **Describe success, not a list of failures.** A run of prohibitions anchors toward the very
-failure it names. Keep a prohibition when the failure it prevents has actually happened here —
-and write the incident beside it, so the next person can tell whether it still applies.
+failure it names. Keep a prohibition while the failure it prevents still happens here, and
+put the reason beside it: what goes wrong, and for whom. A rule written as a story of one bad
+session gets applied to that session's problem only.
 
 **Give the reason with every rule.** On any real task there are dozens of small unstated
 decisions, and the reason is what lets the model make them the way the user would. A rule with
@@ -35,8 +36,15 @@ no "because" is a rule that gets applied in the wrong place.
 definition of done, not more instructions. Every instruction file ends with what finished
 looks like, in terms that can be checked.
 
-**Never ask for the reasoning to be shown.** On Fable 5.1 that reads as an attempt to extract
-the chain of thought and can return an outright refusal — a real API error, not a style issue.
+**Never ask for the reasoning to be shown.** Current Claude models read that as an attempt to
+extract the chain of thought and can return an outright refusal — a real API error, not a style
+issue.
+
+**No length caps, no narration bans, no thinking prompts.** A word or sentence cap starves hard
+answers, a "don't narrate" line makes the model go quiet mid-task, and thinking is always on, so
+"think step by step" does nothing. Describe the reader and what they need instead. The one
+exception is `plain.md`'s sentence count, kept on purpose because the failure it patches still
+happens. Leave model names and dates out of rules, because both go stale.
 
 **Frontmatter is routing, and routing is allowed to be keen.** The `description` decides
 whether the skill is reached for at all, and skills under-trigger more often than they

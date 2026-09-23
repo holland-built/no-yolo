@@ -105,7 +105,8 @@ page up from its frontmatter.
 
 ### 7. Report
 
-Three lines in chat: what it was, the best idea in it, whether it changed a topic page.
+Report in chat what it was, the best idea in it, and whether it changed a topic page or
+contradicted the vault. Keep it short enough to scan.
 
 ## Cleanup
 

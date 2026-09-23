@@ -76,8 +76,8 @@ Use obvious placeholders instead:
 
 Before every commit, search the tracked files, the staged diff and the commit message for
 these and fix any hit. Show the user the search and its result, so they can see the check ran
-rather than take it on trust. A real IP slipped into proxblox's sample output once and needed
-its own commit to take out.
+rather than take it on trust. Sample output and example logs are where real addresses slip in
+most often, so read those hits closely.
 
 ```bash
 # search every tracked file plus what is staged for anything that identifies a person, host, network or secret
