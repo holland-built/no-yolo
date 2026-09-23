@@ -300,7 +300,7 @@ leave out a step you need. Steps you have to follow in order don't count.
 The first line is the answer, or the one thing you can do next. When you have a choice to
 make, it ranks the options, puts its pick first, and gives each one a real time: "10 minutes",
 "an afternoon". On a long job it opens each progress update with where things stand
-("step 3 of 5 done"), so you don't have to remember where things stand.
+("step 3 of 5 done"), so you don't have to keep track.
 
 It skips offering things you didn't ask for. It drops reflex hedging but still tells you when
 it has a real doubt.
