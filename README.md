@@ -5,7 +5,7 @@
 <p align="center">
 <a href="LICENSE"><img alt="MIT licence" src="https://img.shields.io/badge/licence-MIT-blue"></a>
 <img alt="macOS and Linux" src="https://img.shields.io/badge/macOS%20%7C%20Linux-supported-green">
-<img alt="fourteen skills" src="https://img.shields.io/badge/skills-14-8A2BE2">
+<img alt="fifteen skills" src="https://img.shields.io/badge/skills-15-8A2BE2">
 </p>
 
 Claude Code is an AI that writes code for you in your terminal. Out of the box
@@ -33,14 +33,14 @@ mkdir -p ~/AI && git clone https://github.com/holland-built/no-yolo.git ~/AI/no-
 Then **restart Claude Code** and type `/fix`. It should ask what is broken instead of guessing.
 
 **Rather have an AI do it?** Paste this into Claude Code, or any coding agent that can run
-commands. It does the same steps and adds the three skills from other repos.
+commands. It does the same steps and adds the four skills from other repos.
 
 ```text
 Install no-yolo on this machine. Clone https://github.com/holland-built/no-yolo.git to
 ~/AI/no-yolo. If that folder already exists, check that its origin is that URL and that git
 status is clean; if either is not true, stop and tell me. Otherwise git pull. Read its README,
-then run ~/AI/no-yolo/install.sh. Then install the three third-party skills with this command:
-npx -y skills add blader/humanizer -g -y && npx -y skills add tt-a1i/archify --skill archify -g -y && npx -y skills add vercel-labs/skills --skill find-skills -g -y
+then run ~/AI/no-yolo/install.sh. Then install the four third-party skills with this command:
+npx -y skills add blader/humanizer -g -y && npx -y skills add tt-a1i/archify --skill archify -g -y && npx -y skills add vercel-labs/skills --skill find-skills -g -y && npx -y skills add ayghri/i-have-adhd --skill i-have-adhd -g -y
 Do not change anything else. When it is done, tell me what the install script backed up,
 what it installed, and anything that failed, then remind me to restart Claude Code.
 ```
@@ -108,15 +108,15 @@ what it installed, and anything that failed, then remind me to restart Claude Co
 </details>
 
 <details>
-<summary><strong>Three skills that install from their own repos</strong></summary>
+<summary><strong>Four skills that install from their own repos</strong></summary>
 
 They update themselves, so they are not copied into this repo.
 
-All three in one line, with no questions asked:
+All four in one line, with no questions asked:
 
 ```bash
-# install humanizer, archify and find-skills from their own repos
-npx -y skills add blader/humanizer -g -y && npx -y skills add tt-a1i/archify --skill archify -g -y && npx -y skills add vercel-labs/skills --skill find-skills -g -y
+# install humanizer, archify, find-skills and i-have-adhd from their own repos
+npx -y skills add blader/humanizer -g -y && npx -y skills add tt-a1i/archify --skill archify -g -y && npx -y skills add vercel-labs/skills --skill find-skills -g -y && npx -y skills add ayghri/i-have-adhd --skill i-have-adhd -g -y
 ```
 
 Or one at a time:
@@ -128,6 +128,8 @@ npx skills add blader/humanizer --global
 npx skills add tt-a1i/archify --skill archify --global
 # finds and installs skills other people have made
 npx skills add vercel-labs/skills --skill find-skills --global
+# shapes replies for a reader with ADHD; type /i-have-adhd to switch it on
+npx skills add ayghri/i-have-adhd --skill i-have-adhd --global
 ```
 
 To take their newest versions later:
@@ -140,6 +142,7 @@ npx skills update -g
 - [Humanizer](https://github.com/blader/humanizer), MIT, by blader.
 - [Archify](https://github.com/tt-a1i/archify), MIT, by tt-a1i.
 - [find-skills](https://github.com/vercel-labs/skills), by Vercel Labs.
+- [i-have-adhd](https://github.com/ayghri/i-have-adhd), MIT, by ayghri.
 
 </details>
 
@@ -199,13 +202,13 @@ diff -rq skills ~/.claude/skills; diff -q CLAUDE.md ~/.claude/CLAUDE.md
 <summary><strong>Uninstall</strong></summary>
 
 This removes the skills by name. A skill of your own that shares a name with one here goes
-too, and so do Humanizer, Archify, find-skills, Codex and Firecrawl even if you installed them
-yourself. Your dated backup is the way back.
+too, and so do Humanizer, Archify, find-skills, i-have-adhd, Codex and Firecrawl even if you
+installed them yourself. Your dated backup is the way back.
 
 ```bash
 # take out the skills this repo installed, leaving your own alone
-cd ~/.claude/skills && rm -rf build claude-video fix github-readme grill handoff last-30 map site-design slop writing humanizer archify find-skills
-rm -rf ~/.agents/skills/humanizer ~/.agents/skills/archify ~/.agents/skills/find-skills
+cd ~/.claude/skills && rm -rf build claude-video fix github-readme grill handoff last-30 map site-design slop writing humanizer archify find-skills i-have-adhd
+rm -rf ~/.agents/skills/humanizer ~/.agents/skills/archify ~/.agents/skills/find-skills ~/.agents/skills/i-have-adhd
 claude plugin uninstall codex@openai-codex
 claude mcp remove firecrawl -s user
 rm -f ~/.claude/output-styles/plain.md
@@ -225,7 +228,7 @@ cp -R ~/.claude-backup-<date>/. ~/.claude/
 
 </details>
 
-## The fourteen commands
+## The fifteen commands
 
 Type the slash command, or just say the word. Both work.
 
@@ -251,6 +254,7 @@ Type the slash command, or just say the word. Both work.
 <li><code>/last-30</code>: what changed lately</li>
 <li><code>/claude-video</code>: summarise a YouTube video</li>
 <li><code>/archify</code>: draw a diagram of a system</li>
+<li><code>/i-have-adhd</code>: replies shaped for an ADHD reader</li>
 </ul>
 </td>
 </tr>
@@ -313,7 +317,7 @@ you don't re-explain anything.
 | File | What it does |
 | --- | --- |
 | `CLAUDE.md` | Rules Claude follows on every task |
-| `skills/` | Eleven of the fourteen commands above. `/humanizer`, `/archify` and `/find-skills` install from their own repos |
+| `skills/` | Eleven of the fifteen commands above. `/humanizer`, `/archify`, `/find-skills` and `/i-have-adhd` install from their own repos |
 | `output-styles/plain.md` | Makes answers short and plain, next step first |
 | `memory/` | Notes Claude keeps on how you like to work |
 | `settings.json` | Plugins, theme, status line |
@@ -387,7 +391,7 @@ line.
 # copy this machine's live setup back into the repo, then publish it (skips third-party and personal skills)
 cp ~/.claude/CLAUDE.md ~/.claude/statusline.sh .
 cp -R ~/.claude/output-styles/. output-styles/
-rsync -a --exclude humanizer --exclude archify --exclude find-skills --exclude tasks --exclude model-update ~/.claude/skills/ skills/
+rsync -a --exclude humanizer --exclude archify --exclude find-skills --exclude i-have-adhd --exclude tasks --exclude model-update ~/.claude/skills/ skills/
 git add -A && git commit -m "Sync" && git push
 ```
 
