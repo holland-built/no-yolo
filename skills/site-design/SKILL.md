@@ -59,9 +59,18 @@ This is the failure mode, and it is the one comparison cannot catch. Three gener
 produce a winner, and it is still generic.
 
 The cause is always the same: every variant came from the same defaults, so none of them carries
-anything of the subject. On this model those defaults are usually a cream or off-white
-background, italic accent words in headlines, numbered "01 / 02 / 03" section labels, monospace
-labels and pill-shaped buttons. A variant built from them is a default, not a direction.
+anything of the subject. A variant built from these is a default, not a direction, so do not add
+them:
+
+- a cream or off-white background, or a terracotta accent colour
+- one italic or coloured word in a headline
+- "01 / 02 / 03" labels, unless the content really is a sequence
+- small ALL-CAPS labels above headings, or monospace labels
+- pill-shaped buttons, or an arrow (character or icon) in button text
+- identical rounded cards with the same grey shadow
+
+If the brand already uses one, keep it. This list matches the one in `~/.claude/CLAUDE.md`, so
+change both together.
 
 The fix is one move. Name a detail that could appear on **this page and no other** — its real
 units, its real vocabulary, its real numbers, the convention its own field uses. Put that detail
@@ -72,4 +81,6 @@ in, and rebuild the variants around it.
 The user has picked a variant, and it works on a narrow screen, with the longest real content,
 and in its empty, loading and error states, because those are where a layout that looked fine
 side by side breaks. Its controls pass the accessibility list above. The other variants and
-anything only they used are deleted, and nothing outside the designed page changed.
+anything only they used are deleted, and nothing outside the designed page changed. No variant
+adds a style from that list. Tell the user what the chosen variant used instead, and ask whether
+to ban that too.

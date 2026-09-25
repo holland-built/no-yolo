@@ -191,6 +191,31 @@ codex exec --skip-git-repo-check ... < /dev/null
 `--skip-git-repo-check` is required outside a git repo. Closing stdin with `< /dev/null` is
 required always, or it sits waiting for input that never comes.
 
+## 7. Design Rules
+
+**Web pages and slides.** Left alone, a model reaches for the same few styles every time, and
+the user can spot them at a glance. Do not add these:
+
+- a cream or off-white background, or a terracotta accent colour
+- one italic or coloured word in a headline
+- "01 / 02 / 03" labels, unless the content really is a sequence
+- small ALL-CAPS labels above headings, or monospace labels
+- pill-shaped buttons, or an arrow (character or icon) in button text
+- identical rounded cards with the same grey shadow
+
+If a site's brand or a template already uses one of these, keep it, because matching the brand
+matters more than the list. The same list is in the site-design skill. Change both together.
+
+The list grows. After each build, name the style you used in place of these, and ask whether to
+ban that one too.
+
+**PowerPoint.** Keep the existing template's fonts and colours. Never swap them for new ones,
+because the deck has to match the company's other slides. Before editing any `.pptx`, save a
+dated copy beside it, such as `Deck (backup YYYY-MM-DD).pptx`, so a bad edit can be undone.
+
+Done: no listed style was newly added, the brand or template is intact, any `.pptx` edit has
+its backup, and the user has been asked about the style used instead.
+
 ---
 
 **These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
