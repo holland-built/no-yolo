@@ -1,7 +1,7 @@
 {
   "permissions": {
     "defaultMode": "auto",
-    "ask": [
+    "allow": [
       "Bash(gh pr merge:*)"
     ]
   },

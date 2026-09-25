@@ -53,6 +53,9 @@ what it installed, and anything that failed, then remind me to restart Claude Co
 > The secret guard also stops any hook of your own in a repo's `.git/hooks` from running,
 > because git uses one hooks folder at a time for the whole machine. Undo that with
 > `git config --global --unset core.hooksPath`.
+>
+> The settings also let Claude merge pull requests on GitHub without asking you first. To be
+> asked each time, move `Bash(gh pr merge:*)` from `allow` to `ask` in `~/.claude/settings.json`.
 
 <details>
 <summary><strong>Do the same by hand instead</strong></summary>
@@ -342,7 +345,7 @@ you don't re-explain anything.
 | `skills/` | Eleven of the sixteen commands above. `/humanizer`, `/archify`, `/find-skills`, `/i-have-adhd` and `/frontend-design` install from their own repos |
 | `output-styles/plain.md` | Makes answers short and plain, next step first |
 | `memory/` | Notes Claude keeps on how you like to work |
-| `settings.json` | Plugins, theme, status line |
+| `settings.json` | Plugins, theme, status line, and merging pull requests without asking |
 | `statusline.sh` | The bar at the bottom |
 | `install.sh` | Sets this repo up on a machine, or updates one that already has it |
 | `scripts/` | Tidies up stray Codex processes at session start |
