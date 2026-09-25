@@ -168,6 +168,22 @@ claude plugin install codex@openai-codex
 </details>
 
 <details>
+<summary><strong>TypeScript checker: catch broken code as Claude writes it</strong></summary>
+
+Lets Claude spot errors in JavaScript and TypeScript files (`.js`, `.jsx`, `.ts`, `.tsx`) while it
+works, before you run anything. Claude Code offers it on its own the first time it opens one
+of those files.
+
+```bash
+# install the language server the plugin talks to
+npm install -g typescript-language-server typescript
+# install the plugin from Anthropic's official list
+claude plugin install typescript-lsp@claude-plugins-official
+```
+
+</details>
+
+<details>
 <summary><strong>Firecrawl: let Claude search and read the web</strong></summary>
 
 Get a key at [firecrawl.dev](https://firecrawl.dev), then put it where it says `your-key`.
@@ -205,7 +221,7 @@ diff -rq skills ~/.claude/skills; diff -q CLAUDE.md ~/.claude/CLAUDE.md
 <summary><strong>Uninstall</strong></summary>
 
 This removes the skills by name. A skill of your own that shares a name with one here goes
-too, and so do Humanizer, Archify, find-skills, i-have-adhd, frontend-design, Codex and Firecrawl even if you
+too, and so do Humanizer, Archify, find-skills, i-have-adhd, frontend-design, Codex, the TypeScript checker and Firecrawl even if you
 installed them yourself. Your dated backup is the way back.
 
 ```bash
@@ -213,6 +229,8 @@ installed them yourself. Your dated backup is the way back.
 cd ~/.claude/skills && rm -rf build claude-video fix github-readme grill handoff last-30 map site-design slop writing humanizer archify find-skills i-have-adhd frontend-design
 rm -rf ~/.agents/skills/humanizer ~/.agents/skills/archify ~/.agents/skills/find-skills ~/.agents/skills/i-have-adhd ~/.agents/skills/frontend-design
 claude plugin uninstall codex@openai-codex
+# remove the TypeScript checker plugin
+claude plugin uninstall typescript-lsp@claude-plugins-official
 claude mcp remove firecrawl -s user
 rm -f ~/.claude/output-styles/plain.md
 rm -f ~/.claude/CLAUDE.md ~/.claude/settings.json ~/.claude/statusline.sh
