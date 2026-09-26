@@ -130,7 +130,7 @@ For everything else, call Codex directly:
 
 ```bash
 codex exec --skip-git-repo-check --sandbox read-only \
-  -c model=gpt-5.6-sol -c model_reasoning_effort=medium "<the prompt>" < /dev/null
+  -c model=gpt-6-sol -c model_reasoning_effort=medium "<the prompt>" < /dev/null
 ```
 
 `< /dev/null` is required, or it waits forever for input. Here, **empty output means it
@@ -140,7 +140,7 @@ failed** - report that, not a pass.
 
 **`medium` is the ceiling.** Role picks the model, not input size:
 
-`gpt-5.6-sol` for routine second opinions and the automatic review. Escalate explicitly for
+`gpt-6-sol` for routine second opinions and the automatic review. Escalate explicitly for
 consequential architecture, ambiguous debugging, or escalated review.
 
 ### Which model for which job
@@ -154,7 +154,7 @@ current practice, n=1.
 | Thinking a problem through, design | Fable 5.1 | `gpt-6-astra` for structure |
 | Structure, speed, computer use, spreadsheets | `gpt-6-astra` | Fable for the design half |
 | Cheap bulk work under supervision | Haiku 4.5 in a subagent | Always inspected by a stronger model |
-| Second opinion on a plan or a diff | `gpt-5.6-sol` at medium | Astra only when undoing it means rewriting |
+| Second opinion on a plan or a diff | `gpt-6-sol` at medium | Astra only when undoing it means rewriting |
 
 Haiku 4.5 is `claude-haiku-4-5-20251001`. Use it through the Agent tool's `model` override
 for read-and-report work — searching, checking, listing — never for work that writes.
