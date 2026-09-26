@@ -169,6 +169,27 @@ claude plugin marketplace add openai/codex-plugin-cc
 claude plugin install codex@openai-codex
 ```
 
+With several Claude Code windows open, signing in to Codex from one window can break Codex in
+the others with `401 Unauthorized`, because each window's Codex server keeps its own copy of the
+sign-in and does not notice a new one
+([openai/codex-plugin-cc#281](https://github.com/openai/codex-plugin-cc/issues/281)). Add
+this to `~/.zshrc` and sign in with `codex-relogin` instead of `codex login`:
+
+```bash
+# sign Codex in, then stop the plugin's Codex servers; each window starts a fresh one that reads the new sign-in
+codex-relogin() {
+  codex login || return
+  pkill -f 'plugins/cache/openai-codex/.*/app-server-broker\.mjs'
+  case $? in
+    0) echo "Stopped the plugin's Codex servers. Each window starts a fresh one on its next Codex call." ;;
+    1) echo "No plugin Codex servers were running." ;;
+    *) echo "Could not stop the plugin's Codex servers." >&2; return 1 ;;
+  esac
+}
+```
+
+A Codex review running in another window at that moment stops. The next one starts normally.
+
 </details>
 
 <details>
