@@ -26,7 +26,7 @@ harder:
 
 ```bash
 codex exec --skip-git-repo-check --sandbox read-only \
-  -c model=gpt-5.6-sol -c model_reasoning_effort=medium \
+  -c model=gpt-6-sol -c model_reasoning_effort=medium \
   "<the symptom, the reproduction, what is ruled out and how it was ruled out>. What would you check next?" < /dev/null
 ```
 

@@ -36,7 +36,7 @@ when you take it.
 
 ```bash
 codex exec --skip-git-repo-check --sandbox read-only \
-  -c model=gpt-5.6-sol -c model_reasoning_effort=medium \
+  -c model=gpt-6-sol -c model_reasoning_effort=medium \
   "<the chosen approach in full>. What would make this the wrong approach? Concrete failure cases, not style." < /dev/null
 ```
 
@@ -54,7 +54,7 @@ tell" and why, and finish without it — never report a review that did not happ
 git add -N .
 git diff <base> > /tmp/build-review.diff
 codex exec --skip-git-repo-check --sandbox read-only \
-  -c model=gpt-5.6-sol -c model_reasoning_effort=medium \
+  -c model=gpt-6-sol -c model_reasoning_effort=medium \
   "Review the diff at /tmp/build-review.diff. Only defects that would crash it or make it do the wrong thing. Ignore style. None is a valid answer." < /dev/null
 ```
 
