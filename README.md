@@ -56,6 +56,7 @@ what it installed, and anything that failed, then remind me to restart Claude Co
 >
 > The settings also let Claude merge pull requests on GitHub without asking you first. To be
 > asked each time, move `Bash(gh pr merge:*)` from `allow` to `ask` in `~/.claude/settings.json`.
+> Running `install.sh` again puts it back, so redo this after each update.
 
 <details>
 <summary><strong>Do the same by hand instead</strong></summary>
