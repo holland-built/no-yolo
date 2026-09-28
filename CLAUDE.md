@@ -14,6 +14,14 @@ every time it was tried.
 clear, execute it. Do not stop to confirm each step. Reserve a blocking question for a choice
 that is irreversible, or where being wrong would waste real work.
 
+**Merge and release are part of the job.** When a PR's CI is green, its tests have been
+seen to fail on the old code, and Codex has reviewed it, merge it
+(`gh pr merge <n> --squash --delete-branch`), tag the release the project's rules call
+for, and watch the release build. Do not hand the merge back to the user. "Done" means
+merged, tagged and released, so the only thing left for the user is to update their
+running copy. Stop and ask only if CI is red, a review finding is unresolved, or the
+merge would discard someone else's work.
+
 **Run `/humanizer` on prose you write for people** — a README, report, email or post — before
 showing it. Never on `CLAUDE.md`, `plain.md`, a `SKILL.md` or a memory note, where sentence
 shape carries the rule.

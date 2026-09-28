@@ -2,7 +2,19 @@
   "permissions": {
     "defaultMode": "auto",
     "allow": [
-      "Bash(gh pr merge:*)"
+      "Bash(gh pr:*)",
+      "Bash(gh run:*)",
+      "Bash(gh release:*)",
+      "Bash(gh workflow run:*)",
+      "Bash(git tag:*)",
+      "Bash(git push:*)"
+    ],
+    "ask": [
+      "Bash(git push*--force*)",
+      "Bash(git push* -f*)",
+      "Bash(git push* +*)",
+      "Bash(gh release delete:*)",
+      "Bash(gh repo delete:*)"
     ]
   },
   "skillOverrides": {},

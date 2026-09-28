@@ -54,9 +54,12 @@ what it installed, and anything that failed, then remind me to restart Claude Co
 > because git uses one hooks folder at a time for the whole machine. Undo that with
 > `git config --global --unset core.hooksPath`.
 >
-> The settings also let Claude merge pull requests on GitHub without asking you first. To be
-> asked each time, move `Bash(gh pr merge:*)` from `allow` to `ask` in `~/.claude/settings.json`.
-> Running `install.sh` again puts it back, so redo this after each update.
+> The settings also let Claude work on GitHub without asking you first. It can open and merge
+> pull requests, watch CI runs, make releases, tag, and push. The rules tell it that a job is
+> only done once the pull request is merged and released. It still asks before a force push or
+> before deleting a repo or a release. To be asked each time, move the `gh` and `git` lines from
+> `allow` to `ask` in `~/.claude/settings.json`. Running `install.sh` again puts them back, so
+> redo this after each update.
 
 <details>
 <summary><strong>Do the same by hand instead</strong></summary>
