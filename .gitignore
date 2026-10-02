@@ -2,3 +2,7 @@
 node_modules/
 skills/archify
 __pycache__/
+.env
+*.log
+.claude/settings.local.json
+.orca/
