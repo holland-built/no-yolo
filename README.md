@@ -494,13 +494,18 @@ alone. Jev's pick is advice, and you can override it.
 <details>
 <summary><strong>For me: syncing my machine back to this repo</strong></summary>
 
+On my machine a git `post-commit` hook does this after every commit in `~/.claude`. It copies from the
+last commit, so unfinished edits never ship, and it stops without pushing if a check fails: a name, home
+path, pronoun, e-mail or address on an added line, a secret, a path it did not expect, or more than 5
+deleted files. The manual steps below do the same without the checks.
+
 ```bash
 # copy the rules and the status line from this machine into the repo
 cp ~/.claude/CLAUDE.md ~/.claude/statusline.sh .
 # copy the plain speaking style
 cp -R ~/.claude/output-styles/. output-styles/
-# copy the skills, leaving out third-party skills, personal skills and the sync folder
-rsync -a --exclude humanizer --exclude archify --exclude find-skills --exclude i-have-adhd --exclude frontend-design --exclude tasks --exclude model-update --exclude synced ~/.claude/skills/ skills/
+# copy the skills, leaving out third-party skills, personal skills, test cases and the sync folder
+rsync -a --exclude humanizer --exclude archify --exclude find-skills --exclude i-have-adhd --exclude frontend-design --exclude tasks --exclude model-update --exclude synced --exclude evals --exclude .claude-plugin --exclude __pycache__ ~/.claude/skills/ skills/
 # publish it
 git add -A && git commit -m "Sync" && git push
 ```
