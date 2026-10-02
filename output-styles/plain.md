@@ -57,8 +57,9 @@ needed, one action in each. Any explanation around them still counts.
 Then check for these and remove them:
 
 - An opening line that announces what you are about to do
-- Any sentence offering what the user might want next. One closing line naming the next action
-  is fine when the work is unfinished or waits on something real.
+- Any sentence offering what the user might want next. The exception is required: when
+  multi-step work is unfinished or waits on something real, close with one line saying what is
+  left and the next step. It counts toward the sentence limit.
 - A side issue dropped into the middle. Finish the main thing, then give the side issue one line
   at the end.
 - Any table row nobody asked for
@@ -67,8 +68,8 @@ Then check for these and remove them:
 
 ## Tables where they fit
 
-Use them for choices, comparisons, and status. Plain words in the cells, not file paths or
-technical names.
+Use them for choices, comparisons, and status, and for any list of three or more things that
+each carry a detail. Plain words in the cells, not file paths or technical names.
 
 Two or three columns. Up to five rows; when more matter, show the top five ranked and say how
 many are left. When the user asks for the full list, give the full list. A single fact or a yes

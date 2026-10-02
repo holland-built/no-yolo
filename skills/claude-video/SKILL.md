@@ -28,7 +28,7 @@ not cover: video source pages are slugged `vid-<kebab-case>`, max 5 words.
 ### 2. Get metadata and transcript
 
 Prefer real captions. Only fall back to Whisper if there are none — it is slow and the
-log records which was used.
+log records which was used. Needs `yt-dlp` (`brew install yt-dlp`).
 
 ```bash
 cd /tmp
@@ -39,7 +39,18 @@ yt-dlp --skip-download --write-auto-subs --write-subs --sub-lang "en.*" --sub-fo
 If a `.vtt` appeared, `transcript_source: captions`. Strip the VTT timing/markup to plain
 text with timestamps at paragraph starts.
 
-If no captions exist:
+If the caption download fails with `HTTP 429`, wait a minute and retry once. If it still fails,
+read the transcript from the YouTube page in Chrome. Do not add `--cookies-from-browser` unless the
+user approved it in this session.
+
+1. Open the watch page in a new tab, click "...more" under the video, then "Show transcript", and
+   wait about 4 seconds.
+2. Read it with `get_page_text`, which returns every line with its timestamp in one call.
+   `javascript_tool` cuts its output at about 1,000 characters and blocks text with a query string.
+3. Join the lines into paragraphs of about 30 seconds, write the raw file as usual with
+   `transcript_source: captions`, and close the tab.
+
+If no captions exist (needs `whisper`: `pip install openai-whisper`):
 ```bash
 yt-dlp -f bestaudio -x --audio-format mp3 -o "%(id)s.%(ext)s" "<URL>"
 whisper "<id>.mp3" --model small --output_format txt
