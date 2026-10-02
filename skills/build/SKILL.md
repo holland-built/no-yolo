@@ -1,6 +1,6 @@
 ---
 name: build
-description: Build a new thing for the user - settle what it should do, let the user pick the approach, get Codex to attack the plan before code exists, build it, and show it working. Use when the user says build, make, add, or wants a feature or script written.
+description: Build a new thing for the user - settle what it should do, have Codex and an Opus helper argue the approach and Jev pick it (the user can override), get Codex to attack the plan before code exists, build it, and show it working. Use when the user says build, make, add, or wants a feature or script written.
 ---
 
 # build
@@ -17,10 +17,31 @@ change nobody looked at.
 
 ## The constraints
 
-**The user picks the approach, not you.** When the shape is undecided, give two or three real
-options in plain words — what each does, what it costs later, when it is the wrong choice.
-Say which you would pick. Then stop and wait. This is the one place where moving on your own
-wastes the user's day.
+**Two models argue the approach, Jev picks, and the user can override.** When the shape is
+undecided and two approaches really differ, do not choose alone and do not hand the user a menu
+of technical options that only a programmer could judge. The user can say what matters, so settle three or four
+criteria first, as plain sentences such as "Works without a network". The user approves them
+and marks which are must-haves, because Jev answers exactly the criteria it is given, and a pick
+that wins two small criteria can still fail the one that matters. Then brief Codex and an Opus helper
+separately on the same job and criteria. Each returns its own best approach in plain words, plus
+exactly two short claims on how that approach does against each criterion. Keep the count equal,
+because Jev leans toward whichever side writes more. The side that holds a claim writes it, so
+your own slant stays out.
+
+The Opus helper is the Agent tool with `subagent_type: "Plan"` and `model: "opus"`, which cannot
+edit files. Codex is the `codex exec` form below.
+
+If both land on the same approach, take it, skip Jev, and say what it is before any code is
+written. Otherwise run `/jev-judge` on their claims and show the user the table it prints. When it
+gives advice, say the pick and the reason in the reply before any code is written, record it in
+`PLAN.md` as Jev's pick, and carry on; the user can interrupt with "the other one" at any point
+and you switch. When it says ask the user, or cannot run at all (no TypeSafe key, no network),
+show both approaches in plain words and wait.
+However the approach was chosen, if its own claims show it failing a must-have, it goes to the
+user instead. Anything that deletes data, publishes, or spends money goes to the user whatever
+Jev says, because Jev's confidence measures how concentrated its picks are, not how often they
+are right. Jev never judges whether code works; tests do that.
+Skip all of this on the fast lane, and when only one approach is sensible.
 
 **Ask before you assume.** Anything you would otherwise guess at, ask — numbered, with your
 recommended answer on each, so the user can say "all of those" in four words. Find facts
@@ -32,7 +53,9 @@ nothing depends on it yet, and being wrong costs time rather than data — skip 
 show a rough version. What the user says about it is the real brief. Say "fast lane" out loud
 when you take it.
 
-**Codex sees the approach before the code exists**, unless you took the fast lane:
+**Codex sees the approach before the code exists**, unless you took the fast lane. This runs on
+the chosen approach even after the two-model step above, because there the two sides propose and
+never attack each other:
 
 ```bash
 codex exec --skip-git-repo-check --sandbox read-only \
@@ -100,4 +123,5 @@ was asked, with the output on screen. Write those criteria into `PLAN.md` at the
 user's words, so "done" is not your opinion.
 
 Two things are true of every finished build, whichever lane you took: the user chose what got
-built, and Codex saw the final diff. If either is false, say so rather than calling it done.
+built, or was shown Jev's pick before the build began, and Codex saw the final diff. If either is false, say
+so rather than calling it done.
