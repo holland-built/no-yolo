@@ -5,6 +5,7 @@ import threading
 import unittest
 from unittest import mock
 
+import check_approach
 import jev_judge
 from jev_judge import judge, report
 
@@ -47,9 +48,9 @@ def serve(responder):
     return server, log
 
 
-def reply(code, body=b"", location=None):
+def reply(code, body=b"", location=None, reason=None):
     def respond(h):
-        h.send_response(code)
+        h.send_response(code, reason)
         if location:
             h.send_header("Location", location)
         h.send_header("Content-Length", str(len(body)))
@@ -162,6 +163,14 @@ class Ask(unittest.TestCase):
             with self.assertRaises(jev_judge.JevFailed):
                 jev_judge.ask({}, {"c0": {}})
 
+    def test_the_servers_own_words_never_reach_the_message(self):
+        server, _ = serve(reply(500, reason="secret-key echoed here"))
+        with self.assertRaises(jev_judge.JevFailed) as cm:
+            self.call(server)
+        self.assertIn("500", str(cm.exception))
+        self.assertNotIn("echoed", str(cm.exception))
+        self.assertNotIn("secret-key", str(cm.exception))
+
     def test_unreadable_answer_gives_a_clean_message(self):
         server, _ = serve(reply(200, b"{}"))
         with self.assertRaises(jev_judge.JevFailed):
@@ -172,6 +181,91 @@ class Ask(unittest.TestCase):
             with mock.patch.dict(os.environ, {"TYPESAFE_API_KEY": "abc\ndef"}):
                 jev_judge.ask({}, {})
         self.assertNotIn("abc", str(cm.exception))
+
+
+class Post(unittest.TestCase):
+    """The shared client used by the other Jev tools: any question type, same safety."""
+
+    def test_noul_answers_come_back(self):
+        body = b'{"model": "jev-1.13.0", "answers": {"q": {"type": "noul", "noul": 0.25}}}'
+        server, _ = serve(reply(200, body))
+        url = f"http://127.0.0.1:{server.server_port}/"
+        with mock.patch.object(jev_judge, "URL", url), \
+                mock.patch.dict(os.environ, {"TYPESAFE_API_KEY": "secret-key"}):
+            answers = jev_judge.post({"s": "x"}, {"q": {}}, jev_judge.check_noul)
+        self.assertEqual(answers["q"]["noul"], 0.25)
+
+    def test_noul_out_of_range_is_refused(self):
+        body = b'{"answers": {"q": {"type": "noul", "noul": 7}}}'
+        server, _ = serve(reply(200, body))
+        url = f"http://127.0.0.1:{server.server_port}/"
+        with mock.patch.object(jev_judge, "URL", url), \
+                mock.patch.dict(os.environ, {"TYPESAFE_API_KEY": "secret-key"}):
+            with self.assertRaises(jev_judge.JevFailed):
+                jev_judge.post({"s": "x"}, {"q": {}}, jev_judge.check_noul)
+
+    def test_choice_options_are_the_callers_own(self):
+        body = b'{"answers": {"q": {"type": "choice", "choice": "easy", "confidence": 0.9}}}'
+        server, _ = serve(reply(200, body))
+        url = f"http://127.0.0.1:{server.server_port}/"
+        with mock.patch.object(jev_judge, "URL", url), \
+                mock.patch.dict(os.environ, {"TYPESAFE_API_KEY": "secret-key"}):
+            got = jev_judge.post({"s": "x"}, {"q": {}}, jev_judge.choice_in(("easy", "hard")))
+            self.assertEqual(got["q"]["choice"], "easy")
+            with self.assertRaises(jev_judge.JevFailed):
+                jev_judge.post({"s": "x"}, {"q": {}}, jev_judge.choice_in(("X", "Y")))
+
+
+class CheckApproach(unittest.TestCase):
+    DATA = {"approach": "Rewrite the data file from a CSV export.",
+            "claims": ["Replaces the old file."],
+            "must_haves": ["Works without a network", "Keeps the file format unchanged"]}
+
+    def fake_post(self, values):
+        def post(state, questions, check):
+            self.assertEqual(state["approach"], self.DATA["approach"])
+            return {k: {"type": "noul", "noul": values.get(k, 0.05)} for k in questions}
+        return post
+
+    def test_asks_one_question_per_must_have_and_three_risks(self):
+        seen = []
+
+        def post(state, questions, check):
+            seen.extend(questions)
+            return {k: {"type": "noul", "noul": 0.0} for k in questions}
+
+        check_approach.check(self.DATA, post)
+        self.assertEqual(seen, ["m0", "m1", "deletes", "publishes", "spends"])
+
+    def test_a_failed_must_have_escalates(self):
+        rows = check_approach.check(self.DATA, self.fake_post({"m1": 0.8}))
+        text = check_approach.report(rows)
+        self.assertIn("ESCALATE", text)
+        self.assertIn("Keeps the file format unchanged", text)
+
+    def test_a_delete_risk_escalates_at_the_threshold(self):
+        rows = check_approach.check(self.DATA, self.fake_post({"deletes": check_approach.THRESHOLD}))
+        self.assertIn("ESCALATE", check_approach.report(rows))
+
+    def test_low_numbers_never_say_the_approach_is_safe(self):
+        rows = check_approach.check(self.DATA, self.fake_post({}))
+        text = check_approach.report(rows)
+        self.assertNotIn("ESCALATE", text)
+        self.assertIn("still read it yourself", text)
+
+    def test_a_number_just_under_the_threshold_prints_as_it_is(self):
+        rows = check_approach.check(self.DATA, self.fake_post({"deletes": 0.399}))
+        text = check_approach.report(rows)
+        self.assertIn("0.399", text)
+        self.assertNotIn("ESCALATE", text)
+
+    def test_no_must_haves_still_checks_the_three_risks(self):
+        data = {"approach": "x", "claims": []}
+
+        def post(state, questions, check):
+            return {k: {"type": "noul", "noul": 0.9 if k == "spends" else 0.0} for k in questions}
+
+        self.assertIn("ESCALATE", check_approach.report(check_approach.check(data, post)))
 
 
 if __name__ == "__main__":

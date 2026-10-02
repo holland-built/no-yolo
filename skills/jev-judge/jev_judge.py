@@ -15,7 +15,7 @@ For every other criterion Jev answers a Choice (a / b / neither), asked twice
 with the sides swapped. It counts only if both orders agree and confidence is
 at least MIN_CONF. Otherwise it goes to the user. The verdict is advice.
 """
-import http.client, json, os, sys, urllib.error, urllib.request
+import http, http.client, json, os, sys, urllib.error, urllib.request
 
 URL = "https://api.typesafe.ai/v1/systemone"
 MODEL = "jev-1.13.0"
@@ -49,26 +49,47 @@ def api_key():
     return key
 
 
-def ask(state, questions):
+def choice_in(options):
+    """A check for post(): the answer must be a Choice naming one of `options`."""
+    def check(answer):
+        if answer["choice"] not in options or not isinstance(answer["confidence"], (int, float)):
+            raise ValueError
+    return check
+
+
+def check_noul(answer):
+    if not isinstance(answer["noul"], (int, float)) or not 0 <= answer["noul"] <= 1:
+        raise ValueError
+
+
+def post(state, questions, check, timeout=30):
+    """Send one request to Jev and return its answers. `check` raises ValueError for an answer in
+    the wrong shape. Every failure becomes a JevFailed whose message is safe to print."""
     body = json.dumps({"model": MODEL, "state": state, "questions": questions}).encode()
     req = urllib.request.Request(URL, body, {
         "Authorization": "Bearer " + api_key(),
         "Content-Type": "application/json"})
     try:
-        with OPENER.open(req, timeout=30) as r:
+        with OPENER.open(req, timeout=timeout) as r:
             answers = json.load(r)["answers"]
         for k in questions:
-            if answers[k]["choice"] not in ("X", "Y", "neither") \
-                    or not isinstance(answers[k]["confidence"], (int, float)):
-                raise ValueError
+            check(answers[k])
         return answers
     except urllib.error.HTTPError as e:
         e.close()
-        raise JevFailed(f"HTTP {e.code} {e.reason}") from None
+        try:
+            phrase = " " + http.HTTPStatus(e.code).phrase  # our own table, never the server's words
+        except ValueError:
+            phrase = ""
+        raise JevFailed(f"HTTP {e.code}{phrase}") from None
     except (OSError, http.client.HTTPException):
         raise JevFailed("no answer from api.typesafe.ai (network error or timeout)") from None
     except (ValueError, KeyError, TypeError):
         raise JevFailed("Jev's answer was not in the expected shape") from None
+
+
+def ask(state, questions):
+    return post(state, questions, choice_in(("X", "Y", "neither")))
 
 
 def build(i, criterion, first, second):
