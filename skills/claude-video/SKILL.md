@@ -119,6 +119,23 @@ page up from its frontmatter.
 Report in chat what it was, the best idea in it, and whether it changed a topic page or
 contradicted the vault. Keep it short enough to scan.
 
+## Housekeeping: prune old tool news
+
+After every full ingest, run the pruner. Tool-news videos go stale within weeks, and the vault's own
+rule lets their raw transcript go once stale, with the source page staying so every link resolves.
+It only touches videos ingested more than 30 days ago and tagged only to `tool-*` topics. It is a
+dry run unless given `--apply`, backs each file up first, and logs a `prune |` entry in `log.md`. Run
+it plain; when it lists candidates, run it again with `--apply` and add one line to the report saying
+how many transcripts were pruned. If it skips a file, leave that file alone. If it says there are
+more candidates than its limit (5), do not raise the limit yourself: tell the user and stop.
+
+```bash
+# list the old tool-news transcripts that could go, changing nothing
+python3 ~/.claude/skills/claude-video/prune_stale.py "$HOME/AI/Knowledge Base"
+# do it: back up, null the raw path, delete the transcript, log it
+python3 ~/.claude/skills/claude-video/prune_stale.py "$HOME/AI/Knowledge Base" --apply
+```
+
 ## Cleanup
 
 Delete the `/tmp` vtt/mp3/txt working files when done.
