@@ -22,6 +22,12 @@ merged, tagged and released, so the only thing left for the user is to update th
 running copy. Stop and ask only if CI is red, a review finding is unresolved, or the
 merge would discard someone else's work.
 
+**Commit your own finished changes in `~/.claude`.** When a change there is finished and
+tested, stage and commit only the files you changed for it, so the user never has to ask. Other
+sessions leave edits in that repo; leave them untouched, and let the guarded `no-yolo` sync push
+what is shareable. Keep the secret check on: if it blocks a commit, take the flagged value out and
+retry. Never bypass it or stage unrelated files.
+
 **Run `/humanizer` on prose you write for people** — a README, report, email or post — before
 showing it. Never on `CLAUDE.md`, `plain.md`, a `SKILL.md` or a memory note, where sentence
 shape carries the rule.
