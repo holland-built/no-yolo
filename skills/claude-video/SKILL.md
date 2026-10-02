@@ -85,6 +85,17 @@ Quality bar: be a critical reader, not a transcriber. Promotional sources get th
 checked. Note where a claim contradicts something already in the vault, and say which source
 you find more credible and why.
 
+**Route the topics.** This step needs the `jev-judge` skill and a TypeSafe key (see that skill).
+Without them, skip it. Write the source page first with an empty `topics: []`, then run the router
+on it. It names the domain, the topic pages to open first and a few more worth a look, and flags a
+source that is mostly promotion. It only narrows the search, so open any other topic page the source
+touches, then fill in `topics:`.
+
+```bash
+# ask Jev which vault topic pages this source bears on
+python3 ~/.claude/skills/claude-video/route_video.py "<path to the source page>"
+```
+
 ### 5. Update topics
 
 Revise the relevant `wiki/topics/{ai,ha}/*.md` pages — overview, key ideas, and any new

@@ -43,6 +43,22 @@ there (e.g. `codex-cli-2026-09-09.md`).
    Done when every claim either carries a date or says plainly that it could not be dated.
    Anything older than the window moves to the "older but I had missed it" section.
 
+   **Rank the entries, when there are many.** This step needs the `jev-judge` skill and a
+   TypeSafe key (see that skill). Without them, skip it. Write the entries you gathered to a scratch
+   file as `{"topic": "...", "entries": [{"date": "...", "title": "...", "text": "..."}]}` and run
+   the ranker. Read in full the entries it lists as READ. It also keeps any entry that mentions a
+   watch word (the tools, flags and commands the user's setup uses, one per line in
+   `~/.config/typesafe/last30-watch.txt`), and any entry Jev was unsure about. The entries it leaves
+   out come with a number and a first line, so spot-check a few. Jev is a pre-filter and can miss
+   something, so put the left-out ones in "Noise" under their own line, "Ranked low by Jev (N)", so
+   they stay separate from things that looked new but were not. Say in the note that the entries
+   were ranked.
+
+   ```bash
+   # rate each gathered entry for how much it matters, highest first
+   python3 ~/.claude/skills/last-30/rank_entries.py entries.json
+   ```
+
 4. **Write the note.**
 
 ```markdown

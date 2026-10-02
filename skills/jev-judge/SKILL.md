@@ -58,6 +58,26 @@ stops the run, so a typo cannot hide evidence.
 The output lists every question Jev saw, one line per criterion, then either `ADVICE: <name>` or
 `VERDICT: ask the user`. Show the user that output as printed.
 
+## Checking one approach
+
+`check_approach.py` is a second tool in this folder, used by `/build`. It does not compare two
+sides. It checks one approach before any code is written: one yes/no question for each must-have the
+user marked, plus three about the approach itself. Does it delete or overwrite data, publish
+something off this machine, or spend money? A number at or above 0.4 sends the approach to the user.
+It only ever adds escalations, because Jev can miss a delete buried in detail or a cost written as a
+number. A quiet result never clears an approach.
+
+```bash
+# check one approach and print the questions and any escalation
+python3 ~/.claude/skills/jev-judge/check_approach.py approach.json
+```
+
+```json
+{"approach": "Plain-words description of what will be done",
+ "claims": ["An optional short claim about it."],
+ "must_haves": ["Works without a network"]}
+```
+
 ## Done
 
 The user has seen the criteria, both sides' claims, and the printed table, and has made the

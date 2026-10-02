@@ -206,6 +206,12 @@ and Jev gives advice. Claude says which way it is going before it writes any cod
 switch it at any point. When Jev is not sure, it asks you. It does not judge whether code works,
 because tests do that.
 
+Three more places use Jev as an optional helper. `/build` runs a safety check on the chosen
+approach: it asks Jev whether the approach fails a must-have or would delete data, publish
+something or spend money, and sends it to you if so. `/last-30` can rank changelog entries so only
+the relevant ones are read in full. `/claude-video` can suggest which topic pages in your notes
+vault a video bears on. Each skips itself when no key is saved.
+
 It needs Python 3 and a TypeSafe account. Each judgement costs a fraction of a cent at TypeSafe's
 listed price. **No account? Skip this.** Everything else still works, and `/build` shows you both
 approaches and waits for you.

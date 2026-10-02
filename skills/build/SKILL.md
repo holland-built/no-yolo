@@ -37,11 +37,13 @@ gives advice, say the pick and the reason in the reply before any code is writte
 `PLAN.md` as Jev's pick, and carry on; the user can interrupt with "the other one" at any point
 and you switch. When it says ask the user, or cannot run at all (no TypeSafe key, no network),
 show both approaches in plain words and wait.
-However the approach was chosen, if its own claims show it failing a must-have, it goes to the
-user instead. Anything that deletes data, publishes, or spends money goes to the user whatever
-Jev says, because Jev's confidence measures how concentrated its picks are, not how often they
-are right. Jev never judges whether code works; tests do that.
-Skip all of this on the fast lane, and when only one approach is sensible.
+However the approach was chosen, run `check_approach.py` from the `jev-judge` skill on it, with
+its claims and the must-haves. An ESCALATE line sends it to the user instead. If the check cannot
+run, apply the same test by hand. Anything that deletes data, publishes, or spends money goes to
+the user whatever Jev says, because Jev's confidence measures how concentrated its picks are, not
+how often they are right, and a quiet result from the check never clears an approach. Jev never judges whether code works; tests do that.
+Skip the two-model step on the fast lane, and when only one approach is sensible. The check on
+the chosen approach still runs on a single approach, because it is the safety floor.
 
 **Ask before you assume.** Anything you would otherwise guess at, ask — numbered, with your
 recommended answer on each, so the user can say "all of those" in four words. Find facts
