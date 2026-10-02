@@ -187,6 +187,10 @@ The Stop gate carries neither and inherits `config.toml`.
 One critique, one revision, one re-check. If Codex still disagrees, pick the better option
 yourself and say in one line what you overrode. Codex advises; you decide.
 
+When the disagreement is about an approach, plan or wording that tests cannot settle, run
+`/jev-judge` instead of picking alone, because you are one of the two sides. Its pick is advice,
+and the user can override it.
+
 When it hangs: `/codex:status`, then `/codex:cancel`, then carry on. Two hangs on one task,
 stop conferring for that task.
 

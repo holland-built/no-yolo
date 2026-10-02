@@ -5,7 +5,7 @@
 <p align="center">
 <a href="LICENSE"><img alt="MIT licence" src="https://img.shields.io/badge/licence-MIT-blue"></a>
 <img alt="macOS and Linux" src="https://img.shields.io/badge/macOS%20%7C%20Linux-supported-green">
-<img alt="sixteen skills" src="https://img.shields.io/badge/skills-16-8A2BE2">
+<img alt="seventeen skills" src="https://img.shields.io/badge/skills-17-8A2BE2">
 </p>
 
 Claude Code is an AI that writes code for you in your terminal. Out of the box
@@ -196,6 +196,46 @@ A Codex review running in another window at that moment stops. The next one star
 </details>
 
 <details>
+<summary><strong>Jev: a tiebreaker when two AIs disagree</strong></summary>
+
+Jev is a small AI model from [TypeSafe](https://typesafe.ai) that picks between options. When
+Codex and Claude disagree, `/jev-judge` asks Jev to compare their claims, one criterion at a
+time, and shows you the table. `/build` uses it when Codex and an Opus helper (Opus is another
+Claude model) propose different approaches: you approve the criteria and mark the must-haves,
+and Jev gives advice. Claude says which way it is going before it writes any code, and you can
+switch it at any point. When Jev is not sure, it asks you. It does not judge whether code works,
+because tests do that.
+
+It needs Python 3 and a TypeSafe account. Each judgement costs a fraction of a cent at TypeSafe's
+listed price. **No account? Skip this.** Everything else still works, and `/build` shows you both
+approaches and waits for you.
+
+> [!WARNING]
+> The criteria and claims are sent to TypeSafe. Keep passwords and private details out of them.
+
+1. **Get a key.** Sign up at [console.typesafe.ai](https://console.typesafe.ai), then copy a key
+   from the [keys page](https://console.typesafe.ai/keys).
+
+2. **Save the key where the skill looks.** Paste the line below, then paste your key when it
+   asks. Nothing shows as you type, so the key stays out of your screen and your shell history.
+
+   ```bash
+   # ask for your key and save it in a file only you can read
+   mkdir -p ~/.config/typesafe && chmod 700 ~/.config/typesafe && printf 'TypeSafe key: ' && IFS= read -rs k && printf '\n' && [ -n "$k" ] && (umask 077; printf '%s' "$k" > ~/.config/typesafe/key); unset k
+   ```
+
+3. **Check the skill's own tests pass.** They need no internet connection.
+
+   ```bash
+   # run the skill's checks
+   cd ~/.claude/skills/jev-judge && python3 -m unittest
+   ```
+
+If a call fails, the skill prints `Jev: couldn't tell` and the reason, and Claude asks you instead.
+
+</details>
+
+<details>
 <summary><strong>TypeScript checker: catch broken code as Claude writes it</strong></summary>
 
 Lets Claude spot errors in JavaScript and TypeScript files (`.js`, `.jsx`, `.ts`, `.tsx`) while it
@@ -254,13 +294,18 @@ installed them yourself. Your dated backup is the way back.
 
 ```bash
 # take out the skills this repo installed, leaving your own alone
-cd ~/.claude/skills && rm -rf build claude-video fix github-readme grill handoff last-30 map site-design slop writing humanizer archify find-skills i-have-adhd frontend-design
+cd ~/.claude/skills && rm -rf build claude-video fix github-readme grill handoff jev-judge last-30 map site-design slop writing humanizer archify find-skills i-have-adhd frontend-design
+# take out the copies the third-party skills install from
 rm -rf ~/.agents/skills/humanizer ~/.agents/skills/archify ~/.agents/skills/find-skills ~/.agents/skills/i-have-adhd ~/.agents/skills/frontend-design
+# remove the Codex plugin
 claude plugin uninstall codex@openai-codex
 # remove the TypeScript checker plugin
 claude plugin uninstall typescript-lsp@claude-plugins-official
+# disconnect the web search tool
 claude mcp remove firecrawl -s user
+# delete the plain speaking style
 rm -f ~/.claude/output-styles/plain.md
+# delete the rules, settings and status line
 rm -f ~/.claude/CLAUDE.md ~/.claude/settings.json ~/.claude/statusline.sh
 # take out the code checker
 rm -rf ~/.claude/tools/anti-slop
@@ -275,9 +320,12 @@ Then put your old config back, naming the backup folder you made in step 1:
 cp -R ~/.claude-backup-<date>/. ~/.claude/
 ```
 
+The uninstall leaves your TypeSafe key alone, because other tools can use it. Delete
+`~/.config/typesafe/key` yourself if you no longer want it.
+
 </details>
 
-## The sixteen commands
+## The seventeen commands
 
 Type the slash command, or just say the word. Both work.
 
@@ -288,6 +336,7 @@ Type the slash command, or just say the word. Both work.
 <li><code>/build</code>: you want something new made</li>
 <li><code>/fix</code>: something is broken or slow</li>
 <li><code>/grill</code>: you want your plan attacked</li>
+<li><code>/jev-judge</code>: Claude and Codex disagree and you want a tiebreaker</li>
 <li><code>/map</code>: the job is too big to see</li>
 <li><code>/handoff</code>: you're stopping halfway</li>
 <li><code>/github-readme</code>: tidy a repo and its README for GitHub</li>
@@ -367,7 +416,7 @@ you don't re-explain anything.
 | File | What it does |
 | --- | --- |
 | `CLAUDE.md` | Rules Claude follows on every task |
-| `skills/` | Eleven of the sixteen commands above. `/humanizer`, `/archify`, `/find-skills`, `/i-have-adhd` and `/frontend-design` install from their own repos |
+| `skills/` | Twelve of the seventeen commands above. `/humanizer`, `/archify`, `/find-skills`, `/i-have-adhd` and `/frontend-design` install from their own repos |
 | `output-styles/plain.md` | Makes answers short and plain, next step first |
 | `memory/` | Notes Claude keeps on how you like to work |
 | `settings.json` | Plugins, theme, status line, and merging pull requests without asking |
@@ -433,16 +482,20 @@ the answer you would have needed anyway, first time.
 
 Two rounds, then it decides: one critique from Codex, one revision, one
 re-check. If they still disagree it picks and tells you what it overrode in one
-line.
+line. When tests cannot settle the question, it can ask Jev for a tiebreaker instead of picking
+alone. Jev's pick is advice, and you can override it.
 
 <details>
 <summary><strong>For me: syncing my machine back to this repo</strong></summary>
 
 ```bash
-# copy this machine's live setup back into the repo, then publish it (skips third-party and personal skills)
+# copy the rules and the status line from this machine into the repo
 cp ~/.claude/CLAUDE.md ~/.claude/statusline.sh .
+# copy the plain speaking style
 cp -R ~/.claude/output-styles/. output-styles/
-rsync -a --exclude humanizer --exclude archify --exclude find-skills --exclude i-have-adhd --exclude frontend-design --exclude tasks --exclude model-update ~/.claude/skills/ skills/
+# copy the skills, leaving out third-party skills, personal skills and the sync folder
+rsync -a --exclude humanizer --exclude archify --exclude find-skills --exclude i-have-adhd --exclude frontend-design --exclude tasks --exclude model-update --exclude synced ~/.claude/skills/ skills/
+# publish it
 git add -A && git commit -m "Sync" && git push
 ```
 
