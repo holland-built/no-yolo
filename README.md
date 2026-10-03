@@ -8,9 +8,29 @@
 <img alt="eighteen skills" src="https://img.shields.io/badge/skills-18-8A2BE2">
 </p>
 
-Claude Code is an AI that writes code for you in your terminal. Out of the box
-it guesses, writes too much, and buries the answer in waffle. These files fix that, and
-installing them takes two minutes.
+Claude Code is an AI that writes code for you in your terminal. Out of the box it guesses
+what you meant and pads its answers. These files make it ask first and answer short. Installing
+them takes two minutes.
+
+<table>
+<tr>
+<td width="50%" valign="top">
+<h4>Without this</h4>
+<p><em>"Great question! Let me take a look at your configuration files to
+understand the current setup. I'll start by examining the settings and then
+walk through the various options available to you. There are a few different
+approaches we could take here, each with their own tradeoffs…"</em></p>
+</td>
+<td width="50%" valign="top">
+<h4>With this</h4>
+<p><em>"Your status line file is not executable. That is why the bar is
+missing. One line fixes it:"</em></p>
+<p><code>chmod +x ~/.claude/statusline.sh</code></p>
+</td>
+</tr>
+</table>
+
+**Jump to:** [Install](#install) · [Commands](#the-eighteen-commands) · [Workflows](#workflows) · [Rules](#the-rules-it-follows) · [Update](#update)
 
 ## Install
 
@@ -281,7 +301,6 @@ claude mcp add firecrawl -s user -e FIRECRAWL_API_KEY=your-key -- npx -y firecra
 
 </details>
 
-
 ## Update
 
 Run the same script again to take a newer version of this repo. Nothing is deleted, but a file
@@ -307,8 +326,8 @@ diff -rq skills ~/.claude/skills; diff -q CLAUDE.md ~/.claude/CLAUDE.md
 <summary><strong>Uninstall</strong></summary>
 
 This removes the skills by name. A skill of your own that shares a name with one here goes
-too, and so do Humanizer, Archify, find-skills, i-have-adhd, frontend-design, Impeccable, Codex, the TypeScript checker and Firecrawl even if you
-installed them yourself. Your dated backup is the way back.
+too, and so do Humanizer, Archify, find-skills, i-have-adhd, frontend-design, Impeccable,
+Codex, the TypeScript checker and Firecrawl, even if you installed them yourself. Your dated backup is the way back.
 
 ```bash
 # take out the skills this repo installed, leaving your own alone
@@ -462,29 +481,12 @@ make, it ranks the options, puts its pick first, and gives each one a real time:
 It skips offering things you didn't ask for. It drops reflex hedging but still tells you when
 it has a real doubt.
 
-<table>
-<tr>
-<td width="50%" valign="top">
-<h4>Without this</h4>
-<p><em>"Great question! Let me take a look at your configuration files to
-understand the current setup. I'll start by examining the settings and then
-walk through the various options available to you. There are a few different
-approaches we could take here, each with their own tradeoffs…"</em></p>
-</td>
-<td width="50%" valign="top">
-<h4>With this</h4>
-<p><em>"Your status line file is not executable. That is why the bar is
-missing. One line fixes it:"</em></p>
-<p><code>chmod +x ~/.claude/statusline.sh</code></p>
-</td>
-</tr>
-</table>
 
 Four things it will never shorten: commands, file paths, error text, and any
 warning about deleting or overwriting your data.
 
-The rule underneath all of it: when you say <em>"wait, what?"</em>, it writes
-the answer you would have needed anyway, first time.
+When you say <em>"wait, what?"</em>, the next answer should be the one you needed the first
+time.
 
 ## The rules it follows
 
@@ -529,4 +531,4 @@ git add -A && git commit -m "Sync" && git push
 
 ## Licence
 
-[MIT](LICENSE). Take it, change it, ship it.
+[MIT](LICENSE). Use it however you like, as long as the licence notice stays with it.
