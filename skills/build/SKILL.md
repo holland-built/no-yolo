@@ -20,9 +20,10 @@ change nobody looked at.
 **Two models argue the approach, Jev picks, and the user can override.** When the shape is
 undecided and two approaches really differ, do not choose alone and do not hand the user a menu
 of technical options that only a programmer could judge. The user can say what matters, so settle three or four
-criteria first, as plain sentences such as "Works without a network". The user approves them
-and marks which are must-haves, because Jev answers exactly the criteria it is given, and a pick
-that wins two small criteria can still fail the one that matters. Then brief Codex and an Opus helper
+criteria first, as plain sentences such as "Works without a network". Choose them yourself and
+mark which are must-haves, then show them to the user without waiting for approval, because Jev
+answers exactly the criteria it is given, and a pick that wins two small criteria can still fail
+the one that matters. Use the user's own criteria word for word when they give any. Then brief Codex and an Opus helper
 separately on the same job and criteria. Each returns its own best approach in plain words, plus
 exactly two short claims on how that approach does against each criterion. Keep the count equal,
 because Jev leans toward whichever side writes more. The side that holds a claim writes it, so
