@@ -221,8 +221,8 @@ A Codex review running in another window at that moment stops. The next one star
 Jev is a small AI model from [TypeSafe](https://typesafe.ai) that picks between options. When
 Codex and Claude disagree, `/jev-judge` asks Jev to compare their claims, one criterion at a
 time, and shows you the table. `/build` uses it when Codex and an Opus helper (Opus is another
-Claude model) propose different approaches: you approve the criteria and mark the must-haves,
-and Jev gives advice. Claude says which way it is going before it writes any code, and you can
+Claude model) propose different approaches: Claude picks the criteria and the must-haves and shows
+them to you, and Jev gives advice. Claude says which way it is going before it writes any code, and you can
 switch it at any point. When Jev is not sure, it asks you. It does not judge whether code works,
 because tests do that.
 

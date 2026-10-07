@@ -18,9 +18,11 @@ as "ask the user". Never present a winner as settled.
 **Never use it to judge whether code works.** Run the tests. Jev reads claims, not behaviour, so
 it would confidently pick the side that argues better.
 
-**The user approves the criteria before you run it.** Draft them, show them, wait. Jev answers
-exactly the question it is given, and a badly chosen criterion gives a confident wrong answer.
-Each one should be a plain sentence a stranger could check, such as "Works without a network".
+**You choose the criteria and run it. Show the user what you chose.** Do not wait for approval. Jev
+answers exactly the question it is given, and a badly chosen criterion gives a confident wrong
+answer, so write each one as a plain sentence a stranger could check, such as "Works without a
+network". When the user hands over criteria, use theirs word for word. Print the criteria with the
+table, so the user can see what Jev was asked and rerun it with different ones.
 
 **Each side's claims come from that side.** Get Codex's claims from Codex, with `codex exec` as
 in `/build`, and your own from you. Show the user both lists word for word. If you write the other
@@ -80,5 +82,5 @@ python3 ~/.claude/skills/jev-judge/check_approach.py approach.json
 
 ## Done
 
-The user has seen the criteria, both sides' claims, and the printed table, and has made the
+The user has been shown the criteria, both sides' claims, and the printed table, and can make the
 decision. If the script says "ask the user", you asked.
