@@ -5,7 +5,7 @@
 <p align="center">
 <a href="LICENSE"><img alt="MIT licence" src="https://img.shields.io/badge/licence-MIT-blue"></a>
 <img alt="macOS and Linux" src="https://img.shields.io/badge/macOS%20%7C%20Linux-supported-green">
-<img alt="seventeen skills" src="https://img.shields.io/badge/skills-17-8A2BE2">
+<img alt="eighteen skills" src="https://img.shields.io/badge/skills-18-8A2BE2">
 </p>
 
 Claude Code is an AI that writes code for you in your terminal. Out of the box it guesses
@@ -30,7 +30,7 @@ missing. One line fixes it:"</em></p>
 </tr>
 </table>
 
-**Jump to:** [Install](#install) · [Commands](#the-seventeen-commands) · [Workflows](#workflows) · [Rules](#the-rules-it-follows) · [Update](#update)
+**Jump to:** [Install](#install) · [Commands](#the-eighteen-commands) · [Workflows](#workflows) · [Rules](#the-rules-it-follows) · [Update](#update)
 
 ## Install
 
@@ -351,7 +351,7 @@ The uninstall leaves your TypeSafe key alone, because other tools can use it. De
 
 </details>
 
-## The seventeen commands
+## The eighteen commands
 
 Type the slash command, or just say the word. Both work.
 
@@ -365,6 +365,7 @@ Type the slash command, or just say the word. Both work.
 <li><code>/jev-judge</code>: Claude and Codex disagree and you want a tiebreaker</li>
 <li><code>/map</code>: the job is too big to see</li>
 <li><code>/handoff</code>: you're stopping halfway</li>
+<li><code>/resume</code>: write, tune or check a resume</li>
 <li><code>/github-readme</code>: tidy a repo and its README for GitHub</li>
 <li><code>/find-skills</code>: find a skill someone else has made</li>
 </ul>
@@ -442,7 +443,7 @@ you don't re-explain anything.
 | File | What it does |
 | --- | --- |
 | `CLAUDE.md` | Rules Claude follows on every task |
-| `skills/` | Twelve of the seventeen commands above. `/humanizer`, `/archify`, `/find-skills`, `/i-have-adhd` and `/frontend-design` install from their own repos |
+| `skills/` | Thirteen of the eighteen commands above. `/humanizer`, `/archify`, `/find-skills`, `/i-have-adhd` and `/frontend-design` install from their own repos |
 | `output-styles/plain.md` | Makes answers short and plain, next step first |
 | `memory/` | Notes Claude keeps on how you like to work |
 | `settings.json` | Plugins, theme, status line, and merging pull requests without asking |
