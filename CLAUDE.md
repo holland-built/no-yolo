@@ -29,7 +29,7 @@ what is shareable. Keep the secret check on: if it blocks a commit, take the fla
 retry. Never bypass it or stage unrelated files.
 
 **Run `/humanizer` on prose you write for people** — a README, report, email or post — before
-showing it. Never on `CLAUDE.md`, `plain.md`, a `SKILL.md` or a memory note, where sentence
+showing it. Never on `CLAUDE.md`, the output style, a `SKILL.md` or a memory note, where sentence
 shape carries the rule.
 
 **Logos come from Brandfetch, and the key is already on this machine.** The Brandfetch API key

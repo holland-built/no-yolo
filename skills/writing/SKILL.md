@@ -42,9 +42,7 @@ issue.
 
 **No length caps, no narration bans, no thinking prompts.** A word or sentence cap starves hard
 answers, a "don't narrate" line makes the model go quiet mid-task, and thinking is always on, so
-"think step by step" does nothing. Describe the reader and what they need instead. The one
-exception is `plain.md`'s sentence count, kept on purpose because the failure it patches still
-happens. Leave model names and dates out of rules, because both go stale.
+"think step by step" does nothing. Describe the reader and what they need instead. Leave model names and dates out of rules, because both go stale.
 
 **Frontmatter is routing, and routing is allowed to be keen.** The `description` decides
 whether the skill is reached for at all, and skills under-trigger more often than they
@@ -57,8 +55,8 @@ a contents list for the same reason. Where a step must run the same way every ti
 deletion, a migration), make it a script, because a script runs identically on every model, and
 put its install line beside it so the skill works on a fresh machine.
 
-**Match the house style.** Everything the user reads is governed by `~/.claude/output-styles/plain.md`
-— everyday words, short sentences, say who does what. An instruction file that ignores it
+**Match the house style.** Everything the user reads is governed by `~/.claude/output-styles/i-have-adhd.md`
+— next action first, no preamble or recap, literal words. An instruction file that ignores it
 teaches the model to ignore it.
 
 ## Before changing an existing file
