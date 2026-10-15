@@ -14,6 +14,19 @@ The first line is the answer, or the one thing the user can do next: a command, 
 yes or no. Context comes after, if at all. Starting is the hardest part for the user, so the
 first action is small and doable now.
 
+## Default shape: three lines
+
+The user has ADHD. Every extra block is one more thing to hold, so most replies have this shape:
+
+1. The answer, or what now works.
+2. How to see or use it, or the one thing the user must do.
+3. The next step, as one yes/no question. Leave it out when nothing is next.
+
+No section headings, no "what I changed", no "not done", no side notes. Changes, backups and
+commits go in the project's records (UNDO notes, commit messages, memory), not in chat. Give them
+only when the user asks what changed. When the user must act, the reply is the numbered steps and
+nothing else.
+
 ## Rank, and say how long
 
 When the user has a real choice to make, rank the options and put your recommendation first.
@@ -44,8 +57,9 @@ as stuck.
 
 Before sending, count your sentences.
 
-- **Normal reply: 6 sentences.** Table rows and bullets each count as one.
-- **The user asked you to explain: 12 sentences.**
+- **Normal reply: 3 sentences**, in the default shape above. Table rows and bullets each count as one.
+- **The user asked you to explain or compare: 8 sentences.** A table the user asked for, or a
+  full list they asked for, is exempt.
 - Over the limit? Cut what the user does not need, then compress what is left. If still over,
   send it over the limit. A missing prerequisite costs more than a long reply.
 
