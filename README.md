@@ -101,7 +101,7 @@ what it installed, and anything that failed, then remind me to restart Claude Co
    # put the rules, settings and status line where Claude reads them
    mkdir -p ~/.claude/skills ~/.claude/output-styles
    cp CLAUDE.md settings.json statusline.sh ~/.claude/
-   # add the skills and the plain speaking style
+   # add the skills and the ADHD speaking style
    cp -R skills/. ~/.claude/skills/
    cp -R output-styles/. ~/.claude/output-styles/
    # let the status line run
@@ -329,8 +329,8 @@ claude plugin uninstall codex@openai-codex
 claude plugin uninstall typescript-lsp@claude-plugins-official
 # disconnect the web search tool
 claude mcp remove firecrawl -s user
-# delete the plain speaking style
-rm -f ~/.claude/output-styles/plain.md
+# delete the ADHD speaking style
+rm -f ~/.claude/output-styles/i-have-adhd.md ~/.claude/output-styles/i-have-adhd.LICENSE
 # delete the rules, settings and status line
 rm -f ~/.claude/CLAUDE.md ~/.claude/settings.json ~/.claude/statusline.sh
 # take out the code checker
@@ -444,7 +444,7 @@ you don't re-explain anything.
 | --- | --- |
 | `CLAUDE.md` | Rules Claude follows on every task |
 | `skills/` | Thirteen of the eighteen commands above. `/humanizer`, `/archify`, `/find-skills`, `/i-have-adhd` and `/frontend-design` install from their own repos |
-| `output-styles/plain.md` | Makes answers short and plain, next step first |
+| `output-styles/i-have-adhd.md` | Shapes answers for a reader with ADHD, with the next step first and no recap |
 | `memory/` | Notes Claude keeps on how you like to work |
 | `settings.json` | Plugins, theme, status line, and merging pull requests without asking |
 | `statusline.sh` | The bar at the bottom |
@@ -455,25 +455,16 @@ you don't re-explain anything.
 
 ## How it talks to you
 
-`output-styles/plain.md` caps every reply. Normal answer: six sentences. If you
-asked it to explain something: twelve. Bullets and table rows count as one each.
-Over the cap, it cuts what you don't need first. It would rather run long than
-leave out a step you need. Steps you have to follow in order don't count.
+`output-styles/i-have-adhd.md` shapes every reply for a reader with ADHD. It is Ayoub Ghriss's
+[i-have-adhd](https://github.com/ayghri/i-have-adhd) skill (MIT, licence in
+`output-styles/i-have-adhd.LICENSE`), turned into an output style so it runs in every session
+without being typed.
 
-The first line is the answer, or the one thing you can do next. When you have a choice to
-make, it ranks the options, puts its pick first, and gives each one a real time: "10 minutes",
-"an afternoon". On a long job it opens each progress update with where things stand
-("step 3 of 5 done"), so you don't have to keep track.
-
-It skips offering things you didn't ask for. It drops reflex hedging but still tells you when
-it has a real doubt.
-
-
-Four things it will never shorten: commands, file paths, error text, and any
-warning about deleting or overwriting your data.
-
-When you say <em>"wait, what?"</em>, the next answer should be the one you needed the first
-time.
+The first line is the next thing you can do. Steps come as a numbered list with one action each,
+and on a long job each update says where things stand ("step 3 of 5 done"). Time estimates use
+real units such as "10 minutes" or "an afternoon". A side issue waits until the main one is
+finished. Replies skip the opening filler and the closing recap, and they don't end by asking
+whether you need anything else.
 
 ## The rules it follows
 
@@ -506,7 +497,7 @@ deleted files. The manual steps below do the same without the checks.
 ```bash
 # copy the rules and the status line from this machine into the repo
 cp ~/.claude/CLAUDE.md ~/.claude/statusline.sh .
-# copy the plain speaking style
+# copy the ADHD speaking style
 cp -R ~/.claude/output-styles/. output-styles/
 # copy the skills, leaving out third-party skills, personal skills, test cases and the sync folder
 rsync -a --exclude humanizer --exclude archify --exclude find-skills --exclude i-have-adhd --exclude frontend-design --exclude tasks --exclude model-update --exclude synced --exclude evals --exclude .claude-plugin --exclude __pycache__ ~/.claude/skills/ skills/
