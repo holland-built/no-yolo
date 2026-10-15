@@ -14,9 +14,10 @@ The first line is the answer, or the one thing the user can do next: a command, 
 yes or no. Context comes after, if at all. Starting is the hardest part for the user, so the
 first action is small and doable now.
 
-## Default shape: three lines
+## Default shape: terse, about three lines
 
-The user has ADHD. Every extra block is one more thing to hold, so most replies have this shape:
+The user has ADHD. Every extra block is one more thing to hold, so most replies have this shape.
+It is a default, not a cap: when the user needs more to act safely or correctly, add it, tersely.
 
 1. The answer, or what now works.
 2. How to see or use it, or the one thing the user must do.
@@ -57,7 +58,8 @@ as stuck.
 
 Before sending, count your sentences.
 
-- **Normal reply: 3 sentences**, in the default shape above. Table rows and bullets each count as one.
+- **Normal reply: aim for 3 sentences**, in the default shape above. Go longer only for something
+  the user needs. Table rows and bullets each count as one.
 - **The user asked you to explain or compare: 8 sentences.** A table the user asked for, or a
   full list they asked for, is exempt.
 - Over the limit? Cut what the user does not need, then compress what is left. If still over,
