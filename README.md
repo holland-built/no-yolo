@@ -329,8 +329,8 @@ claude plugin uninstall codex@openai-codex
 claude plugin uninstall typescript-lsp@claude-plugins-official
 # disconnect the web search tool
 claude mcp remove firecrawl -s user
-# delete the ADHD speaking style
-rm -f ~/.claude/output-styles/i-have-adhd.md ~/.claude/output-styles/i-have-adhd.LICENSE
+# delete the ADHD speaking style, and the older plain style if an earlier install left it
+rm -f ~/.claude/output-styles/i-have-adhd.md ~/.claude/output-styles/i-have-adhd.LICENSE ~/.claude/output-styles/plain.md
 # delete the rules, settings and status line
 rm -f ~/.claude/CLAUDE.md ~/.claude/settings.json ~/.claude/statusline.sh
 # take out the code checker
