@@ -30,7 +30,8 @@ codex exec --skip-git-repo-check --sandbox read-only \
   "<the symptom, the reproduction, what is ruled out and how it was ruled out>. What would you check next?" < /dev/null
 ```
 
-`< /dev/null` is required. Empty output means it failed, not that it agreed.
+`< /dev/null` is required. Empty output means it failed, not that it agreed. If you are Codex, that
+command would ask your own model again, so hand the evidence to the user for Claude's read instead.
 
 **Correct the cause, and stop there.** The change is limited to what fixing the demonstrated
 cause requires — not the smallest possible patch, and not a tidy-up of the code around it. A
@@ -48,7 +49,7 @@ expected output hides the bug instead of fixing it. If the check itself was wron
 show why before touching it.
 
 **Stop after three attempts at the same cause.** Say what each attempt showed and hand it to
-the user, or get the Codex read above. More attempts past that rarely add evidence.
+the user, or get the second read above. More attempts past that rarely add evidence.
 
 **Show it working.** The reproduction going green, pasted. Then the real thing running — the
 script, the page, the command the user actually runs — pasted too. If you could not run it,
