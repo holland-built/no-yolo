@@ -98,11 +98,13 @@ what it installed, and anything that failed, then remind me to restart Claude Co
    ```bash
    # download this repo to the path the settings expect, then step into it
    mkdir -p ~/AI && git clone https://github.com/holland-built/no-yolo.git ~/AI/no-yolo && cd ~/AI/no-yolo
-   # put the rules, settings and status line where Claude reads them
+   # make the folders Claude reads from
    mkdir -p ~/.claude/skills ~/.claude/output-styles
+   # put the rules, settings and status line where Claude reads them
    cp CLAUDE.md settings.json statusline.sh ~/.claude/
-   # add the skills and the ADHD speaking style
+   # add the skills
    cp -R skills/. ~/.claude/skills/
+   # add the ADHD speaking style
    cp -R output-styles/. ~/.claude/output-styles/
    # let the status line run
    chmod +x ~/.claude/statusline.sh
@@ -125,8 +127,9 @@ what it installed, and anything that failed, then remind me to restart Claude Co
 4. **Add the code checker behind `/slop`.**
 
    ```bash
-   # copy the rules in, then download the linter they run on
+   # copy the rules in
    cp -R tools ~/.claude/
+   # download the linter they run on
    cd ~/.claude/tools/anti-slop && npm install --save-exact oxlint@1.83.0 @oxlint/plugins@1.83.0 && cd -
    ```
 
@@ -184,11 +187,13 @@ It needs an OpenAI account. **No account? Skip this.** Everything else still wor
 says once that it skipped the Codex checks.
 
 ```bash
-# install Codex and sign in
+# install Codex
 npm install -g @openai/codex
+# sign in to Codex
 codex login
-# let Claude call it
+# tell Claude where to find the Codex plugin
 claude plugin marketplace add openai/codex-plugin-cc
+# let Claude call Codex
 claude plugin install codex@openai-codex
 ```
 
