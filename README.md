@@ -471,6 +471,9 @@ real units such as "10 minutes" or "an afternoon". A side issue waits until the 
 finished. Replies skip the opening filler and the closing recap, and they don't end by asking
 whether you need anything else.
 
+There is a length limit too. A normal reply is six sentences or fewer, and a reply that explains or
+compares gets twelve. The limit holds in every folder, including the report at the end of a long job.
+
 ## The rules it follows
 
 `CLAUDE.md` is eight short sections. What each one actually stops:
@@ -505,7 +508,7 @@ cp ~/.claude/CLAUDE.md ~/.claude/statusline.sh .
 # copy the ADHD speaking style
 cp -R ~/.claude/output-styles/. output-styles/
 # copy the skills, leaving out third-party skills, personal skills, test cases and the sync folder
-rsync -a --exclude humanizer --exclude archify --exclude find-skills --exclude i-have-adhd --exclude frontend-design --exclude tasks --exclude model-update --exclude synced --exclude evals --exclude .claude-plugin --exclude __pycache__ ~/.claude/skills/ skills/
+rsync -a --exclude humanizer --exclude archify --exclude find-skills --exclude i-have-adhd --exclude frontend-design --exclude diagram-design --exclude tasks --exclude model-update --exclude synced --exclude evals --exclude .claude-plugin --exclude __pycache__ ~/.claude/skills/ skills/
 # publish it
 git add -A && git commit -m "Sync" && git push
 ```
