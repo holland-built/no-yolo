@@ -20,7 +20,7 @@ decisions already settled in one line each, and holds the open questions. Detail
 the question it belongs to, written once.
 
 **Name the destination first.** One or two lines saying what reaching the end looks like — a
-spec to hand to `/build`, a decision to lock before anything starts, a change to make in
+spec to hand to the `build` skill, a decision to lock before anything starts, a change to make in
 place. Every session re-reads it before picking up a question. It shapes everything else, so
 getting it wrong is expensive and getting it vague is worse.
 
@@ -28,7 +28,7 @@ getting it wrong is expensive and getting it vague is worse.
 another open question waits. Settling one usually reveals two more — that is the map working,
 not the map failing.
 
-**Settle a question by grilling it, not by deciding it on the user's behalf.** Use `/grill` on the open
+**Settle a question by grilling it, not by deciding it on the user's behalf.** Use the `grill` skill on the open
 question: one question at a time, each with your recommendation. Write the answer into `MAP.md` as one
 line, and move the detail under the question it settled.
 
@@ -65,7 +65,8 @@ rather than letting the file grow past what one session will read.
 ## Done
 
 Done is nothing left to decide before someone goes and does the thing — the Open list empty
-and the Fog cleared or moved out of scope. Say so, and hand the map to `/build`.
+and the Fog cleared or moved out of scope. Say so, and hand the map to the `build` skill. `build` runs in Claude only, so in Codex hand the map
+to the user instead.
 
 A session that cannot get there says where it stopped and what it was waiting on. `MAP.md`
 is the handoff; the next session should need nothing else.

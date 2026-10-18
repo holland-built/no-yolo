@@ -144,13 +144,14 @@ and hard to change once it is public.
 
 ## Before finishing
 
-Run `/humanizer` on all the prose, because a README that reads like a chatbot loses the
+Run the `humanizer` skill on all the prose, because a README that reads like a chatbot loses the
 non-programmer reader in the first paragraph. Em dashes are the tell the user notices first, so
 none survive.
 
 Ask Codex to review the README and the diff before the final push, using the command in
 `~/.claude/CLAUDE.md`. A model is a poor judge of its own work, and a public repo is expensive
-to fix after the fact. If `codex` is not installed, skip it and say so once.
+to fix after the fact. If `codex` is not installed, skip it and say so once. If you are Codex, skip
+it too and say so once, because reviewing your own work is the thing this step exists to avoid.
 
 GitHub shows only what is pushed. When the user is reviewing on GitHub, or asked for the repo to
 be published, commit, push, and give them the link to the repo or the README. Otherwise leave
@@ -169,6 +170,6 @@ the commit local and say so.
   in history was named to the user with the advice to replace the key.
 - The root folder holds only README, entry command, config example, LICENSE and dotfiles, and
   the tests pass after any move.
-- The prose has been through `/humanizer` and has no em dashes.
+- The prose has been through the `humanizer` skill and has no em dashes.
 - Codex reviewed the README and diff, or the skip was stated once.
 - If the user is reviewing on GitHub, the work is pushed and they have the link.

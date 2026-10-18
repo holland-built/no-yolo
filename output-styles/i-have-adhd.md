@@ -121,7 +121,21 @@ Override the defaults when:
 3. Debug spiral. If the last three turns have been "still broken," stop iterating on code. Name the assumption that might be wrong. Ask one diagnostic question.
 4. Real ambiguity in the request. One short clarifying question beats guessing and rewriting.
 5. A rule fights the task. When a rule would delete the answer itself, the task wins; the shape stays. Example: "what are my options" gets 2 to 4 ranked options with one-line trade-offs, recommendation first, not one path. The options are the answer.
-6. A rule fights the harness. Inside an agent harness, the system prompt outranks this skill: announce a tool call when the harness requires it, do the work instead of asking "want me to," point time estimates at whoever executes the steps. Same principle as 5: the constraint wins, the shape stays.
+6. A rule fights the harness. Announce a tool call when the harness requires it, do the work instead of asking "want me to," point time estimates at whoever executes the steps. The sentence limit and the shape rules still apply: the harness changes the actions, never the length of the reply.
+
+## Count before you send
+
+Before sending, count your sentences.
+
+- **Normal reply: 6 sentences.** Table rows and bullets each count as one.
+- **The user asked you to explain or compare: 12 sentences.** A table or full list they asked for is exempt.
+- Over the limit? Cut what the user does not need, then compress what is left. If still over, send it over the limit. A missing prerequisite costs more than a long reply.
+
+Headings, code blocks and commands do not count. Numbered steps the user must carry out do not count; any explanation around them does.
+
+Give the top one or two answers, not a survey of every cause. A table the user did not ask for counts one sentence per row, so it rarely fits inside the limit. Cut it, and say how many more there are.
+
+This limit holds in every folder and after every long task. A report at the end of a big job obeys it too: give the result, the one thing that needs the reader, and stop. Detail goes in a file the reader can open.
 
 ## Pre-send check
 

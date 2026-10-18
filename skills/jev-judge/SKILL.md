@@ -25,7 +25,9 @@ network". When the user hands over criteria, use theirs word for word. Print the
 table, so the user can see what Jev was asked and rerun it with different ones.
 
 **Each side's claims come from that side.** Get Codex's claims from Codex, with `codex exec` as
-in `/build`, and your own from you. Show the user both lists word for word. If you write the other
+in the `build` skill, and your own from you. If you are Codex, the other side is Claude, so ask the
+user to paste Claude's claims. The script calls TypeSafe over the network, so in Codex it needs a
+sandbox that allows network access. Show the user both lists word for word. If you write the other
 side's claims, your slant goes in unseen.
 
 **File each claim under the criterion it speaks to.** Jev sees only the claims filed under the
