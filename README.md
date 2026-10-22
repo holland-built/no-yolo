@@ -5,7 +5,7 @@
 <p align="center">
 <a href="LICENSE"><img alt="MIT licence" src="https://img.shields.io/badge/licence-MIT-blue"></a>
 <img alt="macOS and Linux" src="https://img.shields.io/badge/macOS%20%7C%20Linux-supported-green">
-<img alt="eighteen skills" src="https://img.shields.io/badge/skills-18-8A2BE2">
+<img alt="nineteen skills" src="https://img.shields.io/badge/skills-19-8A2BE2">
 </p>
 
 Claude Code is an AI that writes code for you in your terminal. Out of the box it guesses
@@ -30,7 +30,7 @@ missing. One line fixes it:"</em></p>
 </tr>
 </table>
 
-**Jump to:** [Install](#install) · [Commands](#the-eighteen-commands) · [Workflows](#workflows) · [Rules](#the-rules-it-follows) · [Update](#update)
+**Jump to:** [Install](#install) · [Commands](#the-nineteen-commands) · [Workflows](#workflows) · [Rules](#the-rules-it-follows) · [Update](#update)
 
 ## Install
 
@@ -325,7 +325,7 @@ backup is the way back.
 
 ```bash
 # take out the skills this repo installed, leaving your own alone
-cd ~/.claude/skills && rm -rf build claude-video fix github-readme grill handoff jev-judge last-30 map site-design slop writing humanizer archify find-skills i-have-adhd frontend-design
+cd ~/.claude/skills && rm -rf better build claude-video fix github-readme grill handoff jev-judge last-30 map site-design slop writing humanizer archify find-skills i-have-adhd frontend-design
 # take out the copies the third-party skills install from
 rm -rf ~/.agents/skills/humanizer ~/.agents/skills/archify ~/.agents/skills/find-skills ~/.agents/skills/i-have-adhd ~/.agents/skills/frontend-design
 # remove the Codex plugin
@@ -356,7 +356,7 @@ The uninstall leaves your TypeSafe key alone, because other tools can use it. De
 
 </details>
 
-## The eighteen commands
+## The nineteen commands
 
 Type the slash command, or just say the word. Both work.
 
@@ -364,6 +364,7 @@ Type the slash command, or just say the word. Both work.
 <tr>
 <td width="50%" valign="top">
 <ul>
+<li><code>/better</code>: turn a rough ask into a better prompt, then run it</li>
 <li><code>/build</code>: you want something new made</li>
 <li><code>/fix</code>: something is broken or slow</li>
 <li><code>/grill</code>: you want your plan attacked</li>
@@ -448,7 +449,7 @@ you don't re-explain anything.
 | File | What it does |
 | --- | --- |
 | `CLAUDE.md` | Rules Claude follows on every task |
-| `skills/` | Thirteen of the eighteen commands above. `/humanizer`, `/archify`, `/find-skills`, `/i-have-adhd` and `/frontend-design` install from their own repos |
+| `skills/` | Fourteen of the nineteen commands above. `/humanizer`, `/archify`, `/find-skills`, `/i-have-adhd` and `/frontend-design` install from their own repos |
 | `output-styles/i-have-adhd.md` | Shapes answers for a reader with ADHD, with the next step first and no recap |
 | `memory/` | Notes Claude keeps on how you like to work |
 | `settings.json` | Plugins, theme, status line, and merging pull requests without asking |
