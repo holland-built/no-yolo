@@ -9,8 +9,8 @@ The user is not a programmer, and their asks often arrive as a fix they have alr
 ("make the button blue"). A fix caps the result at their idea. This skill rewrites the ask so
 Claude gets the goal, the decisions, and the finish line, then runs the better version.
 
-Source: the Claude Code team's own habits, as recapped in `vid-four-anthropic-prompting-strategies`
-in the Knowledge Base.
+Source: the Claude Code team's own habits, as recapped in
+https://www.youtube.com/watch?v=_NzakzRXzLI.
 
 ## The five checks
 
@@ -54,8 +54,8 @@ When the answer to something would change the rewrite, ask with AskUserQuestion:
 questions, each with a recommended option first. For anything smaller, pick the likely answer and
 state it as an assumption in the rewrite, where the user can correct it.
 
-If the ask is already clear, say so in one line and run it as written. A rewrite for its own sake
-wastes the user's time.
+If the ask is already clear, say so in one line, ask "Run it?" and run it as written on a yes. A
+rewrite for its own sake wastes the user's time.
 
 ## What the user sees
 
