@@ -33,7 +33,6 @@ When something stops you - a question you need answered, a permission you don't 
 build that's running - do not stop and wait.
 
 - Do every part of the task that does not depend on the blocked thing. Then report.
-- Run independent work at the same time, not one after another.
 - When the independent parts do not need each other's results, send them to subagents in
   one message so they run together. Reading, searching and checking are the good cases.
 - **A subagent reads and reports. It does not install, write, or commit.** Subagents here
@@ -118,11 +117,5 @@ and the user can override it.
 When it hangs: `/codex:status`, then `/codex:cancel`, then carry on. Two hangs on one task,
 stop conferring for that task.
 
-Two known causes of a hang, both avoidable:
-
-```bash
-codex exec --skip-git-repo-check ... < /dev/null
-```
-
-`--skip-git-repo-check` is required outside a git repo. Closing stdin with `< /dev/null` is
-required always, or it sits waiting for input that never comes.
+Two known causes of a hang, both avoidable: leaving out `--skip-git-repo-check` outside a git
+repo, and leaving out `< /dev/null`, without which it sits waiting for input that never comes.
