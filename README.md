@@ -5,7 +5,7 @@
 <p align="center">
 <a href="LICENSE"><img alt="MIT licence" src="https://img.shields.io/badge/licence-MIT-blue"></a>
 <img alt="macOS and Linux" src="https://img.shields.io/badge/macOS%20%7C%20Linux-supported-green">
-<img alt="nineteen skills" src="https://img.shields.io/badge/skills-19-8A2BE2">
+<img alt="eighteen skills" src="https://img.shields.io/badge/skills-18-8A2BE2">
 </p>
 
 Claude Code is an AI that writes code for you in your terminal. Out of the box it guesses
@@ -30,7 +30,7 @@ missing. One line fixes it:"</em></p>
 </tr>
 </table>
 
-**Jump to:** [Install](#install) · [Commands](#the-nineteen-commands) · [Workflows](#workflows) · [Rules](#the-rules-it-follows) · [Update](#update)
+**Jump to:** [Install](#install) · [Commands](#the-eighteen-commands) · [Workflows](#workflows) · [Rules](#the-rules-it-follows) · [Update](#update)
 
 ## Install
 
@@ -325,7 +325,7 @@ backup is the way back.
 
 ```bash
 # take out the skills this repo installed, leaving your own alone
-cd ~/.claude/skills && rm -rf better build claude-video fix github-readme grill handoff jev-judge last-30 map site-design slop writing humanizer archify find-skills i-have-adhd frontend-design
+cd ~/.claude/skills && rm -rf better build claude-video fix github-readme handoff jev-judge last-30 resume site-design skill-audit slop writing humanizer archify find-skills i-have-adhd frontend-design
 # take out the copies the third-party skills install from
 rm -rf ~/.agents/skills/humanizer ~/.agents/skills/archify ~/.agents/skills/find-skills ~/.agents/skills/i-have-adhd ~/.agents/skills/frontend-design
 # remove the Codex plugin
@@ -356,7 +356,7 @@ The uninstall leaves your TypeSafe key alone, because other tools can use it. De
 
 </details>
 
-## The nineteen commands
+## The eighteen commands
 
 Type the slash command, or just say the word. Both work.
 
@@ -367,13 +367,12 @@ Type the slash command, or just say the word. Both work.
 <li><code>/better</code>: turn a rough ask into a better prompt, then run it</li>
 <li><code>/build</code>: you want something new made</li>
 <li><code>/fix</code>: something is broken or slow</li>
-<li><code>/grill</code>: you want your plan attacked</li>
 <li><code>/jev-judge</code>: Claude and Codex disagree and you want a tiebreaker</li>
-<li><code>/map</code>: the job is too big to see</li>
 <li><code>/handoff</code>: you're stopping halfway</li>
 <li><code>/resume</code>: write, tune or check a resume</li>
 <li><code>/github-readme</code>: tidy a repo and its README for GitHub</li>
 <li><code>/find-skills</code>: find a skill someone else has made</li>
+<li><code>/skill-audit</code>: see which skills you use and which to drop</li>
 </ul>
 </td>
 <td width="50%" valign="top">
@@ -421,21 +420,22 @@ it working.</p>
 <tr>
 <td width="50%" valign="top">
 
-<h3>A job too big to start</h3>
+<h3>Ask better</h3>
 
-<p><code>/map I want to rebuild this whole app</code></p>
+<p><code>/better make my dashboard look nicer</code></p>
 
-<p>Claude writes the decisions down one at a time instead of charging in. Then
-build them one by one.</p>
+<p>Claude rewrites your ask around what you want to end up with, shows you the new
+version, and runs it when you say go.</p>
 
 </td>
 <td width="50%" valign="top">
 
-<h3>Before something expensive</h3>
+<h3>Too many skills</h3>
 
-<p><code>/grill I'm rewriting the API in Go</code></p>
+<p><code>/skill-audit</code></p>
 
-<p>Claude argues with you on purpose, so the holes turn up now instead of three weeks in.</p>
+<p>Claude counts how often you used each skill and suggests which to keep, hide or delete.
+It changes nothing until you choose.</p>
 
 </td>
 </tr>
@@ -449,7 +449,7 @@ you don't re-explain anything.
 | File | What it does |
 | --- | --- |
 | `CLAUDE.md` | Rules Claude follows on every task |
-| `skills/` | Fourteen of the nineteen commands above. `/humanizer`, `/archify`, `/find-skills`, `/i-have-adhd` and `/frontend-design` install from their own repos |
+| `skills/` | Thirteen of the eighteen commands above. `/humanizer`, `/archify`, `/find-skills`, `/i-have-adhd` and `/frontend-design` install from their own repos |
 | `output-styles/i-have-adhd.md` | Shapes answers for a reader with ADHD, with the next step first and no recap |
 | `memory/` | Notes Claude keeps on how you like to work |
 | `settings.json` | Plugins, theme, status line, and merging pull requests without asking |
