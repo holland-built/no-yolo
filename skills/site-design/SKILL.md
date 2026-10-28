@@ -71,6 +71,7 @@ them:
 - small ALL-CAPS labels above headings, or monospace labels
 - pill-shaped buttons, or an arrow (character or icon) in button text
 - identical rounded cards with the same grey shadow
+- a dark label block at the left end of a strip, with the content in plain columns to its right
 
 If the brand already uses one, keep it. This list matches the one in `~/.claude/CLAUDE.md`, so
 change both together.
