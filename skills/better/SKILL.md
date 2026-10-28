@@ -12,7 +12,7 @@ Claude gets the goal, the decisions, and the finish line, then runs the better v
 Source: the Claude Code team's own habits, as recapped in
 https://www.youtube.com/watch?v=_NzakzRXzLI.
 
-## The five checks
+## The six checks
 
 Apply each one only where it fits the ask. Most asks need two or three, and a check that adds
 nothing makes the prompt longer without making it better.
@@ -36,6 +36,15 @@ because repeating a rule adds nothing.
 **Check access first.** If the job needs something Claude cannot reach (a login, a file, a
 service, a connector), name it in the rewrite so it gets sorted before the work starts rather than
 discovered halfway.
+
+**Ask for the expert version.** When quality matters more than speed (a report, an audit, an
+analysis, anything a professional would be paid for), the rewrite asks for a deeper version, not a
+bigger one. Claude first states what a top professional would do that the ask leaves out, the
+rawest material they would start from, the methods and tools they would use, and what besides
+Claude's own say-so would show the result is right. Then it does the work that way. Telling Claude
+to "act like an expert" only changes how it sounds; naming the expert's methods changes the work.
+Skip it for quick fixes, where it only adds length. Source: Felix Rieseberg,
+https://felixrieseberg.com/how-to-be-more-ambitious-a-tutorial-for-humans-with-models/.
 
 **Let Claude design the setup.** When the ask is about speeding up or repeating work, use this
 prompt, adapted to the ask:
