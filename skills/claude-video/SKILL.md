@@ -130,6 +130,12 @@ page up from its frontmatter.
 Report in chat what it was, the best idea in it, and whether it changed a topic page or
 contradicted the vault. Keep it short enough to scan.
 
+When the video is a list of tools, repos or skills, the report names every item, one table row
+each: the item, what it does in plain words, and whether the user can use it on this setup (yes,
+no, or only if, with the reason). Never fold the rest into "the other seven" or "and 10 more". The
+user had to ask "list the other 7" after three reports did that, because a grouped row hides
+exactly the item they might want. This outranks the usual five-row table limit.
+
 ## Housekeeping: prune old tool news
 
 After every full ingest, run the pruner. Tool-news videos go stale within weeks, and the vault's own
