@@ -70,7 +70,9 @@ codex exec --skip-git-repo-check --sandbox read-only \
 model only when undoing the decision later would mean rewriting rather than editing.
 
 **Codex reviews the final diff** — after your last change, not before. If it finds something
-and you change the code, it reviews the new diff too.
+and you change the code, it reviews the new diff too. Tell it the intent and what is out of
+scope, because a reviewer that knows the goal can flag code the goal never needed, and one that
+does not will suggest more.
 
 New files are invisible to `git diff` until marked, so mark them first, and check the diff file
 is not empty before sending it. If `codex` is missing or fails, say "Codex review: couldn't
@@ -81,8 +83,25 @@ git add -N .
 git diff <base> > /tmp/build-review.diff
 codex exec --skip-git-repo-check --sandbox read-only \
   -c model=gpt-6-sol -c model_reasoning_effort=medium \
-  "Review the diff at /tmp/build-review.diff. Only defects that would crash it or make it do the wrong thing. Ignore style. None is a valid answer." < /dev/null
+  "Intent: <one line>. Out of scope: <one line>. Review the diff at /tmp/build-review.diff. Only defects that would crash it or make it do the wrong thing in the intended case, and code the intent does not need. Ignore style. Label each blocker, should or nit. None is a valid answer." < /dev/null
 ```
+
+**Check each finding against the code before acting on it.** Review loops grow a change one
+cheap-looking fix at a time, and the user maintains every added line. Judge a finding by what it
+costs if left, not by its label or how rare it is: anything that loses data, exposes a secret or
+breaks the intended case gets fixed; a guard for a case that does not matter, extra compatibility
+or a small slowdown gets declined in one line and listed as a follow-up. Prefer the fix that
+deletes or narrows code, and if review made the diff bigger, cut before the next round. Agree
+because the finding is right, not to end the loop.
+
+**Two review rounds, then decide.** A third round rarely finds what the second missed. Settle
+the disputed small findings yourself and say in one line what you overrode. A blocker still open
+after two rounds is not a judgment call: stop and report it as failed, never as done.
+
+**When the work ends in a pull request**, the title says what changed for the user, and the
+description opens with the problem in the user's words, then the fix in a sentence, then how it
+was proved. The user reads it later to remember why the change exists, and a list of renamed
+functions does not answer that.
 
 **Write the least code that does the job, and touch only what the job needs.** The user
 maintains it later without you, and cannot tell speculative code from needed code. Prefer, in
