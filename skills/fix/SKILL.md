@@ -51,6 +51,23 @@ show why before touching it.
 **Stop after three attempts at the same cause.** Say what each attempt showed and hand it to
 the user, or get the second read above. More attempts past that rarely add evidence.
 
+**Codex reviews the final diff**, because the fix you just wrote is the one you are worst
+placed to judge. Mark new files so the diff shows them, and check it is not empty:
+
+```bash
+git add -N .
+git diff <base> > /tmp/fix-review.diff
+codex exec --skip-git-repo-check --sandbox read-only \
+  -c model=gpt-6-sol -c model_reasoning_effort=medium \
+  "Bug: <one line>. Cause: <one line>. Review the diff at /tmp/fix-review.diff. Does it correct that cause, and does it break anything a caller relies on? Flag code the fix does not need. Ignore style. Label each blocker, should or nit. None is a valid answer." < /dev/null
+```
+
+Check each finding against the code yourself. Judge it by what it costs if left: anything that
+loses data, exposes a secret or leaves the bug in place gets fixed; the rest is declined in one
+line, because a fix that grows during review stops being reviewable. Two rounds at most; a
+blocker still open after that means not fixed. If `codex` is missing or fails, or you are Codex,
+say "Codex review: couldn't tell" and why — never report a review that did not happen.
+
 **Show it working.** The reproduction going green, pasted. Then the real thing running — the
 script, the page, the command the user actually runs — pasted too. If you could not run it,
 or ran it and could not tell whether it worked, it is not fixed yet: say "unverified" or
@@ -62,6 +79,7 @@ or ran it and could not tell whether it worked, it is not fixed yet: say "unveri
 - You can name the cause in one sentence, and you showed it
 - The change covers the cause and nothing else
 - The real thing ran, not only its test
+- Codex reviewed the final diff with no blocker left open, or you said why it could not
 
 If one of those is false, say which, and why. That is a better answer than a fix you cannot
 stand behind.
