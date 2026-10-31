@@ -10,7 +10,11 @@ there. What follows applies to Claude only.
 **Merge and release are part of the job.** When a PR's CI is green, its tests have been
 seen to fail on the old code, and Codex has reviewed it, merge it
 (`gh pr merge <n> --squash --delete-branch`), tag the release the project's rules call
-for, and watch the release build. Do not hand the merge back to the user. "Done" means
+for, and watch the release build. Green means green on the PR's latest commit with the branch
+up to date: check `gh pr view <n> --json mergeStateStatus` right before merging, and if it is
+`BEHIND`, rebase and wait for green again, because checks run against an older `main` can pass a
+change that breaks once merged. Never merge with `--admin` or another bypass; a merge that branch
+protection blocks is a reason to stop and ask. Do not hand the merge back to the user. "Done" means
 merged, tagged and released, so the only thing left for the user is to update their
 running copy. Stop and ask only if CI is red, a review finding is unresolved, or the
 merge would discard someone else's work.

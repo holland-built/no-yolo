@@ -34,6 +34,11 @@ the next session avoids it rather than repeating it. This is the section that ea
 **Label anything you did not check yourself.** The next session builds on this file, so a
 guess stated as fact compounds.
 
+**Record where the code stood.** The branch, the last commit hash, and any uncommitted files,
+because the next session can see the code as it is then but not as it was when you wrote this.
+With that line it can tell whether someone changed things in between and treat the file as
+context to check, not as proof.
+
 **Never carry a secret across.** Not the value, not a redacted version, not "the one in X".
 Name the file that holds it and stop. Anything typed into a prompt once lives in the session
 log, and a handoff is exactly the kind of file that would copy it somewhere new.
