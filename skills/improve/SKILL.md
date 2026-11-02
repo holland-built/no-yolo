@@ -49,7 +49,11 @@ Behavior has no checklist skill; the task list below is its checklist.
 - **Normal** (the default, including plain "make it better"): walkthrough, the checklists the
   findings call for, agreement on each change as below.
 - **Deep**: only when the user says "every screen", "everything" or similar. Every screen,
-  `better-interface` plus `frontend-design`, both reviewers per screen.
+  `better-interface` plus `frontend-design`, both reviewers per screen. Screenshot every screen in
+  every state (phone upright, phone sideways, computer; live, recording, zoomed and so on), give
+  Claude and Codex the same screenshots, and merge their findings into one list per screen. A
+  screenshot the user took on their own phone beats a headless one. The user asked for this
+  several times before it was written down.
 
 ## The task list is the test
 
@@ -100,6 +104,9 @@ with criteria in the user's own words where possible ("easy for anyone at home",
 one line and carry on unless they object. If Jev says ask the user or couldn't tell, show both
 options in plain words, park that item, and carry on with the others. A retry of an agreed fix
 needs no new agreement unless the approach changes.
+
+If you are Codex, you cannot start the Opus helper or ask yourself for a second opinion, so stop
+at the agreement step and hand the findings and proposed change to the user for Claude's read.
 
 Subagents run in parallel for testing and reviewing when their work does not overlap: different
 screens, different tasks. The main thread makes every edit, so two agents never write the same
