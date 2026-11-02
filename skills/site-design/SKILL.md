@@ -82,8 +82,16 @@ in, and rebuild the variants around it.
 
 ## Done
 
-The user has picked a variant, and it works on a narrow screen, with the longest real content,
+The user has picked a variant, `/better-interface` returns `Approve` on it, and it works on a narrow screen, with the longest real content,
 and in its empty, loading and error states, because those are where a layout that looked fine
+## Review the pick
+
+Once the user has picked, run `/better-interface` on the chosen variant and fix every `HIGH`
+finding. A side-by-side pick judges the look; nobody tried the page with a keyboard, at 320px or
+at 200% zoom, and those are where a reader gets stuck. Fix `MEDIUM` and `LOW` findings only when
+the user asks, because each fix is more code they maintain alone. If the review marks a domain
+`Not reviewed`, say which one; do not call the page checked.
+
 side by side breaks. Its controls pass the accessibility list above. The other variants and
 anything only they used are deleted, and nothing outside the designed page changed. No variant
 adds a style from that list. Tell the user what the chosen variant used instead, and ask whether
