@@ -71,6 +71,10 @@ them:
 - small ALL-CAPS labels above headings, or monospace labels
 - pill-shaped buttons, or an arrow (character or icon) in button text
 - identical rounded cards with the same grey shadow
+- a side list where the current item is only a slightly lighter rounded row
+- one grey outline on every secondary button, with plain text inside it
+- the same bold heading over a small grey caption on every block
+- a large account or customer name above each item in a list; the item's own title leads, with the name under it at body size
 - a dark label block at the left end of a strip, with the content in plain columns to its right
 
 If the brand already uses one, keep it. This list matches the one in `~/.claude/CLAUDE.md`, so
@@ -80,10 +84,6 @@ The fix is one move. Name a detail that could appear on **this page and no other
 units, its real vocabulary, its real numbers, the convention its own field uses. Put that detail
 in, and rebuild the variants around it.
 
-## Done
-
-The user has picked a variant, `/better-interface` returns `Approve` on it, and it works on a narrow screen, with the longest real content,
-and in its empty, loading and error states, because those are where a layout that looked fine
 ## Review the pick
 
 Once the user has picked, run `/better-interface` on the chosen variant and fix every `HIGH`
@@ -92,7 +92,10 @@ at 200% zoom, and those are where a reader gets stuck. Fix `MEDIUM` and `LOW` fi
 the user asks, because each fix is more code they maintain alone. If the review marks a domain
 `Not reviewed`, say which one; do not call the page checked.
 
+## Done
+
+The user has picked a variant, `/better-interface` returns `Approve` on it, and it works on a narrow screen, with the longest real content,
+and in its empty, loading and error states, because those are where a layout that looked fine
 side by side breaks. Its controls pass the accessibility list above. The other variants and
 anything only they used are deleted, and nothing outside the designed page changed. No variant
-adds a style from that list. Tell the user what the chosen variant used instead, and ask whether
-to ban that too.
+adds a style from that list.

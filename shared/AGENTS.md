@@ -134,8 +134,8 @@ the user can spot them at a glance. Do not add these:
 If a site's brand or a template already uses one of these, keep it, because matching the brand
 matters more than the list. The same list is in the site-design skill. Change both together.
 
-The list grows. After each build, name the style you used in place of these, and ask whether to
-ban that one too.
+The user adds to the list when they spot a new one. Do not ask after a build whether to ban
+something, because the user said they will say so themselves.
 
 **PowerPoint.** Keep the existing template's fonts and colours. Never swap them for new ones,
 because the deck has to match the company's other slides. Before editing any `.pptx`, save a
@@ -143,8 +143,8 @@ dated copy, such as `Deck - backup YYYY-MM-DD <reason>.pptx`, in a `backup/` fol
 deck's own folder (for a customer deck, that customer's folder), so a bad edit can be undone.
 Keep the 5 newest per deck and move older ones to the Trash, never `rm`.
 
-Done: no listed style was newly added, the brand or template is intact, any `.pptx` edit has
-its backup, and the user has been asked about the style used instead.
+Done: no listed style was newly added, the brand or template is intact, and any `.pptx` edit has
+its backup.
 
 ## 8. Getting Web Pages
 
@@ -153,8 +153,7 @@ Pick the tool by what the page needs, because each one fails where another works
 - A normal public page, or a whole site to crawl: Firecrawl, the self-hosted server on the home
   network. It is a plain browser with no proxy, so sites behind Cloudflare often block it.
 - Firecrawl comes back blocked or empty ("Just a moment", a 403, a blank page): retry with
-  Scrapling. On 2026-10-18 Scrapling got through 4 of 4 Cloudflare test pages where Firecrawl got
-  through 1.
+  Scrapling, which gets past Cloudflare checks that block Firecrawl.
 - Anything that needs the user logged in, such as shopping or work sites: the user's own browser,
   with the user typing any password. Claude drives it through Claude in Chrome; Codex uses its own
   Chrome control when it has one, and otherwise hands the task back to Claude. That browser is already the real person on the home
