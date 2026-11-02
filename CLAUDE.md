@@ -86,19 +86,18 @@ current practice, n=1.
 
 | Job | Reach for | Second choice |
 |---|---|---|
-| Thinking a problem through, design | Fable 5.1 | `gpt-6-astra` for structure |
+| Thinking a problem through, design | Fable | `gpt-6-astra` for structure |
 | Structure, speed, computer use, spreadsheets | `gpt-6-astra` | Fable for the design half |
-| Cheap bulk work under supervision | Haiku 4.5 in a subagent | Always inspected by a stronger model |
+| Cheap bulk work under supervision | Haiku in a subagent | Always inspected by a stronger model |
 | Second opinion on a plan or a diff | `gpt-6-sol` at medium | Astra only when undoing it means rewriting |
 
-Haiku 4.5 is `claude-haiku-4-5-20251001`. Use it through the Agent tool's `model` override
+Use Haiku through the Agent tool's `model: "haiku"` override, which follows the current version,
 for read-and-report work — searching, checking, listing — never for work that writes.
 
 When the shape of a thing is undecided, run the same brief past two models. The divergence is
 the deliverable: it shows you what you had not decided.
 
-Most models default to a 272k window (`max_context_window` 872k, raisable), so input size
-rarely separates them. Check `codex debug models` for what is actually available - **not**
+Check `codex debug models` for which Codex models exist now - **not**
 `~/.codex/models_cache.json`, which is written per-client-version and has already been wrong
 once.
 
