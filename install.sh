@@ -33,7 +33,6 @@ cp -R "$REPO/output-styles/." "$CLAUDE/output-styles/"
 # CLAUDE.md imports shared/AGENTS.md, the rules Claude and Codex both follow.
 cp -R "$REPO/shared/." "$CLAUDE/shared/"
 chmod +x "$CLAUDE/shared/build-codex-agents.sh"
-cp -R "$REPO/tools" "$CLAUDE/"
 chmod +x "$CLAUDE/statusline.sh"
 say "Copied the rules, style, skills and checker into $CLAUDE"
 
@@ -79,17 +78,6 @@ else
   say "This also stops any hook of your own in a repo's .git/hooks from running,"
   say "because git uses one hooks folder at a time. Undo with:"
   say "  git config --global --unset core.hooksPath"
-fi
-
-# 5. Download the linter the /slop rules run on.
-if command -v npm >/dev/null 2>&1; then
-  if (cd "$CLAUDE/tools/anti-slop" && npm install --silent --save-exact oxlint@1.83.0 @oxlint/plugins@1.83.0); then
-    say "Installed the linter behind /slop"
-  else
-    say "npm could not install the linter, so /slop has no linter yet."
-  fi
-else
-  say "No npm here, so /slop has no linter. Install Node.js, then run this script again."
 fi
 
 say ""
