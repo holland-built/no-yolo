@@ -518,7 +518,7 @@ cp -R ~/.claude/output-styles/. output-styles/
 # copy the rules Claude and Codex share
 cp -R ~/.claude/shared/. shared/
 # copy the skills, leaving out third-party skills, personal skills, test cases and the sync folder
-rsync -a --exclude humanizer --exclude archify --exclude find-skills --exclude i-have-adhd --exclude frontend-design --exclude diagram-design --exclude tasks --exclude model-update --exclude synced --exclude evals --exclude .claude-plugin --exclude __pycache__ ~/.claude/skills/ skills/
+rsync -a --exclude humanizer --exclude archify --exclude find-skills --exclude i-have-adhd --exclude frontend-design --exclude diagram-design --exclude tasks --exclude model-update --exclude synced --exclude better-interface --exclude better-accessibility --exclude better-layout --exclude better-writing --exclude better-typography --exclude better-colors --exclude better-ui --exclude reverse-engineer-anything --exclude impeccable --exclude evals --exclude .claude-plugin --exclude __pycache__ --exclude results --exclude .DS_Store ~/.claude/skills/ skills/
 # publish it
 git add -A && git commit -m "Sync" && git push
 ```
