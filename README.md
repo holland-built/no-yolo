@@ -5,7 +5,7 @@
 <p align="center">
 <a href="LICENSE"><img alt="MIT licence" src="https://img.shields.io/badge/licence-MIT-blue"></a>
 <img alt="macOS and Linux" src="https://img.shields.io/badge/macOS%20%7C%20Linux-supported-green">
-<img alt="eighteen skills" src="https://img.shields.io/badge/skills-18-8A2BE2">
+<img alt="nineteen commands" src="https://img.shields.io/badge/commands-19-8A2BE2">
 </p>
 
 Claude Code is an AI that writes code for you in your terminal. Out of the box it guesses
@@ -30,7 +30,7 @@ missing. One line fixes it:"</em></p>
 </tr>
 </table>
 
-**Jump to:** [Install](#install) · [Commands](#the-eighteen-commands) · [Workflows](#workflows) · [Rules](#the-rules-it-follows) · [Update](#update)
+**Jump to:** [Install](#install) · [Commands](#the-nineteen-commands) · [Workflows](#workflows) · [Rules](#the-rules-it-follows) · [Update](#update)
 
 ## Install
 
@@ -38,7 +38,7 @@ Needs [Claude Code](https://claude.com/claude-code), Git, Node.js and `jq`, whic
 line reads its values with. macOS or Linux. Windows is not supported.
 
 The script copies the rules, the style and the skills into `~/.claude`, installs `gitleaks`,
-switches the secret guard on, and downloads the linter behind `/slop`. It backs up whatever
+switches the secret guard on, and downloads the code linter in `tools/anti-slop`. It backs up whatever
 you already have before it copies anything, and it tells you what it did at each step. If git
 on this machine already has a hooks folder of its own, it leaves that alone and prints the one
 line to run instead.
@@ -53,14 +53,16 @@ mkdir -p ~/AI && git clone https://github.com/holland-built/no-yolo.git ~/AI/no-
 Then **restart Claude Code** and type `/fix`. It should ask what is broken instead of guessing.
 
 **Rather have an AI do it?** Paste this into Claude Code, or any coding agent that can run
-commands. It does the same steps and adds the five skills from other repos.
+commands. It does the same steps and adds the thirteen skills from other repos.
 
 ```text
 Install no-yolo on this machine. Clone https://github.com/holland-built/no-yolo.git to
 ~/AI/no-yolo. If that folder already exists, check that its origin is that URL and that git
 status is clean; if either is not true, stop and tell me. Otherwise git pull. Read its README,
-then run ~/AI/no-yolo/install.sh. Then install the five third-party skills with these commands:
+then run ~/AI/no-yolo/install.sh. Then install the thirteen third-party skills with these commands:
+npx -y skills add affaan-m/ecc --skill ui-demo -g -y
 npx -y skills add blader/humanizer -g -y && npx -y skills add tt-a1i/archify --skill archify -g -y && npx -y skills add vercel-labs/skills --skill find-skills -g -y && npx -y skills add ayghri/i-have-adhd --skill i-have-adhd -g -y && npx -y skills add anthropics/skills --skill frontend-design -g -y
+npx -y skills add jakubkrehel/skills --skill better-interface -g -y && npx -y skills add jakubkrehel/skills --skill better-accessibility -g -y && npx -y skills add jakubkrehel/skills --skill better-layout -g -y && npx -y skills add jakubkrehel/skills --skill better-writing -g -y && npx -y skills add jakubkrehel/skills --skill better-typography -g -y && npx -y skills add jakubkrehel/skills --skill better-colors -g -y && npx -y skills add jakubkrehel/skills --skill better-ui -g -y
 Do not change anything else. When it is done, tell me what the install script backed up,
 what it installed, and anything that failed, then remind me to restart Claude Code.
 ```
@@ -129,7 +131,7 @@ what it installed, and anything that failed, then remind me to restart Claude Co
    chmod +x hooks/pre-commit
    ```
 
-4. **Add the code checker behind `/slop`.**
+4. **Add the code linter in `tools/anti-slop`.**
 
    ```bash
    # copy the rules in
@@ -143,15 +145,19 @@ what it installed, and anything that failed, then remind me to restart Claude Co
 </details>
 
 <details>
-<summary><strong>Five skills that install from their own repos</strong></summary>
+<summary><strong>Thirteen skills that install from their own repos</strong></summary>
 
 They update themselves, so they are not copied into this repo.
 
-All five in one line, with no questions asked:
+All thirteen, with no questions asked:
 
 ```bash
 # install humanizer, archify, find-skills, i-have-adhd and frontend-design from their own repos
 npx -y skills add blader/humanizer -g -y && npx -y skills add tt-a1i/archify --skill archify -g -y && npx -y skills add vercel-labs/skills --skill find-skills -g -y && npx -y skills add ayghri/i-have-adhd --skill i-have-adhd -g -y && npx -y skills add anthropics/skills --skill frontend-design -g -y
+# install ui-demo, which /demo-voiceover builds on
+npx -y skills add affaan-m/ecc --skill ui-demo -g -y
+# install the seven design checklists that /improve uses
+npx -y skills add jakubkrehel/skills --skill better-interface -g -y && npx -y skills add jakubkrehel/skills --skill better-accessibility -g -y && npx -y skills add jakubkrehel/skills --skill better-layout -g -y && npx -y skills add jakubkrehel/skills --skill better-writing -g -y && npx -y skills add jakubkrehel/skills --skill better-typography -g -y && npx -y skills add jakubkrehel/skills --skill better-colors -g -y && npx -y skills add jakubkrehel/skills --skill better-ui -g -y
 ```
 
 Or one at a time:
@@ -167,12 +173,28 @@ npx skills add vercel-labs/skills --skill find-skills --global
 npx skills add ayghri/i-have-adhd --skill i-have-adhd --global
 # gives pages and screens a deliberate look instead of a template one
 npx skills add anthropics/skills --skill frontend-design --global
+# the ranked review /improve runs when you say "make it better"
+npx skills add jakubkrehel/skills --skill better-interface --global
+# checks keyboard use, screen readers and contrast
+npx skills add jakubkrehel/skills --skill better-accessibility --global
+# checks grouping, alignment and how a page resizes
+npx skills add jakubkrehel/skills --skill better-layout --global
+# checks button labels, error messages and empty screens
+npx skills add jakubkrehel/skills --skill better-writing --global
+# checks text sizes, spacing and wrapping
+npx skills add jakubkrehel/skills --skill better-typography --global
+# checks color palettes and contrast
+npx skills add jakubkrehel/skills --skill better-colors --global
+# checks corners, shadows, icons and motion
+npx skills add jakubkrehel/skills --skill better-ui --global
+# records demo videos of a web app; /demo-voiceover adds narration to them
+npx skills add affaan-m/ecc --skill ui-demo --global
 ```
 
 To take their newest versions later:
 
 ```bash
-# update the five skills installed from someone else's repo
+# update the thirteen skills installed from someone else's repo
 npx skills update -g
 ```
 
@@ -181,6 +203,8 @@ npx skills update -g
 - [find-skills](https://github.com/vercel-labs/skills), by Vercel Labs.
 - [i-have-adhd](https://github.com/ayghri/i-have-adhd), MIT, by ayghri.
 - [frontend-design](https://github.com/anthropics/skills), by Anthropic.
+- [ui-demo](https://github.com/affaan-m/ecc), by affaan-m.
+- [better-interface and its six checklists](https://github.com/jakubkrehel/skills), MIT, by jakubkrehel.
 
 </details>
 
@@ -324,15 +348,15 @@ diff -rq skills ~/.claude/skills; diff -q CLAUDE.md ~/.claude/CLAUDE.md
 <summary><strong>Uninstall</strong></summary>
 
 This removes the skills by name. A skill of your own that shares a name with one here goes
-too, and so do Humanizer, Archify, find-skills, i-have-adhd, frontend-design,
-Codex, the TypeScript checker and Firecrawl, even if you installed them yourself. Your dated
+too, and so do Humanizer, Archify, find-skills, i-have-adhd, frontend-design, ui-demo, the seven
+`better-*` checklists, Codex, the TypeScript checker and Firecrawl, even if you installed them yourself. Your dated
 backup is the way back.
 
 ```bash
 # take out the skills this repo installed, leaving your own alone
-cd ~/.claude/skills && rm -rf better build claude-video fix github-readme handoff jev-judge last-30 resume site-design skill-audit slop writing humanizer archify find-skills i-have-adhd frontend-design
+cd ~/.claude/skills && rm -rf better build claude-video demo-voiceover fix github-readme handoff improve jev-judge last-30 resume site-design skill-audit slop writing humanizer archify find-skills i-have-adhd frontend-design ui-demo better-interface better-accessibility better-layout better-writing better-typography better-colors better-ui
 # take out the copies the third-party skills install from
-rm -rf ~/.agents/skills/humanizer ~/.agents/skills/archify ~/.agents/skills/find-skills ~/.agents/skills/i-have-adhd ~/.agents/skills/frontend-design
+cd ~/.agents/skills && rm -rf humanizer archify find-skills i-have-adhd frontend-design ui-demo better-interface better-accessibility better-layout better-writing better-typography better-colors better-ui
 # remove the Codex plugin
 claude plugin uninstall codex@openai-codex
 # remove the TypeScript checker plugin
@@ -361,7 +385,7 @@ The uninstall leaves your TypeSafe key alone, because other tools can use it. De
 
 </details>
 
-## The eighteen commands
+## The nineteen commands
 
 Type the slash command, or just say the word. Both work.
 
@@ -371,6 +395,7 @@ Type the slash command, or just say the word. Both work.
 <ul>
 <li><code>/better</code>: turn a rough ask into a better prompt, then run it</li>
 <li><code>/build</code>: you want something new made</li>
+<li><code>/improve</code>: make a page or app you already have better, tested on a phone and a computer</li>
 <li><code>/fix</code>: something is broken or slow</li>
 <li><code>/jev-judge</code>: Claude and Codex disagree and you want a tiebreaker</li>
 <li><code>/handoff</code>: you're stopping halfway</li>
@@ -385,7 +410,7 @@ Type the slash command, or just say the word. Both work.
 <li><code>/writing</code>: you're writing rules for an AI</li>
 <li><code>/humanizer</code>: your writing sounds like an AI wrote it</li>
 <li><code>/site-design</code>: you need a page designed</li>
-<li><code>/slop</code>: check code for the patterns AI writes and humans do not</li>
+<li><code>/demo-voiceover</code>: add a spoken voiceover to a demo video</li>
 <li><code>/last-30</code>: what changed lately</li>
 <li><code>/claude-video</code>: summarise a YouTube video</li>
 <li><code>/archify</code>: draw a diagram of a system</li>
@@ -395,6 +420,10 @@ Type the slash command, or just say the word. Both work.
 </td>
 </tr>
 </table>
+
+`/improve` picks from seven design checklists by itself (`better-interface`, `better-accessibility`,
+`better-layout`, `better-writing`, `better-typography`, `better-colors`, `better-ui`), so you never
+have to remember them. You can still type any of them on its own.
 
 ## Workflows
 
@@ -419,6 +448,27 @@ Type the slash command, or just say the word. Both work.
 
 <p>Claude reproduces the error first, shows you the cause, fixes it, then shows
 it working.</p>
+
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+
+<h3>Make something better</h3>
+
+<p><code>/improve the checkout page feels clunky</code></p>
+
+<p>Claude tries the page on a phone and a computer first, picks the design checks that fit, gets
+Codex to agree on each change, ships it, and tests again until it passes.</p>
+
+</td>
+<td width="50%" valign="top">
+
+<h3>Narrow it down</h3>
+
+<p><code>/improve just the colors</code></p>
+
+<p>Name one thing and only the matching checklist runs. Problems it finds elsewhere are listed, not fixed.</p>
 
 </td>
 </tr>
@@ -455,7 +505,7 @@ you don't re-explain anything.
 | --- | --- |
 | `CLAUDE.md` | Rules Claude follows on every task |
 | `shared/` | The rules Claude and Codex share (`AGENTS.md`), which `CLAUDE.md` reads in, plus the script that builds Codex's copy |
-| `skills/` | Thirteen of the eighteen commands above. `/humanizer`, `/archify`, `/find-skills`, `/i-have-adhd` and `/frontend-design` install from their own repos |
+| `skills/` | Fourteen of the nineteen commands above. `/humanizer`, `/archify`, `/find-skills`, `/i-have-adhd` and `/frontend-design` install from their own repos |
 | `output-styles/i-have-adhd.md` | Shapes answers for a reader with ADHD, with the next step first and no recap |
 | `memory/` | Notes Claude keeps on how you like to work |
 | `settings.json` | Plugins, theme, status line, and merging pull requests without asking |
@@ -463,7 +513,7 @@ you don't re-explain anything.
 | `install.sh` | Sets this repo up on a machine, or updates one that already has it |
 | `scripts/` | Tidies up stray Codex processes at session start |
 | `hooks/` | The pre-commit guard that refuses a commit holding a secret |
-| `tools/anti-slop/` | The rules behind `/slop` |
+| `tools/anti-slop/` | Lint rules left from the retired `/slop` command |
 
 ## How it talks to you
 
