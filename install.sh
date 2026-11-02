@@ -26,13 +26,29 @@ if [ -d "$CLAUDE" ]; then
 fi
 
 # 2. Copy the rules, the style, the skills and the checker's rules in.
-mkdir -p "$CLAUDE/skills" "$CLAUDE/output-styles"
+mkdir -p "$CLAUDE/skills" "$CLAUDE/output-styles" "$CLAUDE/shared"
 cp "$REPO/CLAUDE.md" "$REPO/settings.json" "$REPO/statusline.sh" "$CLAUDE/"
 cp -R "$REPO/skills/." "$CLAUDE/skills/"
 cp -R "$REPO/output-styles/." "$CLAUDE/output-styles/"
+# CLAUDE.md imports shared/AGENTS.md, the rules Claude and Codex both follow.
+cp -R "$REPO/shared/." "$CLAUDE/shared/"
+chmod +x "$CLAUDE/shared/build-codex-agents.sh"
 cp -R "$REPO/tools" "$CLAUDE/"
 chmod +x "$CLAUDE/statusline.sh"
 say "Copied the rules, style, skills and checker into $CLAUDE"
+
+# Codex has no file import, so if it is installed, build its rules file from the shared one.
+if command -v codex >/dev/null 2>&1; then
+  if [ -f "$HOME/.codex/AGENTS.md" ]; then
+    cp "$HOME/.codex/AGENTS.md" "$HOME/.codex/AGENTS.md.backup-$(date +%Y%m%d-%H%M%S)"
+    say "Backed up your old ~/.codex/AGENTS.md next to it"
+  fi
+  if "$CLAUDE/shared/build-codex-agents.sh"; then
+    say "Codex now follows the same shared rules"
+  else
+    say "Could not build ~/.codex/AGENTS.md. Run ~/.claude/shared/build-codex-agents.sh to retry."
+  fi
+fi
 
 # 3. Install gitleaks, which the secret guard calls. Without it the guard does nothing.
 if command -v gitleaks >/dev/null 2>&1; then

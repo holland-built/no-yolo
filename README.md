@@ -70,6 +70,9 @@ what it installed, and anything that failed, then remind me to restart Claude Co
 > is overwritten, and so are `CLAUDE.md`, `settings.json` and `statusline.sh`. The dated backup
 > folder it writes first is the only way back.
 >
+> If Codex is installed, `~/.codex/AGENTS.md` is replaced too. The old one is kept beside it with
+> the date in its name.
+>
 > The secret guard also stops any hook of your own in a repo's `.git/hooks` from running,
 > because git uses one hooks folder at a time for the whole machine. Undo that with
 > `git config --global --unset core.hooksPath`.
@@ -99,13 +102,15 @@ what it installed, and anything that failed, then remind me to restart Claude Co
    # download this repo to the path the settings expect, then step into it
    mkdir -p ~/AI && git clone https://github.com/holland-built/no-yolo.git ~/AI/no-yolo && cd ~/AI/no-yolo
    # make the folders Claude reads from
-   mkdir -p ~/.claude/skills ~/.claude/output-styles
+   mkdir -p ~/.claude/skills ~/.claude/output-styles ~/.claude/shared
    # put the rules, settings and status line where Claude reads them
    cp CLAUDE.md settings.json statusline.sh ~/.claude/
    # add the skills
    cp -R skills/. ~/.claude/skills/
    # add the ADHD speaking style
    cp -R output-styles/. ~/.claude/output-styles/
+   # copy the rules Claude and Codex share, which CLAUDE.md reads in
+   cp -R shared/. ~/.claude/shared/
    # let the status line run
    chmod +x ~/.claude/statusline.sh
    ```
@@ -449,6 +454,7 @@ you don't re-explain anything.
 | File | What it does |
 | --- | --- |
 | `CLAUDE.md` | Rules Claude follows on every task |
+| `shared/` | The rules Claude and Codex share (`AGENTS.md`), which `CLAUDE.md` reads in, plus the script that builds Codex's copy |
 | `skills/` | Thirteen of the eighteen commands above. `/humanizer`, `/archify`, `/find-skills`, `/i-have-adhd` and `/frontend-design` install from their own repos |
 | `output-styles/i-have-adhd.md` | Shapes answers for a reader with ADHD, with the next step first and no recap |
 | `memory/` | Notes Claude keeps on how you like to work |
@@ -477,11 +483,12 @@ compares gets twelve. The limit holds in every folder, including the report at t
 
 ## The rules it follows
 
-`CLAUDE.md` is eight short sections. What each one actually stops:
+The rules live in `CLAUDE.md` and `shared/AGENTS.md`. What each one actually stops:
 
 | Rule | What it stops |
 | --- | --- |
 | **Think before coding** | Guessing what you meant. If your request could mean two different things, it shows you both before building either. |
+| **Check before you explain** | Made-up causes. It tells you why something happened only after checking logs, history or a test. If it can't check, it says it doesn't know and names the test that would tell. |
 | **Simplicity first** | Features you did not ask for, wrappers around one call, settings nobody requested, handling for cases that cannot happen. |
 | **Surgical changes** | Tidying code next to the thing you asked about. It matches the style already there, even style it would do differently. |
 | **Goal-driven execution** | "Make it work" as a finish line. It says up front what test or command will prove it, then runs that check. |
@@ -508,6 +515,8 @@ deleted files. The manual steps below do the same without the checks.
 cp ~/.claude/CLAUDE.md ~/.claude/statusline.sh .
 # copy the ADHD speaking style
 cp -R ~/.claude/output-styles/. output-styles/
+# copy the rules Claude and Codex share
+cp -R ~/.claude/shared/. shared/
 # copy the skills, leaving out third-party skills, personal skills, test cases and the sync folder
 rsync -a --exclude humanizer --exclude archify --exclude find-skills --exclude i-have-adhd --exclude frontend-design --exclude diagram-design --exclude tasks --exclude model-update --exclude synced --exclude evals --exclude .claude-plugin --exclude __pycache__ ~/.claude/skills/ skills/
 # publish it
