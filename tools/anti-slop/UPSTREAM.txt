@@ -1,3 +1,0 @@
-c44ef22 Merge pull request #36 from K-Mistele/contrib/effect-tag-match-rules
-github.com/dmmulroy/anti-slop
-2026-09-20

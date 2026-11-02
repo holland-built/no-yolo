@@ -37,8 +37,8 @@ missing. One line fixes it:"</em></p>
 Needs [Claude Code](https://claude.com/claude-code), Git, Node.js and `jq`, which the status
 line reads its values with. macOS or Linux. Windows is not supported.
 
-The script copies the rules, the style and the skills into `~/.claude`, installs `gitleaks`,
-switches the secret guard on, and downloads the code linter in `tools/anti-slop`. It backs up whatever
+The script copies the rules, the style and the skills into `~/.claude`, installs `gitleaks`
+and switches the secret guard on. It backs up whatever
 you already have before it copies anything, and it tells you what it did at each step. If git
 on this machine already has a hooks folder of its own, it leaves that alone and prints the one
 line to run instead.
@@ -131,16 +131,7 @@ what it installed, and anything that failed, then remind me to restart Claude Co
    chmod +x hooks/pre-commit
    ```
 
-4. **Add the code linter in `tools/anti-slop`.**
-
-   ```bash
-   # copy the rules in
-   cp -R tools ~/.claude/
-   # download the linter they run on
-   cd ~/.claude/tools/anti-slop && npm install --save-exact oxlint@1.83.0 @oxlint/plugins@1.83.0 && cd -
-   ```
-
-5. **Restart Claude Code**, then type `/fix`. It should ask what is broken instead of guessing.
+4. **Restart Claude Code**, then type `/fix`. It should ask what is broken instead of guessing.
 
 </details>
 
@@ -354,7 +345,7 @@ backup is the way back.
 
 ```bash
 # take out the skills this repo installed, leaving your own alone
-cd ~/.claude/skills && rm -rf better build claude-video demo-voiceover fix github-readme handoff improve jev-judge last-30 resume site-design skill-audit slop writing humanizer archify find-skills i-have-adhd frontend-design ui-demo better-interface better-accessibility better-layout better-writing better-typography better-colors better-ui
+cd ~/.claude/skills && rm -rf better build claude-video demo-voiceover fix github-readme handoff improve jev-judge last-30 resume site-design skill-audit writing humanizer archify find-skills i-have-adhd frontend-design ui-demo better-interface better-accessibility better-layout better-writing better-typography better-colors better-ui
 # take out the copies the third-party skills install from
 cd ~/.agents/skills && rm -rf humanizer archify find-skills i-have-adhd frontend-design ui-demo better-interface better-accessibility better-layout better-writing better-typography better-colors better-ui
 # remove the Codex plugin
@@ -367,8 +358,6 @@ claude mcp remove firecrawl -s user
 rm -f ~/.claude/output-styles/i-have-adhd.md ~/.claude/output-styles/i-have-adhd.LICENSE ~/.claude/output-styles/plain.md
 # delete the rules, settings and status line
 rm -f ~/.claude/CLAUDE.md ~/.claude/settings.json ~/.claude/statusline.sh
-# take out the code checker
-rm -rf ~/.claude/tools/anti-slop
 # stop git using the secret guard. Had your own hooks path before? Set it back instead
 git config --global --unset core.hooksPath
 ```
@@ -513,7 +502,6 @@ you don't re-explain anything.
 | `install.sh` | Sets this repo up on a machine, or updates one that already has it |
 | `scripts/` | Tidies up stray Codex processes at session start |
 | `hooks/` | The pre-commit guard that refuses a commit holding a secret |
-| `tools/anti-slop/` | Lint rules left from the retired `/slop` command |
 
 ## How it talks to you
 
