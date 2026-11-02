@@ -136,6 +136,13 @@ When files move, update every path that points at them: scripts, tests, other RE
 files. Then run the test suite and show it passing. Stage every related change together, so git
 never holds half a refactor.
 
+## Retired things leave no trace
+
+When a skill, command or tool is retired or parked, remove every reference to it in the same
+change: installer steps, README tables, counts and badges, uninstall lists, and helper folders it
+needed. Search the repo for its name and fix every hit. A half-removed tool still installs and
+still shows up in the docs, so readers set up something that no longer exists.
+
 ## Naming
 
 Do not name a repo after someone else's product. If a rename is needed, offer about ten options
@@ -159,6 +166,7 @@ the commit local and say so.
 
 ## Done
 
+- Nothing retired or parked is still installed, listed or counted.
 - The README has badges, two or three sentences, tables, a quick start of five steps or fewer,
   and everything after the quick start folded into `<details>` blocks, with warnings left
   visible.
