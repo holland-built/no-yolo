@@ -109,7 +109,7 @@ what it installed, and anything that failed, then remind me to restart Claude Co
    cp CLAUDE.md settings.json statusline.sh ~/.claude/
    # add the skills
    cp -R skills/. ~/.claude/skills/
-   # add the ADHD speaking style
+   # add the Action First reply style
    cp -R output-styles/. ~/.claude/output-styles/
    # copy the rules Claude and Codex share, which CLAUDE.md reads in
    cp -R shared/. ~/.claude/shared/
@@ -160,7 +160,7 @@ npx skills add blader/humanizer --global
 npx skills add tt-a1i/archify --skill archify --global
 # finds and installs skills other people have made
 npx skills add vercel-labs/skills --skill find-skills --global
-# shapes replies for a reader with ADHD; type /i-have-adhd to switch it on
+# the original skill the Action First style is adapted from; type /i-have-adhd to use it
 npx skills add ayghri/i-have-adhd --skill i-have-adhd --global
 # gives pages and screens a deliberate look instead of a template one
 npx skills add anthropics/skills --skill frontend-design --global
@@ -354,8 +354,8 @@ claude plugin uninstall codex@openai-codex
 claude plugin uninstall typescript-lsp@claude-plugins-official
 # disconnect the web search tool
 claude mcp remove firecrawl -s user
-# delete the ADHD speaking style, and the older plain style if an earlier install left it
-rm -f ~/.claude/output-styles/i-have-adhd.md ~/.claude/output-styles/i-have-adhd.LICENSE ~/.claude/output-styles/plain.md
+# delete the Action First reply style, and older styles an earlier install left
+rm -f ~/.claude/output-styles/action-first.md ~/.claude/output-styles/action-first.LICENSE ~/.claude/output-styles/i-have-adhd.md ~/.claude/output-styles/i-have-adhd.LICENSE ~/.claude/output-styles/plain.md
 # delete the rules, settings and status line
 rm -f ~/.claude/CLAUDE.md ~/.claude/settings.json ~/.claude/statusline.sh
 # stop git using the secret guard. Had your own hooks path before? Set it back instead
@@ -403,7 +403,7 @@ Type the slash command, or just say the word. Both work.
 <li><code>/last-30</code>: what changed lately</li>
 <li><code>/claude-video</code>: summarise a YouTube video</li>
 <li><code>/archify</code>: draw a diagram of a system</li>
-<li><code>/i-have-adhd</code>: replies shaped for an ADHD reader</li>
+<li><code>/i-have-adhd</code>: the original skill behind the Action First style</li>
 <li><code>/frontend-design</code>: give a page a deliberate look</li>
 </ul>
 </td>
@@ -495,7 +495,7 @@ you don't re-explain anything.
 | `CLAUDE.md` | Rules Claude follows on every task |
 | `shared/` | The rules Claude and Codex share (`AGENTS.md`), which `CLAUDE.md` reads in, plus the script that builds Codex's copy |
 | `skills/` | Fourteen of the nineteen commands above. `/humanizer`, `/archify`, `/find-skills`, `/i-have-adhd` and `/frontend-design` install from their own repos |
-| `output-styles/i-have-adhd.md` | Shapes answers for a reader with ADHD, with the next step first and no recap |
+| `output-styles/action-first.md` | Shapes answers with the next step first and no recap |
 | `memory/` | Notes Claude keeps on how you like to work |
 | `settings.json` | Plugins, theme, status line, and merging pull requests without asking |
 | `statusline.sh` | The bar at the bottom |
@@ -505,10 +505,10 @@ you don't re-explain anything.
 
 ## How it talks to you
 
-`output-styles/i-have-adhd.md` shapes every reply for a reader with ADHD. It is Ayoub Ghriss's
-[i-have-adhd](https://github.com/ayghri/i-have-adhd) skill (MIT, licence in
-`output-styles/i-have-adhd.LICENSE`), turned into an output style so it runs in every session
-without being typed.
+`output-styles/action-first.md` shapes every reply for a busy reader who acts on it. It is adapted
+from Ayoub Ghriss's [i-have-adhd](https://github.com/ayghri/i-have-adhd) skill (MIT, licence in
+`output-styles/action-first.LICENSE`), renamed and turned into an output style so it runs in every
+session without being typed.
 
 The first line is the next thing you can do. Steps come as a numbered list with one action each,
 and on a long job each update says where things stand ("step 3 of 5 done"). Time estimates use
@@ -551,7 +551,7 @@ deleted files. The manual steps below do the same without the checks.
 ```bash
 # copy the rules and the status line from this machine into the repo
 cp ~/.claude/CLAUDE.md ~/.claude/statusline.sh .
-# copy the ADHD speaking style
+# copy the Action First reply style
 cp -R ~/.claude/output-styles/. output-styles/
 # copy the rules Claude and Codex share
 cp -R ~/.claude/shared/. shared/

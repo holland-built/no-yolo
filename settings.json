@@ -41,7 +41,7 @@
   "enabledPlugins": {
     "codex@openai-codex": true
   },
-  "outputStyle": "I Have ADHD",
+  "outputStyle": "Action First",
   "modelSettings": {
     "claude-opus-5": {
       "effortLevel": "medium"
