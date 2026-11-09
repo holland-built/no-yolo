@@ -5,7 +5,7 @@
 <p align="center">
 <a href="LICENSE"><img alt="MIT licence" src="https://img.shields.io/badge/licence-MIT-blue"></a>
 <img alt="macOS and Linux" src="https://img.shields.io/badge/macOS%20%7C%20Linux-supported-green">
-<img alt="nineteen commands" src="https://img.shields.io/badge/commands-19-8A2BE2">
+<img alt="eighteen commands" src="https://img.shields.io/badge/commands-18-8A2BE2">
 </p>
 
 Claude Code is an AI that writes code for you in your terminal. Out of the box it guesses
@@ -30,7 +30,7 @@ missing. One line fixes it:"</em></p>
 </tr>
 </table>
 
-**Jump to:** [Install](#install) · [Commands](#the-nineteen-commands) · [Workflows](#workflows) · [Rules](#the-rules-it-follows) · [Update](#update)
+**Jump to:** [Install](#install) · [Commands](#the-eighteen-commands) · [Workflows](#workflows) · [Rules](#the-rules-it-follows) · [Update](#update)
 
 ## Install
 
@@ -241,52 +241,6 @@ A Codex review running in another window at that moment stops. The next one star
 </details>
 
 <details>
-<summary><strong>Jev: a tiebreaker when two AIs disagree</strong></summary>
-
-Jev is a small AI model from [TypeSafe](https://typesafe.ai) that picks between options. When
-Codex and Claude disagree, `/jev-judge` asks Jev to compare their claims, one criterion at a
-time, and shows you the table. `/build` uses it when Codex and an Opus helper (Opus is another
-Claude model) propose different approaches: Claude picks the criteria and the must-haves and shows
-them to you, and Jev gives advice. Claude says which way it is going before it writes any code, and you can
-switch it at any point. When Jev is not sure, it asks you. It does not judge whether code works,
-because tests do that.
-
-Three more places use Jev as an optional helper. `/build` runs a safety check on the chosen
-approach: it asks Jev whether the approach fails a must-have or would delete data, publish
-something or spend money, and sends it to you if so. `/last-30` can rank changelog entries so only
-the relevant ones are read in full. `/claude-video` can suggest which topic pages in your notes
-vault a video bears on. Each skips itself when no key is saved.
-
-It needs Python 3 and a TypeSafe account. Each judgement costs a fraction of a cent at TypeSafe's
-listed price. **No account? Skip this.** Everything else still works, and `/build` shows you both
-approaches and waits for you.
-
-> [!WARNING]
-> The criteria and claims are sent to TypeSafe. Keep passwords and private details out of them.
-
-1. **Get a key.** Sign up at [console.typesafe.ai](https://console.typesafe.ai), then copy a key
-   from the [keys page](https://console.typesafe.ai/keys).
-
-2. **Save the key where the skill looks.** Paste the line below, then paste your key when it
-   asks. Nothing shows as you type, so the key stays out of your screen and your shell history.
-
-   ```bash
-   # ask for your key and save it in a file only you can read
-   mkdir -p ~/.config/typesafe && chmod 700 ~/.config/typesafe && printf 'TypeSafe key: ' && IFS= read -rs k && printf '\n' && [ -n "$k" ] && (umask 077; printf '%s' "$k" > ~/.config/typesafe/key); unset k
-   ```
-
-3. **Check the skill's own tests pass.** They need no internet connection.
-
-   ```bash
-   # run the skill's checks
-   cd ~/.claude/skills/jev-judge && python3 -m unittest
-   ```
-
-If a call fails, the skill prints `Jev: couldn't tell` and the reason, and Claude asks you instead.
-
-</details>
-
-<details>
 <summary><strong>TypeScript checker: catch broken code as Claude writes it</strong></summary>
 
 Lets Claude spot errors in JavaScript and TypeScript files (`.js`, `.jsx`, `.ts`, `.tsx`) while it
@@ -374,7 +328,7 @@ The uninstall leaves your TypeSafe key alone, because other tools can use it. De
 
 </details>
 
-## The nineteen commands
+## The eighteen commands
 
 Type the slash command, or just say the word. Both work.
 
@@ -386,7 +340,6 @@ Type the slash command, or just say the word. Both work.
 <li><code>/build</code>: you want something new made</li>
 <li><code>/improve</code>: make a page or app you already have better, tested on a phone and a computer</li>
 <li><code>/fix</code>: something is broken or slow</li>
-<li><code>/jev-judge</code>: Claude and Codex disagree and you want a tiebreaker</li>
 <li><code>/handoff</code>: you're stopping halfway</li>
 <li><code>/resume</code>: write, tune or check a resume</li>
 <li><code>/github-readme</code>: tidy a repo and its README for GitHub</li>
@@ -494,7 +447,7 @@ you don't re-explain anything.
 | --- | --- |
 | `CLAUDE.md` | Rules Claude follows on every task |
 | `shared/` | The rules Claude and Codex share (`AGENTS.md`), which `CLAUDE.md` reads in, plus the script that builds Codex's copy |
-| `skills/` | Fourteen of the nineteen commands above. `/humanizer`, `/archify`, `/find-skills`, `/i-have-adhd` and `/frontend-design` install from their own repos |
+| `skills/` | Thirteen of the eighteen commands above. `/humanizer`, `/archify`, `/find-skills`, `/i-have-adhd` and `/frontend-design` install from their own repos |
 | `output-styles/action-first.md` | Shapes answers with the next step first and no recap |
 | `memory/` | Notes Claude keeps on how you like to work |
 | `settings.json` | Plugins, theme, status line, and merging pull requests without asking |
@@ -537,8 +490,8 @@ The rules live in `CLAUDE.md` and `shared/AGENTS.md`. What each one actually sto
 
 Two rounds, then it decides: one critique from Codex, one revision, one
 re-check. If they still disagree it picks and tells you what it overrode in one
-line. When tests cannot settle the question, it can ask Jev for a tiebreaker instead of picking
-alone. Jev's pick is advice, and you can override it.
+line. When tests cannot settle the question, it hands both positions to a second Claude helper
+without saying which is its own, and takes that pick. You can override it.
 
 <details>
 <summary><strong>For me: syncing my machine back to this repo</strong></summary>
