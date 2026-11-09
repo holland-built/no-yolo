@@ -26,7 +26,7 @@ harder:
 
 ```bash
 codex exec --skip-git-repo-check --sandbox read-only \
-  -c model=gpt-6-sol -c model_reasoning_effort=medium \
+  -c model=gpt-6.1-sol -c model_reasoning_effort=medium \
   "<the symptom, the reproduction, what is ruled out and how it was ruled out>. What would you check next?" < /dev/null
 ```
 
@@ -58,7 +58,7 @@ placed to judge. Mark new files so the diff shows them, and check it is not empt
 git add -N .
 git diff <base> > /tmp/fix-review.diff
 codex exec --skip-git-repo-check --sandbox read-only \
-  -c model=gpt-6-sol -c model_reasoning_effort=medium \
+  -c model=gpt-6.1-sol -c model_reasoning_effort=medium \
   "Bug: <one line>. Cause: <one line>. Review the diff at /tmp/fix-review.diff. Does it correct that cause, and does it break anything a caller relies on? Flag code the fix does not need. Ignore style. Label each blocker, should or nit. None is a valid answer." < /dev/null
 ```
 
