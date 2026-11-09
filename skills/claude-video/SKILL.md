@@ -33,8 +33,14 @@ log records which was used. Needs `yt-dlp` (`brew install yt-dlp`).
 ```bash
 cd /tmp
 yt-dlp --skip-download --print "%(title)s\n%(channel)s\n%(upload_date)s\n%(duration)s\n%(id)s" "<URL>"
+yt-dlp --skip-download --print "%(description)s" "<URL>"
 yt-dlp --skip-download --write-auto-subs --write-subs --sub-lang "en.*" --sub-format vtt -o "%(id)s" "<URL>"
 ```
+
+Read the description before the transcript. It often names the hosts and links every repo,
+tool and sponsor, while the captions garble names ("Sub Box" for Subvox, "Monet" for Monid).
+Take names, hosts and links from it, and never from earlier episodes of the same show; one
+ingest credited a co-host from past episodes and missed three repos the description linked.
 
 If a `.vtt` appeared, `transcript_source: captions`. Strip the VTT timing/markup to plain
 text with timestamps at paragraph starts.

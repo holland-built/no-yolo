@@ -1,11 +1,11 @@
 ---
 name: improve
-description: Make something that already exists better - a web page, web app, dashboard or screen, on phone and desktop. Picks the right design and behavior checklists itself (accessibility, layout, writing, type, color, polish, taste), tests it like a real user at phone and desktop size, has Codex and an Opus helper agree before any code, ships each fix live and retests until it passes. Use when the user says improve, make it better, polish, clean it up, this feels off, it's clunky, the colors/layout/buttons/wording are bad, or names a page and complains about how it looks or behaves. A web page that behaves wrong comes here even if the user says broken; /fix is for crashes, errors and things that are not pages. New things go to /build; for rewriting a prompt use /better.
+description: Make something that already exists better - a web page, web app, dashboard or screen, on phone and desktop. Picks the right design and behavior checklists itself (accessibility, layout, writing, type, color, polish, taste), tests it like a real user at phone and desktop size, has Codex and an Opus helper agree before any code, ships each fix live and retests until it passes. Use when the user says improve, make it better, polish, clean it up, this feels off, it's clunky, the colors/layout/buttons/wording/fonts/spacing are bad, the animations feel janky or slow, or names a page and complains about how it looks or behaves. A web page that behaves wrong comes here even if the user says broken; /fix is for crashes, errors and things that are not pages. New things go to /build; for rewriting a prompt use /better.
 ---
 
 # improve
 
-The user is not a programmer, has ADHD, and finds out what they want by using the thing. They
+The user is not a programmer, reads replies in short bursts, and finds out what they want by using the thing. They
 will never remember which design checklist does what, so this skill picks them. It covers web
 pages and web apps, on a phone and on a desktop browser, because the user uses both.
 

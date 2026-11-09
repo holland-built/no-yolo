@@ -1,6 +1,6 @@
 ---
 name: build
-description: Build a new thing for the user - settle what it should do, have Codex and an Opus helper argue the approach and Jev pick it (the user can override), get Codex to attack the plan before code exists, build it, and show it working. Use when the user says build, make, add, or wants a feature or script written.
+description: Build a new thing for the user - settle what it should do, have Codex and an Opus helper argue the approach and Jev pick it (the user can override), get Codex to attack the plan before code exists, build it, and show it working. Use when the user says build, make, add, or wants a feature, page, toggle, setting or script written, including small additions that look like a few lines, because those still get the Codex review on the diff.
 ---
 
 # build
@@ -114,6 +114,13 @@ because evals run without `~/.claude/CLAUDE.md`, so the skill has to carry it.
 
 **Run it and paste what happened** — the real command and its real output. A passing test is
 not the thing working. If it draws a page, open the page.
+
+**A new page gets the design pass without being asked.** The user will not remember which design
+skill does what, so `/build` carries it. Before writing a page or screen, load `frontend-design`
+for the visual direction, so it does not come out looking like every other generated page. Once
+it runs, run `better-interface` on it and fix every `HIGH` finding, because those are the
+accessibility and layout failures nobody notices until a reader hits one. A small change to an
+existing page skips both; that is `/improve`'s job when it looks wrong.
 
 **Every check ends as passed, failed, or couldn't tell.** Report "couldn't tell" as that, never
 as a pass — a guessed pass is how a broken thing gets called done. Never weaken a check,

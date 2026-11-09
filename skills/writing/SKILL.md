@@ -48,6 +48,13 @@ answers, a "don't narrate" line makes the model go quiet mid-task, and thinking 
 whether the skill is reached for at all, and skills under-trigger more often than they
 over-trigger. Name the situations plainly, including the words the user actually uses.
 
+**Test a skill against no skill.** Run two or three prompts the user would really type, once
+with the skill and once without (for a changed skill, against the old copy), and compare the
+results. A skill whose output is no better than the bare model's is only costing context. When
+skills overlap or a description changes, also check the near-misses, prompts that share words
+with the skill but belong to a neighbour, with `skill-audit`'s `trigger_test.py`, because a
+keener description can quietly take requests from the skill next to it.
+
 **Lay a skill out so it gets read.** Keep a `SKILL.md` under 500 lines and link every other file
 straight from it, one level deep. Claude previews a long or nested file instead of reading all of
 it, so a rule at the bottom of a chain can go unseen; a reference file over 100 lines starts with
@@ -55,7 +62,7 @@ a contents list for the same reason. Where a step must run the same way every ti
 deletion, a migration), make it a script, because a script runs identically on every model, and
 put its install line beside it so the skill works on a fresh machine.
 
-**Match the house style.** Everything the user reads is governed by `~/.claude/output-styles/i-have-adhd.md`
+**Match the house style.** Everything the user reads is governed by `~/.claude/output-styles/action-first.md`
 — next action first, no preamble or recap, literal words. An instruction file that ignores it
 teaches the model to ignore it.
 

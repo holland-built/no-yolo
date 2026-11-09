@@ -1,6 +1,6 @@
 ---
 name: fix
-description: Something is broken, throwing, failing, or slow - reproduce it, show the cause, correct it, and show it working. Use when the user says fix, broken, failing, erroring, crashed, or slow.
+description: Something is broken, throwing, failing, or slow - reproduce it, show the cause, correct it, and show it working. Use when the user says fix, broken, failing, erroring, crashed, or slow, or pastes an error or a failing command, including when the cause looks obvious or the fix looks like one line, because a guessed fix without a reproduction is the failure this skill exists to stop. A web page that looks or behaves wrong without an error goes to /improve.
 ---
 
 # fix
