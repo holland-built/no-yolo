@@ -1,6 +1,6 @@
 ---
 name: build
-description: Build a new thing for the user - settle what it should do, have Codex and an Opus helper argue the approach and Jev pick it (the user can override), get Codex to attack the plan before code exists, build it, and show it working. Use when the user says build, make, add, or wants a feature, page, toggle, setting or script written, including small additions that look like a few lines, because those still get the Codex review on the diff.
+description: Build a new thing for the user - settle what it should do, have Codex and an Opus helper argue the approach and pick between them (the user can override), get Codex to attack the plan before code exists, build it, and show it working. Use when the user says build, make, add, or wants a feature, page, toggle, setting or script written, including small additions that look like a few lines, because those still get the Codex review on the diff.
 ---
 
 # build
@@ -17,32 +17,30 @@ change nobody looked at.
 
 ## The constraints
 
-**Two models argue the approach, Jev picks, and the user can override.** When the shape is
+**Two models argue the approach, you pick, and the user can override.** When the shape is
 undecided and two approaches really differ, do not choose alone and do not hand the user a menu
 of technical options that only a programmer could judge. The user can say what matters, so settle three or four
 criteria first, as plain sentences such as "Works without a network". Choose them yourself and
-mark which are must-haves, then show them to the user without waiting for approval, because Jev
-answers exactly the criteria it is given, and a pick that wins two small criteria can still fail
-the one that matters. Use the user's own criteria word for word when they give any. Then brief Codex and an Opus helper
-separately on the same job and criteria. Each returns its own best approach in plain words, plus
-exactly two short claims on how that approach does against each criterion. Keep the count equal,
-because Jev leans toward whichever side writes more. The side that holds a claim writes it, so
-your own slant stays out.
+mark which are must-haves, then show them to the user without waiting for approval, because a pick
+that wins two small criteria can still fail the one that matters. Use the user's own criteria word
+for word when they give any. Then brief Codex and an Opus helper separately on the same job and
+criteria. Each returns its own best approach in plain words, plus how it does against each
+criterion. Neither sees the other's answer, so neither anchors on it.
 
 The Opus helper is the Agent tool with `subagent_type: "Plan"` and `model: "opus"`, which cannot
 edit files. Codex is the `codex exec` form below.
 
-If both land on the same approach, take it, skip Jev, and say what it is before any code is
-written. Otherwise run `/jev-judge` on their claims and show the user the table it prints. When it
-gives advice, say the pick and the reason in the reply before any code is written, record it in
-`PLAN.md` as Jev's pick, and carry on; the user can interrupt with "the other one" at any point
-and you switch. When it says ask the user, or cannot run at all (no TypeSafe key, no network),
-show both approaches in plain words and wait.
-However the approach was chosen, run `check_approach.py` from the `jev-judge` skill on it, with
-its claims and the must-haves. An ESCALATE line sends it to the user instead. If the check cannot
-run, apply the same test by hand. Anything that deletes data, publishes, or spends money goes to
-the user whatever Jev says, because Jev's confidence measures how concentrated its picks are, not
-how often they are right, and a quiet result from the check never clears an approach. Jev never judges whether code works; tests do that.
+If both land on the same approach, take it and say what it is before any code is written.
+Otherwise pick the one that wins the must-haves; when both meet them, the one that wins more of the
+rest. Say the pick and the reason in one line before any code is written, record it in `PLAN.md`,
+and carry on; the user can interrupt with "the other one" at any point and you switch. You are not
+one of the two sides here, so the pick is yours to make, and stopping to ask would hand the user
+the technical menu this rule exists to avoid.
+
+Whoever chose it, check the chosen approach before building: does it delete or overwrite data,
+publish something off this machine, or spend money, and does it meet every must-have? Any yes on
+the first three, or a missed must-have, goes to the user instead, because those cannot be undone
+by switching later. Tests, not argument, decide whether code works.
 Skip the two-model step on the fast lane, and when only one approach is sensible. The check on
 the chosen approach still runs on a single approach, because it is the safety floor.
 
@@ -152,5 +150,5 @@ was asked, with the output on screen. Write those criteria into `PLAN.md` at the
 user's words, so "done" is not your opinion.
 
 Two things are true of every finished build, whichever lane you took: the user chose what got
-built, or was shown Jev's pick before the build began, and Codex saw the final diff. If either is false, say
+built, or was told the pick and the reason before the build began, and Codex saw the final diff. If either is false, say
 so rather than calling it done.
