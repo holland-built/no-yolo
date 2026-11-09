@@ -5,7 +5,7 @@
 <p align="center">
 <a href="LICENSE"><img alt="MIT licence" src="https://img.shields.io/badge/licence-MIT-blue"></a>
 <img alt="macOS and Linux" src="https://img.shields.io/badge/macOS%20%7C%20Linux-supported-green">
-<img alt="eighteen commands" src="https://img.shields.io/badge/commands-18-8A2BE2">
+<img alt="seventeen commands" src="https://img.shields.io/badge/commands-17-8A2BE2">
 </p>
 
 Claude Code is an AI that writes code for you in your terminal. Out of the box it guesses
@@ -30,7 +30,7 @@ missing. One line fixes it:"</em></p>
 </tr>
 </table>
 
-**Jump to:** [Install](#install) · [Commands](#the-eighteen-commands) · [Workflows](#workflows) · [Rules](#the-rules-it-follows) · [Update](#update)
+**Jump to:** [Install](#install) · [Commands](#the-seventeen-commands) · [Workflows](#workflows) · [Rules](#the-rules-it-follows) · [Update](#update)
 
 ## Install
 
@@ -53,15 +53,15 @@ mkdir -p ~/AI && git clone https://github.com/holland-built/no-yolo.git ~/AI/no-
 Then **restart Claude Code** and type `/fix`. It should ask what is broken instead of guessing.
 
 **Rather have an AI do it?** Paste this into Claude Code, or any coding agent that can run
-commands. It does the same steps and adds the thirteen skills from other repos.
+commands. It does the same steps and adds the twelve skills from other repos.
 
 ```text
 Install no-yolo on this machine. Clone https://github.com/holland-built/no-yolo.git to
 ~/AI/no-yolo. If that folder already exists, check that its origin is that URL and that git
 status is clean; if either is not true, stop and tell me. Otherwise git pull. Read its README,
-then run ~/AI/no-yolo/install.sh. Then install the thirteen third-party skills with these commands:
+then run ~/AI/no-yolo/install.sh. Then install the twelve third-party skills with these commands:
 npx -y skills add affaan-m/ecc --skill ui-demo -g -y
-npx -y skills add blader/humanizer -g -y && npx -y skills add tt-a1i/archify --skill archify -g -y && npx -y skills add vercel-labs/skills --skill find-skills -g -y && npx -y skills add ayghri/i-have-adhd --skill i-have-adhd -g -y && npx -y skills add anthropics/skills --skill frontend-design -g -y
+npx -y skills add blader/humanizer -g -y && npx -y skills add tt-a1i/archify --skill archify -g -y && npx -y skills add vercel-labs/skills --skill find-skills -g -y && npx -y skills add anthropics/skills --skill frontend-design -g -y
 npx -y skills add jakubkrehel/skills --skill better-interface -g -y && npx -y skills add jakubkrehel/skills --skill better-accessibility -g -y && npx -y skills add jakubkrehel/skills --skill better-layout -g -y && npx -y skills add jakubkrehel/skills --skill better-writing -g -y && npx -y skills add jakubkrehel/skills --skill better-typography -g -y && npx -y skills add jakubkrehel/skills --skill better-colors -g -y && npx -y skills add jakubkrehel/skills --skill better-ui -g -y
 Do not change anything else. When it is done, tell me what the install script backed up,
 what it installed, and anything that failed, then remind me to restart Claude Code.
@@ -136,15 +136,15 @@ what it installed, and anything that failed, then remind me to restart Claude Co
 </details>
 
 <details>
-<summary><strong>Thirteen skills that install from their own repos</strong></summary>
+<summary><strong>Twelve skills that install from their own repos</strong></summary>
 
 They update themselves, so they are not copied into this repo.
 
-All thirteen, with no questions asked:
+All twelve, with no questions asked:
 
 ```bash
-# install humanizer, archify, find-skills, i-have-adhd and frontend-design from their own repos
-npx -y skills add blader/humanizer -g -y && npx -y skills add tt-a1i/archify --skill archify -g -y && npx -y skills add vercel-labs/skills --skill find-skills -g -y && npx -y skills add ayghri/i-have-adhd --skill i-have-adhd -g -y && npx -y skills add anthropics/skills --skill frontend-design -g -y
+# install humanizer, archify, find-skills and frontend-design from their own repos
+npx -y skills add blader/humanizer -g -y && npx -y skills add tt-a1i/archify --skill archify -g -y && npx -y skills add vercel-labs/skills --skill find-skills -g -y && npx -y skills add anthropics/skills --skill frontend-design -g -y
 # install ui-demo, which /demo-voiceover builds on
 npx -y skills add affaan-m/ecc --skill ui-demo -g -y
 # install the seven design checklists that /improve uses
@@ -160,8 +160,6 @@ npx skills add blader/humanizer --global
 npx skills add tt-a1i/archify --skill archify --global
 # finds and installs skills other people have made
 npx skills add vercel-labs/skills --skill find-skills --global
-# the original skill the Action First style is adapted from; type /i-have-adhd to use it
-npx skills add ayghri/i-have-adhd --skill i-have-adhd --global
 # gives pages and screens a deliberate look instead of a template one
 npx skills add anthropics/skills --skill frontend-design --global
 # the ranked review /improve runs when you say "make it better"
@@ -185,14 +183,15 @@ npx skills add affaan-m/ecc --skill ui-demo --global
 To take their newest versions later:
 
 ```bash
-# update the thirteen skills installed from someone else's repo
+# update the twelve skills installed from someone else's repo
 npx skills update -g
 ```
+
+`/skill-audit` lists which of them are behind before you run this.
 
 - [Humanizer](https://github.com/blader/humanizer), MIT, by blader.
 - [Archify](https://github.com/tt-a1i/archify), MIT, by tt-a1i.
 - [find-skills](https://github.com/vercel-labs/skills), by Vercel Labs.
-- [i-have-adhd](https://github.com/ayghri/i-have-adhd), MIT, by ayghri.
 - [frontend-design](https://github.com/anthropics/skills), by Anthropic.
 - [ui-demo](https://github.com/affaan-m/ecc), by affaan-m.
 - [better-interface and its six checklists](https://github.com/jakubkrehel/skills), MIT, by jakubkrehel.
@@ -293,9 +292,9 @@ diff -rq skills ~/.claude/skills; diff -q CLAUDE.md ~/.claude/CLAUDE.md
 <summary><strong>Uninstall</strong></summary>
 
 This removes the skills by name. A skill of your own that shares a name with one here goes
-too, and so do Humanizer, Archify, find-skills, i-have-adhd, frontend-design, ui-demo, the seven
-`better-*` checklists, Codex, the TypeScript checker and Firecrawl, even if you installed them yourself. Your dated
-backup is the way back.
+too, and so do Humanizer, Archify, find-skills, frontend-design, ui-demo, the seven
+`better-*` checklists, Codex, the TypeScript checker and Firecrawl, even if you installed them yourself. It also clears `jev-judge` and `i-have-adhd`, which
+older versions of this repo installed. Your dated backup is the way back.
 
 ```bash
 # take out the skills this repo installed, leaving your own alone
@@ -328,7 +327,7 @@ The uninstall leaves your TypeSafe key alone, because other tools can use it. De
 
 </details>
 
-## The eighteen commands
+## The seventeen commands
 
 Type the slash command, or just say the word. Both work.
 
@@ -337,14 +336,14 @@ Type the slash command, or just say the word. Both work.
 <td width="50%" valign="top">
 <ul>
 <li><code>/better</code>: turn a rough ask into a better prompt, then run it</li>
-<li><code>/build</code>: you want something new made</li>
+<li><code>/build</code>: you want something new made; a new page gets a design check without asking</li>
 <li><code>/improve</code>: make a page or app you already have better, tested on a phone and a computer</li>
 <li><code>/fix</code>: something is broken or slow</li>
 <li><code>/handoff</code>: you're stopping halfway</li>
 <li><code>/resume</code>: write, tune or check a resume</li>
 <li><code>/github-readme</code>: tidy a repo and its README for GitHub</li>
 <li><code>/find-skills</code>: find a skill someone else has made</li>
-<li><code>/skill-audit</code>: see which skills you use and which to drop</li>
+<li><code>/skill-audit</code>: see which skills you use, which to drop, and which are out of date</li>
 </ul>
 </td>
 <td width="50%" valign="top">
@@ -356,7 +355,6 @@ Type the slash command, or just say the word. Both work.
 <li><code>/last-30</code>: what changed lately</li>
 <li><code>/claude-video</code>: summarise a YouTube video</li>
 <li><code>/archify</code>: draw a diagram of a system</li>
-<li><code>/i-have-adhd</code>: the original skill behind the Action First style</li>
 <li><code>/frontend-design</code>: give a page a deliberate look</li>
 </ul>
 </td>
@@ -431,8 +429,9 @@ version, and runs it when you say go.</p>
 
 <p><code>/skill-audit</code></p>
 
-<p>Claude counts how often you used each skill and suggests which to keep, hide or delete.
-It changes nothing until you choose.</p>
+<p>Claude counts how often you used each skill and suggests which to keep, hide or delete. It
+also lists skills from other repos that have a newer version, and tests which skill Claude picks
+for twenty everyday asks. It changes nothing until you choose. Once a month is about right.</p>
 
 </td>
 </tr>
@@ -447,7 +446,7 @@ you don't re-explain anything.
 | --- | --- |
 | `CLAUDE.md` | Rules Claude follows on every task |
 | `shared/` | The rules Claude and Codex share (`AGENTS.md`), which `CLAUDE.md` reads in, plus the script that builds Codex's copy |
-| `skills/` | Thirteen of the eighteen commands above. `/humanizer`, `/archify`, `/find-skills`, `/i-have-adhd` and `/frontend-design` install from their own repos |
+| `skills/` | Thirteen of the seventeen commands above. `/humanizer`, `/archify`, `/find-skills` and `/frontend-design` install from their own repos |
 | `output-styles/action-first.md` | Shapes answers with the next step first and no recap |
 | `memory/` | Notes Claude keeps on how you like to work |
 | `settings.json` | Plugins, theme, status line, and merging pull requests without asking |
@@ -509,7 +508,7 @@ cp -R ~/.claude/output-styles/. output-styles/
 # copy the rules Claude and Codex share
 cp -R ~/.claude/shared/. shared/
 # copy the skills, leaving out third-party skills, personal skills, test cases and the sync folder
-rsync -a --exclude humanizer --exclude archify --exclude find-skills --exclude i-have-adhd --exclude frontend-design --exclude diagram-design --exclude tasks --exclude model-update --exclude synced --exclude better-interface --exclude better-accessibility --exclude better-layout --exclude better-writing --exclude better-typography --exclude better-colors --exclude better-ui --exclude reverse-engineer-anything --exclude impeccable --exclude evals --exclude .claude-plugin --exclude __pycache__ --exclude results --exclude .DS_Store ~/.claude/skills/ skills/
+rsync -a --exclude humanizer --exclude archify --exclude find-skills --exclude i-have-adhd --exclude frontend-design --exclude diagram-design --exclude tasks --exclude model-update --exclude synced --exclude better-interface --exclude better-accessibility --exclude better-layout --exclude better-writing --exclude better-typography --exclude better-colors --exclude better-ui --exclude reverse-engineer-anything --exclude hub-add --exclude impeccable --exclude evals --exclude .claude-plugin --exclude __pycache__ --exclude results --exclude .DS_Store ~/.claude/skills/ skills/
 # publish it
 git add -A && git commit -m "Sync" && git push
 ```
