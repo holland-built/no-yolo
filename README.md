@@ -5,7 +5,7 @@
 <p align="center">
 <a href="LICENSE"><img alt="MIT licence" src="https://img.shields.io/badge/licence-MIT-blue"></a>
 <img alt="macOS and Linux" src="https://img.shields.io/badge/macOS%20%7C%20Linux-supported-green">
-<img alt="seventeen commands" src="https://img.shields.io/badge/commands-17-8A2BE2">
+<img alt="eighteen commands" src="https://img.shields.io/badge/commands-18-8A2BE2">
 </p>
 
 Claude Code is an AI that writes code for you in your terminal. Out of the box it guesses
@@ -30,7 +30,7 @@ missing. One line fixes it:"</em></p>
 </tr>
 </table>
 
-**Jump to:** [Install](#install) · [Commands](#the-seventeen-commands) · [Workflows](#workflows) · [Rules](#the-rules-it-follows) · [Update](#update)
+**Jump to:** [Install](#install) · [Commands](#the-eighteen-commands) · [Workflows](#workflows) · [Rules](#the-rules-it-follows) · [Update](#update)
 
 ## Install
 
@@ -298,7 +298,7 @@ older versions of this repo installed. Your dated backup is the way back.
 
 ```bash
 # take out the skills this repo installed, leaving your own alone
-cd ~/.claude/skills && rm -rf better build claude-video demo-voiceover fix github-readme handoff improve jev-judge last-30 resume site-design skill-audit writing humanizer archify find-skills i-have-adhd frontend-design ui-demo better-interface better-accessibility better-layout better-writing better-typography better-colors better-ui
+cd ~/.claude/skills && rm -rf better build claude-video demo-voiceover fix github-readme handoff improve jev-judge last-30 resume short site-design skill-audit writing humanizer archify find-skills i-have-adhd frontend-design ui-demo better-interface better-accessibility better-layout better-writing better-typography better-colors better-ui
 # take out the copies the third-party skills install from
 cd ~/.agents/skills && rm -rf humanizer archify find-skills i-have-adhd frontend-design ui-demo better-interface better-accessibility better-layout better-writing better-typography better-colors better-ui
 # remove the Codex plugin
@@ -327,7 +327,7 @@ The uninstall leaves your TypeSafe key alone, because other tools can use it. De
 
 </details>
 
-## The seventeen commands
+## The eighteen commands
 
 Type the slash command, or just say the word. Both work.
 
@@ -340,6 +340,7 @@ Type the slash command, or just say the word. Both work.
 <li><code>/improve</code>: make a page or app you already have better, tested on a phone and a computer</li>
 <li><code>/fix</code>: something is broken or slow</li>
 <li><code>/handoff</code>: you're stopping halfway</li>
+<li><code>/short</code>: the last reply was too long; redo it next step first</li>
 <li><code>/resume</code>: write, tune or check a resume</li>
 <li><code>/github-readme</code>: tidy a repo and its README for GitHub</li>
 <li><code>/find-skills</code>: find a skill someone else has made</li>
@@ -446,7 +447,7 @@ you don't re-explain anything.
 | --- | --- |
 | `CLAUDE.md` | Rules Claude follows on every task |
 | `shared/` | The rules Claude and Codex share (`AGENTS.md`), which `CLAUDE.md` reads in, plus the script that builds Codex's copy |
-| `skills/` | Thirteen of the seventeen commands above. `/humanizer`, `/archify`, `/find-skills` and `/frontend-design` install from their own repos |
+| `skills/` | Fourteen of the eighteen commands above. `/humanizer`, `/archify`, `/find-skills` and `/frontend-design` install from their own repos |
 | `output-styles/action-first.md` | Shapes answers with the next step first and no recap |
 | `memory/` | Notes Claude keeps on how you like to work |
 | `settings.json` | Plugins, theme, status line, and merging pull requests without asking |
