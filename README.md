@@ -288,16 +288,19 @@ Check what you have matches the repo. Silence means you are up to date.
 diff -rq skills ~/.claude/skills; diff -q CLAUDE.md ~/.claude/CLAUDE.md
 ```
 
+> [!WARNING]
+> Uninstall removes skills by name. A skill of your own that shares a name with one here goes
+> too, and so do Humanizer, Archify, find-skills, frontend-design, ui-demo, the seven
+> `better-*` checklists, Codex, the TypeScript checker and Firecrawl, even if you installed them
+> yourself. It also clears `jev-judge` and `i-have-adhd`, which older versions of this repo
+> installed. Your dated backup brings back `~/.claude`. Skills from other repos live in
+> `~/.agents/skills`, which the backup does not cover, so reinstall those with the commands above.
+
 <details>
 <summary><strong>Uninstall</strong></summary>
 
-This removes the skills by name. A skill of your own that shares a name with one here goes
-too, and so do Humanizer, Archify, find-skills, frontend-design, ui-demo, the seven
-`better-*` checklists, Codex, the TypeScript checker and Firecrawl, even if you installed them yourself. It also clears `jev-judge` and `i-have-adhd`, which
-older versions of this repo installed. Your dated backup is the way back.
-
 ```bash
-# take out the skills this repo installed, leaving your own alone
+# take out the skills this repo installed, by name
 cd ~/.claude/skills && rm -rf better build claude-video demo-voiceover fix github-readme handoff improve jev-judge last-30 resume short site-design skill-audit writing humanizer archify find-skills i-have-adhd frontend-design ui-demo better-interface better-accessibility better-layout better-writing better-typography better-colors better-ui
 # take out the copies the third-party skills install from
 cd ~/.agents/skills && rm -rf humanizer archify find-skills i-have-adhd frontend-design ui-demo better-interface better-accessibility better-layout better-writing better-typography better-colors better-ui
@@ -340,7 +343,7 @@ Type the slash command, or just say the word. Both work.
 <li><code>/improve</code>: make a page or app you already have better, tested on a phone and a computer</li>
 <li><code>/fix</code>: something is broken or slow</li>
 <li><code>/handoff</code>: you're stopping halfway</li>
-<li><code>/short</code>: the last reply was too long; redo it next step first</li>
+<li><code>/short</code>: the last reply was too long; redo it with the next step first</li>
 <li><code>/resume</code>: write, tune or check a resume</li>
 <li><code>/github-readme</code>: tidy a repo and its README for GitHub</li>
 <li><code>/find-skills</code>: find a skill someone else has made</li>
