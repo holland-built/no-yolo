@@ -98,11 +98,11 @@ codex exec --skip-git-repo-check --sandbox read-only \
 
 The user's rule: no code until Codex and an Opus helper (Agent tool, `subagent_type: "Plan"`,
 `model: "opus"`) agree on each change. Send all items in one prompt per round and argue only the
-ones they disagree on; at most three rounds on any item. If they still disagree, run `/jev-judge`
-with criteria in the user's own words where possible ("easy for anyone at home", "highest quality video",
-"fewer buttons", "works one-handed on an iPhone"). Jev's pick is advice: tell the user the pick in
-one line and carry on unless they object. If Jev says ask the user or couldn't tell, show both
-options in plain words, park that item, and carry on with the others. A retry of an agreed fix
+ones they disagree on; at most three rounds on any item. If they still disagree, pick
+against criteria in the user's own words where possible ("easy for anyone at home", "highest quality video",
+"fewer buttons", "works one-handed on an iPhone"): tell the user the pick and the reason in one line
+and carry on unless they object. You are not one of the two sides, so the pick is yours to make. When
+neither option clearly wins, show both in plain words, park that item, and carry on with the others. A retry of an agreed fix
 needs no new agreement unless the approach changes.
 
 If you are Codex, you cannot start the Opus helper or ask yourself for a second opinion, so stop
@@ -140,5 +140,5 @@ asking there.
 Every task that passed before still passes, every task for the area asked about passes at phone
 and desktop size on the live page, and any other failures are listed as left over. The user has
 seen before and after screenshots, Codex reviewed the final diff, every change was agreed by Codex
-and the Opus helper or decided by Jev, and the undo steps are written. Report it as one short
+and the Opus helper or picked with the reason given, and the undo steps are written. Report it as one short
 table of what changed, the task results, and anything left over.
