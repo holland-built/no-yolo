@@ -74,7 +74,7 @@ updates them, and the user will not remember which ones those are. Each has one 
 
 | Skills | Check | Update, once the user says yes |
 |---|---|---|
-| Everything in `~/.agents/.skill-lock.json` (`better-*`, `frontend-design`, `archify`, `humanizer`, `i-have-adhd`, `find-skills`, `ui-demo`) | the lock's `updatedAt` dates, and the upstream repo's last commit | `npx -y skills update -g -y` |
+| Everything in `~/.agents/.skill-lock.json` (`better-*`, `frontend-design`, `archify`, `humanizer`, `find-skills`, `ui-demo`) | the lock's `updatedAt` dates, and the upstream repo's last commit | `npx -y skills update -g -y` |
 | `impeccable` | `~/.claude/skills/impeccable/scripts/impeccable check` | `~/.claude/skills/impeccable/scripts/impeccable update` |
 | `diagram-design` | upstream `cathrynlavery/diagram-design` against the commit named at the top of its `SKILL.md` | by hand only: it carries a local house skin that an update would overwrite, so merge the upstream changes into it and keep the skin |
 | Plugin skills | `claude plugin marketplace update` | `claude plugin update <plugin>` |
