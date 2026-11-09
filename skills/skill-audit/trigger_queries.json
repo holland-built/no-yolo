@@ -1,0 +1,129 @@
+[
+ {
+  "q": "the camera dashboard looks off on my phone, the buttons are cramped and the colours are muddy",
+  "ok": [
+   "improve"
+  ]
+ },
+ {
+  "q": "the camera app home page feels clunky, can you clean it up",
+  "ok": [
+   "improve"
+  ]
+ },
+ {
+  "q": "the settings screen in my web app is ugly and confusing, make it better",
+  "ok": [
+   "improve"
+  ]
+ },
+ {
+  "q": "polish the report page at localhost:3000/report before I show it to my boss",
+  "ok": [
+   "improve"
+  ]
+ },
+ {
+  "q": "this page looks like every other AI generated site, make it look less generic",
+  "ok": [
+   "improve",
+   "frontend-design"
+  ]
+ },
+ {
+  "q": "the wording on the signup form is bad and the error messages make no sense",
+  "ok": [
+   "improve",
+   "better-writing"
+  ]
+ },
+ {
+  "q": "the login page button does nothing when I tap it on my iphone",
+  "ok": [
+   "improve"
+  ]
+ },
+ {
+  "q": "I need a new landing page for this camera app, what should it look like",
+  "ok": [
+   "site-design"
+  ]
+ },
+ {
+  "q": "redesign the dashboard layout from scratch, show me a few options to pick from",
+  "ok": [
+   "site-design"
+  ]
+ },
+ {
+  "q": "what should the new settings page for the camera app look like",
+  "ok": [
+   "site-design"
+  ]
+ },
+ {
+  "q": "review the camera web app for accessibility and layout problems and give me a ranked list, don't change anything",
+  "ok": [
+   "better-interface",
+   "better-accessibility"
+  ]
+ },
+ {
+  "q": "audit the checkout screen against WCAG and tell me what fails",
+  "ok": [
+   "better-accessibility",
+   "better-interface"
+  ]
+ },
+ {
+  "q": "run impeccable on the landing page and make it bolder",
+  "ok": [
+   "impeccable"
+  ]
+ },
+ {
+  "q": "build me a new page in the camera app that lists each camera with an on/off toggle",
+  "ok": [
+   "build"
+  ]
+ },
+ {
+  "q": "add a dark mode toggle to the camera app",
+  "ok": [
+   "build"
+  ]
+ },
+ {
+  "q": "the dashboard throws a TypeError: cannot read properties of undefined when I open it",
+  "ok": [
+   "fix"
+  ]
+ },
+ {
+  "q": "npm run build is failing on the camera app with a module not found error",
+  "ok": [
+   "fix"
+  ]
+ },
+ {
+  "q": "pick a better colour palette for my app and check the contrast",
+  "ok": [
+   "better-colors",
+   "improve"
+  ]
+ },
+ {
+  "q": "make the fonts in the camera app look more professional, the line spacing is off",
+  "ok": [
+   "better-typography",
+   "improve"
+  ]
+ },
+ {
+  "q": "the card animations in the camera app feel janky, smooth them out",
+  "ok": [
+   "better-ui",
+   "improve"
+  ]
+ }
+]
