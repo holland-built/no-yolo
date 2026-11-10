@@ -66,6 +66,20 @@ else
   say "and put it on your PATH. Until you do, the secret guard lets everything through."
 fi
 
+# 3b. Install exiftool, which /github-readme uses to strip hidden data (device, date, location)
+# from screenshots before they are published. Only that step needs it, so a failure is a note.
+if command -v exiftool >/dev/null 2>&1; then
+  say "exiftool already installed: $(exiftool -ver)"
+elif command -v brew >/dev/null 2>&1; then
+  brew install exiftool || say "brew could not install exiftool. Install it before /github-readme publishes a screenshot."
+elif command -v apk >/dev/null 2>&1; then
+  apk add exiftool || say "Installing exiftool needs root. Run: sudo apk add exiftool"
+elif command -v apt-get >/dev/null 2>&1; then
+  apt-get install -y libimage-exiftool-perl || say "Installing exiftool needs root. Run: sudo apt-get install libimage-exiftool-perl"
+else
+  say "Could not install exiftool: no brew, apk or apt-get here. Install it before /github-readme publishes a screenshot."
+fi
+
 # 4. Point git at the guard, keeping any hooks path you already had.
 EXISTING=$(git config --global --get core.hooksPath || true)
 if [ -n "$EXISTING" ] && [ "$EXISTING" != "$REPO/hooks" ]; then
