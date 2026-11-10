@@ -6,29 +6,17 @@
 <a href="LICENSE"><img alt="MIT licence" src="https://img.shields.io/badge/licence-MIT-blue"></a>
 <img alt="macOS and Linux" src="https://img.shields.io/badge/macOS%20%7C%20Linux-supported-green">
 <img alt="eighteen commands" src="https://img.shields.io/badge/commands-18-8A2BE2">
+<a href="https://github.com/holland-built/no-yolo/releases"><img alt="latest release" src="https://img.shields.io/github/v/release/holland-built/no-yolo"></a>
+<img alt="last commit" src="https://img.shields.io/github/last-commit/holland-built/no-yolo">
 </p>
 
 Claude Code is an AI that writes code for you in your terminal. Out of the box it guesses
 what you meant and pads its answers. These files make it ask first and answer short. Installing
 them takes two minutes.
 
-<table>
-<tr>
-<td width="50%" valign="top">
-<h4>Without this</h4>
-<p><em>"Great question! Let me take a look at your configuration files to
-understand the current setup. I'll start by examining the settings and then
-walk through the various options available to you. There are a few different
-approaches we could take here, each with their own tradeoffs…"</em></p>
-</td>
-<td width="50%" valign="top">
-<h4>With this</h4>
-<p><em>"Your status line file is not executable. That is why the bar is
-missing. One line fixes it:"</em></p>
-<p><code>chmod +x ~/.claude/statusline.sh</code></p>
-</td>
-</tr>
-</table>
+| Without this | With this |
+|---|---|
+| *"Great question! Let me take a look at your configuration files to understand the current setup. I'll start by examining the settings and then walk through the various options available to you. There are a few different approaches we could take here, each with their own tradeoffs…"* | *"Your status line file is not executable. That is why the bar is missing. One line fixes it:"* `chmod +x ~/.claude/statusline.sh` |
 
 **Jump to:** [Install](#install) · [Commands](#the-eighteen-commands) · [Workflows](#workflows) · [Rules](#the-rules-it-follows) · [Update](#update)
 
