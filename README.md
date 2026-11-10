@@ -25,8 +25,8 @@ them takes two minutes.
 Needs [Claude Code](https://claude.com/claude-code), Git, Node.js and `jq`, which the status
 line reads its values with. macOS or Linux. Windows is not supported.
 
-The script copies the rules, the style and the skills into `~/.claude`, installs `gitleaks`
-and switches the secret guard on. It backs up whatever
+The script copies the rules, the style and the skills into `~/.claude`, installs `gitleaks` and
+`exiftool`, and switches the secret guard on. It backs up whatever
 you already have before it copies anything, and it tells you what it did at each step. If git
 on this machine already has a hooks folder of its own, it leaves that alone and prints the one
 line to run instead.
@@ -115,6 +115,8 @@ what it installed, and anything that failed, then remind me to restart Claude Co
    git config --global core.hooksPath "$PWD/hooks"
    # let the guard run
    chmod +x hooks/pre-commit
+   # lets /github-readme strip hidden data from screenshots. Linux: apt install libimage-exiftool-perl
+   brew install exiftool
    ```
 
 4. **Restart Claude Code**, then type `/fix`. It should ask what is broken instead of guessing.
