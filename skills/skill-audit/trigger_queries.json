@@ -62,6 +62,26 @@
     ]
   },
   {
+    "q": "review the camera web app for accessibility and layout problems and give me a ranked list, don't change anything",
+    "ok": [
+      "better-interface",
+      "better-accessibility"
+    ]
+  },
+  {
+    "q": "audit the checkout screen against WCAG and tell me what fails",
+    "ok": [
+      "better-accessibility",
+      "better-interface"
+    ]
+  },
+  {
+    "q": "run impeccable on the landing page and make it bolder",
+    "ok": [
+      "impeccable"
+    ]
+  },
+  {
     "q": "build me a new page in the camera app that lists each camera with an on/off toggle",
     "ok": [
       "build"
