@@ -89,13 +89,34 @@ current practice, n=1.
 | Thinking a problem through, design | Fable | `gpt-6-astra` for structure |
 | Structure, speed, computer use, spreadsheets | `gpt-6-astra` | Fable for the design half |
 | Cheap bulk work under supervision | Haiku in a subagent | Always inspected by a stronger model |
-| Second opinion on a plan or a diff | `gpt-6.1-sol` at medium | Astra only when undoing it means rewriting |
+| Second opinion on a plan or a diff | `gpt-6.1-sol` at medium | Astra only when undoing it means rewriting, except its big-job roles below |
 
 Use Haiku through the Agent tool's `model: "haiku"` override, which follows the current version,
 for read-and-report work — searching, checking, listing — never for work that writes.
 
 When the shape of a thing is undecided, run the same brief past two models. The divergence is
 the deliverable: it shows you what you had not decided.
+
+### Big jobs: plan, check, review
+
+A big job is one with more than about five steps or about an hour of work. On those, a mistake
+found at the end costs the most, so three models look at it at different points:
+
+| When | Who | Effort | Job |
+|---|---|---|---|
+| Before any work | Fable and Astra, briefed separately | medium | Each returns its own plan; where they differ is what is still undecided |
+| After each major step | Fable or Astra, taking turns | low | One narrow question, below |
+| After the last change | `gpt-6.1-sol` | medium | Review the final diff, as in "Two rounds, then decide" |
+
+Fable is the Agent tool with `subagent_type: "Plan"`, `model: "fable"` and the effort from the
+table, which this rule authorises. Astra is the `codex exec` command above with
+`-c model=gpt-6-astra` and the effort from the table.
+
+The step check works at low effort only because the question is narrow: give the plan, what this
+step changed, and ask "Is anything off-plan or broken? Answer yes or no, then one line." A broad
+"review everything" at low effort comes back as a confident pass that means little. A yes is checked
+against the code before acting on it, and empty output is a failed check, not a pass. A step check
+never replaces the final review.
 
 Check `codex debug models` for which Codex models exist now - **not**
 `~/.codex/models_cache.json`, which is written per-client-version and has already been wrong
@@ -114,8 +135,9 @@ One critique, one revision, one re-check. If Codex still disagrees, pick the bet
 yourself and say in one line what you overrode. Codex advises; you decide.
 
 When the disagreement is about an approach, plan or wording that tests cannot settle, you are one
-of the two sides, so do not settle it alone: give both positions to an Opus helper (Agent tool,
-`subagent_type: "Plan"`) without saying which is yours, and take its pick. Say the pick in one line;
+of the two sides, so do not settle it alone: give both positions to Fable (Agent tool,
+`subagent_type: "Plan"`, `model: "fable"`, `effort: "medium"`) without saying which is yours, and
+take its pick. It runs at medium, not low, because its answer decides the outcome. Say the pick in one line;
 the user can override it.
 
 When it hangs: `/codex:status`, then `/codex:cancel`, then carry on. Two hangs on one task,

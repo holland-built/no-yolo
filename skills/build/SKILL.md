@@ -1,6 +1,6 @@
 ---
 name: build
-description: Build a new thing for the user - settle what it should do, have Codex and an Opus helper argue the approach and pick between them (the user can override), get Codex to attack the plan before code exists, build it, and show it working. Use when the user says build, make, add, or wants a feature, page, toggle, setting or script written, including small additions that look like a few lines, because those still get the Codex review on the diff.
+description: Build a new thing for the user - settle what it should do, have Fable and Astra each plan the approach and pick between them (the user can override), check big builds after each step, get Codex to attack the plan before code exists, build it, and show it working. Use when the user says build, make, add, or wants a feature, page, toggle, setting or script written, including small additions that look like a few lines, because those still get the Codex review on the diff.
 ---
 
 # build
@@ -23,12 +23,12 @@ of technical options that only a programmer could judge. The user can say what m
 criteria first, as plain sentences such as "Works without a network". Choose them yourself and
 mark which are must-haves, then show them to the user without waiting for approval, because a pick
 that wins two small criteria can still fail the one that matters. Use the user's own criteria word
-for word when they give any. Then brief Codex and an Opus helper separately on the same job and
+for word when they give any. Then brief Fable and Astra separately on the same job and
 criteria. Each returns its own best approach in plain words, plus how it does against each
 criterion. Neither sees the other's answer, so neither anchors on it.
 
-The Opus helper is the Agent tool with `subagent_type: "Plan"` and `model: "opus"`, which cannot
-edit files. Codex is the `codex exec` form below.
+Fable is the Agent tool with `subagent_type: "Plan"`, `model: "fable"` and `effort: "medium"`,
+which cannot edit files. Astra is the `codex exec` form below with `-c model=gpt-6-astra`.
 
 If both land on the same approach, take it and say what it is before any code is written.
 Otherwise pick the one that wins the must-haves; when both meet them, the one that wins more of the
@@ -41,7 +41,8 @@ Whoever chose it, check the chosen approach before building: does it delete or o
 publish something off this machine, or spend money, and does it meet every must-have? Any yes on
 the first three, or a missed must-have, goes to the user instead, because those cannot be undone
 by switching later. Tests, not argument, decide whether code works.
-Skip the two-model step on the fast lane, and when only one approach is sensible. The check on
+Skip the two-model step on the fast lane, and when only one approach is sensible on a job that is
+not big; a big build always gets both plans. The check on
 the chosen approach still runs on a single approach, because it is the safety floor.
 
 **Ask before you assume.** Anything you would otherwise guess at, ask — numbered, with your
@@ -66,6 +67,14 @@ codex exec --skip-git-repo-check --sandbox read-only \
 
 `< /dev/null` is required. Empty output means it failed, not that it agreed. Use a stronger
 model only when undoing the decision later would mean rewriting rather than editing.
+
+**A big build gets a check after each major step.** Big means more than about five steps or
+about an hour of work, where a mistake found only at the end costs the most. After each major
+step, ask Fable or Astra, taking turns, at `effort: "low"` / `model_reasoning_effort=low`: give
+the plan and what the step changed, and ask "Is anything off-plan or broken? Answer yes or no,
+then one line." Keep the question that narrow, because a broad review at low effort returns a
+confident pass that means little. Check a yes against the code before acting on it; empty output
+is a failed check, not a pass. These checks never replace the final review.
 
 **Codex reviews the final diff** — after your last change, not before. If it finds something
 and you change the code, it reviews the new diff too. Tell it the intent and what is out of
