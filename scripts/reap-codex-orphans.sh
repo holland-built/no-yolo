@@ -60,6 +60,25 @@ STATE_ROOT="${CODEX_REAPER_STATE_ROOT:-$HOME/.claude/plugins/data/codex-openai-c
 refuse() { echo "refusing to act: $1" >&2; exit 1; }
 command -v python3 >/dev/null 2>&1 || refuse "python3 is needed to read job state"
 command -v node    >/dev/null 2>&1 || refuse "node is needed to send broker/shutdown"
+command -v perl    >/dev/null 2>&1 || refuse "perl is needed to time-limit lsof"
+
+# One copy at a time. This runs from SessionStart, so a burst of sessions
+# (a skill eval starts hundreds) would otherwise start hundreds of copies,
+# each running lsof against every live session, until the machine stalls.
+# A second copy has nothing to add, so it just leaves. mkdir is atomic; a
+# lock whose owner has died is taken over.
+LOCK="${CODEX_REAPER_LOCK:-$HOME/.claude/reap-codex-orphans.lock}"
+if ! mkdir "$LOCK" 2>/dev/null; then
+  owner=$(cat "$LOCK/pid" 2>/dev/null)
+  if [[ -n "$owner" ]] && kill -0 "$owner" 2>/dev/null; then
+    echo "another copy (pid $owner) is already running; leaving it to that one"
+    exit 0
+  fi
+  rm -rf "$LOCK"
+  mkdir "$LOCK" 2>/dev/null || { echo "another copy took the lock; leaving it to that one"; exit 0; }
+fi
+echo $$ > "$LOCK/pid"
+trap 'rm -rf "$LOCK"' EXIT
 
 mb() { ps -eo rss,command | grep -E "$PATTERN" | grep -v grep \
         | awk '{s+=$1} END {printf "%.0f", (NR ? s/1024 : 0)}'; }
@@ -217,7 +236,9 @@ live_session_in() {
   # "no match" after failing to read one of them would be the fail-open that
   # stops a live session's broker.
   for pid in $pids; do
-    cwd=$(lsof -a -p "$pid" -d cwd -Fn 2>/dev/null | sed -n 's/^n//p' | head -1)
+    # perl's alarm survives exec, so lsof is killed after 10 seconds. A killed
+    # lsof prints nothing, which lands on "unknown" below: the safe answer.
+    cwd=$(perl -e 'alarm shift; exec @ARGV' 10 lsof -a -p "$pid" -d cwd -Fn 2>/dev/null | sed -n 's/^n//p' | head -1)
     if [[ -z "$cwd" ]]; then unknown=1; continue; fi
     got=$(stat -f '%d:%i' "$cwd" 2>/dev/null) || { unknown=1; continue; }
     [[ -n "$got" ]] || { unknown=1; continue; }
