@@ -29,6 +29,12 @@ retry. Never bypass it or stage unrelated files.
 showing it. Never on `CLAUDE.md`, the output style, a `SKILL.md` or a memory note, where sentence
 shape carries the rule.
 
+**Say when the main model has changed.** These rules were last fitted to Opus 5.5. If the system
+prompt names a different model for the main session, say so in one line at the start and offer
+`/model-update`, because a rule that fixed one model's habit can push another the wrong way, and
+the user has said they will not remember to check. A subagent running another model is expected
+and needs no mention. `/model-update` updates the model name here when it runs.
+
 ## 5. Never Idle
 
 **Blocked on one thing is not blocked on everything.**
