@@ -11,8 +11,9 @@
 </p>
 
 Claude Code is an AI that writes code for you in your terminal. Out of the box it guesses
-what you meant and pads its answers. These files make it ask first and answer short. Installing
-them takes two minutes.
+what you meant, pads its answers and marks its own homework. These files make it ask first, answer
+short, and have a second AI check costly work before it is built, when mistakes are cheapest to fix.
+Installing them takes two minutes.
 
 | Without this | With this |
 |---|---|
@@ -400,6 +401,22 @@ Two rounds, then it decides: one critique from Codex, one revision, one
 re-check. If they still disagree it picks and tells you what it overrode in one
 line. When tests cannot settle the question, it hands both positions to Fable, another
 Claude model, without saying which is its own, and takes that pick. You can override it.
+
+<details>
+<summary><b>Costs and limits</b></summary>
+
+Bigger or riskier jobs can mean extra questions, a plan and a second opinion before anything is
+built, and those cost tokens. These rules limit when that happens and how long it goes on:
+
+| Limit | What it does |
+|---|---|
+| Short replies | A normal reply stops at six sentences, twelve when it explains, so Claude writes less per answer. |
+| A cheap model for read-only work | Haiku, a smaller and cheaper model, handles searching, listing and checking, and never writes anything. A stronger model always checks what it finds. |
+| An effort ceiling | Codex never runs above medium effort. A sharper question comes before more effort. |
+| Second opinions where they pay | Small edits that are easy to undo skip Codex. The full plan, step checks and review are kept for big jobs. |
+| No endless loops | One critique, one revision and one re-check, then Claude decides. If Codex hangs twice on one task, Claude stops asking it for that task. |
+
+</details>
 
 <details>
 <summary><strong>For me: syncing my machine back to this repo</strong></summary>
