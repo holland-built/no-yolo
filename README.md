@@ -59,10 +59,8 @@ commands. It does the same steps and adds the twelve skills from other repos.
 Install no-yolo on this machine. Clone https://github.com/holland-built/no-yolo.git to
 ~/AI/no-yolo. If that folder already exists, check that its origin is that URL and that git
 status is clean; if either is not true, stop and tell me. Otherwise git pull. Read its README,
-then run ~/AI/no-yolo/install.sh. Then install the twelve third-party skills with these commands:
-npx -y skills add affaan-m/ecc --skill ui-demo -g -y
-npx -y skills add blader/humanizer -g -y && npx -y skills add tt-a1i/archify --skill archify -g -y && npx -y skills add vercel-labs/skills --skill find-skills -g -y && npx -y skills add anthropics/skills --skill frontend-design -g -y
-npx -y skills add jakubkrehel/skills --skill better-interface -g -y && npx -y skills add jakubkrehel/skills --skill better-accessibility -g -y && npx -y skills add jakubkrehel/skills --skill better-layout -g -y && npx -y skills add jakubkrehel/skills --skill better-writing -g -y && npx -y skills add jakubkrehel/skills --skill better-typography -g -y && npx -y skills add jakubkrehel/skills --skill better-colors -g -y && npx -y skills add jakubkrehel/skills --skill better-ui -g -y
+then run ~/AI/no-yolo/install.sh. Then install the twelve third-party skills by running the
+install-everything command under "Twelve skills that install from their own repos" in that README.
 Do not change anything else. When it is done, tell me what the install script backed up,
 what it installed, and anything that failed, then remind me to restart Claude Code.
 ```
@@ -151,34 +149,24 @@ npx -y skills add affaan-m/ecc --skill ui-demo -g -y
 npx -y skills add jakubkrehel/skills --skill better-interface -g -y && npx -y skills add jakubkrehel/skills --skill better-accessibility -g -y && npx -y skills add jakubkrehel/skills --skill better-layout -g -y && npx -y skills add jakubkrehel/skills --skill better-writing -g -y && npx -y skills add jakubkrehel/skills --skill better-typography -g -y && npx -y skills add jakubkrehel/skills --skill better-colors -g -y && npx -y skills add jakubkrehel/skills --skill better-ui -g -y
 ```
 
-Or one at a time:
+What each one does:
 
-```bash
-# makes Claude's writing sound less like an AI wrote it
-npx skills add blader/humanizer --global
-# draws diagrams of a system
-npx skills add tt-a1i/archify --skill archify --global
-# finds and installs skills other people have made
-npx skills add vercel-labs/skills --skill find-skills --global
-# gives pages and screens a deliberate look instead of a template one
-npx skills add anthropics/skills --skill frontend-design --global
-# the ranked review /improve runs when you say "make it better"
-npx skills add jakubkrehel/skills --skill better-interface --global
-# checks keyboard use, screen readers and contrast
-npx skills add jakubkrehel/skills --skill better-accessibility --global
-# checks grouping, alignment and how a page resizes
-npx skills add jakubkrehel/skills --skill better-layout --global
-# checks button labels, error messages and empty screens
-npx skills add jakubkrehel/skills --skill better-writing --global
-# checks text sizes, spacing and wrapping
-npx skills add jakubkrehel/skills --skill better-typography --global
-# checks color palettes and contrast
-npx skills add jakubkrehel/skills --skill better-colors --global
-# checks corners, shadows, icons and motion
-npx skills add jakubkrehel/skills --skill better-ui --global
-# records demo videos of a web app; /demo-voiceover adds narration to them
-npx skills add affaan-m/ecc --skill ui-demo --global
-```
+| Skill | What it does | Made by |
+|---|---|---|
+| `humanizer` | Makes Claude's writing sound less like an AI wrote it | [blader](https://github.com/blader/humanizer), MIT |
+| `archify` | Draws diagrams of a system | [tt-a1i](https://github.com/tt-a1i/archify), MIT |
+| `find-skills` | Finds and installs skills other people have made | [Vercel Labs](https://github.com/vercel-labs/skills) |
+| `frontend-design` | Gives pages and screens a deliberate look instead of a template one | [Anthropic](https://github.com/anthropics/skills) |
+| `ui-demo` | Records demo videos of a web app; `/demo-voiceover` adds narration | [affaan-m](https://github.com/affaan-m/ecc) |
+| `better-interface` | The ranked review `/improve` runs when you say "make it better" | [jakubkrehel](https://github.com/jakubkrehel/skills), MIT |
+| `better-accessibility` | Checks keyboard use, screen readers and contrast | jakubkrehel, MIT |
+| `better-layout` | Checks grouping, alignment and how a page resizes | jakubkrehel, MIT |
+| `better-writing` | Checks button labels, error messages and empty screens | jakubkrehel, MIT |
+| `better-typography` | Checks text sizes, spacing and wrapping | jakubkrehel, MIT |
+| `better-colors` | Checks color palettes and contrast | jakubkrehel, MIT |
+| `better-ui` | Checks corners, shadows, icons and motion | jakubkrehel, MIT |
+
+To install only some of them, copy just their `npx -y skills add ...` parts from the command above.
 
 To take their newest versions later:
 
@@ -188,13 +176,6 @@ npx skills update -g
 ```
 
 `/skill-audit` lists which of them are behind before you run this.
-
-- [Humanizer](https://github.com/blader/humanizer), MIT, by blader.
-- [Archify](https://github.com/tt-a1i/archify), MIT, by tt-a1i.
-- [find-skills](https://github.com/vercel-labs/skills), by Vercel Labs.
-- [frontend-design](https://github.com/anthropics/skills), by Anthropic.
-- [ui-demo](https://github.com/affaan-m/ecc), by affaan-m.
-- [better-interface and its six checklists](https://github.com/jakubkrehel/skills), MIT, by jakubkrehel.
 
 </details>
 
@@ -334,36 +315,26 @@ The uninstall leaves your TypeSafe key alone, because other tools can use it. De
 
 Type the slash command, or just say the word. Both work.
 
-<table>
-<tr>
-<td width="50%" valign="top">
-<ul>
-<li><code>/better</code>: turn a rough ask into a better prompt, then run it</li>
-<li><code>/build</code>: you want something new made; a new page gets a design check without asking</li>
-<li><code>/improve</code>: make a page or app you already have better, tested on a phone and a computer</li>
-<li><code>/fix</code>: something is broken or slow</li>
-<li><code>/handoff</code>: you're stopping halfway</li>
-<li><code>/short</code>: the last reply was too long; redo it with the next step first</li>
-<li><code>/resume</code>: write, tune or check a resume</li>
-<li><code>/github-readme</code>: tidy a repo and its README for GitHub</li>
-<li><code>/find-skills</code>: find a skill someone else has made</li>
-<li><code>/skill-audit</code>: see which skills you use, which to drop, and which are out of date</li>
-</ul>
-</td>
-<td width="50%" valign="top">
-<ul>
-<li><code>/writing</code>: you're writing rules for an AI</li>
-<li><code>/humanizer</code>: your writing sounds like an AI wrote it</li>
-<li><code>/site-design</code>: you need a page designed</li>
-<li><code>/demo-voiceover</code>: add a spoken voiceover to a demo video</li>
-<li><code>/last-30</code>: what changed lately</li>
-<li><code>/claude-video</code>: summarise a YouTube video</li>
-<li><code>/archify</code>: draw a diagram of a system</li>
-<li><code>/frontend-design</code>: give a page a deliberate look</li>
-</ul>
-</td>
-</tr>
-</table>
+| Command | What it's for |
+|---|---|
+| `/better` | turn a rough ask into a better prompt, then run it |
+| `/build` | you want something new made; a new page gets a design check without asking |
+| `/improve` | make a page or app you already have better, tested on a phone and a computer |
+| `/fix` | something is broken or slow |
+| `/handoff` | you're stopping halfway |
+| `/short` | the last reply was too long; redo it with the next step first |
+| `/resume` | write, tune or check a resume |
+| `/github-readme` | tidy a repo and its README for GitHub |
+| `/find-skills` | find a skill someone else has made |
+| `/skill-audit` | see which skills you use, which to drop, and which are out of date |
+| `/writing` | you're writing rules for an AI |
+| `/humanizer` | your writing sounds like an AI wrote it |
+| `/site-design` | you need a page designed |
+| `/demo-voiceover` | add a spoken voiceover to a demo video |
+| `/last-30` | what changed lately |
+| `/claude-video` | summarise a YouTube video |
+| `/archify` | draw a diagram of a system |
+| `/frontend-design` | give a page a deliberate look |
 
 `/improve` picks from seven design checklists by itself (`better-interface`, `better-accessibility`,
 `better-layout`, `better-writing`, `better-typography`, `better-colors`, `better-ui`), so you never
@@ -371,78 +342,15 @@ have to remember them. You can still type any of them on its own.
 
 ## Workflows
 
-<table>
-<tr>
-<td width="50%" valign="top">
-
-<h3>Make a website</h3>
-
-<p><code>/site-design a landing page for a bakery</code></p>
-
-<p>Claude builds three versions and shows them side by side. Pick one.</p>
-
-<p><code>/build it, using version 2</code></p>
-
-</td>
-<td width="50%" valign="top">
-
-<h3>Fix something broken</h3>
-
-<p><code>/fix the login page throws a 500</code></p>
-
-<p>Claude reproduces the error first, shows you the cause, fixes it, then shows
-it working.</p>
-
-</td>
-</tr>
-<tr>
-<td width="50%" valign="top">
-
-<h3>Make something better</h3>
-
-<p><code>/improve the checkout page feels clunky</code></p>
-
-<p>Claude tries the page on a phone and a computer first, picks the design checks that fit, gets
-Codex and Fable to agree on each change, ships it, and tests again until it passes.</p>
-
-</td>
-<td width="50%" valign="top">
-
-<h3>Narrow it down</h3>
-
-<p><code>/improve just the colors</code></p>
-
-<p>Name one thing and only the matching checklist runs. Problems it finds elsewhere are listed, not fixed.</p>
-
-</td>
-</tr>
-<tr>
-<td width="50%" valign="top">
-
-<h3>Ask better</h3>
-
-<p><code>/better make my dashboard look nicer</code></p>
-
-<p>Claude rewrites your ask around what you want to end up with, shows you the new
-version, and runs it when you say go.</p>
-
-</td>
-<td width="50%" valign="top">
-
-<h3>Too many skills</h3>
-
-<p><code>/skill-audit</code></p>
-
-<p>Claude counts how often you used each skill and suggests which to keep, hide or delete. It
-also lists skills from other repos that have a newer version, and tests which skill Claude picks
-for twenty everyday asks. It changes nothing until you choose. Once a month is about right.</p>
-
-</td>
-</tr>
-</table>
-
-**Running out of time?** `/handoff` writes down where you got to, so tomorrow
-you don't re-explain anything.
+| Type this | What happens |
+|---|---|
+| `/site-design a landing page for a bakery` | Claude builds three versions and shows them side by side. Pick one, then type `/build it, using version 2`. |
+| `/fix the login page throws a 500` | Claude reproduces the error first, shows you the cause, fixes it, then shows it working. |
+| `/improve the checkout page feels clunky` | Claude tries the page on a phone and a computer first, picks the design checks that fit, gets Codex and Fable to agree on each change, ships it, and tests again until it passes. |
+| `/improve just the colors` | Only the matching checklist runs. Problems it finds elsewhere are listed, not fixed. |
+| `/better make my dashboard look nicer` | Claude rewrites your ask around what you want to end up with, shows you the new version, and runs it when you say go. |
+| `/skill-audit` | Claude counts how often you used each skill and suggests which to keep, hide or delete. It also lists skills from other repos that have a newer version, and tests which skill Claude picks for twenty everyday asks. It changes nothing until you choose. Once a month is about right. |
+| `/handoff` | Running out of time? It writes down where you got to, so tomorrow you don't re-explain anything. |
 
 ## What's in here
 
@@ -477,7 +385,7 @@ compares gets twelve. The limit holds in every folder, including the report at t
 
 ## The rules it follows
 
-The rules live in `CLAUDE.md` and `shared/AGENTS.md`. What each one actually stops:
+The rules live in `CLAUDE.md` and `shared/AGENTS.md`. What each one stops:
 
 | Rule | What it stops |
 | --- | --- |
