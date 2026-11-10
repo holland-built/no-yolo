@@ -5,7 +5,7 @@
 <p align="center">
 <a href="LICENSE"><img alt="MIT licence" src="https://img.shields.io/badge/licence-MIT-blue"></a>
 <img alt="macOS and Linux" src="https://img.shields.io/badge/macOS%20%7C%20Linux-supported-green">
-<img alt="eighteen commands" src="https://img.shields.io/badge/commands-18-8A2BE2">
+<img alt="nineteen commands" src="https://img.shields.io/badge/commands-19-8A2BE2">
 <a href="https://github.com/holland-built/no-yolo/releases"><img alt="latest release" src="https://img.shields.io/github/v/release/holland-built/no-yolo"></a>
 <img alt="last commit" src="https://img.shields.io/github/last-commit/holland-built/no-yolo">
 </p>
@@ -18,7 +18,7 @@ them takes two minutes.
 |---|---|
 | *"Great question! Let me take a look at your configuration files to understand the current setup. I'll start by examining the settings and then walk through the various options available to you. There are a few different approaches we could take here, each with their own tradeoffs…"* | *"Your status line file is not executable. That is why the bar is missing. One line fixes it:"* `chmod +x ~/.claude/statusline.sh` |
 
-**Jump to:** [Install](#install) · [Commands](#the-eighteen-commands) · [Workflows](#workflows) · [Rules](#the-rules-it-follows) · [Update](#update)
+**Jump to:** [Install](#install) · [Commands](#the-nineteen-commands) · [Workflows](#workflows) · [Rules](#the-rules-it-follows) · [Update](#update)
 
 ## Install
 
@@ -301,7 +301,7 @@ The uninstall leaves your TypeSafe key alone, because other tools can use it. De
 
 </details>
 
-## The eighteen commands
+## The nineteen commands
 
 Type the slash command, or just say the word. Both work.
 
@@ -320,6 +320,7 @@ Type the slash command, or just say the word. Both work.
 | `/writing` | you're writing rules for an AI |
 | `/humanizer` | your writing sounds like an AI wrote it |
 | `/site-design` | you need a page designed |
+| `/dashboard-design` | design or check a dashboard, status page or metrics screen |
 | `/demo-voiceover` | add a spoken voiceover to a demo video |
 | `/last-30` | what changed lately |
 | `/claude-video` | summarise a YouTube video |
@@ -330,6 +331,10 @@ Type the slash command, or just say the word. Both work.
 `better-layout`, `better-writing`, `better-typography`, `better-colors`, `better-ui`), so you never
 have to remember them. You can still type any of them on its own.
 
+`/dashboard-design` is adapted from Otabek Abdiraimov's
+[dashboard-design-skill](https://github.com/abdiraimov-otabek/dashboard-design-skill) (MIT, licence in
+`skills/dashboard-design/LICENSE`).
+
 ## Workflows
 
 | Type this | What happens |
@@ -337,9 +342,10 @@ have to remember them. You can still type any of them on its own.
 | `/site-design a landing page for a bakery` | Claude builds three versions and shows them side by side. Pick one, then type `/build it, using version 2`. |
 | `/fix the login page throws a 500` | Claude reproduces the error first, shows you the cause, fixes it, then shows it working. |
 | `/improve the checkout page feels clunky` | Claude tries the page on a phone and a computer first, picks the design checks that fit, gets Codex and Fable to agree on each change, ships it, and tests again until it passes. |
+| `/dashboard-design is the overview page clear at a glance?` | Claude gives a one-line verdict, what works, and the problems ranked by harm, starting with numbers that disagree. |
 | `/improve just the colors` | Only the matching checklist runs. Problems it finds elsewhere are listed, not fixed. |
 | `/better make my dashboard look nicer` | Claude rewrites your ask around what you want to end up with, shows you the new version, and runs it when you say go. |
-| `/skill-audit` | Claude counts how often you used each skill and suggests which to keep, hide or delete. It also lists skills from other repos that have a newer version, and tests which skill Claude picks for twenty everyday asks. It changes nothing until you choose. Once a month is about right. |
+| `/skill-audit` | Claude counts how often you used each skill and suggests which to keep, hide or delete. It also lists skills from other repos that have a newer version, and tests which skill Claude picks for about twenty everyday asks. It changes nothing until you choose. Once a month is about right. |
 | `/handoff` | Running out of time? It writes down where you got to, so tomorrow you don't re-explain anything. |
 
 ## What's in here
@@ -348,7 +354,7 @@ have to remember them. You can still type any of them on its own.
 | --- | --- |
 | `CLAUDE.md` | Rules Claude follows on every task |
 | `shared/` | The rules Claude and Codex share (`AGENTS.md`), which `CLAUDE.md` reads in, plus the script that builds Codex's copy |
-| `skills/` | Fourteen of the eighteen commands above. `/humanizer`, `/archify`, `/find-skills` and `/frontend-design` install from their own repos |
+| `skills/` | Fifteen of the nineteen commands above. `/humanizer`, `/archify`, `/find-skills` and `/frontend-design` install from their own repos |
 | `output-styles/action-first.md` | Shapes answers with the next step first and no recap |
 | `memory/` | Notes Claude keeps on how you like to work |
 | `settings.json` | Plugins, theme, status line, and merging pull requests without asking |
