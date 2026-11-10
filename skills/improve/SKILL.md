@@ -1,6 +1,6 @@
 ---
 name: improve
-description: Make something that already exists better - a web page, web app, dashboard or screen, on phone and desktop. Picks the right design and behavior checklists itself (accessibility, layout, writing, type, color, polish, taste), tests it like a real user at phone and desktop size, has Codex and an Opus helper agree before any code, ships each fix live and retests until it passes. Use when the user says improve, make it better, polish, clean it up, this feels off, it's clunky, the colors/layout/buttons/wording/fonts/spacing are bad, the animations feel janky or slow, or names a page and complains about how it looks or behaves. A web page that behaves wrong comes here even if the user says broken; /fix is for crashes, errors and things that are not pages. New things go to /build; for rewriting a prompt use /better.
+description: Make something that already exists better - a web page, web app, dashboard or screen, on phone and desktop. Picks the right design and behavior checklists itself (accessibility, layout, writing, type, color, polish, taste), tests it like a real user at phone and desktop size, has Codex and Fable agree before any code, ships each fix live and retests until it passes. Use when the user says improve, make it better, polish, clean it up, this feels off, it's clunky, the colors/layout/buttons/wording/fonts/spacing are bad, the animations feel janky or slow, or names a page and complains about how it looks or behaves. A web page that behaves wrong comes here even if the user says broken; /fix is for crashes, errors and things that are not pages. New things go to /build; for rewriting a prompt use /better.
 ---
 
 # improve
@@ -43,7 +43,7 @@ Behavior has no checklist skill; the task list below is its checklist.
 
 ## How deep to go
 
-- **Quick**: one named thing. Codex and the Opus helper each get one look at the proposed change,
+- **Quick**: one named thing. Codex and Fable each get one look at the proposed change,
   at the same time; if they agree, make it, and if not, use the normal rounds. Rerun the tasks the
   change touches, then the full list once at the end.
 - **Normal** (the default, including plain "make it better"): walkthrough, the checklists the
@@ -53,7 +53,12 @@ Behavior has no checklist skill; the task list below is its checklist.
   every state (phone upright, phone sideways, computer; live, recording, zoomed and so on), give
   Claude and Codex the same screenshots, and merge their findings into one list per screen. A
   screenshot the user took on their own phone beats a headless one. The user asked for this
-  several times before it was written down.
+  several times before it was written down. A deep run is a big job, so after each screen ask one
+  checker, taking turns: Fable (Agent tool, `subagent_type: "Plan"`, `model: "fable"`,
+  `effort: "low"`) or Astra (the `codex exec` command below with `-c model=gpt-6-astra
+  -c model_reasoning_effort=low`). Ask only "Is anything off-plan or broken? Yes or no, then one
+  line", and check a yes against the page before acting on it. This low effort is for these checks
+  only; Fable's part in agreeing on changes stays at medium.
 
 ## The task list is the test
 
@@ -96,8 +101,8 @@ codex exec --skip-git-repo-check --sandbox read-only \
 
 `< /dev/null` is required, and empty output means it failed, not that it agreed.
 
-The user's rule: no code until Codex and an Opus helper (Agent tool, `subagent_type: "Plan"`,
-`model: "opus"`) agree on each change. Send all items in one prompt per round and argue only the
+The user's rule: no code until Codex and Fable (Agent tool, `subagent_type: "Plan"`,
+`model: "fable"`, `effort: "medium"`) agree on each change. Send all items in one prompt per round and argue only the
 ones they disagree on; at most three rounds on any item. If they still disagree, pick
 against criteria in the user's own words where possible ("easy for anyone at home", "highest quality video",
 "fewer buttons", "works one-handed on an iPhone"): tell the user the pick and the reason in one line
@@ -105,7 +110,7 @@ and carry on unless they object. You are not one of the two sides, so the pick i
 neither option clearly wins, show both in plain words, park that item, and carry on with the others. A retry of an agreed fix
 needs no new agreement unless the approach changes.
 
-If you are Codex, you cannot start the Opus helper or ask yourself for a second opinion, so stop
+If you are Codex, you cannot start Fable or ask yourself for a second opinion, so stop
 at the agreement step and hand the findings and proposed change to the user for Claude's read.
 
 Subagents run in parallel for testing and reviewing when their work does not overlap: different
@@ -140,5 +145,5 @@ asking there.
 Every task that passed before still passes, every task for the area asked about passes at phone
 and desktop size on the live page, and any other failures are listed as left over. The user has
 seen before and after screenshots, Codex reviewed the final diff, every change was agreed by Codex
-and the Opus helper or picked with the reason given, and the undo steps are written. Report it as one short
+and Fable or picked with the reason given, and the undo steps are written. Report it as one short
 table of what changed, the task results, and anything left over.
