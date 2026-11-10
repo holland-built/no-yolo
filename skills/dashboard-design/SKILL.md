@@ -13,7 +13,7 @@ Adapted from Otabek Abdiraimov's dashboard-design skill (MIT, see `LICENSE`), wi
 
 ## The owner's picks
 
-The owner compared the author's style with Bloxsmith's, option by option in light and dark, and chose the author's on every one.
+The owner compared the author's style with their own design system's, option by option in light and dark, and chose the author's on every one.
 These five choices override the banned-style list (kept in `~/.claude/shared/AGENTS.md`, read by both Claude and
 Codex) for dashboards only, because the owner chose them knowing each was on that list. The rest of the list, and
 the whole list everywhere outside dashboards, still holds.
@@ -27,7 +27,7 @@ the whole list everywhere outside dashboards, still holds.
 | Patterns kept | Use each where the data calls for it, not on every screen: chart tip with a dashed unfinished period, grey "was N" for tiny bases, pale when healthy and bright only for problems, a goal-line bar instead of dials, no data is not good news, thin share bars under ranked rows, every number says compared to what, a status strip of days per service |
 
 Tokens for both themes are in [references/tokens.md](references/tokens.md). A project with its own design system
-keeps its tokens for meaning (Bloxsmith's ok, warn and crit colours) and takes the look above for surfaces,
+keeps its tokens for meaning (its own ok, warn and crit colours) and takes the look above for surfaces,
 controls and selection, unless the owner says otherwise for that project.
 
 ## Rules that carry the picks

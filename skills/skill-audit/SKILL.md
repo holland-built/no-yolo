@@ -87,7 +87,7 @@ update; check `git log` for edits made after its install commit first.
 ## Which skill actually loads
 
 Reading descriptions side by side shows where skills could clash; it does not show which one
-Claude picks. The trigger test does. It sends 20 realistic prompts, three times each, to
+Claude picks. The trigger test does. It sends each realistic prompt in `trigger_queries.json` three times to
 `claude -p` inside a copy of a small fake web app, and records the first skill loaded. Run it
 during an audit when skills overlap, and after any change to a description, because a new
 description can pull requests away from a neighbour.
