@@ -171,6 +171,31 @@ Do not name a repo after someone else's product. If a rename is needed, offer ab
 in a table with the idea behind each, recommend one, and let the user choose. The name is theirs to make,
 and hard to change once it is public.
 
+## Look official: badges, topics, releases
+
+A visitor decides in seconds whether a repo is maintained. Three things on the repo page answer
+that, and each must show something true, because a badge that is wrong or stale does more harm
+than no badge.
+
+- **Badges** under the title: the latest release and the last commit, alongside the tools and
+  platforms. They are shields.io links built from the repo's own `<owner>/<repo>`, which is
+  already public in its URL: `https://img.shields.io/github/v/release/<owner>/<repo>` and
+  `https://img.shields.io/github/last-commit/<owner>/<repo>`. Add a release badge only once a
+  release exists.
+- **Topics and description.** Five to ten lowercase topics that a stranger would search for, and
+  a one-line description in plain words. Set them with `gh repo edit <owner>/<repo>
+  --description "..." --add-topic a,b,c`, then check them with
+  `gh repo view <owner>/<repo> --json description,repositoryTopics`.
+- **A dated release** (`vYYYY-MM-DD`) when something a user installs or runs has changed since the
+  last one: a command added, removed or renamed, different install steps, or changed behaviour
+  the README describes. Judge that from the code and install files, not the README: a wording fix,
+  or newly documenting something that already worked, gets no release, because release notes that
+  read like new features when nothing shipped mislead the people who follow the repo. Write the
+  notes from the full diff since the latest release's tag (`gh release view --json tagName`), in
+  plain words under Added, Changed and Removed, then `gh release create <tag> --title <tag>
+  --notes-file <file>`. A second release on the same day takes `vYYYY-MM-DD.2`. A repo with no
+  releases starts one only when the user asks.
+
 ## Before finishing
 
 Run the `humanizer` skill on all the prose, because a README that reads like a chatbot loses the
@@ -195,6 +220,8 @@ the commit local and say so.
 - Real use cases are in a table, and anything visual has a checked screenshot, or the report
   says why there is none.
 - No HTML layout blocks remain, and nothing is listed twice.
+- The repo page shows true badges, topics and a description, and a release exists for any
+  change to what users install or run since the last one.
 - Every copy-paste command has a plain-words comment on the line above it.
 - The identifying-detail search over tracked files, staged diff and commit message was shown
   to the user and returns nothing real.
