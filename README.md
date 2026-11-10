@@ -342,7 +342,7 @@ have to remember them. You can still type any of them on its own.
 | `/site-design a landing page for a bakery` | Claude builds three versions and shows them side by side. Pick one, then type `/build it, using version 2`. |
 | `/fix the login page throws a 500` | Claude reproduces the error first, shows you the cause, fixes it, then shows it working. |
 | `/improve the checkout page feels clunky` | Claude tries the page on a phone and a computer first, picks the design checks that fit, gets Codex and Fable to agree on each change, ships it, and tests again until it passes. |
-| `/dashboard-design is the overview page clear at a glance?` | Claude gives a one-line verdict, what works, and the problems ranked by harm, starting with numbers that disagree. |
+| `/dashboard-design is the overview page clear at a glance?` | Claude sums the page up in one line, says what works, then lists what to fix, worst first. |
 | `/improve just the colors` | Only the matching checklist runs. Problems it finds elsewhere are listed, not fixed. |
 | `/better make my dashboard look nicer` | Claude rewrites your ask around what you want to end up with, shows you the new version, and runs it when you say go. |
 | `/skill-audit` | Claude counts how often you used each skill and suggests which to keep, hide or delete. It also lists skills from other repos that have a newer version, and tests which skill Claude picks for about twenty everyday asks. It changes nothing until you choose. Once a month is about right. |
