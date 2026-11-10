@@ -35,6 +35,28 @@ The whole page is built so a reader opens only what they need.
 - **Warnings stay visible.** Anything about deleting, overwriting or publishing data goes in a
   `> [!WARNING]` block that is never inside a folded section. A reader who never opens the
   details still has to see it.
+- **Use cases, as a table.** Wherever the project has real examples, show them as a "Type this |
+  What happens" table (or "You want to | Do this" for things that are not commands). A reader
+  learns what a tool is for faster from three real uses than from a description of it. A table
+  holds short examples a reader types into the tool, such as `/fix the login page`. A command
+  they copy into a shell to install or run something goes in a code block with its comment above,
+  and the table row points to it.
+- **Screenshots where there is something to see.** A page, a dashboard, a report, or terminal
+  output a reader will meet gets a screenshot from a real run, saved as PNG in `docs/images/` with alt
+  text that says what it shows. A screenshot is published data, so open every one and check it
+  before committing: no real names, hosts, addresses, paths, tokens or customer data. Crop or
+  rerun with sample data rather than blurring. Then strip the hidden data a file can carry
+  (device, date, location) with `exiftool -all= -overwrite_original docs/images/*`
+  (`brew install exiftool`), because a picture that looks clean can still name the machine. A
+  project with nothing visual gets none.
+- **Markdown tables, not HTML layouts.** Cards and two-column `<table>` blocks are long to read
+  in the source and break on a phone. Use a markdown table instead.
+- **Say each thing once.** A command list, credit or explanation appears in one place, and
+  anything else that needs it points there.
+
+When tidying an existing README, measure it first: show the user a table of each section's
+lines now, proposed lines, and what goes, and wait for a go before editing. Cutting a public page
+is easier to judge as a plan than as a finished diff.
 
 ## Copy-paste commands
 
@@ -170,6 +192,9 @@ the commit local and say so.
 - The README has badges, two or three sentences, tables, a quick start of five steps or fewer,
   and everything after the quick start folded into `<details>` blocks, with warnings left
   visible.
+- Real use cases are in a table, and anything visual has a checked screenshot, or the report
+  says why there is none.
+- No HTML layout blocks remain, and nothing is listed twice.
 - Every copy-paste command has a plain-words comment on the line above it.
 - The identifying-detail search over tracked files, staged diff and commit message was shown
   to the user and returns nothing real.
