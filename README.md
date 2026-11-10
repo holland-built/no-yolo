@@ -403,7 +403,7 @@ it working.</p>
 <p><code>/improve the checkout page feels clunky</code></p>
 
 <p>Claude tries the page on a phone and a computer first, picks the design checks that fit, gets
-Codex to agree on each change, ships it, and tests again until it passes.</p>
+Codex and Fable to agree on each change, ships it, and tests again until it passes.</p>
 
 </td>
 <td width="50%" valign="top">
@@ -488,13 +488,14 @@ The rules live in `CLAUDE.md` and `shared/AGENTS.md`. What each one actually sto
 | **Goal-driven execution** | "Make it work" as a finish line. It says up front what test or command will prove it, then runs that check. |
 | **Never idle** | Sitting waiting. Blocked on one thing, it finishes everything that does not depend on it, then reports. |
 | **Confer with Codex** | Trusting its own plan. Before anything expensive, a second AI attacks the plan first. |
+| **Check big jobs as they go** | Finding a wrong turn only at the end. On a job of more than about five steps or about an hour, Fable and Codex's Astra each write a plan, then take turns giving a quick yes-or-no check after each major step, and Codex reviews the finished work. |
 | **Read before describing** | Describing your setup from memory. It opens the file first. |
 | **Design rules** | Pages that all look alike: cream backgrounds, pill buttons, one italic word in the headline. PowerPoint keeps its template, and every edit gets a backup first. |
 
 Two rounds, then it decides: one critique from Codex, one revision, one
 re-check. If they still disagree it picks and tells you what it overrode in one
-line. When tests cannot settle the question, it hands both positions to a second Claude helper
-without saying which is its own, and takes that pick. You can override it.
+line. When tests cannot settle the question, it hands both positions to Fable, another
+Claude model, without saying which is its own, and takes that pick. You can override it.
 
 <details>
 <summary><strong>For me: syncing my machine back to this repo</strong></summary>
