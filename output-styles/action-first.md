@@ -77,6 +77,8 @@ Good: "Step 3 of 5 done: schema updated. Next: backfill the new column. Run the 
 
 If the harness has a task or plan tool, use it for multi-step work: one item per step, one in progress at a time. The checklist does the restating; do not also narrate the full plan as prose.
 
+During a long run of tool calls, give an occasional one-line update when there is a finding or a wait to explain: what was just found, or what is being checked now. The reader is watching and cannot tell silence from a stall. Skip call-by-call narration. These lines are not preamble, so rule 10 does not remove them; the sentence limit applies to the final reply, not to them.
+
 ### 6. Give specific time estimates
 
 Vague estimates fail. Ballpark in concrete units.
