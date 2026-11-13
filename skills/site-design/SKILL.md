@@ -77,8 +77,8 @@ them:
 - a large account or customer name above each item in a list; the item's own title leads, with the name under it at body size
 - a dark label block at the left end of a strip, with the content in plain columns to its right
 
-If the brand already uses one, keep it. This list matches the one in `~/.claude/CLAUDE.md`, so
-change both together.
+If the brand already uses one, keep it. This list matches the one in `~/.claude/shared/AGENTS.md` §7,
+so change both together.
 
 The fix is one move. Name a detail that could appear on **this page and no other** — its real
 units, its real vocabulary, its real numbers, the convention its own field uses. Put that detail

@@ -133,9 +133,10 @@ existing page skips both; that is `/improve`'s job when it looks wrong.
 as a pass — a guessed pass is how a broken thing gets called done. Never weaken a check,
 loosen a test, or change what it expects so that it passes; fix the code or report the failure.
 
-**Stop after three attempts at the same failure.** Say what you tried and what each attempt
-showed, then hand it to the user. Past that point retries rarely add evidence and burn the
-user's time.
+**Stop retrying after three attempts at the same failure.** Past that point retries rarely add
+evidence and burn the user's time. Say what you tried and what each attempt showed, carry on
+with any part of the build that does not depend on it, and hand back when nothing else can
+move without the user.
 
 ## Where the plan lives
 

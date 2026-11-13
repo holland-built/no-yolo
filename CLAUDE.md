@@ -29,7 +29,7 @@ retry. Never bypass it or stage unrelated files.
 showing it. Never on `CLAUDE.md`, the output style, a `SKILL.md` or a memory note, where sentence
 shape carries the rule.
 
-**Say when the main model has changed.** These rules were last fitted to Opus 5.5. If the system
+**Say when the main model has changed.** These rules were last fitted to Fable 5.2. If the system
 prompt names a different model for the main session, say so in one line at the start and offer
 `/model-update`, because a rule that fixed one model's habit can push another the wrong way, and
 the user has said they will not remember to check. A subagent running another model is expected
@@ -43,8 +43,10 @@ When something stops you - a question you need answered, a permission you don't 
 build that's running - do not stop and wait.
 
 - Do every part of the task that does not depend on the blocked thing. Then report.
-- When the independent parts do not need each other's results, send them to subagents in
-  one message so they run together. Reading, searching and checking are the good cases.
+- Send independent parts to subagents, in one message so they run together, when each is a
+  substantial reading job, such as a sweep across many files, that would otherwise fill your
+  context with source material. Do a handful of lookups yourself: each subagent costs a
+  briefing, a summary and its own tokens, so it pays only when the reading is large.
 - **A subagent reads and reports. It does not install, write, or commit.** Subagents here
   have twice installed things nobody approved. Bring their findings back and make the
   change yourself, so one thread owns every edit.
