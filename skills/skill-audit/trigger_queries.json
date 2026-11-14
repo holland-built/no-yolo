@@ -128,6 +128,24 @@
     ]
   },
   {
+    "q": "write a quick start guide for the camera app that my team can follow, with the setup steps",
+    "ok": [
+      "write-doc"
+    ]
+  },
+  {
+    "q": "write up a one-page summary for leadership on how the camera app rollout went",
+    "ok": [
+      "write-doc"
+    ]
+  },
+  {
+    "q": "draft an email to the vendor's support team asking why the camera app's login keeps timing out",
+    "ok": [
+      "write-doc"
+    ]
+  },
+  {
     "q": "write a README for the camera app repo so strangers can install it",
     "ok": [
       "github-readme"
