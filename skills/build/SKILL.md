@@ -162,3 +162,15 @@ user's words, so "done" is not your opinion.
 Two things are true of every finished build, whichever lane you took: the user chose what got
 built, or was told the pick and the reason before the build began, and Codex saw the final diff. If either is false, say
 so rather than calling it done.
+
+## Excuses to catch
+
+Each of these has sounded reasonable mid-build and cost the user later. When you hear yourself
+think the left column, do the right one.
+
+| The excuse | What to do instead |
+|---|---|
+| It's only a few lines, so it can skip the review | Small additions still get the Codex review on the diff |
+| The tests pass, so it works | Run the real thing; if it draws a page, open the page |
+| A setting or fallback might be handy later | Leave it out. The user maintains every line and can't tell which were speculative |
+| The user will want this, so I'll just pick | Ask with a recommended answer, unless it's the fast lane |

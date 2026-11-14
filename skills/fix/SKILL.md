@@ -83,3 +83,15 @@ or ran it and could not tell whether it worked, it is not fixed yet: say "unveri
 
 If one of those is false, say which, and why. That is a better answer than a fix you cannot
 stand behind.
+
+## Excuses to catch
+
+Each of these has sounded reasonable mid-session and led to a fix that was not one. When you
+hear yourself think the left column, do the right one.
+
+| The excuse | What to do instead |
+|---|---|
+| The cause is obvious, so the reproduction can wait | Build it anyway. Guessed causes have twice sent fixes after a problem that wasn't there |
+| It's one line, so it doesn't need the Codex review | One line can still break a caller; the review runs on every final diff |
+| The test was wrong, so I'll adjust it | Show why the check was wrong first, or it only hides the bug |
+| It should work now | Not run means unverified. Run the real thing and paste it |

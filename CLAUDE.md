@@ -47,9 +47,13 @@ build that's running - do not stop and wait.
   substantial reading job, such as a sweep across many files, that would otherwise fill your
   context with source material. Do a handful of lookups yourself: each subagent costs a
   briefing, a summary and its own tokens, so it pays only when the reading is large.
-- **A subagent reads and reports. It does not install, write, or commit.** Subagents here
-  have twice installed things nobody approved. Bring their findings back and make the
-  change yourself, so one thread owns every edit.
+- **A subagent reads and reports. It does not install, write, commit, push, publish or send
+  messages.** Subagents here have twice installed things nobody approved. Bring their findings
+  back and make the change yourself, so one thread owns every edit.
+- End every subagent brief with a "Done means" list, including "stop and report what you could
+  not find", so its report can be checked rather than trusted. If the report falls short, ask
+  once more, then do the rest of the reading yourself, because a third round costs more than
+  the reading.
 - Ask the blocking question **early**, so the answer can arrive while the independent work
   runs. Do not save it for the end.
 
@@ -100,7 +104,9 @@ current practice, n=1.
 | Second opinion on a plan or a diff | `gpt-6.1-sol` at medium | Astra only when undoing it means rewriting, except its big-job roles below |
 
 Use Haiku through the Agent tool's `model: "haiku"` override, which follows the current version,
-for read-and-report work — searching, checking, listing — never for work that writes.
+for read-and-report work — searching, checking, listing — never for work that writes. Unclear
+or cut-off work never goes to Haiku: recover the missing context in the main session first,
+because a cheaper model guesses at the gap instead of asking.
 
 When the shape of a thing is undecided, run the same brief past two models. The divergence is
 the deliverable: it shows you what you had not decided.
@@ -132,6 +138,10 @@ once.
 
 Reach for a sharper prompt before more effort. The plugin's own guidance: *"Do not raise
 reasoning or complexity first. Tighten the prompt and verification rules before escalating."*
+Raise effort only once a tightened prompt has also stalled: the same call failing twice, or two
+fixes in a row leaving the tests red. Go up one level and stay within the ceiling above. A
+denied permission, an empty search or a missing network is a blocker to clear, not a reason for
+more effort.
 
 `/codex:review` takes `--model` but silently discards `--effort` - its transport has no effort
 field, so it runs at whatever `config.toml` says. `codex exec` and `/codex:rescue` carry both.
