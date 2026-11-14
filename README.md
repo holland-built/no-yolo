@@ -5,7 +5,7 @@
 <p align="center">
 <a href="LICENSE"><img alt="MIT licence" src="https://img.shields.io/badge/licence-MIT-blue"></a>
 <img alt="macOS and Linux" src="https://img.shields.io/badge/macOS%20%7C%20Linux-supported-green">
-<img alt="nineteen commands" src="https://img.shields.io/badge/commands-19-8A2BE2">
+<img alt="twenty commands" src="https://img.shields.io/badge/commands-20-8A2BE2">
 <a href="https://github.com/holland-built/no-yolo/releases"><img alt="latest release" src="https://img.shields.io/github/v/release/holland-built/no-yolo"></a>
 <img alt="last commit" src="https://img.shields.io/github/last-commit/holland-built/no-yolo">
 </p>
@@ -19,7 +19,7 @@ Installing them takes two minutes.
 |---|---|
 | *"Great question! Let me take a look at your configuration files to understand the current setup. I'll start by examining the settings and then walk through the various options available to you. There are a few different approaches we could take here, each with their own tradeoffs…"* | *"Your status line file is not executable. That is why the bar is missing. One line fixes it:"* `chmod +x ~/.claude/statusline.sh` |
 
-**Jump to:** [Install](#install) · [Commands](#the-nineteen-commands) · [Workflows](#workflows) · [Rules](#the-rules-it-follows) · [Update](#update)
+**Jump to:** [Install](#install) · [Commands](#the-twenty-commands) · [Workflows](#workflows) · [Rules](#the-rules-it-follows) · [Update](#update)
 
 ## Install
 
@@ -273,7 +273,7 @@ diff -rq skills ~/.claude/skills; diff -q CLAUDE.md ~/.claude/CLAUDE.md
 
 ```bash
 # take out the skills this repo installed, by name
-cd ~/.claude/skills && rm -rf better build claude-video demo-voiceover fix github-readme handoff improve jev-judge last-30 resume short site-design skill-audit writing humanizer archify find-skills i-have-adhd frontend-design ui-demo better-interface better-accessibility better-layout better-writing better-typography better-colors better-ui
+cd ~/.claude/skills && rm -rf better build claude-video demo-voiceover fix github-readme write-doc handoff improve jev-judge last-30 resume short site-design skill-audit writing humanizer archify find-skills i-have-adhd frontend-design ui-demo better-interface better-accessibility better-layout better-writing better-typography better-colors better-ui
 # take out the copies the third-party skills install from
 cd ~/.agents/skills && rm -rf humanizer archify find-skills i-have-adhd frontend-design ui-demo better-interface better-accessibility better-layout better-writing better-typography better-colors better-ui
 # remove the Codex plugin
@@ -302,7 +302,7 @@ The uninstall leaves your TypeSafe key alone, because other tools can use it. De
 
 </details>
 
-## The nineteen commands
+## The twenty commands
 
 Type the slash command, or just say the word. Both work.
 
@@ -316,6 +316,7 @@ Type the slash command, or just say the word. Both work.
 | `/short` | the last reply was too long; redo it with the next step first |
 | `/resume` | write, tune or check a resume |
 | `/github-readme` | tidy a repo and its README for GitHub |
+| `/write-doc` | write a guide, report, email or post someone will read, or shorten one you have |
 | `/find-skills` | find a skill someone else has made |
 | `/skill-audit` | see which skills you use, which to drop, and which are out of date |
 | `/writing` | you're writing rules for an AI |
@@ -355,7 +356,7 @@ have to remember them. You can still type any of them on its own.
 | --- | --- |
 | `CLAUDE.md` | Rules Claude follows on every task |
 | `shared/` | The rules Claude and Codex share (`AGENTS.md`), which `CLAUDE.md` reads in, plus the script that builds Codex's copy |
-| `skills/` | Fifteen of the nineteen commands above. `/humanizer`, `/archify`, `/find-skills` and `/frontend-design` install from their own repos |
+| `skills/` | Sixteen of the twenty commands above. `/humanizer`, `/archify`, `/find-skills` and `/frontend-design` install from their own repos |
 | `output-styles/action-first.md` | Shapes answers with the next step first and no recap |
 | `memory/` | Notes Claude keeps on how you like to work |
 | `settings.json` | Plugins, theme, status line, and merging pull requests without asking |
