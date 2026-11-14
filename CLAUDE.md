@@ -29,9 +29,9 @@ retry. Never bypass it or stage unrelated files.
 showing it. Never on `CLAUDE.md`, the output style, a `SKILL.md` or a memory note, where sentence
 shape carries the rule.
 
-**Say when the main model has changed.** These rules were last fitted to Fable 5.2. If the system
-prompt names a different model for the main session, say so in one line at the start and offer
-`/model-update`, because a rule that fixed one model's habit can push another the wrong way, and
+**Say when the main model has changed.** These rules are fitted to Opus 5.5 (most sessions) and
+Fable 5.2, because the user switches between them. If the system prompt names a main-session model
+not in that list, say so in one line at the start and offer `/model-update`, because a rule that fixed one model's habit can push another the wrong way, and
 the user has said they will not remember to check. A subagent running another model is expected
 and needs no mention. `/model-update` updates the model name here when it runs.
 
