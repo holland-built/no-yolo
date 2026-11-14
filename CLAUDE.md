@@ -85,7 +85,7 @@ failed** - report that, not a pass.
 
 ### Model and effort
 
-**`medium` is the ceiling.** Role picks the model, not input size:
+**`medium` is the default; `high` only as below, never `max`.** Role picks the model, not input size:
 
 `gpt-6.1-sol` for routine second opinions and the automatic review. Escalate explicitly for
 consequential architecture, ambiguous debugging, or escalated review.
@@ -139,9 +139,10 @@ once.
 Reach for a sharper prompt before more effort. The plugin's own guidance: *"Do not raise
 reasoning or complexity first. Tighten the prompt and verification rules before escalating."*
 Raise effort only once a tightened prompt has also stalled: the same call failing twice, or two
-fixes in a row leaving the tests red. Go up one level and stay within the ceiling above. A
-denied permission, an empty search or a missing network is a blocker to clear, not a reason for
-more effort.
+fixes in a row leaving the tests red. Then go to `high` once, and only for a hard bug or a design
+that would be costly to undo, because routine work gains nothing from more effort and a thin spec
+at high effort over-builds. A denied permission, an empty search or a missing network is a
+blocker to clear, not a reason for more effort.
 
 `/codex:review` takes `--model` but silently discards `--effort` - its transport has no effort
 field, so it runs at whatever `config.toml` says. `codex exec` and `/codex:rescue` carry both.
