@@ -45,6 +45,12 @@ Skip the two-model step on the fast lane, and when only one approach is sensible
 not big; a big build always gets both plans. The check on
 the chosen approach still runs on a single approach, because it is the safety floor.
 
+**A mockup the user picked is the settled approach.** The user has already chosen what it should
+look like and do, so skip the two plans and the Codex attack on the approach below: on the
+interview-density build (2026-11-15) the two plans took ten minutes and agreed with the mockup.
+Still run the check on the chosen approach, the after-step checks on a big build, and the final
+review, because those catch how it is built, which the mockup does not settle.
+
 **Ask before you assume.** Anything you would otherwise guess at, ask — numbered, with your
 recommended answer on each, so the user can say "all of those" in four words. Find facts
 yourself; never ask for something you could read off the disk. Stop asking when a round turns
