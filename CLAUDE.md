@@ -65,9 +65,9 @@ Read that file every time: it holds the commands, the brief every builder gets, 
 when one asks, fails or reports. This is the one place another agent writes code, and it is
 safe because each copy is its own folder.
 
-- **"helpers" is the user's trigger word**, and so is "parallel" spelled any way ("paralel",
-  "parrallel"), because the user types fast and should not have to spell it right. When a
-  message has either, every item in it gets a builder, questions included: a builder can investigate
+- **"swarm" is the user's trigger word**, in any spelling or case ("swam", "swarn"), because
+  the user types fast and should not have to spell it right. When a message has it, every item
+  in it gets a builder, questions included: a builder can investigate
   and report as well as code. Don't judge whether it is worth it, because the user has said it
   is. Items that change the same lines go to one builder together. With more than 3 items,
   start 3 and start the next as each one reports.
