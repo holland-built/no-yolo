@@ -67,16 +67,18 @@ when a worker asks a question or reports done, so never poll. This is the one pl
 agent writes code, and it is safe because each copy is its own folder: nobody overwrites
 anyone. Say in one line which agent has which job.
 
-- Each brief names the files that job may change, and no two jobs share a file, because two
-  copies that edit the same lines conflict when they are merged.
+- Each brief names the files, and the part of each file (function, section, element), that
+  job may change. Two jobs may share a file when they touch different parts of it, because git
+  merges separate parts on its own. Only jobs that change the same lines run one after another,
+  since those always conflict. If a merge conflicts anyway, you resolve it and run the tests.
 - Builders commit on their own branch only. They do not push, merge, install, publish or send
   messages.
 - You stay the owner: wait for each builder, read its diff, merge the branches back one at a
   time, and run the tests after each merge, so a break points at one branch.
 - One small change, a folder that is not a git repo, or Orca not running: do it yourself in
   this session, because a worktree costs a setup and a review round.
-- When the user asks for agents and you do the work yourself anyway (the jobs share a file, or
-  one of the cases above), say so in your first line, with the reason, before starting. A
+- When the user asks for agents and you do the work yourself anyway (the jobs change the same
+  lines, or one of the cases above), say so in your first line, with the reason, before starting. A
   silent switch reads as the request being ignored. Still hand out what can run alongside:
   tests, checks and reading go to subagents while you edit.
 
