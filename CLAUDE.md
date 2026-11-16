@@ -75,6 +75,10 @@ anyone. Say in one line which agent has which job.
   time, and run the tests after each merge, so a break points at one branch.
 - One small change, a folder that is not a git repo, or Orca not running: do it yourself in
   this session, because a worktree costs a setup and a review round.
+- When the user asks for agents and you do the work yourself anyway (the jobs share a file, or
+  one of the cases above), say so in your first line, with the reason, before starting. A
+  silent switch reads as the request being ignored. Still hand out what can run alongside:
+  tests, checks and reading go to subagents while you edit.
 
 **Then stop.** Independent work is finite. When it runs out, wait - do not invent work to
 look busy. Waiting is also correct when carrying on would be unsafe, or would waste real
