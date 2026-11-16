@@ -21,10 +21,10 @@ and reports to the user.
   the job must not touch goes in the brief as off-limits instead.
 - **Commit this session's finished changes** (this rule authorises that commit), because each
   copy is cut from a commit and uncommitted edits are missing from every builder's copy.
-- **Leftover builder copies clear themselves.** `~/.claude/tools/orca-sweep.py` runs every 15
-  minutes from launchd and removes any child worktree whose branch is merged into the branch it
-  came from, has no unsaved files, and has been idle for an hour. Its log is
-  `~/.claude/state/orca-sweep.log`; name anything it keeps to the user when it matters.
+- **Leftover builder copies clear themselves.** `~/.claude/tools/session-tidy.py` runs at the
+  start of every Claude session and removes any child worktree whose branch is merged (directly or
+  as a squash-merged PR), has no unsaved files, and has been idle for an hour. Its log is
+  `~/.claude/state/session-tidy.log`.
 - **At most 3 builders at once.** Each costs about a full session of usage, and many at once
   have overloaded the machine (Orca issue #24058). Queue the rest and start one as each
   finishes.
