@@ -71,6 +71,10 @@ anyone. Say in one line which agent has which job.
   job may change. Two jobs may share a file when they touch different parts of it, because git
   merges separate parts on its own. Only jobs that change the same lines run one after another,
   since those always conflict. If a merge conflicts anyway, you resolve it and run the tests.
+- Worktrees separate the code, not what the code touches. Give each builder its own test
+  target (a test file name on a shared server, a port, an output folder), named in the brief,
+  because two builders deploying to one test URL overwrite each other and each tests the
+  wrong version. Nothing goes live until you have merged.
 - Builders commit on their own branch only. They do not push, merge, install, publish or send
   messages.
 - You stay the owner: wait for each builder, read its diff, merge the branches back one at a
