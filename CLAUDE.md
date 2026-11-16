@@ -49,7 +49,8 @@ build that's running - do not stop and wait.
   briefing, a summary and its own tokens, so it pays only when the reading is large.
 - **A subagent reads and reports. It does not install, write, commit, push, publish or send
   messages.** Subagents here have twice installed things nobody approved. Bring their findings
-  back and make the change yourself, so one thread owns every edit.
+  back and make the change yourself, so one thread owns every edit. The one exception is Orca
+  builders, below.
 - End every subagent brief with a "Done means" list, including "stop and report what you could
   not find", so its report can be checked rather than trusted. If the report falls short, ask
   once more, then do the rest of the reading yourself, because a third round costs more than
@@ -58,33 +59,49 @@ build that's running - do not stop and wait.
   runs. Do not save it for the end.
 
 **Two or more coding jobs that don't depend on each other: build them in parallel in Orca.**
-Inside a git repo with Orca running, load the `orchestration` skill and start one Orca worker
-per job, each in its own child worktree (a separate copy of the repo):
-`orca orchestration worker-start --spec "<brief>" --worktree new-child --name <job> --agent
-<claude|codex> --keep-open`. Pick the agent from the §6 model table. `--keep-open` leaves each worker's
-tab open in Orca, so the user can watch it and talk to it. Then end your turn: Orca wakes you
-when a worker asks a question or reports done, so never poll. This is the one place another
-agent writes code, and it is safe because each copy is its own folder: nobody overwrites
-anyone. Say in one line which agent has which job.
+Inside a git repo, in a session running in Orca (`orca status` succeeds), load the
+`orchestration` skill and start one Orca builder per job, each in its own child worktree (a
+separate copy of the repo). First commit this session's finished changes (this rule authorises
+that commit), because each copy is cut from a commit and uncommitted edits are missing from
+every builder's copy. Then, for each job:
+`orca orchestration worker-start --spec-file <brief-file> --worktree new-child --name <job>
+--base-branch <the branch you are on> --agent <claude|codex> --setup skip`.
+Write each brief to a scratchpad file, because the shell mangles quotes and backticks inside
+`--spec`. Use `claude` unless the user names Codex. Leave out `--model` and `--effort` unless
+the user names a model, because `--effort` is rejected without `--model`. `--setup skip` stops
+the repo's setup hooks, which can install things. A builder in a new worktree keeps its tab
+open on its own, so the user can watch it and talk to it. Start every builder, say in one line
+which agent has which job, then end your turn: Orca wakes you when a builder asks a question or
+reports done, so never poll. This is the one place another agent writes code, and it is safe
+because each copy is its own folder.
 
 - Each brief names the files, and the part of each file (function, section, element), that
-  job may change. Two jobs may share a file when they touch different parts of it, because git
-  merges separate parts on its own. Only jobs that change the same lines run one after another,
-  since those always conflict. If a merge conflicts anyway, you resolve it and run the tests.
+  job may change, plus the checks that prove it done. Two jobs may share a file when they touch
+  parts that are well apart, because git merges separate parts on its own. Jobs that change the
+  same or neighbouring lines, or both add to the end of the same block, run one after another,
+  since those conflict.
 - Worktrees separate the code, not what the code touches. Give each builder its own test
   target (a test file name on a shared server, a port, an output folder), named in the brief,
   because two builders deploying to one test URL overwrite each other and each tests the
-  wrong version. Nothing goes live until you have merged.
-- Builders commit on their own branch only. They do not push, merge, install, publish or send
-  messages.
-- You stay the owner: wait for each builder, read its diff, merge the branches back one at a
-  time, and run the tests after each merge, so a break points at one branch.
-- One small change, a folder that is not a git repo, or Orca not running: do it yourself in
-  this session, because a worktree costs a setup and a review round.
+  wrong version.
+- Builders commit on their own branch only, and may upload to the one test target named in
+  their brief. They do not push, merge, install, publish anywhere else or send messages,
+  because anything outside their own copy and test target is shared with the other builders
+  and the live site.
+- You stay the owner. When Orca wakes you with a builder's report, read its diff, merge that
+  branch, and run the tests before merging the next, so a break points at one branch. A clean
+  merge can still break behaviour, so the tests run every time. A bug inside one builder's work
+  goes back to it with `orca orchestration send`; a merge conflict you resolve yourself. Nothing
+  goes live until everything is merged and tested.
+- Done is every branch merged, tests passing on the merged result, each builder's test target
+  removed, and one line to the user naming the builder tabs and worktrees still open, so they
+  can keep or close them.
+- One small change, a folder that is not a git repo, or no Orca: do it yourself in this
+  session, because a worktree costs a setup and a review round.
 - When the user asks for agents and you do the work yourself anyway (the jobs change the same
-  lines, or one of the cases above), say so in your first line, with the reason, before starting. A
-  silent switch reads as the request being ignored. Still hand out what can run alongside:
-  tests, checks and reading go to subagents while you edit.
+  lines, or one of the cases above), say so in your first line, with the reason, before
+  starting. A silent switch reads as the request being ignored. Still hand out what can run
+  alongside: reading and checks go to subagents while you edit.
 
 **Then stop.** Independent work is finite. When it runs out, wait - do not invent work to
 look busy. Waiting is also correct when carrying on would be unsafe, or would waste real
