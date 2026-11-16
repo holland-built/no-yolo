@@ -58,12 +58,14 @@ build that's running - do not stop and wait.
   runs. Do not save it for the end.
 
 **Two or more coding jobs that don't depend on each other: build them in parallel in Orca.**
-Inside a git repo with Orca running, give each job its own Orca worktree (a separate copy of
-the repo) with an agent in it: `orca worktree create --name <job> --agent <claude|codex>
---prompt "<brief>"`, loading the `orca-cli` skill first for the exact agent ids and flags. Pick
-the agent from the §6 model table. This is the one place another agent writes code, and it is
-safe because each copy is its own folder: nobody overwrites anyone. Say in one line which agent
-has which job.
+Inside a git repo with Orca running, load the `orchestration` skill and start one Orca worker
+per job, each in its own child worktree (a separate copy of the repo):
+`orca orchestration worker-start --spec "<brief>" --worktree new-child --name <job> --agent
+<claude|codex> --keep-open`. Pick the agent from the §6 model table. `--keep-open` leaves each worker's
+tab open in Orca, so the user can watch it and talk to it. Then end your turn: Orca wakes you
+when a worker asks a question or reports done, so never poll. This is the one place another
+agent writes code, and it is safe because each copy is its own folder: nobody overwrites
+anyone. Say in one line which agent has which job.
 
 - Each brief names the files that job may change, and no two jobs share a file, because two
   copies that edit the same lines conflict when they are merged.
