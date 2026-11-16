@@ -235,17 +235,10 @@ Then, in Orca:
 3. Start Claude in an Orca tab, not a separate terminal, so Orca can wake Claude when a helper
    finishes. Keep Orca's notifications on (gear icon, then **Notifications**) so you hear when
    Claude is waiting on you.
-4. On a Mac, have finished helpers' copies deleted for you. Orca closes a helper's tab when it
-   reports, but keeps its copy of the project in the sidebar. This checks every 15 minutes and
-   deletes a copy only when its work is merged, it has no changed or new files, and it has been idle
-   for an hour:
 
-   ```bash
-   # check every 15 minutes and delete finished helper copies (log: ~/.claude/state/orca-sweep.log)
-   python3 scripts/orca-sweep.py --install
-   ```
-
-Leave Orca's "skip permissions" launch setting off. Helpers still stop before risky steps that way.
+Helpers' copies clean themselves up. Each time you start Claude, a hook deletes any copy whose work
+is merged, that has no changed or new files (files git ignores aside), and that nobody has touched
+for an hour. Nothing to set up.
 
 </details>
 
@@ -401,7 +394,7 @@ have to remember them. You can still type any of them on its own.
 | `settings.json` | Plugins, theme, status line, and merging pull requests without asking |
 | `statusline.sh` | The bar at the bottom |
 | `install.sh` | Sets this repo up on a machine, or updates one that already has it |
-| `scripts/` | Tidies up stray Codex processes at session start, and (optional) deletes finished Orca helper copies |
+| `scripts/` | Run when Claude starts: tidies stray Codex processes, deletes finished Orca helper copies and merged branches, and catches your project up with GitHub |
 | `hooks/` | The pre-commit guard that refuses a commit holding a secret, and the Claude hook that blocks pushes straight to `main` |
 
 ## How it talks to you
