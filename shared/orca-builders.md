@@ -48,7 +48,11 @@ Write the brief to a scratchpad file, because the shell mangles quotes and backt
    builders deploying to one test URL overwrite each other. The builder may upload to that
    target and nowhere else.
 4. **The checks that prove it done.**
-5. **The report it must send:** `worker_done` with `--outcome`, `--files-modified`, its branch
+5. **How to ask:** "When you need anything from the user (a choice, a missing fact, a go-ahead),
+   do not ask in your own tab, because the user watches the main chat, not yours. Send it to the
+   coordinator with `orca orchestration ask --question "<one line: what you need>" --options
+   "<a,b>"` when there are clear choices, then end your turn; Orca wakes you with the answer."
+6. **The report it must send:** `worker_done` with `--outcome`, `--files-modified`, its branch
    name, its last commit hash, and the test output.
 
 Jobs that change the same or neighbouring lines go into one builder's brief as steps in order,
@@ -81,10 +85,26 @@ Say in one line which agent has which job, then end your turn. Orca wakes you; d
 ## When Orca wakes you
 
 - **A question:** answer with `orca orchestration reply --id <message_id> --body "<answer>"`
-  when the brief or the user's words settle it; otherwise ask the user. Finish your current
-  edit first; the builder waits.
-- **A builder waiting on a permission prompt** (`worker-show` reports `agentWait`): tell the
-  user which builder tab needs their approval. Never answer it through its terminal.
+  when the brief or the user's words settle it. Otherwise relay it to the user, then pass their
+  answer back with the same `reply`. Finish your current edit first; the builder waits.
+- **Anything that waits on the user** (a relayed question, a permission prompt in a builder's
+  tab, a decision of your own) goes in this shape, at the top of your reply and in the `/short`
+  style, because the user has said they often cannot tell whether a helper needs them or what
+  it is asking:
+
+  ```text
+  Waiting on you: <helper name> needs <the one thing>.
+  Reply: <the choices, or the exact words to type>
+  ```
+
+  One block per waiting item, nothing above them. A permission prompt cannot be relayed, so its
+  block says which Orca tab to open and what to approve. Then also mark the waiting copy in
+  Orca's sidebar, so the user sees it there too: `orca worktree set --worktree <selector>
+  --unread --comment "Waiting on you: <the one thing>"`, and clear it with `--read --comment ""`
+  once answered. End your turn after the blocks; Orca sends its notification when your turn
+  ends.
+- **A builder waiting on a permission prompt** (`worker-show` reports `agentWait`): a
+  "Waiting on you" block naming its tab. Never answer it through its terminal.
 - **A report:** first commit or finish your own current step, so the merge lands on a clean
   tree. Read the diff, merge that branch, and run the tests before merging the next, so a
   break points at one branch. A clean merge can still break behaviour, so the tests run every
