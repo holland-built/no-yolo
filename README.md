@@ -233,6 +233,15 @@ Then, in Orca:
    yes. That installs the add-on that lets Claude start helpers and hear back from them.
 3. Start Claude in an Orca tab, not a separate terminal, so Orca can wake Claude when a helper
    finishes.
+4. On a Mac, have finished helpers' copies deleted for you. Orca closes a helper's tab when it
+   reports, but keeps its copy of the project in the sidebar. This checks every 15 minutes and
+   deletes a copy only when its work is merged, nothing in it is unsaved, and it has been idle
+   for an hour:
+
+   ```bash
+   # check every 15 minutes and delete finished helper copies (log: ~/.claude/state/orca-sweep.log)
+   python3 scripts/orca-sweep.py --install
+   ```
 
 Leave Orca's "skip permissions" launch setting off. Helpers still stop before risky steps that way.
 
