@@ -96,6 +96,10 @@ because each copy is its own folder.
 - Done is every branch merged, tests passing on the merged result, each builder's test target
   removed, and one line to the user naming the builder tabs and worktrees still open, so they
   can keep or close them.
+- A new coding job that arrives while you are mid-task counts as a second job: if it touches a
+  different part of the code, start a builder for it and carry on with your own work, without
+  the user having to ask. Say in one line that a builder took it. If it touches the code you are
+  changing, or changes what you are building, fold it in after the current step instead.
 - One small change, a folder that is not a git repo, or no Orca: do it yourself in this
   session, because a worktree costs a setup and a review round.
 - When the user asks for agents and you do the work yourself anyway (the jobs change the same
