@@ -62,7 +62,11 @@ def main():
             log(f"keep {name}: missing path, branch, base or parent")
             continue
 
-        idle_min = (time.time() * 1000 - (w.get("lastActivityAt") or 0)) / 60000
+        last = w.get("lastActivityAt")
+        if not last:
+            log(f"keep {name}: Orca has no activity time for it")
+            continue
+        idle_min = (time.time() * 1000 - last) / 60000
         if idle_min < MIN_IDLE_MIN:
             continue  # still recent; checked again next run
 
@@ -74,7 +78,7 @@ def main():
             log(f"keep {name}: {ahead.stdout.strip()} commit(s) not merged into {base}")
             continue
 
-        dirty = run(["git", "status", "--porcelain"], cwd=path)
+        dirty = run(["git", "status", "--porcelain", "--untracked-files=all"], cwd=path)
         if dirty.returncode != 0 or dirty.stdout.strip():
             n = len(dirty.stdout.strip().splitlines())
             log(f"keep {name}: {n} unsaved file(s)")
@@ -83,22 +87,13 @@ def main():
         if DRY:
             log(f"would remove {name} ({branch})")
             continue
+        # No --force: git refuses to remove a copy that changed since the checks above, and
+        # --delete-branch keeps any branch Orca cannot prove is merged.
         rm = run([ORCA, "worktree", "rm", "--worktree", f"id:{w['id']}", "--delete-branch"])
         if rm.returncode == 0:
             log(f"removed {name} ({branch}, merged into {base})")
         else:
             log(f"keep {name}: rm failed ({rm.stderr.strip()[:160]})")
-
-
-PLIST = """<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0"><dict>
-  <key>Label</key><string>com.user.orca-sweep</string>
-  <key>ProgramArguments</key><array><string>/usr/bin/python3</string><string>{script}</string></array>
-  <key>StartInterval</key><integer>900</integer>
-  <key>StandardErrorPath</key><string>{err}</string>
-</dict></plist>
-"""
 
 
 def install():
@@ -111,7 +106,14 @@ def install():
         shutil.copy2(__file__, dest)
     plist = Path.home() / "Library/LaunchAgents/com.user.orca-sweep.plist"
     plist.parent.mkdir(parents=True, exist_ok=True)
-    plist.write_text(PLIST.format(script=dest, err=LOG.with_suffix(".err")))
+    import plistlib
+    plist.write_bytes(plistlib.dumps({
+        "Label": "com.user.orca-sweep",
+        # the same Python that ran --install, so the schedule never needs a different one
+        "ProgramArguments": [sys.executable, str(dest)],
+        "StartInterval": 900,
+        "StandardErrorPath": str(LOG.with_suffix(".err")),
+    }))
     domain = f"gui/{os.getuid()}"
     run(["launchctl", "bootout", f"{domain}/com.user.orca-sweep"])
     res = run(["launchctl", "bootstrap", domain, str(plist)])

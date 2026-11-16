@@ -235,7 +235,7 @@ Then, in Orca:
    finishes.
 4. On a Mac, have finished helpers' copies deleted for you. Orca closes a helper's tab when it
    reports, but keeps its copy of the project in the sidebar. This checks every 15 minutes and
-   deletes a copy only when its work is merged, nothing in it is unsaved, and it has been idle
+   deletes a copy only when its work is merged, it has no changed or new files, and it has been idle
    for an hour:
 
    ```bash
@@ -399,7 +399,7 @@ have to remember them. You can still type any of them on its own.
 | `settings.json` | Plugins, theme, status line, and merging pull requests without asking |
 | `statusline.sh` | The bar at the bottom |
 | `install.sh` | Sets this repo up on a machine, or updates one that already has it |
-| `scripts/` | Tidies up stray Codex processes at session start |
+| `scripts/` | Tidies up stray Codex processes at session start, and (optional) deletes finished Orca helper copies |
 | `hooks/` | The pre-commit guard that refuses a commit holding a secret |
 
 ## How it talks to you
