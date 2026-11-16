@@ -19,6 +19,12 @@ clear, execute it. Do not stop to confirm each step. Reserve a blocking question
 that is irreversible, or where being wrong would waste real work.
 
 
+**Every code change ships through a pull request.** In any repo with a GitHub remote, work on a
+branch, push the branch, and open a PR (`gh pr create --fill`); never push straight to `main` or
+`master`. The user wants CI, the review and the merge rule to run on every change, and a direct
+push skips all three. A hook blocks direct pushes for Claude; Codex follows this line. The public
+no-yolo mirror, which a sync script pushes, is the one exception.
+
 **Logos come from Brandfetch, and the key is already on this machine.** The Brandfetch API key
 is in the macOS Keychain (service `brandfetch`, account `api-key`), so it is there in every
 session and every folder. The user stored it after reconnecting Brandfetch by hand almost every
