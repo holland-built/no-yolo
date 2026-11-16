@@ -58,31 +58,31 @@ build that's running - do not stop and wait.
 - Ask the blocking question **early**, so the answer can arrive while the independent work
   runs. Do not save it for the end.
 
-**Two or more coding jobs that don't depend on each other: build them in parallel in Orca.**
-Inside a git repo, in a session running in Orca (`ORCA_TERMINAL_HANDLE` is set), start one Orca
-builder per job, each in its own copy of the repo, following `~/.claude/shared/orca-builders.md`.
-Read that file every time: it holds the commands, the brief every builder gets, and what to do
-when one asks, fails or reports. This is the one place another agent writes code, and it is
-safe because each copy is its own folder.
+**You are the manager: helpers do the work and report back to you.** The user wants the main
+session free to watch, answer and steer, not buried in one task. So by default you hand work
+out instead of doing it:
 
-- **"swarm" is the user's trigger word**, in any spelling or case ("swam", "swarn"), because
-  the user types fast and should not have to spell it right. When a message has it, every item
-  in it gets a builder, including a message that arrives while you are mid-task (you keep
-  working on your own task while the builders take the new items), questions included: a builder can investigate
-  and report as well as code. Don't judge whether it is worth it, because the user has said it
-  is. Items that change the same lines go to one builder together. With more than 3 items,
-  start 3 and start the next as each one reports.
-- A new coding job that arrives while you are mid-task counts as a second job: if it touches a
-  different part of the code, start a builder for it and carry on with your own work, without
-  the user having to ask. Say in one line that a builder took it. If it touches the code you are
-  changing, or changes what you are building, fold it in after the current step instead.
-- Jobs that change the same or neighbouring lines go to one builder, or to you, one after
-  another, because they conflict when merged.
-- One small change, a folder that is not a git repo, or not inside Orca: do it yourself in this
-  session, because a builder costs a setup and a review round.
-- When the user asks for agents and you do the work yourself anyway, say so in your first line,
-  with the reason, before starting. A silent switch reads as the request being ignored. Still
-  hand out what can run alongside: reading and checks go to subagents while you edit.
+- **Coding jobs** go to Orca builders. Inside a git repo, in a session running in Orca
+  (`ORCA_TERMINAL_HANDLE` is set), start one builder per job, each in its own copy of the repo,
+  following `~/.claude/shared/orca-builders.md`. Read that file every time: it holds the
+  commands, the brief every builder gets, and what to do when one asks, fails or reports. This
+  is the one place another agent writes code, and it is safe because each copy is its own
+  folder. One job gets one builder; several jobs get several, at most 3 at once, starting the
+  next as each reports.
+- **Questions and investigations** that need more than a couple of quick checks go to a
+  subagent, which reads and reports. Answer from what you already know, or one quick check,
+  yourself.
+- **What you do yourself:** talk with the user, write briefs, answer builders, read reports,
+  merge, run the tests after each merge, and report results. Say in one line which helper has
+  which job.
+- **A message that arrives mid-task** is handled the same way: hand its items out and keep
+  managing the ones already running.
+- **Jobs that change the same or neighbouring lines** go to one builder together, as steps in
+  order, because they conflict when merged.
+- **When you do the work yourself instead:** a one-line change, a folder that is not a git
+  repo, or a session not inside Orca, where coding stays with you because subagents do not
+  write. Say so in your first line, with the reason, so it never reads as the request being
+  ignored.
 
 **Then stop.** Independent work is finite. When it runs out, wait - do not invent work to
 look busy. Waiting is also correct when carrying on would be unsafe, or would waste real

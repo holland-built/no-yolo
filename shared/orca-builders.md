@@ -99,7 +99,12 @@ Nothing goes live until every branch is merged and tested.
 
 ## Done
 
-Every branch merged, tests passing on the merged result, each builder's test target removed,
-each merged builder released with `orca orchestration worker-release --dispatch <id>` unless
-the user is using that tab, and one line to the user naming any worktrees left on disk. Never
-delete a worktree without the user's say-so.
+Each builder goes away once its work is merged and tested, because the user wants finished
+helpers gone, not piling up as tabs and folders: release it with
+`orca orchestration worker-release --dispatch <id>`, then remove its copy and branch with
+`orca worktree rm --worktree branch:<its branch> --delete-branch`. Its work is already in your
+branch, so nothing is lost. Keep a builder only when its work was not merged (it failed, or
+the user is still talking to it in its tab) and name those to the user.
+
+Done is every branch merged, tests passing on the merged result, each builder's test target
+removed, and every merged builder gone.
