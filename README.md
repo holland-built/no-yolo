@@ -212,6 +212,33 @@ A Codex review running in another window at that moment stops. The next one star
 </details>
 
 <details>
+<summary><strong>Orca: run several coding jobs at once</strong></summary>
+
+[Orca](https://github.com/stablyai/orca) is a desktop app that runs Claude and Codex side by side,
+each in its own copy of your project. With it, Claude hands separate coding jobs to helper
+agents in Orca tabs and combines their work when they report back (see **Build in parallel**
+below). **No Orca? Skip this.** Claude does the jobs one after another itself and says so.
+
+Download it from [orca.dev/download](https://orca.dev/download) (Mac, Windows, Linux), or on a Mac:
+
+```bash
+# install the Orca desktop app
+brew install --cask stablyai/orca/orca
+```
+
+Then, in Orca:
+
+1. Open your project folder. It has to be a git repo, because each helper works in its own copy.
+2. Click the gear icon at the bottom left, then **Orchestration**, then **Update**, and answer
+   yes. That installs the add-on that lets Claude start helpers and hear back from them.
+3. Start Claude in an Orca tab, not a separate terminal, so Orca can wake Claude when a helper
+   finishes.
+
+Leave Orca's "skip permissions" launch setting off. Helpers still stop before risky steps that way.
+
+</details>
+
+<details>
 <summary><strong>TypeScript checker: catch broken code as Claude writes it</strong></summary>
 
 Lets Claude spot errors in JavaScript and TypeScript files (`.js`, `.jsx`, `.ts`, `.tsx`) while it
