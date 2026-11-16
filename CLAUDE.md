@@ -65,6 +65,11 @@ Read that file every time: it holds the commands, the brief every builder gets, 
 when one asks, fails or reports. This is the one place another agent writes code, and it is
 safe because each copy is its own folder.
 
+- **"parallel" is the user's trigger word.** When a message says "parallel" (or "in
+  parallel"), every item in it gets a builder, questions included: a builder can investigate
+  and report as well as code. Don't judge whether it is worth it, because the user has said it
+  is. Items that change the same lines go to one builder together. With more than 3 items,
+  start 3 and start the next as each one reports.
 - A new coding job that arrives while you are mid-task counts as a second job: if it touches a
   different part of the code, start a builder for it and carry on with your own work, without
   the user having to ask. Say in one line that a builder took it. If it touches the code you are
