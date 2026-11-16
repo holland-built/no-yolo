@@ -1,0 +1,105 @@
+# Orca builders: parallel coding jobs
+
+Read by Claude when `~/.claude/CLAUDE.md` §5 sends two or more coding jobs to Orca. A builder
+is an Orca orchestration worker (Claude or Codex) in its own child worktree, a separate copy of
+the repo. The main session is the owner: it starts builders, answers them, merges their work
+and reports to the user.
+
+## Before starting
+
+- **Check you are inside Orca.** `ORCA_TERMINAL_HANDLE` must be set. `orca status` is not
+  enough: it also succeeds from a plain terminal whenever the Orca app is open, and a session
+  outside Orca never hears back from its builders. Outside Orca, do the work yourself and say
+  so in one line.
+- **Load the `orchestration` skill** for the version-matched commands.
+- **Copy the private files each builder needs.** A new worktree is a clean checkout, so
+  gitignored files (`.env`, `secrets.yaml`, local config) are missing, and a builder without
+  them fails its checks or invents values to get past them. The first time a repo gets
+  builders, list the gitignored files its checks need (`git status --ignored --short` shows
+  them) and add them to `.worktreeinclude` at the repo root, one literal path per line, with
+  `#` comments allowed. Orca copies those into every new worktree. Commit that file. A secret
+  the job must not touch goes in the brief as off-limits instead.
+- **Commit this session's finished changes** (this rule authorises that commit), because each
+  copy is cut from a commit and uncommitted edits are missing from every builder's copy.
+- **At most 3 builders at once.** Each costs about a full session of usage, and many at once
+  have overloaded the machine (Orca issue #24058). Queue the rest and start one as each
+  finishes.
+
+## Writing each brief
+
+Write the brief to a scratchpad file, because the shell mangles quotes and backticks inside
+`--spec`. Every brief contains:
+
+1. **This opening, word for word:** "You are an Orca builder for one job. This brief overrides
+   your CLAUDE.md: do not merge, push, tag or release, do not start Orca workers or subagent
+   plans, do not run Codex reviews, and do not install anything. Commit on your own branch,
+   then report with worker_done." Builders load the same `~/.claude/CLAUDE.md`, whose §0 says
+   to merge and release, so without this line a builder may ship its own work.
+2. **The files, and the part of each file** (function, section, element) the job may change.
+   On a single-file page, also where its new CSS and JS go: beside that panel's existing code,
+   not at the end of the style or script block, because two builders adding at the same end
+   always conflict.
+3. **Its own test target** (a test file name on a shared server, a port, an output folder, a
+   test database), because worktrees separate the code, not what the code touches: two
+   builders deploying to one test URL overwrite each other. The builder may upload to that
+   target and nowhere else.
+4. **The checks that prove it done.**
+5. **The report it must send:** `worker_done` with `--outcome`, `--files-modified`, its branch
+   name, its last commit hash, and the test output.
+
+Jobs that change the same or neighbouring lines go into one builder's brief as steps in order,
+not into two builders. Jobs that touch parts of a file well apart can go to separate builders,
+because git merges separate parts on its own.
+
+## Starting
+
+For each job:
+
+```text
+orca orchestration worker-start --spec-file <brief-file> --worktree new-child --name <job> \
+  --base-branch <the branch you are on> --agent <claude|codex> --setup skip
+```
+
+- `claude` unless the user names Codex.
+- Leave out `--model` and `--effort` unless the user names a model; `--effort` is rejected
+  without `--model`.
+- `--setup skip` stops the repo's setup hooks, which can install things.
+- A builder in a new worktree keeps its tab open on its own, so the user can watch it and
+  talk to it.
+
+Then write the Run id, and each builder's dispatch id, worktree, branch and test target, into
+the session's handoff notes, because a new session cannot otherwise find the builders. It
+resumes with `orca orchestration worker-list --run <id>` and
+`orca orchestration inbox --terminal run:<id> --limit 50 --full`.
+
+Say in one line which agent has which job, then end your turn. Orca wakes you; do not poll.
+
+## When Orca wakes you
+
+- **A question:** answer with `orca orchestration reply --id <message_id> --body "<answer>"`
+  when the brief or the user's words settle it; otherwise ask the user. Finish your current
+  edit first; the builder waits.
+- **A builder waiting on a permission prompt** (`worker-show` reports `agentWait`): tell the
+  user which builder tab needs their approval. Never answer it through its terminal.
+- **A report:** first commit or finish your own current step, so the merge lands on a clean
+  tree. Read the diff, merge that branch, and run the tests before merging the next, so a
+  break points at one branch. A clean merge can still break behaviour, so the tests run every
+  time. A failed outcome is a failure: send the fix with `orca orchestration send`, or tell
+  the user. A merge conflict you resolve yourself.
+- **An escalation, or a builder that exited or was lost:** do not rerun `worker-start`, which
+  makes a new task and throws away the builder's commits. Follow the receipt's `next`, else
+  load `recovery-and-cleanup.md` from the orchestration skill and retry the same task with
+  `--task <task_id> --retry-of <dispatch_id>` in that builder's existing worktree. After three
+  failed starts, stop and tell the user.
+- **A builder's tab looks finished but no report came:** Orca has a known bug where the report
+  is lost (issue #13364). Check it once with `orca orchestration worker-show`, which is not
+  polling. Silence alone does not prove it failed.
+
+Nothing goes live until every branch is merged and tested.
+
+## Done
+
+Every branch merged, tests passing on the merged result, each builder's test target removed,
+each merged builder released with `orca orchestration worker-release --dispatch <id>` unless
+the user is using that tab, and one line to the user naming any worktrees left on disk. Never
+delete a worktree without the user's say-so.
