@@ -87,6 +87,8 @@ Say in one line which agent has which job, then end your turn. Orca wakes you; d
 - **A question:** answer with `orca orchestration reply --id <message_id> --body "<answer>"`
   when the brief or the user's words settle it. Otherwise relay it to the user, then pass their
   answer back with the same `reply`. Finish your current edit first; the builder waits.
+- **Merging, pushing and releasing never wait on the user.** They are your job under
+  `~/.claude/CLAUDE.md` §0, so they never appear as a "Waiting on you" item.
 - **Anything that waits on the user** (a relayed question, a permission prompt in a builder's
   tab, a decision of your own) goes in this shape, at the top of your reply and in the `/short`
   style, because the user has said they often cannot tell whether a helper needs them or what

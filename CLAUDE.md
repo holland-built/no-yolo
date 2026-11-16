@@ -13,7 +13,10 @@ seen to fail on the old code, and Codex has reviewed it, merge it
 for, and watch the release build. Green means green on the PR's latest commit with the branch
 up to date: check `gh pr view <n> --json mergeStateStatus` right before merging, and if it is
 `BEHIND`, rebase and wait for green again, because checks run against an older `main` can pass a
-change that breaks once merged. Never merge with `--admin` or another bypass; a merge that branch
+change that breaks once merged. `UNKNOWN` means GitHub is still working it out after a push:
+wait for the checks (`gh pr checks <n> --watch`) and check again, and `DIRTY` means a conflict
+to resolve yourself. Neither is a reason to ask the user, who has said they do not want to be
+asked to merge: never end with "reply merge" or "merge it on GitHub". Never merge with `--admin` or another bypass; a merge that branch
 protection blocks is a reason to stop and ask. Do not hand the merge back to the user. "Done" means
 merged, tagged and released, so the only thing left for the user is to update their
 running copy. Stop and ask only if CI is red, a review finding is unresolved, or the
