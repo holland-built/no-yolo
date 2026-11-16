@@ -233,7 +233,8 @@ Then, in Orca:
 2. Click the gear icon at the bottom left, then **Orchestration**, then **Update**, and answer
    yes. That installs the add-on that lets Claude start helpers and hear back from them.
 3. Start Claude in an Orca tab, not a separate terminal, so Orca can wake Claude when a helper
-   finishes.
+   finishes. Keep Orca's notifications on (gear icon, then **Notifications**) so you hear when
+   Claude is waiting on you.
 4. On a Mac, have finished helpers' copies deleted for you. Orca closes a helper's tab when it
    reports, but keeps its copy of the project in the sidebar. This checks every 15 minutes and
    deletes a copy only when its work is merged, it has no changed or new files, and it has been idle
@@ -432,7 +433,7 @@ The rules live in `CLAUDE.md` and `shared/AGENTS.md`. What each one stops:
 | **Every change through a pull request** | Changes that skip CI and review. It works on a branch and opens a pull request; a hook blocks its ordinary pushes straight to `main` or `master`. |
 | **Goal-driven execution** | "Make it work" as a finish line. It says up front what test or command will prove it, then runs that check. |
 | **Never idle** | Sitting waiting. Blocked on one thing, it finishes everything that does not depend on it, then reports. |
-| **Manage, don't do** | One chat buried in one task while your next request waits. The main Claude hands each coding job to a helper in its own copy of the repo in [Orca](https://github.com/stablyai/orca), at most three at once, and sends questions that need digging to a reading helper. Helpers report back; it combines their work one at a time, tests after each, ships it all as one pull request, and closes each helper when its work is in. Without Orca, outside a git repo, or for a one-line change, it does the work itself and says so. |
+| **Manage, don't do** | One chat buried in one task while your next request waits. The main Claude hands each coding job to a helper in its own copy of the repo in [Orca](https://github.com/stablyai/orca), at most three at once, and sends questions that need digging to a reading helper. Helpers report back; it combines their work one at a time, tests after each, ships it all as one pull request, and closes each helper when its work is in. When a helper needs you, its question comes to the main chat as a short "Waiting on you" line saying what to reply, and the helper's copy is marked in Orca's sidebar. Without Orca, outside a git repo, or for a one-line change, it does the work itself and says so. |
 | **Confer with Codex** | Trusting its own plan. Before anything expensive, a second AI attacks the plan first. |
 | **Check big jobs as they go** | Finding a wrong turn only at the end. On a job of more than about five steps or about an hour, Fable and Codex's Astra each write a plan, then take turns giving a quick yes-or-no check after each major step, and Codex reviews the finished work. |
 | **Read before describing** | Describing your setup from memory. It opens the file first. |
