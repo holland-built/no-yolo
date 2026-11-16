@@ -67,7 +67,8 @@ what it installed, and anything that failed, then remind me to restart Claude Co
 > `git config --global --unset core.hooksPath`.
 >
 > The settings also let Claude work on GitHub without asking you first. It can open and merge
-> pull requests, watch CI runs, make releases, tag, and push. The rules tell it that a job is
+> pull requests, watch CI runs, make releases, tag, and push branches. A hook stops its ordinary
+> pushes straight to `main` or `master`, so changes go through a pull request. The rules tell it that a job is
 > only done once the pull request is merged and released. It still asks before a force push or
 > before deleting a repo or a release. To be asked each time, move the `gh` and `git` lines from
 > `allow` to `ask` in `~/.claude/settings.json`. Running `install.sh` again puts them back, so
@@ -400,7 +401,7 @@ have to remember them. You can still type any of them on its own.
 | `statusline.sh` | The bar at the bottom |
 | `install.sh` | Sets this repo up on a machine, or updates one that already has it |
 | `scripts/` | Tidies up stray Codex processes at session start, and (optional) deletes finished Orca helper copies |
-| `hooks/` | The pre-commit guard that refuses a commit holding a secret |
+| `hooks/` | The pre-commit guard that refuses a commit holding a secret, and the Claude hook that blocks pushes straight to `main` |
 
 ## How it talks to you
 
@@ -428,9 +429,10 @@ The rules live in `CLAUDE.md` and `shared/AGENTS.md`. What each one stops:
 | **Check before you explain** | Made-up causes. It tells you why something happened only after checking logs, history or a test. If it can't check, it says it doesn't know and names the test that would tell. |
 | **Simplicity first** | Features you did not ask for, wrappers around one call, settings nobody requested, handling for cases that cannot happen. |
 | **Surgical changes** | Tidying code next to the thing you asked about. It matches the style already there, even style it would do differently. |
+| **Every change through a pull request** | Changes that skip CI and review. It works on a branch and opens a pull request; a hook blocks its ordinary pushes straight to `main` or `master`. |
 | **Goal-driven execution** | "Make it work" as a finish line. It says up front what test or command will prove it, then runs that check. |
 | **Never idle** | Sitting waiting. Blocked on one thing, it finishes everything that does not depend on it, then reports. |
-| **Manage, don't do** | One chat buried in one task while your next request waits. The main Claude hands each coding job to a helper in its own copy of the repo in [Orca](https://github.com/stablyai/orca), at most three at once, and sends questions that need digging to a reading helper. Helpers report back; it combines their work one at a time, tests after each, and closes each helper when its work is in. Without Orca, outside a git repo, or for a one-line change, it does the work itself and says so. |
+| **Manage, don't do** | One chat buried in one task while your next request waits. The main Claude hands each coding job to a helper in its own copy of the repo in [Orca](https://github.com/stablyai/orca), at most three at once, and sends questions that need digging to a reading helper. Helpers report back; it combines their work one at a time, tests after each, ships it all as one pull request, and closes each helper when its work is in. Without Orca, outside a git repo, or for a one-line change, it does the work itself and says so. |
 | **Confer with Codex** | Trusting its own plan. Before anything expensive, a second AI attacks the plan first. |
 | **Check big jobs as they go** | Finding a wrong turn only at the end. On a job of more than about five steps or about an hour, Fable and Codex's Astra each write a plan, then take turns giving a quick yes-or-no check after each major step, and Codex reviews the finished work. |
 | **Read before describing** | Describing your setup from memory. It opens the file first. |
