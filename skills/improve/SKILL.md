@@ -114,8 +114,10 @@ If you are Codex, you cannot start Fable or ask yourself for a second opinion, s
 at the agreement step and hand the findings and proposed change to the user for Claude's read.
 
 Subagents run in parallel for testing and reviewing when their work does not overlap: different
-screens, different tasks. The main thread makes every edit, so two agents never write the same
-file and one thread owns what changed.
+screens, different tasks. When two or more agreed fixes touch different parts of the code, build
+them in parallel as Orca builders under `~/.claude/CLAUDE.md` §5, each testing on its own test
+target; each fix then goes live once it is merged and tested, not before. Fixes that change the
+same or neighbouring lines stay in this session, one after another, and you say so in one line.
 
 ## Ship live, then test back and forth
 
