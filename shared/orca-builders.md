@@ -93,16 +93,17 @@ Say in one line which agent has which job, then end your turn. Orca wakes you; d
   it is asking:
 
   ```text
-  Waiting on you: <helper name> needs <the one thing>.
+  Waiting on you: <helper name, or "I" for your own decision> need(s) <the one thing>.
   Reply: <the choices, or the exact words to type>
   ```
 
   One block per waiting item, nothing above them. A permission prompt cannot be relayed, so its
-  block says which Orca tab to open and what to approve. Then also mark the waiting copy in
-  Orca's sidebar, so the user sees it there too: `orca worktree set --worktree <selector>
+  block says which Orca tab to open and what to approve. Then also mark the copy it concerns
+  (the helper's, or your own for a decision of yours) in Orca's sidebar, so the user sees it there too: `orca worktree set --worktree <selector>
   --unread --comment "Waiting on you: <the one thing>"`, and clear it with `--read --comment ""`
-  once answered. End your turn after the blocks; Orca sends its notification when your turn
-  ends.
+  once answered. First finish any work that does not need the answer, such as merging and
+  testing helpers that already reported (§5, never idle), then end your turn with the blocks at
+  the top of that reply; Orca sends its notification when your turn ends.
 - **A builder waiting on a permission prompt** (`worker-show` reports `agentWait`): a
   "Waiting on you" block naming its tab. Never answer it through its terminal.
 - **A report:** first commit or finish your own current step, so the merge lands on a clean
