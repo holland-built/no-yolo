@@ -393,6 +393,7 @@ The rules live in `CLAUDE.md` and `shared/AGENTS.md`. What each one stops:
 | **Surgical changes** | Tidying code next to the thing you asked about. It matches the style already there, even style it would do differently. |
 | **Goal-driven execution** | "Make it work" as a finish line. It says up front what test or command will prove it, then runs that check. |
 | **Never idle** | Sitting waiting. Blocked on one thing, it finishes everything that does not depend on it, then reports. |
+| **Build in parallel** | One job at a time when several could run together. Given two or more coding jobs that don't depend on each other, it gives each its own copy of the repo in [Orca](https://github.com/stablyai/orca) with Claude or Codex working inside. Each job edits a separate set of files and commits only on its own branch. It then merges them back one at a time and tests after each. Without Orca, outside a git repo, or for one small change, it does the work itself. |
 | **Confer with Codex** | Trusting its own plan. Before anything expensive, a second AI attacks the plan first. |
 | **Check big jobs as they go** | Finding a wrong turn only at the end. On a job of more than about five steps or about an hour, Fable and Codex's Astra each write a plan, then take turns giving a quick yes-or-no check after each major step, and Codex reviews the finished work. |
 | **Read before describing** | Describing your setup from memory. It opens the file first. |
