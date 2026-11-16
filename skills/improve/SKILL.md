@@ -115,7 +115,7 @@ at the agreement step and hand the findings and proposed change to the user for 
 
 Subagents run in parallel for testing and reviewing when their work does not overlap: different
 screens, different tasks. When two or more agreed fixes touch different parts of the code, build
-them in parallel as Orca builders under `~/.claude/CLAUDE.md` §5, each testing on its own test
+them in parallel as Orca builders under `~/.claude/CLAUDE.md` §5 and `~/.claude/shared/orca-builders.md`, each testing on its own test
 target; each fix then goes live once it is merged and tested, not before. Fixes that change the
 same or neighbouring lines stay in this session, one after another, and you say so in one line.
 
