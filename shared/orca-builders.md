@@ -110,5 +110,9 @@ helpers gone, not piling up as tabs and folders: release it with
 branch, so nothing is lost. Keep a builder only when its work was not merged (it failed, or
 the user is still talking to it in its tab) and name those to the user.
 
-Done is every branch merged, tests passing on the merged result, each builder's test target
+Then ship the merged result the way the project ships anything else (its README or rules say
+how: push, deploy, PR and release under `~/.claude/CLAUDE.md` §0), because the user's done means
+live, not merged on this machine.
+
+Done is every branch merged, tests passing on the merged result, the result shipped, each builder's test target
 removed, and every merged builder gone.
