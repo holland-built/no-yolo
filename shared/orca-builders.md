@@ -21,6 +21,14 @@ and reports to the user.
   the job must not touch goes in the brief as off-limits instead.
 - **Commit this session's finished changes** (this rule authorises that commit), because each
   copy is cut from a commit and uncommitted edits are missing from every builder's copy.
+- **Sweep leftover builders first.** A chat that closed before its Done step leaves copies
+  behind in Orca's sidebar, and nothing else removes them. Run `orca worktree list --json` and,
+  for each child worktree of this repo, remove it with `orca worktree rm --worktree
+  branch:<its branch> --delete-branch` when all three hold: its branch has no commits missing
+  from yours (`git rev-list --count <your branch>..<its branch>` is 0), `git -C <its path>
+  status --porcelain` is empty, and its last commit is over an hour old. Leave any other one
+  and name it to the user with what it still holds, because it may be unmerged work or a
+  builder another chat is still running.
 - **At most 3 builders at once.** Each costs about a full session of usage, and many at once
   have overloaded the machine (Orca issue #24058). Queue the rest and start one as each
   finishes.
