@@ -57,6 +57,23 @@ build that's running - do not stop and wait.
 - Ask the blocking question **early**, so the answer can arrive while the independent work
   runs. Do not save it for the end.
 
+**Two or more coding jobs that don't depend on each other: build them in parallel in Orca.**
+Inside a git repo with Orca running, give each job its own Orca worktree (a separate copy of
+the repo) with an agent in it: `orca worktree create --name <job> --agent <claude|codex>
+--prompt "<brief>"`, loading the `orca-cli` skill first for the exact agent ids and flags. Pick
+the agent from the §6 model table. This is the one place another agent writes code, and it is
+safe because each copy is its own folder: nobody overwrites anyone. Say in one line which agent
+has which job.
+
+- Each brief names the files that job may change, and no two jobs share a file, because two
+  copies that edit the same lines conflict when they are merged.
+- Builders commit on their own branch only. They do not push, merge, install, publish or send
+  messages.
+- You stay the owner: wait for each builder, read its diff, merge the branches back one at a
+  time, and run the tests after each merge, so a break points at one branch.
+- One small change, a folder that is not a git repo, or Orca not running: do it yourself in
+  this session, because a worktree costs a setup and a review round.
+
 **Then stop.** Independent work is finite. When it runs out, wait - do not invent work to
 look busy. Waiting is also correct when carrying on would be unsafe, or would waste real
 work if the answer came back different.
