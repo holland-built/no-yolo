@@ -90,23 +90,19 @@ Say in one line which agent has which job, then end your turn. Orca wakes you; d
   answer back with the same `reply`. Finish your current edit first; the builder waits.
 - **Anything that waits on the user** (a relayed question, a permission prompt in a builder's
   tab, a decision of your own; never a merge, push or release, which are your job under §0)
-  goes in this shape, at the top of your reply, because the user has said they often cannot tell whether a helper needs them or what
-  it is asking:
+  goes in the "Waiting on you" question block from the Action First style (rule 13), at the top
+  of your reply, with all waiting questions in that one block, because the user has said they
+  often cannot tell whether a helper needs them or what it is asking.
 
-  ```text
-  Waiting on you: <helper name, or "I" for your own decision> need(s) <the one thing>.
-  Reply: <the choices, or the exact words to type>
-  ```
-
-  One block per waiting item, nothing above them. A permission prompt cannot be relayed, so its
-  block says which Orca tab to open and what to approve. Then also mark the copy it concerns
-  (the helper's, or your own for a decision of yours) in Orca's sidebar, so the user sees it
-  there too: `orca worktree set --worktree <selector> --unread --comment "Waiting on you: <the one thing>"`, and clear it with `--read --comment ""`
-  once answered. First finish any work that does not need the answer, such as merging and
-  testing helpers that already reported (§5), then end your turn with the blocks at
-  the top of that reply; Orca sends its notification when your turn ends.
+  A permission prompt cannot be relayed, so its question names the Orca tab to open and what to
+  approve. Also mark the copy it concerns (the helper's, or your own for a decision of yours) in
+  Orca's sidebar, so the user sees it there too: `orca worktree set --worktree <selector>
+  --unread --comment "Waiting on you: <the one thing>"`, cleared with `--read --comment ""` once
+  answered. First finish any work that does not need the answer, such as merging and testing
+  helpers that already reported (§5), then end your turn with the question block at the top of
+  that reply; Orca sends its notification when your turn ends.
 - **A builder waiting on a permission prompt** (`worker-show` reports `agentWait`): a
-  "Waiting on you" block naming its tab. Never answer it through its terminal.
+  question in the "Waiting on you" block naming its tab. Never answer it through its terminal.
 - **A report:** first commit or finish your own current step, so the merge lands on a clean
   tree. Read the diff, merge that branch, and run the tests before merging the next, so a
   break points at one branch. A clean merge can still break behaviour, so the tests run every
