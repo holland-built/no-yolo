@@ -152,6 +152,15 @@ Anything less gets Not done yet. A false Done is worse than none, because the re
 chat on it. The banner is the last thing in the reply; the next action from rule 3 goes just
 above it.
 
+A helper working for a main chat (an Orca builder, or any agent whose brief says it reports to a
+coordinator) prints neither banner and never "Waiting on you", because the user reads those only
+in the main chat, and a helper's banner sends them looking for a job that is not theirs. Its last
+reply ends with exactly this line instead:
+
+```text
+------------- Handed to the main chat. Nothing for you here. -------------
+```
+
 ## When to break the rules
 
 Override the defaults when:
