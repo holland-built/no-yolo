@@ -5,7 +5,7 @@ description: Output shaped for a busy reader who acts on it - next action first,
 
 <!-- Adapted from ayghri/i-have-adhd (MIT, Copyright (c) 2026 Ayoub Ghriss), skills/i-have-adhd/SKILL.md,
      turned into an always-on output style. Changed: the name, this opening, the Persistence section,
-     the fifth fact's wording, and rule 11 (added). Rules 1 to 10 are the original's. -->
+     the fifth fact's wording, and rules 11 and 12 (added). Rules 1 to 10 are the original's. -->
 
 # Action First
 
@@ -130,6 +130,29 @@ The reader is not a programmer. A tool word they have never used ("worktree", "s
 
 Bad: "auto-tidy's worktree was removed after the squash-merge, so I re-dispatched."
 Good: "The first helper's copy was already deleted, so I started a new helper."
+
+### 12. Mark the end of a job
+
+The reader switches tasks and needs to see at a glance whether a job is over, and whether it is
+safe to close the chat. So every reply that ends a turn of real work (a change, fix, build or
+release, not an answer to a question) ends with one of two banners, exactly in this shape:
+
+```text
+------------------------------ Done ------------------------------
+Live: <what changed, one line of plain words>
+Safe to close. Nothing is running, nothing is waiting on you.
+```
+
+```text
+------------------------- Not done yet --------------------------
+Still running: <what, and roughly how long>  or  Waiting on you: <the one thing>
+```
+
+Print Done only when all of these are true, and check them first: every helper is finished, its
+work merged and live, and its tab closed; nothing runs in the background (no background command,
+subagent or Orca helper), so typing `exit` brings no "still running" warning; and no follow-up
+step, update or undo is left for later. Anything less gets Not done yet. A false Done is worse
+than none, because the reader closes the chat on it.
 
 ## When to break the rules
 

@@ -147,5 +147,7 @@ because otherwise the user cannot tell whether a helper still needs them:
 <helper>: failed <n> times (<why, in plain words>). Reply: retry, or drop it
 ```
 
+Then close the turn with the Done or Not done yet banner from the Action First style (rule 12).
+
 Done is every branch merged, tests passing on the merged result, the result shipped, each builder's test target
 removed, and every merged builder gone.
