@@ -117,7 +117,12 @@ Say in one line which agent has which job, then end your turn. Orca wakes you; d
   is lost (issue #13364). Check it once with `orca orchestration worker-show`, which is not
   polling. Silence alone does not prove it failed.
 
-Nothing goes live until every branch is merged and tested.
+**Ship each branch as soon as it is merged and tested; do not hold it for the others.** Give it its
+own pull request under `~/.claude/CLAUDE.md` §0 and run the project's deploy step right away, then
+tell the user in one line what to test, because the user hates waiting and wants to try each
+change while the other builders are still working. Builders still never merge or deploy their own
+work: several of them share live files such as `index.html`, and one owner keeps them from
+overwriting each other. Merge and ship one branch at a time, so a break points at one change.
 
 ## Done
 
@@ -128,9 +133,8 @@ helpers gone, not piling up as tabs and folders: release it with
 branch, so nothing is lost. Keep a builder only when its work was not merged (it failed, or
 the user is still talking to it in its tab) and name those to the user.
 
-Then ship the merged result as one pull request under `~/.claude/CLAUDE.md` §0, and run any
-deploy step the project's README names, because the user's done means live, not merged on this
-machine.
+Each branch already shipped as it came in (above), because the user's done means live, not merged
+on this machine.
 
 **Tell the user about every helper once it is settled**, one line each, in one of two forms,
 because otherwise the user cannot tell whether a helper still needs them:
@@ -145,5 +149,5 @@ question, and a helper already waiting on the user gets no second line.
 
 Then close the turn with the Done or Not done yet banner from the Action First style (rule 12).
 
-Done is every branch merged, tests passing on the merged result, the result shipped, each
+Done is every branch merged, tested and shipped live as it came in, each
 builder's test target removed, and every merged builder gone.
