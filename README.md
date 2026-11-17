@@ -19,30 +19,47 @@ Installing them takes two minutes.
 |---|---|
 | *"Great question! Let me take a look at your configuration files to understand the current setup. I'll start by examining the settings and then walk through the various options available to you. There are a few different approaches we could take here, each with their own tradeoffs…"* | *"Your status line file is not executable. That is why the bar is missing. One line fixes it:"* `chmod +x ~/.claude/statusline.sh` |
 
-**Jump to:** [Install](#install) · [Commands](#the-twenty-one-commands) · [Workflows](#workflows) · [Rules](#the-rules-it-follows) · [Update](#update)
+**Jump to:** [Install](#install) · [Use cases](#use-cases) · [Rules](#the-rules-it-follows) · [Update](#update)
 
 ## Install
 
-Needs [Claude Code](https://claude.com/claude-code), Git, Node.js and `jq`, which the status
-line reads its values with. macOS or Linux. Windows is not supported.
+| Where | Needs |
+|---|---|
+| Your computer | macOS or Linux (not Windows) |
+| Installed first | [Claude Code](https://claude.com/claude-code), Git, Node.js, `jq` |
 
-The script copies the rules, the style and the skills into `~/.claude`, installs `gitleaks` and
-`exiftool`, and switches the secret guard on. It backs up whatever
-you already have before it copies anything, and it tells you what it did at each step. If git
-on this machine already has a hooks folder of its own, it leaves that alone and prints the one
-line to run instead.
+1. Download and install. The script backs up your current `~/.claude` first, then copies the
+   rules, style and skills in, installs `gitleaks` and `exiftool`, and turns on the secret guard.
 
-```bash
-# download this repo to the path the settings expect
-mkdir -p ~/AI && git clone https://github.com/holland-built/no-yolo.git ~/AI/no-yolo
-# set everything up on this machine
-~/AI/no-yolo/install.sh
-```
+   ```bash
+   # download this repo to the path the settings expect
+   mkdir -p ~/AI && git clone https://github.com/holland-built/no-yolo.git ~/AI/no-yolo
+   # set everything up on this machine
+   ~/AI/no-yolo/install.sh
+   ```
 
-Then **restart Claude Code** and type `/fix`. It should ask what is broken instead of guessing.
+2. Restart Claude Code.
+3. Type `/fix`. It should ask what is broken instead of guessing.
 
-**Rather have an AI do it?** Paste this into Claude Code, or any coding agent that can run
-commands. It does the same steps and adds the twelve skills from other repos.
+> [!WARNING]
+> The script replaces `CLAUDE.md`, `settings.json`, `statusline.sh` and any skill of yours with
+> the same name as one here, and `~/.codex/AGENTS.md` if Codex is installed (its old copy is kept beside it). The dated backup it
+> writes first is the only way back.
+>
+> The secret guard makes git use this repo's hooks for every repo on the machine, so your own
+> `.git/hooks` stop running. Undo with `git config --global --unset core.hooksPath`. If git
+> already has a hooks folder set, the script leaves it alone and prints the one line to run instead.
+>
+> Claude may open, merge and release pull requests on GitHub without asking. A hook still blocks
+> its pushes straight to `main`, and it asks before a force push or deleting a repo or release.
+> To be asked every time, move the `gh` and `git` lines from `allow` to `ask` in
+> `~/.claude/settings.json` (redo after each update).
+
+<details>
+<summary><strong>Have an AI install it instead</strong></summary>
+
+Paste this into Claude Code, or any coding agent that can run commands. It does the same steps
+and adds the twelve skills from other repos.
 
 ```text
 Install no-yolo on this machine. Clone https://github.com/holland-built/no-yolo.git to
@@ -54,25 +71,7 @@ Do not change anything else. When it is done, tell me what the install script ba
 what it installed, and anything that failed, then remind me to restart Claude Code.
 ```
 
-> [!WARNING]
-> The script replaces files in `~/.claude`. A skill of your own with the same name as one here
-> is overwritten, and so are `CLAUDE.md`, `settings.json` and `statusline.sh`. The dated backup
-> folder it writes first is the only way back.
->
-> If Codex is installed, `~/.codex/AGENTS.md` is replaced too. The old one is kept beside it with
-> the date in its name.
->
-> The secret guard also stops any hook of your own in a repo's `.git/hooks` from running,
-> because git uses one hooks folder at a time for the whole machine. Undo that with
-> `git config --global --unset core.hooksPath`.
->
-> The settings also let Claude work on GitHub without asking you first. It can open and merge
-> pull requests, watch CI runs, make releases, tag, and push branches. A hook stops its ordinary
-> pushes straight to `main` or `master`, so changes go through a pull request. The rules tell it that a job is
-> only done once the pull request is merged and released. It still asks before a force push or
-> before deleting a repo or a release. To be asked each time, move the `gh` and `git` lines from
-> `allow` to `ask` in `~/.claude/settings.json`. Running `install.sh` again puts them back, so
-> redo this after each update.
+</details>
 
 <details>
 <summary><strong>Do the same by hand instead</strong></summary>
@@ -217,7 +216,7 @@ A Codex review running in another window at that moment stops. The next one star
 
 [Orca](https://github.com/stablyai/orca) is a desktop app that runs Claude and Codex side by side,
 each in its own copy of your project. With it, Claude hands separate coding jobs to helper
-agents in Orca tabs and combines their work when they report back (see **Workflows** and the
+agents in Orca tabs and combines their work when they report back (see **Use cases** and the
 **Manage, don't do** rule below). **No Orca? Skip this.** Claude does the jobs one after another itself and says so.
 
 Download it from [orca.dev/download](https://orca.dev/download) (Mac, Windows, Linux), or on a Mac:
@@ -333,59 +332,42 @@ The uninstall leaves your TypeSafe key alone, because other tools can use it. De
 
 </details>
 
-## The twenty-one commands
+## Use cases
 
-Type the slash command, or just say the word. Both work.
-
-| Command | What it's for |
-|---|---|
-| `/better` | turn a rough ask into a better prompt, then run it |
-| `/build` | you want something new made; a new page gets a design check without asking |
-| `/improve` | make a page or app you already have better, tested on a phone and a computer |
-| `/fix` | something is broken or slow |
-| `/handoff` | you're stopping halfway |
-| `/retro` | look back at a session and suggest changes so the next one goes better (from [mattpocock/skills](https://github.com/mattpocock/skills), MIT) |
-| `/short` | the last reply was too long; redo it with the next step first |
-| `/resume` | write, tune or check a resume |
-| `/github-readme` | tidy a repo and its README for GitHub |
-| `/write-doc` | write a guide, report, email or post someone will read, or shorten one you have |
-| `/find-skills` | find a skill someone else has made |
-| `/skill-audit` | see which skills you use, which to drop, and which are out of date |
-| `/writing` | you're writing rules for an AI |
-| `/humanizer` | your writing sounds like an AI wrote it |
-| `/site-design` | you need a page designed |
-| `/dashboard-design` | design or check a dashboard, status page or metrics screen |
-| `/demo-voiceover` | add a spoken voiceover to a demo video |
-| `/last-30` | what changed lately |
-| `/claude-video` | summarise a YouTube video |
-| `/archify` | draw a diagram of a system |
-| `/frontend-design` | give a page a deliberate look |
-
-`/improve` picks from seven design checklists by itself (`better-interface`, `better-accessibility`,
-`better-layout`, `better-writing`, `better-typography`, `better-colors`, `better-ui`), so you never
-have to remember them. You can still type any of them on its own.
-
-`/dashboard-design` is adapted from Otabek Abdiraimov's
-[dashboard-design-skill](https://github.com/abdiraimov-otabek/dashboard-design-skill) (MIT, licence in
-`skills/dashboard-design/LICENSE`).
-
-## Workflows
+Type the command and what you want, or just say it in plain words. Both work.
 
 | Type this | What happens |
 |---|---|
-| `/site-design a landing page for a bakery` | Claude builds three versions and shows them side by side. Pick one, then type `/build it, using version 2`. |
-| `/fix the login page throws a 500` | Claude reproduces the error first, shows you the cause, fixes it, then shows it working. |
-| `/improve the checkout page feels clunky` | Claude tries the page on a phone and a computer first, picks the design checks that fit, gets Codex and Fable to agree on each change, ships it, and tests again until it passes. |
-| `/dashboard-design is the overview page clear at a glance?` | Claude sums the page up in one line, says what works, then lists what to fix, worst first. |
-| `/improve just the colors` | Only the matching checklist runs. Problems it finds elsewhere are listed, not fixed. |
-| `/better make my dashboard look nicer` | Claude rewrites your ask around what you want to end up with, shows you the new version, and runs it when you say go. |
-| `/skill-audit` | Claude counts how often you used each skill and suggests which to keep, hide or delete. It also lists skills from other repos that have a newer version, and tests which skill Claude picks for about twenty everyday asks. It changes nothing until you choose. Once a month is about right. |
-| `/handoff` | Running out of time? It writes down where you got to, so tomorrow you don't re-explain anything. |
-| `fix the login error, add a Save button, and add dark mode` | With Orca, Claude gives each job to its own helper in its own tab, at most three at once. Each helper works in its own copy of the project, so they don't get in each other's way while they work. Claude then combines their work one at a time, sorts out any clash, tests it, and ships it as one pull request (a change GitHub checks before it goes in). You get one line per helper. |
-| `why is the login page so slow?` | A question that needs digging goes to a reading helper, which looks and reports back. The main chat stays free for your next message. |
-| `1 2` | Your answer when Claude is waiting on you: one number per question, in order. See **How it talks to you**. |
+| `/fix the login page throws a 500` | Reproduces the error, shows you the cause, fixes it, shows it working |
+| `/build a Save button on the settings page` | Agrees what it should do, has a second AI attack the plan, builds it, shows it running |
+| `/improve the checkout page feels clunky` | Tests it on a phone and a computer, fixes the worst problems, tests again until they pass |
+| `/improve just the colors` | Runs only the color checks; other problems are listed, not fixed |
+| `/site-design a landing page for a bakery` | Builds three versions side by side. Then `/build it, using version 2` |
+| `/dashboard-design is the overview clear at a glance?` | One-line verdict, what works, then fixes worst first |
+| `/better make my dashboard look nicer` | Rewrites your ask around what you want to end up with, runs it on your go |
+| `/short` | Redoes the last reply shorter, next step first |
+| `/handoff` | Writes down where you got to, so tomorrow you don't re-explain |
+| `/retro` | Looks back at a session and suggests what to change next time |
+| `/write-doc a quick start for the new laptop setup` | A guide, report, email or post someone will read |
+| `/github-readme` | Tidies a repo and its README for GitHub |
+| `/resume tailor mine to this job post` | Writes, tunes or checks a resume, without inventing facts |
+| `/last-30 Claude Code` | What changed in a tool in the last 30 days |
+| `/claude-video <YouTube link>` | Summarises a video into your notes |
+| `/skill-audit` | Which skills you use, which to drop, which are out of date. Changes nothing until you choose |
+| `/writing`, `/humanizer` | Write rules for an AI; make your writing sound less like an AI |
+| `/demo-voiceover`, `/archify`, `/frontend-design`, `/find-skills` | Narrate a demo video; draw a system diagram; give a page its own look; find someone else's skill |
+| `fix the login error, add a Save button, and add dark mode` | With Orca, each job goes to its own helper, up to three at once. Each change goes live as soon as it's tested, and you get a "Live: test this" note for each |
+| `why is the login page so slow?` | A reading helper digs and reports back; the main chat stays free |
+| `1 2` | Your answer when Claude is waiting on you: one number per question |
 
-## What's in here
+`/improve` picks from seven design checklists by itself (`better-*`), so you never have to
+remember them. `/retro` is from [mattpocock/skills](https://github.com/mattpocock/skills) (MIT).
+`/dashboard-design` is adapted from
+[dashboard-design-skill](https://github.com/abdiraimov-otabek/dashboard-design-skill) (MIT, licence
+in `skills/dashboard-design/LICENSE`).
+
+<details>
+<summary><strong>What's in here</strong></summary>
 
 | File | What it does |
 | --- | --- |
@@ -400,28 +382,16 @@ have to remember them. You can still type any of them on its own.
 | `scripts/` | Run when Claude starts: tidies stray Codex processes, deletes finished Orca helper copies and merged branches, and catches your project up with GitHub |
 | `hooks/` | The pre-commit guard that refuses a commit holding a secret, and the Claude hook that blocks pushes straight to `main` |
 
+</details>
+
 ## How it talks to you
 
-`output-styles/action-first.md` shapes every reply for a busy reader who acts on it. It is adapted
-from Ayoub Ghriss's [i-have-adhd](https://github.com/ayghri/i-have-adhd) skill (MIT, licence in
-`output-styles/action-first.LICENSE`), renamed and turned into an output style so it runs in every
-session without being typed.
+The first line is the next thing you can do. Steps are numbered, one action each. A normal reply
+is six sentences or fewer (twelve when it explains), in your words, not tool words. Four fixed
+blocks tell you where things stand.
 
-The first line is the next thing you can do. Steps come as a numbered list with one action each,
-and on a long job each update says where things stand ("step 3 of 5 done"). Time estimates use
-real units such as "10 minutes" or "an afternoon". A side issue waits until the main one is
-finished. Replies skip the opening filler and the closing recap, and they don't end by asking
-whether you need anything else.
-
-There is a length limit too. A normal reply is six sentences or fewer, and a reply that explains or
-compares gets twelve. The limit holds in every folder, including the report at the end of a long job.
-The fixed blocks below don't count toward it.
-
-It uses your words, not tool words. A technical word appears only after you've used it, or with a
-few words of explanation the first time, and one thing keeps one name for the whole chat.
-
-When it needs you to choose, every question comes in one block at the top, each with numbered
-options and the recommended one first. You answer with one number per question:
+When it needs you to choose, every question comes in one block, with the recommended option
+first. You answer with one number per question:
 
 ```text
 ------------------------- Waiting on you -------------------------
@@ -436,18 +406,16 @@ Dark mode
 Reply with one number per question, in order. Example: 1 2
 ```
 
-When helpers are working, you get one line about each as it finishes:
+Each helper's change goes live as soon as it's tested, with one thing to try while the others
+keep working:
 
 ```text
-login-fix: done and live. Nothing for you. Its tab closes now.
-dark-mode: failed 2 times (the page tests broke). See the question above.
+------------------------- Live: test this -------------------------
+The Save button now keeps your changes when you leave the page
+Try: on your phone, edit your name, tap Save, then reload
 ```
 
-A helper's own tab never asks you anything. It ends with
-`Handed to the main chat. Nothing for you here.`, so you know you can ignore it.
-
-Every piece of real work ends with one of two banners, so you can tell at a glance whether it is
-safe to close the chat:
+Every piece of real work ends with Done or Not done yet, so you know if it's safe to close:
 
 ```text
 ------------------------------ Done ------------------------------
@@ -455,13 +423,23 @@ Live: the login page no longer shows an error after a wrong password
 Safe to close. Nothing is running, nothing is waiting on you.
 ```
 
-```text
-------------------------- Not done yet --------------------------
-Still running: two helpers, about 10 minutes
-```
+<details>
+<summary><strong>More on the reply style</strong></summary>
 
-Done appears only when the work is live, nothing is still running, and nothing is left for later.
-Codex gets the same reply style, so its answers look the same.
+`output-styles/action-first.md` is adapted from Ayoub Ghriss's
+[i-have-adhd](https://github.com/ayghri/i-have-adhd) skill (MIT, licence in
+`output-styles/action-first.LICENSE`), turned into an output style so it runs in every session.
+
+- Long jobs say where they stand ("step 3 of 5 done") and give times in real units.
+- A side issue waits until the main one is finished. No opening filler, recap or "anything else?".
+- A technical word appears only after you've used it, and one thing keeps one name all chat.
+- Not done yet looks like `Still running: two helpers, about 10 minutes`.
+- A helper's own tab never asks you anything. It ends with
+  `Handed to the main chat. Nothing for you here.`, and a helper that fails gets one line in the
+  main chat, such as `dark-mode: failed 2 times (the page tests broke). See the question above.`
+- Codex gets the same style, so its answers look the same.
+
+</details>
 
 ## The rules it follows
 
@@ -476,7 +454,7 @@ The rules live in `CLAUDE.md` and `shared/AGENTS.md`. What each one stops:
 | **Every change through a pull request** | Changes that skip CI and review. It works on a branch and opens a pull request; a hook blocks its ordinary pushes straight to `main` or `master`. |
 | **Goal-driven execution** | "Make it work" as a finish line. It says up front what test or command will prove it, then runs that check. |
 | **Work around a blocker, then wait** | Sitting waiting. Blocked on one thing, it finishes everything that does not depend on it, then reports. |
-| **Manage, don't do** | One chat buried in one task while your next request waits. The main Claude hands each coding job to a helper in its own copy of the repo in [Orca](https://github.com/stablyai/orca), at most three at once, and sends questions that need digging to a reading helper. Helpers report back; it combines their work one at a time, tests after each, ships it all as one pull request, and closes each helper when its work is in. When a helper needs you, its question comes to the main chat as a short "Waiting on you" line saying what to reply, and the helper's copy is marked in Orca's sidebar. Without Orca, outside a git repo, or for a one-line change, it does the work itself and says so. |
+| **Manage, don't do** | One chat buried in one task while your next request waits. The main Claude hands each coding job to a helper in its own copy of the repo in [Orca](https://github.com/stablyai/orca), at most three at once. As each reports, it merges, tests and ships that change live right away, one at a time, and tells you what to test. It ships finished work before it asks you anything, so nothing waits behind a question. Without Orca, outside a git repo, or for a one-line change, it does the work itself and says so. |
 | **Confer with Codex** | Trusting its own plan. Before anything expensive, a second AI attacks the plan first. |
 | **Check big jobs as they go** | Finding a wrong turn only at the end. On a job of more than about five steps or about an hour, Fable and Codex's Astra each write a plan, then take turns giving a quick yes-or-no check after each major step, and Codex reviews the finished work. |
 | **Read before describing** | Describing your setup from memory. It opens the file first. |
