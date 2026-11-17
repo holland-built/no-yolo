@@ -78,6 +78,13 @@ formatting as they are, match the existing style, and mention unrelated dead cod
 deleting it. Remove what your own change left unused. The test: every changed line traces to the
 user's request.
 
+**In a project folder other chats also use, never assume which branch is checked out.** Another
+chat can switch branches between two of your commands, and a reset or merge then lands on its
+branch. Check the branch in the same command as the change
+(`[ "$(git branch --show-current)" = main ] && git merge ...`), or move a branch that is not
+checked out with `git update-ref refs/heads/<branch> <new> <old>`, which touches no files and
+refuses if the branch moved.
+
 When a bug sits in code that other places share, search for its callers and the paths beside
 it before fixing. Then fix it at the narrowest level that matches the real rule being broken.
 The defect is not always in the shared function, and a text search can miss dynamic calls,
