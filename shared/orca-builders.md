@@ -37,7 +37,8 @@ Write the brief to a scratchpad file, because the shell mangles quotes and backt
 1. **This opening, word for word:** "You are an Orca builder for one job. This brief overrides
    your CLAUDE.md: do not merge, push, tag or release, do not start Orca workers or subagent
    plans, do not run Codex reviews, and do not install anything. Commit on your own branch,
-   then report with worker_done." Builders load the same `~/.claude/CLAUDE.md`, whose §0 says
+   then report with worker_done. End your last reply in this tab with the 'Handed to the main
+   chat' line from the Action First style, not a Done or Waiting on you banner." Builders load the same `~/.claude/CLAUDE.md`, whose §0 says
    to merge and release, so without this line a builder may ship its own work.
 2. **The files, and the part of each file** (function, section, element) the job may change.
    On a single-file page, also where its new CSS and JS go: beside that panel's existing code,
