@@ -137,11 +137,11 @@ because otherwise the user cannot tell whether a helper still needs them:
 
 ```text
 <helper>: done and live. Nothing for you. Its tab closes now.
-<helper>: failed <n> times (<why, in plain words>). Reply: retry, or drop it
+<helper>: failed <n> times (<why, in plain words>). See the question above.
 ```
 
-A helper that is waiting on the user already has its "Waiting on you" block, so it gets no
-second line.
+A failed helper's "retry, or drop it" goes in the "Waiting on you" block as a numbered
+question, and a helper already waiting on the user gets no second line.
 
 Then close the turn with the Done or Not done yet banner from the Action First style (rule 12).
 

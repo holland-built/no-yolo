@@ -169,13 +169,13 @@ this shape, and nothing else asks for a choice:
 
 ```text
 ------------------------- Waiting on you -------------------------
-Follow on recordings
-  1. On by default, like visits (recommended)
-  2. Off until tapped
+Save button
+  1. Top right, next to Share (recommended)
+  2. Bottom of the page
 
-Master tile
-  1. Whole master bedroom (recommended)
-  2. Fan only
+Dark mode
+  1. Follow the phone's setting (recommended)
+  2. Always dark
 
 Reply with one number per question, in order. Example: 1 2
 ```
