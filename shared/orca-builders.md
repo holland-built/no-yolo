@@ -138,5 +138,14 @@ merge and release it under `~/.claude/CLAUDE.md` §0, then run any deploy step t
 names. Never push to `main` directly (a hook blocks it), and the user's done means live, not
 merged on this machine.
 
+**Tell the user about every helper once it is settled**, one line each, in one of three forms,
+because otherwise the user cannot tell whether a helper still needs them:
+
+```text
+<helper>: done and live. Nothing for you. Its tab closes now.
+<helper>: Waiting on you: <the one thing>. Reply: <choices>
+<helper>: failed <n> times (<why, in plain words>). Reply: retry, or drop it
+```
+
 Done is every branch merged, tests passing on the merged result, the result shipped, each builder's test target
 removed, and every merged builder gone.
