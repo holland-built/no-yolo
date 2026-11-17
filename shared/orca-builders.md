@@ -98,9 +98,11 @@ Say in one line which agent has which job, then end your turn. Orca wakes you; d
   approve. Also mark the copy it concerns (the helper's, or your own for a decision of yours) in
   Orca's sidebar, so the user sees it there too: `orca worktree set --worktree <selector>
   --unread --comment "Waiting on you: <the one thing>"`, cleared with `--read --comment ""` once
-  answered. First finish any work that does not need the answer, such as merging and testing
-  helpers that already reported (§5), then end your turn with the question block at the top of
-  that reply; Orca sends its notification when your turn ends.
+  answered. First finish any work that does not need the answer, such as merging, testing and
+  shipping helpers that already reported (§5), then end your turn with the question block at the
+  top of that reply; Orca sends its notification when your turn ends. Ask in that text block, not
+  with the AskUserQuestion dialog: the dialog freezes this chat until the user answers, and on
+  2026-11-17 three finished builders sat unshipped for over an hour behind one zoom question.
 - **A builder waiting on a permission prompt** (`worker-show` reports `agentWait`): a
   question in the "Waiting on you" block naming its tab. Never answer it through its terminal.
 - **A report:** first commit or finish your own current step, so the merge lands on a clean
