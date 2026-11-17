@@ -96,9 +96,8 @@ Internal documents use one plain sans-serif font, one dark accent colour for hea
 white background. Customer-facing documents use the company's brand. A company template's own
 fonts and colours win over both.
 
-The banned styles in `~/.claude/shared/AGENTS.md` §7 apply to every document, because they are
-what make generated pages look generated. "01 / 02 / 03" section labels are allowed only when a
-company template already uses them.
+The banned styles in `~/.claude/shared/AGENTS.md` §7 apply to every document, with its
+exceptions, because they are what make generated pages look generated.
 
 ## Keep out
 

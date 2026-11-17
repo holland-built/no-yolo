@@ -1,9 +1,9 @@
 # Orca builders: parallel coding jobs
 
-Read by Claude when `~/.claude/CLAUDE.md` §5 sends two or more coding jobs to Orca. A builder
-is an Orca orchestration worker (Claude or Codex) in its own child worktree, a separate copy of
-the repo. The main session is the owner: it starts builders, answers them, merges their work
-and reports to the user.
+Read by Claude when `~/.claude/CLAUDE.md` §5 sends coding jobs to Orca. A builder is an Orca
+orchestration worker (Claude or Codex) in its own child worktree, a separate copy of the repo.
+The main session starts builders, answers them, merges their work and reports to the user. These
+instructions say "builder"; anything the user reads says "helper", their word for it.
 
 ## Before starting
 
@@ -87,11 +87,9 @@ Say in one line which agent has which job, then end your turn. Orca wakes you; d
 - **A question:** answer with `orca orchestration reply --id <message_id> --body "<answer>"`
   when the brief or the user's words settle it. Otherwise relay it to the user, then pass their
   answer back with the same `reply`. Finish your current edit first; the builder waits.
-- **Merging, pushing and releasing never wait on the user.** They are your job under
-  `~/.claude/CLAUDE.md` §0, so they never appear as a "Waiting on you" item.
 - **Anything that waits on the user** (a relayed question, a permission prompt in a builder's
-  tab, a decision of your own) goes in this shape, at the top of your reply and in the `/short`
-  style, because the user has said they often cannot tell whether a helper needs them or what
+  tab, a decision of your own; never a merge, push or release, which are your job under §0)
+  goes in this shape, at the top of your reply, because the user has said they often cannot tell whether a helper needs them or what
   it is asking:
 
   ```text
@@ -101,10 +99,10 @@ Say in one line which agent has which job, then end your turn. Orca wakes you; d
 
   One block per waiting item, nothing above them. A permission prompt cannot be relayed, so its
   block says which Orca tab to open and what to approve. Then also mark the copy it concerns
-  (the helper's, or your own for a decision of yours) in Orca's sidebar, so the user sees it there too: `orca worktree set --worktree <selector>
-  --unread --comment "Waiting on you: <the one thing>"`, and clear it with `--read --comment ""`
+  (the helper's, or your own for a decision of yours) in Orca's sidebar, so the user sees it
+  there too: `orca worktree set --worktree <selector> --unread --comment "Waiting on you: <the one thing>"`, and clear it with `--read --comment ""`
   once answered. First finish any work that does not need the answer, such as merging and
-  testing helpers that already reported (§5, never idle), then end your turn with the blocks at
+  testing helpers that already reported (§5), then end your turn with the blocks at
   the top of that reply; Orca sends its notification when your turn ends.
 - **A builder waiting on a permission prompt** (`worker-show` reports `agentWait`): a
   "Waiting on you" block naming its tab. Never answer it through its terminal.
@@ -133,21 +131,22 @@ helpers gone, not piling up as tabs and folders: release it with
 branch, so nothing is lost. Keep a builder only when its work was not merged (it failed, or
 the user is still talking to it in its tab) and name those to the user.
 
-Then ship the merged result as one pull request: push your branch, `gh pr create --fill`, and
-merge and release it under `~/.claude/CLAUDE.md` §0, then run any deploy step the project's README
-names. Never push to `main` directly (a hook blocks it), and the user's done means live, not
-merged on this machine.
+Then ship the merged result as one pull request under `~/.claude/CLAUDE.md` §0, and run any
+deploy step the project's README names, because the user's done means live, not merged on this
+machine.
 
-**Tell the user about every helper once it is settled**, one line each, in one of three forms,
+**Tell the user about every helper once it is settled**, one line each, in one of two forms,
 because otherwise the user cannot tell whether a helper still needs them:
 
 ```text
 <helper>: done and live. Nothing for you. Its tab closes now.
-<helper>: Waiting on you: <the one thing>. Reply: <choices>
 <helper>: failed <n> times (<why, in plain words>). Reply: retry, or drop it
 ```
 
+A helper that is waiting on the user already has its "Waiting on you" block, so it gets no
+second line.
+
 Then close the turn with the Done or Not done yet banner from the Action First style (rule 12).
 
-Done is every branch merged, tests passing on the merged result, the result shipped, each builder's test target
-removed, and every merged builder gone.
+Done is every branch merged, tests passing on the merged result, the result shipped, each
+builder's test target removed, and every merged builder gone.

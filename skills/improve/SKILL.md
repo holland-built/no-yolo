@@ -11,9 +11,8 @@ pages and web apps, on a phone and on a desktop browser, because the user uses b
 
 ## What the user actually asks for
 
-On the user's own camera web app, most requests were about
-behavior: the timeline not following a scroll, taps that do nothing, zoom, wrong times, video
-quality. Colors and fonts almost never came up. The complaint that came up again and again was
+Most of the user's requests are about behavior (scrolling, taps that do nothing, zoom, wrong
+times), not colors and fonts. The complaint that came up again and again was
 "you fixed one tiny thing and didn't look at everything" and "did you even test it". So test
 behavior on a real screen size first, judge looks second, and sweep the whole app for the same
 problem once one is found.
@@ -54,9 +53,8 @@ Behavior has no checklist skill; the task list below is its checklist.
   Claude and Codex the same screenshots, and merge their findings into one list per screen. A
   screenshot the user took on their own phone beats a headless one. The user asked for this
   several times before it was written down. A deep run is a big job, so after each screen ask one
-  checker, taking turns: Fable (Agent tool, `subagent_type: "Plan"`, `model: "fable"`,
-  `effort: "low"`) or Astra (the `codex exec` command below with `-c model=gpt-6-astra
-  -c model_reasoning_effort=low`). Ask only "Is anything off-plan or broken? Yes or no, then one
+  checker, taking turns: Fable or Astra at low effort, called as `~/.claude/shared/codex.md`
+  says. Ask only "Is anything off-plan or broken? Yes or no, then one
   line", and check a yes against the page before acting on it. This low effort is for these checks
   only; Fable's part in agreeing on changes stays at medium.
 
@@ -92,6 +90,8 @@ run commands or open files, and it does not have the checklist skills, so paste 
 and the relevant rule lines from the loaded checklists into the prompt, and attach screenshots by
 absolute path. The prompt goes after `--`, or the last image flag reads it as a file:
 
+Use the reviewer command in `~/.claude/shared/codex.md`, adding the screenshots:
+
 ```bash
 codex exec --skip-git-repo-check --sandbox read-only \
   -c model=gpt-6.1-sol -c model_reasoning_effort=medium \
@@ -99,10 +99,8 @@ codex exec --skip-git-repo-check --sandbox read-only \
   "<goal in the user's words>. <task results>. <code excerpt>. Review against these rules: <pasted rule lines>. List problems a user would hit, most serious first." < /dev/null
 ```
 
-`< /dev/null` is required, and empty output means it failed, not that it agreed.
-
-The user's rule: no code until Codex and Fable (Agent tool, `subagent_type: "Plan"`,
-`model: "fable"`, `effort: "medium"`) agree on each change. Send all items in one prompt per round and argue only the
+The user's rule: no code until Codex and Fable (at medium effort) agree on each change. This
+skill's review rule wins over the general one in `CLAUDE.md` §6. Send all items in one prompt per round and argue only the
 ones they disagree on; at most three rounds on any item. If they still disagree, pick
 against criteria in the user's own words where possible ("easy for anyone at home", "highest quality video",
 "fewer buttons", "works one-handed on an iPhone"): tell the user the pick and the reason in one line
@@ -121,8 +119,8 @@ same or neighbouring lines stay in this session, one after another, and you say 
 
 ## Ship live, then test back and forth
 
-The user's rule, given as standing approval on 2026-11-02: each agreed fix goes live as soon as it
-is made, without asking first. Live means wherever the
+The user's standing approval: each agreed fix goes live as soon as it is made, without asking
+first. Live means wherever the
 project's own deploy steps put it (its README says how); if the project has none, ask once where
 live is. Before the first edit, write undo steps the way the project already does (for example a dated
 entry in an `UNDO.md` file), because live changes need a way back.
