@@ -121,8 +121,15 @@ Say in one line which agent has which job, then end your turn. Orca wakes you; d
 
 **Ship each branch as soon as it is merged and tested; do not hold it for the others.** Give it its
 own pull request under `~/.claude/CLAUDE.md` §0 and run the project's deploy step right away, then
-tell the user in one line what to test, because the user hates waiting and wants to try each
-change while the other builders are still working. Builders still never merge or deploy their own
+tell the user what to test, because the user hates waiting and wants to try each change while the
+other builders are still working. Use this banner, in plain everyday words with no code names,
+file names or jargon, one line each:
+
+```text
+------------------------- Live: test this -------------------------
+<what changed, as the user would say it>
+Try: <one thing to do, and where, on phone or computer>
+``` Builders still never merge or deploy their own
 work: several of them share live files such as `index.html`, and one owner keeps them from
 overwriting each other. Merge and ship one branch at a time, so a break points at one change.
 
