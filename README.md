@@ -217,8 +217,8 @@ A Codex review running in another window at that moment stops. The next one star
 
 [Orca](https://github.com/stablyai/orca) is a desktop app that runs Claude and Codex side by side,
 each in its own copy of your project. With it, Claude hands separate coding jobs to helper
-agents in Orca tabs and combines their work when they report back (see **Build in parallel**
-below). **No Orca? Skip this.** Claude does the jobs one after another itself and says so.
+agents in Orca tabs and combines their work when they report back (see **Workflows** and the
+**Manage, don't do** rule below). **No Orca? Skip this.** Claude does the jobs one after another itself and says so.
 
 Download it from [orca.dev/download](https://orca.dev/download) (Mac, Windows, Linux), or on a Mac:
 
@@ -381,6 +381,9 @@ have to remember them. You can still type any of them on its own.
 | `/better make my dashboard look nicer` | Claude rewrites your ask around what you want to end up with, shows you the new version, and runs it when you say go. |
 | `/skill-audit` | Claude counts how often you used each skill and suggests which to keep, hide or delete. It also lists skills from other repos that have a newer version, and tests which skill Claude picks for about twenty everyday asks. It changes nothing until you choose. Once a month is about right. |
 | `/handoff` | Running out of time? It writes down where you got to, so tomorrow you don't re-explain anything. |
+| `fix the login error, add a Save button, and add dark mode` | With Orca, Claude gives each job to its own helper in its own tab, at most three at once. Each helper works in its own copy of the project, so they don't get in each other's way while they work. Claude then combines their work one at a time, sorts out any clash, tests it, and ships it as one pull request (a change GitHub checks before it goes in). You get one line per helper. |
+| `why is the login page so slow?` | A question that needs digging goes to a reading helper, which looks and reports back. The main chat stays free for your next message. |
+| `1 2` | Your answer when Claude is waiting on you: one number per question, in order. See **How it talks to you**. |
 
 ## What's in here
 
@@ -412,6 +415,53 @@ whether you need anything else.
 
 There is a length limit too. A normal reply is six sentences or fewer, and a reply that explains or
 compares gets twelve. The limit holds in every folder, including the report at the end of a long job.
+The fixed blocks below don't count toward it.
+
+It uses your words, not tool words. A technical word appears only after you've used it, or with a
+few words of explanation the first time, and one thing keeps one name for the whole chat.
+
+When it needs you to choose, every question comes in one block at the top, each with numbered
+options and the recommended one first. You answer with one number per question:
+
+```text
+------------------------- Waiting on you -------------------------
+Save button
+  1. Top right, next to Share (recommended)
+  2. Bottom of the page
+
+Dark mode
+  1. Follow the phone's setting (recommended)
+  2. Always dark
+
+Reply with one number per question, in order. Example: 1 2
+```
+
+When helpers are working, you get one line about each as it finishes:
+
+```text
+login-fix: done and live. Nothing for you. Its tab closes now.
+dark-mode: failed 2 times (the page tests broke). See the question above.
+```
+
+A helper's own tab never asks you anything. It ends with
+`Handed to the main chat. Nothing for you here.`, so you know you can ignore it.
+
+Every piece of real work ends with one of two banners, so you can tell at a glance whether it is
+safe to close the chat:
+
+```text
+------------------------------ Done ------------------------------
+Live: the login page no longer shows an error after a wrong password
+Safe to close. Nothing is running, nothing is waiting on you.
+```
+
+```text
+------------------------- Not done yet --------------------------
+Still running: two helpers, about 10 minutes
+```
+
+Done appears only when the work is live, nothing is still running, and nothing is left for later.
+Codex gets the same reply style, so its answers look the same.
 
 ## The rules it follows
 
