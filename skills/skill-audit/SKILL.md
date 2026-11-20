@@ -82,7 +82,9 @@ updates them, and the user will not remember which ones those are. Each has one 
 | Plugin skills | `claude plugin marketplace update` | `claude plugin update <plugin>` |
 
 Put a "Updates" section in the report listing what is behind and by how much. After the user says
-yes, run the updates, then rerun `trigger_test.py`, because an updated description can change
+yes, run the updates, then `python3 apply_descriptions.py` to put back the short descriptions
+in `short_descriptions.json` (an update restores the long upstream ones, which Claude Code's
+skill list cuts), then rerun `trigger_test.py`, because an updated description can change
 which skill loads. Report what changed. A skill with local edits never goes through an automatic
 update; check `git log` for edits made after its install commit first.
 

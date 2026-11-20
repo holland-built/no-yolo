@@ -1,6 +1,6 @@
 ---
 name: better
-description: Turn the user's rough ask into a sharper prompt, show it, then run it on their go. Use when the user types /better followed by an ask, or says make my prompt better, improve this ask, how should I ask this, rewrite my prompt, or prompt this better.
+description: "Use when the user types /better followed by an ask, or says make my prompt better, improve this ask, how should I ask this, rewrite my prompt, or prompt this better. Sharpens the ask, shows it, and runs it on their go."
 ---
 
 # better

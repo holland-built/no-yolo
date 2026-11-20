@@ -1,6 +1,6 @@
 ---
 name: handoff
-description: Write the current session down so a fresh one can carry on without the user re-explaining anything. Use when a session is getting long, running out of context, ending unfinished, or when the user says hand off, write this up, or pick this up tomorrow.
+description: "Use when a session is getting long, running out of context or ending unfinished, or the user says hand off, write this up, or pick this up tomorrow. Writes the session down so a fresh one can carry on."
 ---
 
 # handoff

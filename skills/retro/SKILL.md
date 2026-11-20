@@ -1,6 +1,6 @@
 ---
 name: retro
-description: "Conduct a retrospective on a coding session."
+description: "Use when the user asks for a retro or retrospective on a coding session."
 disable-model-invocation: true
 ---
 

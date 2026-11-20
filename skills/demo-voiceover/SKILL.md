@@ -1,6 +1,6 @@
 ---
 name: demo-voiceover
-description: Add a spoken voiceover to a ui-demo screen recording, so the demo video talks as well as showing captions. Use with the ui-demo skill whenever the user wants a demo, walkthrough or tutorial video that is narrated, voiced, talks, has audio, or has a voiceover, and to add a voiceover to a demo recorded earlier.
+description: "Use with ui-demo when the user wants a demo, walkthrough or tutorial video that is narrated, voiced, talks, has audio or has a voiceover, or wants a voiceover added to a demo recorded earlier."
 ---
 
 # demo-voiceover

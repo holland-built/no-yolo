@@ -1,6 +1,6 @@
 ---
 name: resume
-description: Write, expand, tune or check a resume for the user or someone they are helping. Use when the user says resume, CV, tailor my resume, make it more professional, will it pass ATS, or hands over a resume file or a job posting. Built for students and early-career people with thin work history, and it never invents facts.
+description: "Use when the user says resume, CV, tailor my resume, make it more professional, will it pass ATS, or hands over a resume file or a job posting. Writes, expands or checks a resume for students and early-career people, and never invents facts."
 ---
 
 # resume

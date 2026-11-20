@@ -1,6 +1,6 @@
 ---
 name: grill-lite
-description: Interview the user in numbered rounds before building or deciding anything, then save the decisions in a short note. Use when the user says grill me, grill-lite, interview me, ask me your questions first, stress-test this plan, or wants to think a plan, purchase or idea through before acting.
+description: "Use when the user says grill me, grill-lite, interview me, ask me your questions first, stress-test this plan, or wants to think a plan, purchase or idea through before acting. Asks numbered rounds of questions, then saves the decisions in a short note."
 ---
 
 <!-- Based on mattpocock/skills (MIT): skills/productivity/grilling and skills/engineering/grill-with-docs, read 2026-11-20. Changed: questions use the Action First "Waiting on you" shape; only questions the user can judge; DECISIONS.md replaces the glossary and ADRs. -->

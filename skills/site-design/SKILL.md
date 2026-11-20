@@ -1,6 +1,6 @@
 ---
 name: site-design
-description: Design a page by building several variants and judging them side by side. Use when building or redesigning a page, landing page, dashboard, or screen, or when the user asks what something should look like.
+description: "Use when building or redesigning a page, landing page, dashboard or screen, or when the user asks what something should look like. Builds several variants and judges them side by side."
 ---
 
 # Site Design

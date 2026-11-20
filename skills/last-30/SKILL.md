@@ -1,6 +1,6 @@
 ---
 name: last-30
-description: Research what actually changed in a topic over the last 30 days and write a dated research note to ~/AI/research. Use for "what's new in X", "last 30 days of X", "catch me up on X", or when checking whether a tool/model/repo has shipped anything since it was last looked at.
+description: "Use for \"what's new in X\", \"last 30 days of X\", \"catch me up on X\", or to check whether a tool, model or repo has shipped anything since it was last looked at. Writes a dated research note to ~/AI/research."
 ---
 
 # last-30
