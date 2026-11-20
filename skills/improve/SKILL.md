@@ -1,6 +1,6 @@
 ---
 name: improve
-description: Make something that already exists better - a web page, web app, dashboard or screen, on phone and desktop. Picks the right design and behavior checklists itself (accessibility, layout, writing, type, color, polish, taste), tests it like a real user at phone and desktop size, has Codex and Fable agree before any code, ships each fix live and retests until it passes. Use when the user says improve, make it better, polish, clean it up, this feels off, it's clunky, the colors/layout/buttons/wording/fonts/spacing are bad, the animations feel janky or slow, or names a page and complains about how it looks or behaves. A web page that behaves wrong comes here even if the user says broken; /fix is for crashes, errors and things that are not pages. New things go to /build; for rewriting a prompt use /better.
+description: "Use when the user says improve, make it better, polish, clean it up, this feels off, it's clunky, the colors/layout/buttons/wording/fonts/spacing are bad, animations feel janky or slow, or complains about how an existing web page, app, dashboard or screen looks or behaves, Tests at phone and desktop size, fixes, ships and retests. A page that behaves wrong, like a button that does nothing, comes here even if the user says broken; /fix is for crashes, errors and things that are not pages. New things go to /build, prompts to /better."
 ---
 
 # improve

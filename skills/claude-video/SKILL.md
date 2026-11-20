@@ -1,6 +1,6 @@
 ---
 name: claude-video
-description: Watch a YouTube video and ingest it into the Knowledge Base vault - pulls the transcript, writes an immutable raw transcript, a wiki source page, updates topic pages and log.md. Use when given a YouTube URL to watch, ingest, summarise, or add to the vault. Also handles "just watch" (summarise in chat and stop).
+description: "Use when given a YouTube URL to watch, ingest, summarise or add to the Knowledge Base vault; \"just watch\" summarises in chat only. Writes the transcript, a source page, topic updates and the log."
 ---
 
 # claude-video
