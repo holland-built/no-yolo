@@ -5,7 +5,7 @@
 <p align="center">
 <a href="LICENSE"><img alt="MIT licence" src="https://img.shields.io/badge/licence-MIT-blue"></a>
 <img alt="macOS and Linux" src="https://img.shields.io/badge/macOS%20%7C%20Linux-supported-green">
-<img alt="twenty-one commands" src="https://img.shields.io/badge/commands-21-8A2BE2">
+<img alt="twenty-two commands" src="https://img.shields.io/badge/commands-22-8A2BE2">
 <a href="https://github.com/holland-built/no-yolo/releases"><img alt="latest release" src="https://img.shields.io/github/v/release/holland-built/no-yolo"></a>
 <img alt="last commit" src="https://img.shields.io/github/last-commit/holland-built/no-yolo">
 </p>
@@ -303,7 +303,7 @@ diff -rq skills ~/.claude/skills; diff -q CLAUDE.md ~/.claude/CLAUDE.md
 
 ```bash
 # take out the skills this repo installed, by name
-cd ~/.claude/skills && rm -rf better build claude-video demo-voiceover fix github-readme write-doc handoff improve jev-judge last-30 resume retro short site-design skill-audit writing humanizer archify find-skills i-have-adhd frontend-design ui-demo better-interface better-accessibility better-layout better-writing better-typography better-colors better-ui
+cd ~/.claude/skills && rm -rf better build claude-video dashboard-design demo-voiceover fix github-readme grill-lite write-doc handoff improve jev-judge last-30 resume retro short site-design skill-audit writing humanizer archify find-skills i-have-adhd frontend-design ui-demo better-interface better-accessibility better-layout better-writing better-typography better-colors better-ui
 # take out the copies the third-party skills install from
 cd ~/.agents/skills && rm -rf humanizer archify find-skills i-have-adhd frontend-design ui-demo better-interface better-accessibility better-layout better-writing better-typography better-colors better-ui
 # remove the Codex plugin
@@ -344,6 +344,7 @@ Type the command and what you want, or just say it in plain words. Both work.
 | `/improve just the colors` | Runs only the color checks; other problems are listed, not fixed |
 | `/site-design a landing page for a bakery` | Builds three versions side by side. Then `/build it, using version 2` |
 | `/dashboard-design is the overview clear at a glance?` | One-line verdict, what works, then fixes worst first |
+| `/grill-lite should I move the NAS to the garage?` | Asks you questions in numbered rounds before anything is built or bought, then saves the decisions in a short note |
 | `/better make my dashboard look nicer` | Rewrites your ask around what you want to end up with, runs it on your go |
 | `/short` | Redoes the last reply shorter, next step first |
 | `/handoff` | Writes down where you got to, so tomorrow you don't re-explain |
@@ -361,7 +362,7 @@ Type the command and what you want, or just say it in plain words. Both work.
 | `1 2` | Your answer when Claude is waiting on you: one number per question |
 
 `/improve` picks from seven design checklists by itself (`better-*`), so you never have to
-remember them. `/retro` is from [mattpocock/skills](https://github.com/mattpocock/skills) (MIT).
+remember them. `/retro` is from [mattpocock/skills](https://github.com/mattpocock/skills) (MIT), and `/grill-lite` is adapted from its grilling skills.
 `/dashboard-design` is adapted from
 [dashboard-design-skill](https://github.com/abdiraimov-otabek/dashboard-design-skill) (MIT, licence
 in `skills/dashboard-design/LICENSE`).
@@ -373,7 +374,7 @@ in `skills/dashboard-design/LICENSE`).
 | --- | --- |
 | `CLAUDE.md` | Rules Claude follows on every task |
 | `shared/` | The rules Claude and Codex share (`AGENTS.md`), which `CLAUDE.md` reads in, the script that builds Codex's copy, and `orca-builders.md`, the steps for running coding jobs in parallel in Orca |
-| `skills/` | Seventeen of the twenty-one commands above. `/humanizer`, `/archify`, `/find-skills` and `/frontend-design` install from their own repos |
+| `skills/` | Eighteen of the twenty-two commands above. `/humanizer`, `/archify`, `/find-skills` and `/frontend-design` install from their own repos |
 | `output-styles/action-first.md` | Shapes answers with the next step first and no recap |
 | `memory/` | Notes Claude keeps on how you like to work |
 | `settings.json` | Plugins, theme, status line, and merging pull requests without asking |
