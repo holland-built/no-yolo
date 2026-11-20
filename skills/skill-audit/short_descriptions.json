@@ -1,24 +1,87 @@
 {
-  "_why": "Skill updates overwrite these descriptions. apply_descriptions.py puts the short, trigger-first versions back, because Claude Code's skill list cuts long descriptions. Edit the text here, not in the skill.",
-  "archify": "Use when visualizing systems, API calls, pipelines, schemas, histories, timings, or everyday steps, parts and states as explorable HTML diagrams (architecture, workflow, sequence, data-flow, state, ERD, class, tree, timeline, waterfall), from requirements, Mermaid or the repo. Also turns an answer into a one-page explainer when the user asks for a page or explainer (做成一页, 用页面讲) or their rules opt in with an [archify explainer: ...] line. Not for dashboards.",
-  "better-accessibility": "Use when reviewing or fixing accessibility: keyboard and focus behavior, ARIA, accessible names, forms, screen-reader announcements, motion and zoom, against WCAG 2.2.",
-  "better-colors": "Use when building or checking a color system: generating palettes, naming semantic tokens, converting between formats and measuring contrast.",
-  "better-interface": "Use when reviewing a whole screen, flow or interface for problems across accessibility, layout, writing, typography, color and UI polish, returned as one ranked report.",
-  "better-layout": "Use when setting or reviewing grouping, alignment, reading order, responsive structure and room for translated text, so a layout holds up when resized, translated or mirrored.",
-  "better-typography": "Use when setting or reviewing how text renders: type scale, spacing, font features, wrapping, truncation and punctuation.",
-  "better-ui": "Use when polishing surfaces, icons and motion with exact values for border radius, optical alignment, shadows, icon states and animation.",
-  "better-writing": "Use when writing or reviewing interface copy (labels, errors, empty states, confirmations) so it matches the product's voice and tells people what to do next.",
-  "find-skills": "Use when the user asks \"how do I do X\", \"find a skill for X\", \"is there a skill that can...\", or wants to find and install an agent skill for a task.",
-  "frontend-design": "Use when building new UI or reshaping an existing one and it needs a distinctive, intentional visual direction: aesthetic choices, typography, and avoiding templated defaults.",
-  "humanizer": "Use when editing or reviewing prose for AI tells (not-X-but-Y contrasts, one-line closers, staged openers, forced triads, dashes everywhere, inflated claims, sales language, stock AI words, bold labels, filler). Rewrites it to read like the writer without changing what it says.",
-  "resume-tailor": "Use when tailoring a resume to a specific job posting, keeping every claim truthful.",
-  "ui-demo": "Use when the user asks for a demo, walkthrough, screen recording or tutorial video of a web app. Records a WebM with Playwright, a visible cursor and natural pacing.",
-  "web-design-guidelines": "Use when asked to \"review my UI\", \"check accessibility\", \"audit design\", \"review UX\", or \"check my site against best practices\". Reviews UI code against the Web Interface Guidelines.",
-  "orchestration": "Use when the user invokes /orchestration, asks for Orca workers or supervision (monitor, task DAGs, ask/reply, decision gates), asks to split, parallelize or fan out code changes across agents, worktrees or branches, or wants another agent to do work and report back (\"Have Codex review this and report back\"). Also when you are a dispatched worker (a prompt with Task and Dispatch IDs: ask, worker_done). Plain searches and reads stay with your own subagents; hand-offs with nothing expected back go to orca-cli.",
-  "orca-cli": "Use when the user says $orca-cli, Orca worktree, child worktree, spawn codex/claude in a worktree, read/wait/send Orca terminal, handoff, handover, give this to another agent, ask/tell/message another agent, or Orca browser, or to open, test or screenshot a web page while working in Orca. Prefer it over raw git worktree, ad hoc terminals or Computer Use when Orca state is involved.",
-  "orca-computer-use": "Use only when a local app window (a native app, Chrome, Edge, Safari or a webview) needs GUI control that shell, files, HTTP or existing CLIs cannot reach: clicks, typing, menus, dialogs and screenshots, in the background via `orca computer`. Not for Orca's embedded browser (orca-cli).",
-  "impeccable": "Use to design, redesign, critique, audit, polish or animate a frontend: websites, landing pages, dashboards, app UI, components, native iOS/Android screens, or a design system (DESIGN.md).",
-  "diagram-design": "Branded diagrams and charts as HTML/SVG/PNG. Use when the user asks for an architecture (current-state, delta, deployment), flowchart, sequence, swimlane, state machine, ER/schema, UML class, timeline, Gantt, org chart, tree, layer stack, Venn, pyramid/funnel, quadrant, radar, treemap, Sankey, fishbone, Wardley map, kanban, user journey, service blueprint, story map, medallion, data flow, DP integration or DP security matrix diagram, or a bar, line, scatter, heatmap or waterfall chart. Imports .drawio, Mermaid and .excalidraw.",
-  "retro": "Use when the user asks for a retro or retrospective on a coding session.",
-  "grill-lite": "Use when the user says grill me, grill-lite, interview me, ask me your questions first, stress-test this plan, or wants to think a plan, purchase or idea through before acting. Asks numbered rounds of questions, then saves the decisions in a short note."
+  "_why": "Skill updates bring back long upstream descriptions. apply_descriptions.py puts these short ones back when the upstream text is the one recorded in 'upstream' (a fingerprint), and reports the skill when the upstream text is new, so the short version gets rewritten from the latest text. 'upstream': null means not recorded yet; the next update will report it once.",
+  "archify": {
+    "short": "Use when visualizing systems, API calls, pipelines, schemas, histories, timings, or everyday steps, parts and states as explorable HTML diagrams (architecture, workflow, sequence, data-flow, state, ERD, class, tree, timeline, waterfall), from requirements, Mermaid or the repo. Also turns an answer into a one-page explainer when the user asks for a page or explainer (做成一页, 用页面讲) or their rules opt in with an [archify explainer: ...] line. Not for dashboards.",
+    "upstream": null
+  },
+  "better-accessibility": {
+    "short": "Use when reviewing or fixing accessibility: keyboard and focus behavior, ARIA, accessible names, forms, screen-reader announcements, motion and zoom, against WCAG 2.2.",
+    "upstream": null
+  },
+  "better-colors": {
+    "short": "Use when building or checking a color system: generating palettes, naming semantic tokens, converting between formats and measuring contrast.",
+    "upstream": null
+  },
+  "better-interface": {
+    "short": "Use when reviewing a whole screen, flow or interface for problems across accessibility, layout, writing, typography, color and UI polish, returned as one ranked report.",
+    "upstream": null
+  },
+  "better-layout": {
+    "short": "Use when setting or reviewing grouping, alignment, reading order, responsive structure and room for translated text, so a layout holds up when resized, translated or mirrored.",
+    "upstream": null
+  },
+  "better-typography": {
+    "short": "Use when setting or reviewing how text renders: type scale, spacing, font features, wrapping, truncation and punctuation.",
+    "upstream": null
+  },
+  "better-ui": {
+    "short": "Use when polishing surfaces, icons and motion with exact values for border radius, optical alignment, shadows, icon states and animation.",
+    "upstream": null
+  },
+  "better-writing": {
+    "short": "Use when writing or reviewing interface copy (labels, errors, empty states, confirmations) so it matches the product's voice and tells people what to do next.",
+    "upstream": null
+  },
+  "find-skills": {
+    "short": "Use when the user asks \"how do I do X\", \"find a skill for X\", \"is there a skill that can...\", or wants to find and install an agent skill for a task.",
+    "upstream": null
+  },
+  "frontend-design": {
+    "short": "Use when building new UI or reshaping an existing one and it needs a distinctive, intentional visual direction: aesthetic choices, typography, and avoiding templated defaults.",
+    "upstream": null
+  },
+  "humanizer": {
+    "short": "Use when editing or reviewing prose for AI tells (not-X-but-Y contrasts, one-line closers, staged openers, forced triads, dashes everywhere, inflated claims, sales language, stock AI words, bold labels, filler). Rewrites it to read like the writer without changing what it says.",
+    "upstream": null
+  },
+  "resume-tailor": {
+    "short": "Use when tailoring a resume to a specific job posting, keeping every claim truthful.",
+    "upstream": null
+  },
+  "ui-demo": {
+    "short": "Use when the user asks for a demo, walkthrough, screen recording or tutorial video of a web app. Records a WebM with Playwright, a visible cursor and natural pacing.",
+    "upstream": "53e04ab2cf3614b5"
+  },
+  "web-design-guidelines": {
+    "short": "Use when asked to \"review my UI\", \"check accessibility\", \"audit design\", \"review UX\", or \"check my site against best practices\". Reviews UI code against the Web Interface Guidelines.",
+    "upstream": null
+  },
+  "orchestration": {
+    "short": "Use when the user invokes /orchestration, asks for Orca workers or supervision (monitor, task DAGs, ask/reply, decision gates), asks to split, parallelize or fan out code changes across agents, worktrees or branches, or wants another agent to do work and report back (\"Have Codex review this and report back\"). Also when you are a dispatched worker (a prompt with Task and Dispatch IDs: ask, worker_done). Plain searches and reads stay with your own subagents; hand-offs with nothing expected back go to orca-cli.",
+    "upstream": null
+  },
+  "orca-cli": {
+    "short": "Use when the user says $orca-cli, Orca worktree, child worktree, spawn codex/claude in a worktree, read/wait/send Orca terminal, handoff, handover, give this to another agent, ask/tell/message another agent, or Orca browser, or to open, test or screenshot a web page while working in Orca. Prefer it over raw git worktree, ad hoc terminals or Computer Use when Orca state is involved.",
+    "upstream": null
+  },
+  "orca-computer-use": {
+    "short": "Use only when a local app window (a native app, Chrome, Edge, Safari or a webview) needs GUI control that shell, files, HTTP or existing CLIs cannot reach: clicks, typing, menus, dialogs and screenshots, in the background via `orca computer`. Not for Orca's embedded browser (orca-cli).",
+    "upstream": null
+  },
+  "impeccable": {
+    "short": "Use to design, redesign, critique, audit, polish or animate a frontend: websites, landing pages, dashboards, app UI, components, native iOS/Android screens, or a design system (DESIGN.md).",
+    "upstream": null
+  },
+  "diagram-design": {
+    "short": "Branded diagrams and charts as HTML/SVG/PNG. Use when the user asks for an architecture (current-state, delta, deployment), flowchart, sequence, swimlane, state machine, ER/schema, UML class, timeline, Gantt, org chart, tree, layer stack, Venn, pyramid/funnel, quadrant, radar, treemap, Sankey, fishbone, Wardley map, kanban, user journey, service blueprint, story map, medallion, data flow, DP integration or DP security matrix diagram, or a bar, line, scatter, heatmap or waterfall chart. Imports .drawio, Mermaid and .excalidraw.",
+    "upstream": null
+  },
+  "retro": {
+    "short": "Use when the user asks for a retro or retrospective on a coding session.",
+    "upstream": null
+  },
+  "grill-lite": {
+    "short": "Use when the user says grill me, grill-lite, interview me, ask me your questions first, stress-test this plan, or wants to think a plan, purchase or idea through before acting. Asks numbered rounds of questions, then saves the decisions in a short note.",
+    "upstream": null
+  }
 }

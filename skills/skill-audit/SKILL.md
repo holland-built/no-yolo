@@ -82,10 +82,27 @@ updates them, and the user will not remember which ones those are. Each has one 
 | Plugin skills | `claude plugin marketplace update` | `claude plugin update <plugin>` |
 
 Put a "Updates" section in the report listing what is behind and by how much. After the user says
-yes, run the updates, then `python3 apply_descriptions.py` to put back the short descriptions
-in `short_descriptions.json` (an update restores the long upstream ones, which Claude Code's
-skill list cuts), then rerun `trigger_test.py`, because an updated description can change
-which skill loads. Report what changed. A skill with local edits never goes through an automatic
+yes, run the updates, then follow "Short descriptions" below, then rerun `trigger_test.py`,
+because an updated description can change which skill loads.
+
+## Short descriptions
+
+Claude Code's skill list cuts long descriptions, and updates bring the long upstream ones back.
+`short_descriptions.json` holds a short, trigger-first version of each updated skill's
+description. After any update, run `python3 apply_descriptions.py`. It puts the short version
+back where the upstream text is unchanged, and lists each skill whose upstream text is new
+("upstream changed", with the new text). The startup hook prints the same list.
+
+For each listed skill, write a new short version from the new text: trigger words first, every
+trigger phrase and "not for" line kept, anything new upstream added kept, what-it-does detail
+cut, under about 300 characters. The point is the latest information in fewer words, so never
+reuse the old short version over new upstream text. Save and apply it with:
+
+```bash
+python3 apply_descriptions.py --set <skill> "<short text>"
+```
+
+Done when `python3 apply_descriptions.py --check` prints nothing. Report what changed. A skill with local edits never goes through an automatic
 update; check `git log` for edits made after its install commit first.
 
 ## Which skill actually loads
