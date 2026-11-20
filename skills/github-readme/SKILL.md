@@ -1,12 +1,6 @@
 ---
 name: github-readme
-description: |
-  Write or tidy a GitHub repo the way the user likes: a short README with badges, tables and
-  a numbered quick start, everything else folded into collapsible sections, a comment above
-  every copy-paste command, nothing personal anywhere, a .gitignore that works, and a clean
-  root folder. Use when the user says "make the github docs simpler", "clean up the repo", "write a
-  README", "tidy the repo", "get this ready for GitHub", "make it public", or asks for a
-  README, docs pass, or repo cleanup on anything that lives in git.
+description: "Use when the user says write a README, make the github docs simpler, clean up the repo, tidy the repo, get this ready for GitHub, make it public, or wants a docs pass or repo cleanup on anything in git. Short README with badges and a numbered quick start, the rest folded away, nothing personal, a working .gitignore."
 ---
 
 # github-readme

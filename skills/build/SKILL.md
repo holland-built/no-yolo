@@ -1,6 +1,6 @@
 ---
 name: build
-description: Build a new thing for the user - settle what it should do, have Fable and Astra each plan the approach and pick between them (the user can override), check big builds after each step, get Codex to attack the plan before code exists, build it, and show it working. Use when the user says build, make, add, or wants a feature, page, toggle, setting or script written, including small additions that look like a few lines, because those still get the Codex review on the diff.
+description: "Use when the user says build, make, add, or wants a feature, page, toggle, setting or script written, including small additions that look like a few lines, because those still get the Codex review. Settles what it should do, picks a plan, has Codex attack it, builds it and shows it working."
 ---
 
 # build

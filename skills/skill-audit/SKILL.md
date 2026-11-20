@@ -1,6 +1,6 @@
 ---
 name: skill-audit
-description: Audit every skill Claude Code and Codex can load and recommend what to keep, merge, park or delete, as one report page, changing nothing. Use when the user says skill audit, clean up my skills, which skills do I use, too many skills, prune skills, or after installing a batch of skills or plugins. Also suggest it once a month, since that is when third-party skills fall behind.
+description: "Use when the user says skill audit, clean up my skills, which skills do I use, too many skills, prune skills, or after installing a batch of skills or plugins; suggest it monthly. Reports what to keep, merge, park or delete across Claude Code and Codex, changing nothing."
 ---
 
 # skill-audit

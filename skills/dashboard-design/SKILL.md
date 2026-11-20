@@ -1,6 +1,6 @@
 ---
 name: dashboard-design
-description: Design, redesign or critique a dashboard, status page, NOC screen, KPI tiles, stats or metrics page, or any data-heavy screen, in the style the owner picked. Covers KPI tiles, charts, comparisons, heatmaps, status strips, goal bars, ranked lists, hover tips, empty and loading states, light and dark. Use when the user says dashboard, Overview page, status page, KPI, metrics, "make the numbers clearer", or asks whether a data screen is good. Not for single charts in a document (dataviz) or non-data pages (site-design, improve).
+description: "Use when the user says dashboard, Overview page, status page, NOC screen, KPI, metrics, stats, \"make the numbers clearer\", or wants a data-heavy screen designed, redesigned or critiqued in the owner's chosen style. Not for single charts in a document (dataviz) or non-data pages (site-design, improve)."
 ---
 
 # Dashboard design

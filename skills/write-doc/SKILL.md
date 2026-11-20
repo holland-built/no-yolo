@@ -1,6 +1,6 @@
 ---
 name: write-doc
-description: Write a document a person will read - a how-to guide, quick start, report, status update, email, intranet or SharePoint post, leadership summary, customer one-pager, a README turned into a PDF for readers outside GitHub, or handoff notes for whoever maintains a tool next. Use when the user says write a guide, draft an email, one-pager, report, send to leadership, post for the hub, make this doc shorter, or hands over notes to turn into a doc, including a guide about an app or project in this folder; load it before reading the project, because the document type decides what to look for. Not for GitHub READMEs (github-readme), interface copy (better-writing), files an AI reads (writing), or picking up an unfinished session (handoff).
+description: "Use when the user wants a document a person will read: a guide, quick start, report, status update, email, SharePoint or hub post, leadership summary, customer one-pager, README as a PDF, or handoff notes for a tool's next owner; or says write a guide, draft an email, make this doc shorter, or hands over notes. Load it before reading the project. Not for GitHub READMEs (github-readme), interface copy (better-writing), AI instruction files (writing) or session handoffs (handoff)."
 ---
 
 # write-doc
