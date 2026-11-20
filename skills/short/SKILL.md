@@ -1,6 +1,6 @@
 ---
 name: short
-description: Redo the last reply in the Action First style - next action first, numbered steps, nothing extra. Use when the user types /short, or says shorter, too long, tl;dr, action first, just tell me what to do, or complains a reply was long, rambling or hard to follow.
+description: "Use when the user types /short, or says shorter, too long, tl;dr, action first, just tell me what to do, or complains a reply was long, rambling or hard to follow. Redoes the last reply in the Action First style."
 ---
 
 # short

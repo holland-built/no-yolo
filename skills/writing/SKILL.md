@@ -1,6 +1,6 @@
 ---
 name: writing
-description: Write or edit a file that an AI reads as instructions - a SKILL.md, CLAUDE.md, an output style, or a memory file. Use when creating or changing any of those, or when the user says the instructions are not working.
+description: "Use when creating or changing a file an AI reads as instructions (a SKILL.md, CLAUDE.md, an output style or a memory file), or when the user says the instructions are not working."
 ---
 
 # writing
