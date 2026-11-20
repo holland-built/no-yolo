@@ -1,6 +1,6 @@
 ---
 name: improve
-description: "Use when the user says improve, make it better, polish, clean it up, this feels off, it's clunky, the colors/layout/buttons/wording/fonts/spacing are bad, animations feel janky or slow, or complains about how an existing web page, app, dashboard or screen looks or behaves, Tests at phone and desktop size, fixes, ships and retests. A page that behaves wrong, like a button that does nothing, comes here even if the user says broken; /fix is for crashes, errors and things that are not pages. New things go to /build, prompts to /better."
+description: "Use when the user says improve, make it better, polish, clean it up, this feels off, it's clunky, the colors/layout/buttons/wording/fonts/spacing are bad, animations feel janky or slow, or complains about how an existing web page, app, dashboard or screen looks or behaves. Tests at phone and desktop size, fixes, ships and retests. A page that behaves wrong, like a button that does nothing, comes here even if the user says broken; /fix is for crashes, errors and things that are not pages. New things go to /build, prompts to /better."
 ---
 
 # improve
