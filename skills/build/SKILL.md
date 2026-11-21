@@ -148,6 +148,26 @@ Keep `DISABLE_TELEMETRY=1` and leave app and customer names out of the search, b
 otherwise reports searches to Google. Skip it for backend work and text-only edits. The user never
 has to ask for this, and the reply does not mention it unless a guide changed what they will see.
 
+**A brand-new web app starts on Astryx, without asking.** The user likes how it looks, and its
+ready-made tables, forms and chat screens cost far fewer tokens than writing them. Use React 19 or
+later, keep the `frontend-design` pass, and give the app its own theme so it does not look like
+every other Astryx app. The version script picks the newest release at least a week old, because
+Astryx is in beta and ships often.
+
+```bash
+V=$(python3 ~/.claude/tools/astryx-version.py)
+npm install --save-exact --ignore-scripts @astryxdesign/core@$V @astryxdesign/theme-neutral@$V @stylexjs/stylex
+npm install -D --save-exact --ignore-scripts @astryxdesign/cli@$V
+npx astryx init
+```
+
+Delete the `GEMINI.md` that `init` leaves, and read a part's guide with `npx astryx component <Name>`
+before using it.
+
+An existing app stays on what it uses unless the user asks to convert it, because in a test
+Astryx's theme changed the fonts, heading colors and page background of parts it was not used on.
+Converting is its own job, one app at a time, with before and after screenshots of every page.
+
 **Every check ends as passed, failed, or couldn't tell.** Report "couldn't tell" as that, never
 as a pass — a guessed pass is how a broken thing gets called done. Never weaken a check,
 loosen a test, or change what it expects so that it passes; fix the code or report the failure.
