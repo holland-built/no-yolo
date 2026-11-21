@@ -57,6 +57,12 @@ broad "review everything" at low effort comes back as a confident pass that mean
 yes against the code before acting on it; empty output is a failed check. A step check never
 replaces the final review.
 
+**A big job that gathers information runs in two stages.** One helper finds material up to a set
+limit, such as the top 50, and writes what it kept and what it learned to a short file. A fresh
+helper starts from that file and improves only those items. Without the limit and the file, a long
+run keeps collecting or repeats work, and what it learned never reaches the next helper. Done means
+the second stage's result covers every kept item, each with its evidence.
+
 ## When it hangs
 
 `/codex:status`, then `/codex:cancel`, then carry on. Two hangs on one task: stop conferring for
