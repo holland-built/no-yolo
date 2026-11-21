@@ -44,6 +44,18 @@ bug sits in shared code, search its callers before changing it. Leave nearby cod
 formatting alone; mention unrelated dead code rather than deleting it. This is here because
 evals run without `~/.claude/CLAUDE.md`, so the skill has to carry it.
 
+When the fix changes page code, look up the current browser feature first, because models lean
+on old patterns and a native feature can be the smaller fix:
+
+```bash
+DISABLE_TELEMETRY=1 npx -y modern-web-guidance@1.0.1 search "<2-5 word capability>"
+DISABLE_TELEMETRY=1 npx -y modern-web-guidance@1.0.1 retrieve "<id>"
+```
+
+Keep `DISABLE_TELEMETRY=1` and leave app and customer names out of the search, because the tool
+otherwise reports searches to Google. The reply does not mention this unless a guide changed what
+the user will see.
+
 **Never make the reproduction pass by changing the reproduction.** Loosening a test or its
 expected output hides the bug instead of fixing it. If the check itself was wrong, say so and
 show why before touching it.

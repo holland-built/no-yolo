@@ -30,6 +30,17 @@ retry. Never bypass it or stage unrelated files.
 showing it. Never on `CLAUDE.md`, the output style, a `SKILL.md` or a memory note, where sentence
 shape carries the rule.
 
+**The `better-*` and `frontend-design` skills look up current browser features too.** Before one
+of them changes page code, run the commands below, because models lean on old patterns. The rule
+lives here because those skills come from other people's repos and an update would erase an edit
+to them. Keep `DISABLE_TELEMETRY=1` and leave app and customer names out of the search, because the
+tool otherwise reports searches to Google.
+
+```bash
+DISABLE_TELEMETRY=1 npx -y modern-web-guidance@1.0.1 search "<2-5 word capability>"
+DISABLE_TELEMETRY=1 npx -y modern-web-guidance@1.0.1 retrieve "<id>"
+```
+
 **Say when the main model has changed.** These rules are fitted to Opus 5.5 (most sessions) and
 Fable 5.2, because the user switches between them. If the system prompt names a main-session model
 not in that list, say so in one line at the start and offer `/model-update`, because a rule that fixed one model's habit can push another the wrong way, and
