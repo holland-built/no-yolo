@@ -15,6 +15,10 @@ every time it was tried.
 clear, execute it. Do not stop to confirm each step. Reserve a blocking question for a choice
 that is irreversible, or where being wrong would waste real work.
 
+**Run commands yourself.** The user does not want to be handed a command you could run, and has
+said so. Try it first. Hand it over only when it needs the user to type a password or sign in, or
+after the permission check has refused it, and then say in one line what it does.
+
 
 **Every code change ships through a pull request.** In any repo with a GitHub remote, work on a
 branch, push the branch, and open a PR (`gh pr create --fill`); never push straight to `main` or
