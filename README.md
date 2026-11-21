@@ -303,7 +303,7 @@ diff -rq skills ~/.claude/skills; diff -q CLAUDE.md ~/.claude/CLAUDE.md
 
 ```bash
 # take out the skills this repo installed, by name
-cd ~/.claude/skills && rm -rf better build claude-video dashboard-design demo-voiceover fix github-readme grill-lite write-doc handoff improve jev-judge last-30 resume retro short site-design skill-audit writing humanizer archify find-skills i-have-adhd frontend-design ui-demo better-interface better-accessibility better-layout better-writing better-typography better-colors better-ui
+cd ~/.claude/skills && rm -rf better build claude-video dashboard-design demo-voiceover fix github-readme grill-lite write-doc handoff improve jev-judge resume retro short site-design skill-audit writing humanizer archify find-skills i-have-adhd frontend-design ui-demo better-interface better-accessibility better-layout better-writing better-typography better-colors better-ui
 # take out the copies the third-party skills install from
 cd ~/.agents/skills && rm -rf humanizer archify find-skills i-have-adhd frontend-design ui-demo better-interface better-accessibility better-layout better-writing better-typography better-colors better-ui
 # remove the Codex plugin
@@ -352,7 +352,7 @@ Type the command and what you want, or just say it in plain words. Both work.
 | `/write-doc a quick start for the new laptop setup` | A guide, report, email or post someone will read |
 | `/github-readme` | Tidies a repo and its README for GitHub |
 | `/resume tailor mine to this job post` | Writes, tunes or checks a resume, without inventing facts |
-| `/last-30 Claude Code` | What changed in a tool in the last 30 days |
+| `/last30days Claude Code` | What people said about it in the last 30 days, using the official [Last 30 Days](https://github.com/mvanhorn/last30days-skill) plugin. Install it with `claude plugin marketplace add mvanhorn/last30days-skill`, then `claude plugin install last30days@last30days-skill` |
 | `/claude-video <YouTube link>` | Summarises a video into your notes |
 | `/skill-audit` | Which skills you use, which to drop, which are out of date. Changes nothing until you choose |
 | `/writing`, `/humanizer` | Write rules for an AI; make your writing sound less like an AI |
