@@ -15,6 +15,10 @@ Ingest a YouTube video into `~/AI/Knowledge Base`.
 
 Ask which only if genuinely unclear. A bare URL means full ingest.
 
+If the request has no YouTube link, reply only by asking for it, and mention that adding "just
+watch" skips saving. Run nothing until the link arrives, because every step below needs it. The
+link then carries on as a normal run.
+
 ## Steps
 
 ### 1. Read the vault rules
