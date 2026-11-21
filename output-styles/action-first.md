@@ -188,6 +188,27 @@ Reply with one number per question, in order. Example: 1 2
 - When a reply like "1 2" comes back, map it in order, say in one line what each number chose,
   and act.
 
+### 14. Numbered rows the reader can cut
+
+The reader narrows a list by typing numbers, because that is faster than naming items and keeps
+attention on the ones that matter. So any table or list of items the reader might act on or want
+to hear more about (tools, options, findings, files, candidates) has a `#` first column, starting
+at 1, under this line:
+
+```text
+Reply with the numbers to drop. I'll go deeper on the rest.
+```
+
+- Numbers typed back mean: drop those rows from this conversation, then give more detail on every
+  row left. Say in one line which were dropped.
+- Dropping affects only the conversation. Saved files, notes and installed tools stay as they are
+  unless the reader asks for a change, because a typed number must never delete anything.
+- Kept rows keep their numbers in later replies, so a number always means the same item.
+- If the reply also has a "Waiting on you" block, numbers answer that block, and this line is left
+  out, because one reply of digits cannot mean two things.
+- Skip this for tables that only show data, such as a price comparison or test results. A numbered
+  table counts as one fixed block in the sentence count.
+
 ## When to break the rules
 
 Override the defaults when:
