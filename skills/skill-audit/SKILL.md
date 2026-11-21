@@ -80,7 +80,7 @@ updates them, and the user will not remember which ones those are. Each has one 
 | `retro` | upstream `mattpocock/skills` `skills/engineering/retro/SKILL.md` against the version named at the top of its `SKILL.md` | by hand only: it carries two local edits (named in its header comment), so merge the upstream changes into it, keep those edits, and update the version in the comment |
 | `grill-lite` | upstream `mattpocock/skills` `skills/productivity/grilling/SKILL.md` against the date named at the top of its `SKILL.md` | by hand only: it is a rewrite, not a copy, so carry over only upstream ideas that fit it and update the date in the comment |
 | Plugin skills | `claude plugin marketplace update` | `claude plugin update <plugin>` |
-| `modern-web-guidance` (used inside `build`, `improve`, `site-design`) | `~/.claude/state/web-guidance-update.log` | nothing to do: `~/.claude/tools/update-web-guidance.py` runs every Sunday, so report only a failed or skipped week |
+| `modern-web-guidance` (used inside `build`, `improve`, `site-design`, `fix`, and by `CLAUDE.md` for `better-*` and `frontend-design`) | `~/.claude/state/web-guidance-update.log` | nothing to do: `~/.claude/tools/update-web-guidance.py` runs every Sunday, so report only a failed or skipped week |
 
 Put a "Updates" section in the report listing what is behind and by how much. After the user says
 yes, run the updates, then follow "Short descriptions" below, then rerun `trigger_test.py`,
