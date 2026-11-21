@@ -34,6 +34,20 @@ Never lorem ipsum. Never invented sample text.
 Fake content hides that the layout does not fit the real thing. Use the user's own copy, real
 records, longest title and emptiest state.
 
+## Use current browser features
+
+Models lean on old patterns, so look up each dialog, form, table, layout or animation before
+writing it:
+
+```bash
+DISABLE_TELEMETRY=1 npx -y modern-web-guidance@1.0.1 search "<2-5 word capability>"
+DISABLE_TELEMETRY=1 npx -y modern-web-guidance@1.0.1 retrieve "<id>"
+```
+
+Keep `DISABLE_TELEMETRY=1` and leave app and customer names out of the search, because the tool
+otherwise reports searches to Google. The reply does not mention this unless a guide changed what
+the user will see.
+
 ## Judge, pick, delete
 
 Show all three. The user picks one, or takes parts from each. Delete the rest.
