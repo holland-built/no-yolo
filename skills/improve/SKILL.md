@@ -40,6 +40,18 @@ The checklists are skills; load the ones that apply:
 
 Behavior has no checklist skill; the task list below is its checklist.
 
+Before changing page code, look up the current browser feature for it, because models lean on old
+patterns and a native feature often replaces a custom script:
+
+```bash
+DISABLE_TELEMETRY=1 npx -y modern-web-guidance@1.0.1 search "<2-5 word capability>"
+DISABLE_TELEMETRY=1 npx -y modern-web-guidance@1.0.1 retrieve "<id>"
+```
+
+Keep `DISABLE_TELEMETRY=1` and leave app and customer names out of the search, because the tool
+otherwise reports searches to Google. The reply does not mention this unless a guide changed what
+the user will see.
+
 ## How deep to go
 
 - **Quick**: one named thing. Codex and Fable each get one look at the proposed change,

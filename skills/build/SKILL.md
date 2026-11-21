@@ -135,6 +135,19 @@ it runs, run `better-interface` on it and fix every `HIGH` finding, because thos
 accessibility and layout failures nobody notices until a reader hits one. A small change to an
 existing page skips both; that is `/improve`'s job when it looks wrong.
 
+**Look up the current browser feature before writing page code.** Models lean on old patterns
+from their training, which adds JavaScript the browser now does for free. For each dialog, form,
+table, layout, animation or similar piece of a page, search first and use the guide that fits:
+
+```bash
+DISABLE_TELEMETRY=1 npx -y modern-web-guidance@1.0.1 search "<2-5 word capability>"
+DISABLE_TELEMETRY=1 npx -y modern-web-guidance@1.0.1 retrieve "<id>"
+```
+
+Keep `DISABLE_TELEMETRY=1` and leave app and customer names out of the search, because the tool
+otherwise reports searches to Google. Skip it for backend work and text-only edits. The user never
+has to ask for this, and the reply does not mention it unless a guide changed what they will see.
+
 **Every check ends as passed, failed, or couldn't tell.** Report "couldn't tell" as that, never
 as a pass — a guessed pass is how a broken thing gets called done. Never weaken a check,
 loosen a test, or change what it expects so that it passes; fix the code or report the failure.
