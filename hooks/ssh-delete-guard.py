@@ -22,9 +22,12 @@ RISKY = re.compile(
     | \bdocker\s+(?:\S+\s+)?(?:rm|rmi)\b
     | \b(?:drop\s+(?:table|database)|delete\s+from)\b
     | >\s*/dev/(?:sd|nvme|vd|disk)
-    | \b(?:ba|z)?sh\s+-s\b(?![^\n]*<<-?\s*['"\\]) | \bbase64\b
+    | \b(?:ba|z)?sh\s+-s\b(?![^\n]*<<-?\s*['"\\])
+    | \bbase64\s+(?:-\S+\s+)*-(?:\w*d\b|-decode\b)
+    | \bb64decode\b[^\n]*\|\s*(?:sudo\s+)?(?:ba|z)?sh\b
     """
 )
+ORCA_WORKTREE_RM = re.compile(r"\borca\s+worktree\s+rm\b")
 # A quoted heredoc (<<'EOF') is exempt above because its whole script is in the command and scanned.
 DELETE_WORD = re.compile(r"(?i)\b(?:destroy|purge|prune)\b")
 READ_ONLY = {"cat", "cut", "echo", "grep", "head", "less", "ls", "sed", "stat", "tail", "wc"}
@@ -68,6 +71,24 @@ def names_delete_word(command):
     return any(DELETE_WORD.search(p) for p in split_commands(unquoted) if not only_reads(p))
 
 
+def without_local_deletes(command):
+    """Drop deletes that run on this Mac: `orca worktree rm`, and plain `rm` before the first ssh.
+
+    Keeps the text unchanged if anything before ssh could carry a script to the server
+    (a heredoc, or a quote spanning lines), because then an `rm` line may run remotely.
+    """
+    command = ORCA_WORKTREE_RM.sub("orca worktree", command)
+    start = SSH.search(command).start()
+    before = command[:start]
+    if "<<" in before or any(line.count("'") % 2 or line.count('"') % 2 for line in before.split("\n")):
+        return command
+    parts = split_commands(before)
+    kept = [p for p in parts if p.split()[:1] != ["rm"]]
+    if len(kept) == len(parts):
+        return command
+    return "; ".join(kept + [command[start:]])
+
+
 def main():
     try:
         command = json.load(sys.stdin).get("tool_input", {}).get("command", "")
@@ -75,7 +96,8 @@ def main():
         return
     if not isinstance(command, str) or not SSH.search(command):
         return
-    if not RISKY.search(command) and not names_delete_word(command):
+    checked = without_local_deletes(command)
+    if not RISKY.search(checked) and not names_delete_word(checked):
         return
     print(json.dumps({"hookSpecificOutput": {
         "hookEventName": "PreToolUse",
