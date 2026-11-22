@@ -25,6 +25,11 @@ outside a git repo; leaving out either is what makes it hang. **Empty output mea
 report that, not a pass. `codex debug models` lists the Codex models that exist now
 (`~/.codex/models_cache.json` has been wrong before).
 
+When a prompt carries long material (a document, log or transcript), put the material first and
+the instructions and question last. Anthropic reports up to 30% better answers in its tests with
+the question at the end. When the answer must rest on the material, ask for the exact supporting
+quotes first, so each claim can be checked against the source.
+
 When the shape of a thing is undecided, run the same brief past two models. Where they differ is
 what you had not decided.
 
@@ -57,9 +62,17 @@ broad "review everything" at low effort comes back as a confident pass that mean
 yes against the code before acting on it; empty output is a failed check. A step check never
 replaces the final review.
 
-**A big job that gathers information runs in two stages.** One helper finds material up to a set
-limit, such as the top 50, and writes what it kept and what it learned to a short file. A fresh
-helper starts from that file and improves only those items. Without the limit and the file, a long
+**A big job keeps its step list in `checklist.json`,** beside `PLAN.md`: one entry per step with
+`step`, `check` (the command or observation that proves it) and `passes`, which starts `false`.
+Change `passes` to `true` only after that step's check has run and passed, and change nothing else
+in the entry. A fresh session trusts this file, and Anthropic reports from its own experiments,
+without a benchmark, that models are less likely to wrongly rewrite JSON than Markdown. `PLAN.md`
+keeps the goal and decisions, so the steps live in one place.
+
+**A big job that gathers information runs in two stages.** Start with short, broad searches and
+list the options before comparing the best few, because detailed reading too early can miss a
+better choice. One helper finds material up to a set limit, such as the top 50, and writes what
+it kept and what it learned to a short file. A fresh helper starts from that file and improves only those items. Without the limit and the file, a long
 run keeps collecting or repeats work, and what it learned never reaches the next helper. Done means
 the second stage's result covers every kept item, each with its evidence.
 
