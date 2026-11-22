@@ -63,16 +63,16 @@ When the answer to something would change the rewrite, ask with AskUserQuestion:
 questions, each with a recommended option first. For anything smaller, pick the likely answer and
 state it as an assumption in the rewrite, where the user can correct it.
 
-If the ask is already clear, say so in one line, ask "Run it?" and run it as written on a yes. A
-rewrite for its own sake wastes the user's time.
+If the ask is already clear, say so in one line and run it as written. A rewrite for its own sake
+wastes the user's time.
 
 ## What the user sees
 
 Lead with the better prompt in a code block, so it can be copied. Under it, one line per change
-saying what changed and why, at most three lines. Then ask "Run it?" and wait. On a yes, run the
-better prompt as if the user had typed it.
+saying what changed and why, at most three lines. Then run the better prompt as if the user had
+typed it, without asking.
 
 ## Done
 
 Done is a rewritten prompt that leads with the goal, carries only the checks that fit, ends with a
-checkable finish line, and has run after the user said go.
+checkable finish line, and has run.
