@@ -58,22 +58,33 @@ the user will see.
 
 ## A fresh look before the user sees them
 
-Whoever built a design is the worst judge of it, so a different model looks first. Screenshot each
-variant at 1440 wide and at phone width, then send only the images to the Codex reviewer:
+Whoever built a design is the worst judge of it, so a different model looks first. Screenshot every
+variant at 1440 and 390 wide into a temp folder, with the variant bar hidden, then send only the
+images to the Codex reviewer. Attach two images per variant. If the user gave a reference, attach
+it too, screenshotting it first if it is a link; otherwise leave out `reference.png`:
 
 ```bash
 codex exec --skip-git-repo-check --sandbox read-only \
   -c model=gpt-6.1-sol -c model_reasoning_effort=medium \
-  --image /abs/a-desktop.png --image /abs/a-phone.png --image /abs/b-desktop.png \
-  --image /abs/b-phone.png --image /abs/c-desktop.png --image /abs/c-phone.png -- \
-  "<which images are option A, B, C>. <one line on what the page is for>. <the user's reference, if any>. Styles to flag if present: <the list under 'When all three look the same', minus any the brand or owner keeps>. Answer: 1) Which two options look most alike, and what do they share? 2) For each option, the one part that looks generated, where on screen, and what to change. 3) Any listed style present, by option and name. None is a valid answer. Do not pick a winner and give no scores." < /dev/null
+  --image /abs/reference.png --image /abs/a-desktop.png --image /abs/a-phone.png \
+  --image /abs/b-desktop.png --image /abs/b-phone.png --image /abs/c-desktop.png \
+  --image /abs/c-phone.png -- \
+  "<which images are the reference and options A, B, C>. <one line on what the page is for>. <if there is a reference, the line on what to take from it and what to leave; do not flag what was taken on purpose>. Styles to flag if present: <the list under 'When all three look the same', minus any the brand or owner keeps>. Answer: 1) Are any two options too alike to be a real choice? If so, which, and what do they share? 2) For each option, the one part that looks generated, where on screen, and what to change. 3) Any listed style present, by option and name. None is a valid answer to 1, 2 or 3. Do not pick a winner and give no scores." < /dev/null
 ```
 
 Send no code and none of your own opinion, so the review stays independent. Remove any listed style
-it finds. If two options are alike, rebuild one around the fix in "When all three look the same".
-Do this once, with no second review. It never picks a winner; the user does, even if they pick the
-one it criticised. Say in one line what it changed. Empty output means "fresh look: couldn't tell",
-so say that and show the variants anyway. Skip this for a fix inside a direction already picked.
+it finds. Fix each generated-looking part it names, or say in one line why not. If it names two
+options as too alike, rebuild one around the fix in "When all three look the same". Do this once,
+then retake the screenshots of what changed and look at them yourself, with no second review. It
+never picks a winner; the user does, even if they pick the one it criticised. Say in one line what
+it changed.
+
+If `codex` is missing or fails, or its output is empty, say "fresh look: couldn't tell" and show
+the variants anyway. Skip this step for a fix inside a direction already picked.
+
+These images leave the machine. If any of them, including a reference, would show customer or
+private records, swap those records for made-up ones of the same length in the review screenshots
+only, and keep the real content on the page. If that cannot be done, skip the review and say so.
 
 ## Judge, pick, delete
 

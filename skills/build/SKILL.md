@@ -45,8 +45,9 @@ Skip the two-model step on the fast lane, and when only one approach is sensible
 not big; a big build always gets both plans. The check on
 the chosen approach still runs on a single approach, because it is the safety floor.
 
-**A mockup the user picked is the settled approach.** The user has already chosen what it should
-look like and do, so skip the two plans and the Codex attack on the approach below: on the
+**A mockup the user picked is the settled approach.** When a new page's look is unsettled, run
+`site-design` before the two plans; the variant the user picks is this mockup. The user has
+already chosen what it should look like and do, so skip the two plans and the Codex attack on the approach below: on the
 interview-density build (2026-11-15) the two plans took ten minutes and agreed with the mockup.
 Still run the check on the chosen approach, the after-step checks on a big build, and the final
 review, because those catch how it is built, which the mockup does not settle.
@@ -136,11 +137,11 @@ not the thing working. If it draws a page, open the page.
 
 **A new page gets the design pass without being asked.** The user will not remember which design
 skill does what, so `/build` carries it. Before writing a page or screen, load `frontend-design`
-for the visual direction, so it does not come out looking like every other generated page. When
-the user has not settled how the page should look, build it through `site-design`, so they pick
-from three variants; a mockup they already picked skips this. Once it runs, run `better-interface` on it and fix every `HIGH` finding, because those are the
+for the visual direction, so it does not come out looking like every other generated page. Once the
+page runs, run `better-interface` on it, unless `site-design` already
+did, and fix every `HIGH` finding, because those are the
 accessibility and layout failures nobody notices until a reader hits one. A small change to an
-existing page skips both; that is `/improve`'s job when it looks wrong.
+existing page skips all of this; that is `/improve`'s job when it looks wrong.
 
 **Look up the current browser feature before writing page code.** Models lean on old patterns
 from their training, which adds JavaScript the browser now does for free. For each dialog, form,
