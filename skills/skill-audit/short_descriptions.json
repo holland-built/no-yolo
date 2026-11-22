@@ -44,10 +44,6 @@
     "short": "Use when editing or reviewing prose for AI tells (not-X-but-Y contrasts, one-line closers, staged openers, forced triads, dashes everywhere, inflated claims, sales language, stock AI words, bold labels, filler). Rewrites it to read like the writer without changing what it says.",
     "upstream": "7a4bf0743c43d193"
   },
-  "resume-tailor": {
-    "short": "Use when tailoring a resume to a specific job posting, keeping every claim truthful.",
-    "upstream": null
-  },
   "ui-demo": {
     "short": "Use when the user asks for a demo, walkthrough, screen recording or tutorial video of a web app. Records a WebM with Playwright, a visible cursor and natural pacing.",
     "upstream": "53e04ab2cf3614b5"
