@@ -1,8 +1,8 @@
 {
   "_why": "Skill updates bring back long upstream descriptions. apply_descriptions.py puts these short ones back when the upstream text is the one recorded in 'upstream' (a fingerprint), and reports the skill when the upstream text is new, so the short version gets rewritten from the latest text. 'upstream': null means not recorded yet; the next update will report it once.",
   "archify": {
-    "short": "Use when visualizing systems, API calls, pipelines, schemas, histories, timings, or everyday steps, parts and states as explorable HTML diagrams (architecture, workflow, sequence, data-flow, state, ERD, class, tree, timeline, waterfall), from requirements, Mermaid or the repo. Also turns an answer into a one-page explainer when the user asks for a page or explainer (做成一页, 用页面讲) or their rules opt in with an [archify explainer: ...] line. Not for dashboards.",
-    "upstream": null
+    "short": "Use when visualizing systems, APIs, pipelines, schemas, histories, timings, or everyday steps, parts, relationships and states as HTML diagrams, from requirements, Mermaid or the repo; checking repo architecture health, coupling or refactor scope; or making a one-page explainer (做成一页, 用页面讲), by default for complex flows, diagnoses, comparisons or test reports unless an [archify explainer: on-demand] rule is set. Also story and video export. Not for dashboards.",
+    "upstream": "57812925f58c84ad"
   },
   "better-accessibility": {
     "short": "Use when reviewing or fixing accessibility: keyboard and focus behavior, ARIA, accessible names, forms, screen-reader announcements, motion and zoom, against WCAG 2.2.",
