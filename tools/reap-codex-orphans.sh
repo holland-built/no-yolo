@@ -42,6 +42,12 @@
 
 set -uo pipefail
 
+# The live-session check below reads BSD stat output, so it cannot give a safe answer elsewhere.
+if [[ "$(uname -s)" != "Darwin" ]]; then
+  echo "macOS only: Codex process cleanup was skipped."
+  exit 0
+fi
+
 DRY_RUN=0
 MIN_AGE=2
 while [[ $# -gt 0 ]]; do

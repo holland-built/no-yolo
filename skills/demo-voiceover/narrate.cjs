@@ -9,6 +9,11 @@ const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
 
+if (process.platform !== 'darwin') {
+  console.log('macOS only: narration needs the say and afinfo commands, so nothing was recorded.');
+  process.exit(0);
+}
+
 const VOICE = process.env.DEMO_VOICE || 'Samantha';
 const RATE = process.env.DEMO_RATE || '175'; // words per minute
 

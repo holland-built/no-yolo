@@ -2,7 +2,10 @@
 # Block a commit that contains a secret. Set globally via core.hooksPath, so
 # every repo on this machine gets it and no project carries its own copy.
 # Skip deliberately with: git commit --no-verify
-command -v gitleaks >/dev/null 2>&1 || exit 0
+if ! command -v gitleaks >/dev/null 2>&1; then
+  echo "WARNING: gitleaks is not installed, so this commit was NOT scanned for secrets." >&2
+  exit 0
+fi
 gitleaks git --staged --redact --no-banner . || {
   echo ""
   echo "Commit blocked: gitleaks found a secret in what you staged."

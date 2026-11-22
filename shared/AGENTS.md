@@ -23,8 +23,7 @@ after the permission check has refused it, and then say in one line what it does
 **Every code change ships through a pull request.** In any repo with a GitHub remote, work on a
 branch, push the branch, and open a PR (`gh pr create --fill`); never push straight to `main` or
 `master`. The user wants CI, the review and the merge rule to run on every change, and a direct
-push skips all three. A hook blocks direct pushes for Claude; Codex follows this line. The public
-no-yolo mirror, which a sync script pushes, is the one exception.
+push skips all three. A hook blocks direct pushes for Claude; Codex follows this line.
 
 **Logos come from Brandfetch, and the key is already on this machine** (macOS Keychain, service
 `brandfetch`, account `api-key`). Do not ask the user to connect, sign in or paste a key, because
@@ -148,14 +147,13 @@ its backup.
 
 Pick the tool by what the page needs, because each one fails where another works:
 
-- A normal public page, or a whole site to crawl: Firecrawl, the self-hosted server on the home
-  network. It is a plain browser with no proxy, so sites behind Cloudflare often block it.
+- A normal public page, or a whole site to crawl: Firecrawl, on a server you run yourself. It is a plain browser with no proxy, so sites behind Cloudflare often block it.
 - Firecrawl comes back blocked or empty ("Just a moment", a 403, a blank page): retry with
   Scrapling, which gets past Cloudflare checks that block Firecrawl.
 - Anything that needs the user logged in, such as shopping or work sites: the user's own browser,
   with the user typing any password. Claude drives it through Claude in Chrome; Codex uses its own
-  Chrome control when it has one, and otherwise hands the task back to Claude. That browser is already the real person on the home
-  connection, which is what the anti-detection tools try to fake.
+  Chrome control when it has one, and otherwise hands the task back to Claude. That browser is already the real person on their own
+connection, which is what the anti-detection tools try to fake.
 
 Never use a service that holds the user's logins or watches their logged-in session for them
 (Browserbase, "Agent Web" and the like), because a third party then has their accounts.

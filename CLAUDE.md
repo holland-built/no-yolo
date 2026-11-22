@@ -22,8 +22,7 @@ would discard someone else's work.
 
 **Commit your own finished changes in `~/.claude`.** When a change there is finished and
 tested, stage and commit only the files you changed for it, so the user never has to ask. Other
-sessions leave edits in that repo; leave them untouched, and let the guarded `no-yolo` sync push
-what is shareable. Keep the secret check on: if it blocks a commit, take the flagged value out and
+sessions leave edits in that repo; leave them untouched. Keep the secret check on: if it blocks a commit, take the flagged value out and
 retry. Never bypass it or stage unrelated files.
 
 **Run `/humanizer` on prose you write for people** — a README, report, email or post — before
@@ -43,9 +42,9 @@ DISABLE_TELEMETRY=1 npx -y modern-web-guidance@1.0.1 retrieve "<id>"
 
 **Say when the main model has changed.** These rules are fitted to Opus 5.5 (most sessions) and
 Fable 5.2, because the user switches between them. If the system prompt names a main-session model
-not in that list, say so in one line at the start and offer `/model-update`, because a rule that fixed one model's habit can push another the wrong way, and
+not in that list, say so in one line at the start, because a rule that fixed one model's habit can push another the wrong way, and
 the user has said they will not remember to check. A subagent running another model is expected
-and needs no mention. `/model-update` updates the model name here when it runs.
+and needs no mention.
 
 ## 5. Work around a blocker, then wait
 

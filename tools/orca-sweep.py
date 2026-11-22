@@ -22,13 +22,15 @@ Usage: orca-sweep.py [--dry-run]
 """
 import json
 import os
+import shutil
 import subprocess
 import sys
 import time
 from pathlib import Path
 
 # ORCA_BIN lets the tests swap in a fake orca
-ORCA = os.environ.get("ORCA_BIN", "/Applications/Orca.app/Contents/Resources/bin/orca")
+ORCA = (os.environ.get("ORCA_BIN") or shutil.which("orca")
+        or "/Applications/Orca.app/Contents/Resources/bin/orca")
 LOG = Path.home() / ".claude/state/orca-sweep.log"
 MIN_IDLE_MIN = 60
 DRY = "--dry-run" in sys.argv
@@ -114,6 +116,9 @@ def is_merged(repo, branch, base, prs, tip, timeout=30):
 def main(dry=None, log=log, deadline=None, timeout=120):
     """Sweep finished child worktrees. session-tidy.py calls this with its own log."""
     dry = DRY if dry is None else dry
+    if not os.path.exists(ORCA):
+        log("skip: Orca is not installed")
+        return
     res = run([ORCA, "worktree", "list", "--json"], timeout=timeout)
     if res.returncode != 0:
         log(f"skip: orca not reachable ({res.stderr.strip()[:120]})")
