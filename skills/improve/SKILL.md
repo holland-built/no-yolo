@@ -33,9 +33,10 @@ The checklists are skills; load the ones that apply:
 | Labels, errors, empty states | `better-writing` |
 | Type scale, wrapping, truncation | `better-typography` |
 | Palettes, tokens, contrast | `better-colors` |
-| Corners, shadows, icons, motion | `better-ui` |
+| Corners, shadows, icons | `better-ui` |
+| Animation, transitions, enters and exits | `better-motion` |
 | Not looking generic or templated | `frontend-design` |
-| All six `better-*` areas in one ranked report | `better-interface` |
+| All seven `better-*` areas in one ranked report | `better-interface` |
 | A new layout with several real options | `site-design` (variants on the real page, user picks) |
 
 Behavior has no checklist skill; the task list below is its checklist.
