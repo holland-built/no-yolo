@@ -17,15 +17,55 @@ RISKY = re.compile(
         lvremove|vgremove|pvremove|rmi)(?![\w-])
     | \bfind\b.*\s-delete\b
     | \b(?:pct|qm|zfs|zpool)\s+(?:\S+\s+)*?destroy\b
-    | \bdestroy\b | \bpurge\b | \bprune\b
     | \bpvesm\s+free\b
     | \bgit\s+(?:reset\s+--hard|clean\b|push\b.*(?:--force|\s-f\b))
     | \bdocker\s+(?:\S+\s+)?(?:rm|rmi)\b
     | \b(?:drop\s+(?:table|database)|delete\s+from)\b
     | >\s*/dev/(?:sd|nvme|vd|disk)
-    | \b(?:ba|z)?sh\s+-s\b | \bbase64\b
+    | \b(?:ba|z)?sh\s+-s\b(?![^\n]*<<-?\s*['"\\]) | \bbase64\b
     """
 )
+# A quoted heredoc (<<'EOF') is exempt above because its whole script is in the command and scanned.
+DELETE_WORD = re.compile(r"(?i)\b(?:destroy|purge|prune)\b")
+READ_ONLY = {"cat", "cut", "echo", "grep", "head", "less", "ls", "sed", "stat", "tail", "wc"}
+PIPED_TO_RUNNER = re.compile(r"\|\s*(?:sudo\s+)?(?:(?:ba|z)?sh|xargs)\b")
+
+
+def split_commands(text):
+    """Split on ; & | and newlines outside quotes. Quotes reset per line so a stray ' can't hide text."""
+    parts, current, quote = [], "", None
+    for char in text:
+        if char == "\n":
+            parts.append(current)
+            current, quote = "", None
+        elif quote:
+            quote = None if char == quote else quote
+            current += char
+        elif char in "'\"":
+            quote = char
+            current += char
+        elif char in ";&|":
+            parts.append(current)
+            current = ""
+        else:
+            current += char
+    return parts + [current]
+
+
+def only_reads(part):
+    words = part.split()
+    if not words or words[0] not in READ_ONLY:
+        return False
+    return not (words[0] == "sed" and any(w.startswith("-i") or w == "--in-place" for w in words))
+
+
+def names_delete_word(command):
+    """True if destroy/purge/prune appears anywhere except as text a read-only command only reads."""
+    if PIPED_TO_RUNNER.search(command):
+        return bool(DELETE_WORD.search(command))
+    # Open the quote after `ssh host` so the commands inside it are checked one by one.
+    unquoted = re.sub(r"(\bssh\b[^\n'\"]*)['\"]", r"\1;", command)
+    return any(DELETE_WORD.search(p) for p in split_commands(unquoted) if not only_reads(p))
 
 
 def main():
@@ -33,7 +73,9 @@ def main():
         command = json.load(sys.stdin).get("tool_input", {}).get("command", "")
     except (ValueError, AttributeError):
         return
-    if not isinstance(command, str) or not SSH.search(command) or not RISKY.search(command):
+    if not isinstance(command, str) or not SSH.search(command):
+        return
+    if not RISKY.search(command) and not names_delete_word(command):
         return
     print(json.dumps({"hookSpecificOutput": {
         "hookEventName": "PreToolUse",
