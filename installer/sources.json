@@ -14,10 +14,10 @@
   ],
   "skills": [
     { "name": "humanizer", "repo": "blader/humanizer", "ref": "a32f24407364c74c812b43c15926d638bee1e072", "licence": "MIT" },
-    { "name": "archify", "repo": "tt-a1i/archify", "ref": "8509a3d63e763b4d454ea9aafa1f939545fcb1ea", "licence": "Apache-2.0" },
+    { "name": "archify", "repo": "tt-a1i/archify", "ref": "6cafc5a9875a795c6932ac0c196dacf3097fafe6", "licence": "Apache-2.0" },
     { "name": "find-skills", "repo": "vercel-labs/skills", "ref": "57217cf86ba38148a57af9e90d14a4c049558330", "licence": "MIT" },
     { "name": "frontend-design", "repo": "anthropics/skills", "ref": "e4bb5d960d87126ff3b3a8af1a104b7db67560ba", "licence": "Apache-2.0" },
-    { "name": "diagram-design", "repo": "cathrynlavery/diagram-design", "ref": "d74d8c2d0c78a9e1efd43137f6a9a51182a8b5f0", "licence": "MIT" },
+    { "name": "diagram-design", "repo": "cathrynlavery/diagram-design", "ref": "d7b0176d7e60c6f2ff54067991491ac7622c81fb", "licence": "MIT" },
     { "name": "ui-demo", "repo": "affaan-m/ecc", "ref": "4adeee6732a12d1540f49a4d50a38ce8c97f9a53", "licence": "MIT" },
     { "name": "better-interface", "repo": "jakubkrehel/skills", "ref": "672ae44ace6aaed65b86cbb1e2fd6fbea0e79578", "licence": "MIT" },
     { "name": "better-accessibility", "repo": "jakubkrehel/skills", "ref": "672ae44ace6aaed65b86cbb1e2fd6fbea0e79578", "licence": "MIT" },
