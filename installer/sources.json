@@ -2,7 +2,7 @@
   "skills_cli": "skills@1.9.0",
   "marketplaces": {
     "openai-codex": { "repo": "openai/codex-plugin-cc", "ref": "db52e28f4d9ded852ab3942cea316258ae4ef346", "licence": "Apache-2.0" },
-    "claude-plugins-official": { "repo": "anthropics/claude-plugins-official", "ref": "ad30d62cd52ad0d0af1beda1eab7f61c601045d0", "licence": "Apache-2.0" },
+    "claude-plugins-official": { "repo": "anthropics/claude-plugins-official", "follows": "Anthropic's own branch, because Claude Code does not allow a pinned ref on this reserved name", "licence": "Apache-2.0" },
     "cc-marketplace": { "repo": "kenryu42/cc-marketplace", "ref": "6a6b0a9f4b86d2b8230a1d06872fdd61dcace990", "licence": "MIT" },
     "last30days-skill": { "repo": "mvanhorn/last30days-skill", "ref": "e63f8e8732f1b934449b363f211b3654531b8ef2", "licence": "MIT" }
   },

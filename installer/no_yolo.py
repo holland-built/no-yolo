@@ -467,7 +467,9 @@ def install_plugins(manifest):
     for name, entry in sources["marketplaces"].items():
         if re.search(rf"(?<![\w-]){re.escape(name)}(?![\w-])", known):
             continue
-        code, output = run("claude", "plugin", "marketplace", "add", f"{entry['repo']}#{entry['ref']}")
+        # Claude Code refuses a ref on its reserved official marketplace, so that entry has none.
+        source = f"{entry['repo']}#{entry['ref']}" if "ref" in entry else entry["repo"]
+        code, output = run("claude", "plugin", "marketplace", "add", source)
         if code == 0:
             manifest["marketplaces"].append(name)
         else:
