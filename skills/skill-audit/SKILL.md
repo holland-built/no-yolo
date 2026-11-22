@@ -1,6 +1,6 @@
 ---
 name: skill-audit
-description: "Use when the user says skill audit, clean up my skills, which skills do I use, too many skills, prune skills, or after installing a batch of skills or plugins; suggest it monthly. Reports what to keep, merge, park or delete across Claude Code and Codex, changing nothing."
+description: "Use when the user says skill audit, clean up my skills, which skills do I use, too many skills, prune skills, or after installing a batch of skills or plugins; suggest it monthly. Installs waiting skill and plugin updates, retests them, then reports what to keep, merge, park or delete across Claude Code and Codex."
 ---
 
 # skill-audit
@@ -10,9 +10,10 @@ overlapping skill is another chance for Claude to load the wrong one. This audit
 skills earn that place. The method is Mark Kashef's
 (https://www.youtube.com/watch?v=2IPR6F3cQ_I), plus checks the video's prompt leaves out.
 
-The audit changes no skill, setting, note or plugin (updates run only after the user says yes), because the user decides from the report
-and a wrong delete costs them a skill they relied on. Its only outputs are a scratch JSON file
-and a private report page. Changes happen afterwards, only the ones the user picks.
+Running this skill is the user's yes to install every waiting update, so install them without
+asking, because the user has said a second question defeats the point of running it. Merging,
+parking, deleting and turning off stay recommendations in the report until the user picks them,
+because a wrong delete costs them a skill they relied on.
 
 It covers skills installed for the whole machine. Skills inside a single project's
 `.claude/skills` folder are out of scope; say so in the report.
@@ -72,7 +73,7 @@ or a stale reference). Give each one a single-sentence reason the user can check
 Skills copied from other people's repos stay frozen on the day they were copied unless something
 updates them, and the user will not remember which ones those are. Each has one way to update:
 
-| Skills | Check | Update, once the user says yes |
+| Skills | Check | Update |
 |---|---|---|
 | Everything in `~/.agents/.skill-lock.json` (`better-*`, `frontend-design`, `archify`, `humanizer`, `find-skills`, `ui-demo`, `web-design-guidelines`) | the lock's `updatedAt` dates, and the upstream repo's last commit | `npx -y skills update -g -y` |
 | `diagram-design` | upstream `cathrynlavery/diagram-design` against the commit named at the top of its `SKILL.md` | by hand only: it carries a local house skin that an update would overwrite, so merge the upstream changes into it and keep the skin |
@@ -81,9 +82,11 @@ updates them, and the user will not remember which ones those are. Each has one 
 | Plugin skills | `claude plugin marketplace update` | `claude plugin update <plugin>` |
 | `modern-web-guidance` (used inside `build`, `improve`, `site-design`, `fix`, and by `CLAUDE.md` for `better-*` and `frontend-design`) | `~/.claude/state/web-guidance-update.log` | nothing to do: `~/.claude/tools/update-web-guidance.py` runs every Sunday, so report only a failed or skipped week |
 
-Put a "Updates" section in the report listing what is behind and by how much. After the user says
-yes, run the updates, then follow "Short descriptions" below, then rerun `trigger_test.py`,
-because an updated description can change which skill loads.
+Save a copy of each skill before updating it, then run the updates, follow "Short descriptions"
+below, and rerun `trigger_test.py`, because an updated description can change which skill loads.
+If an update removes or moves part of a skill, install what it moved to. Then bring no-yolo's
+`installer/sources.json` to the same versions through a pull request, so a fresh install matches.
+Put an "Updates" section in the report listing what was updated and anything that failed.
 
 ## Short descriptions
 
@@ -140,4 +143,5 @@ In chat, give the counts per verdict and the link.
 ## Done
 
 The report is published, every skill and dead link has a verdict with a reason grounded in its
-use count and the checks above, and no skill, setting, note or plugin has changed.
+use count and the checks above, every waiting update is installed and retested or reported as
+failed, no-yolo matches, and nothing was merged, parked or deleted without the user picking it.
