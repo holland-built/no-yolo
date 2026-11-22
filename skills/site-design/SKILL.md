@@ -16,6 +16,14 @@ Default to **three** variants. Stop at five. Past five they stop being different
 Make them **radically different**. Three versions of the same idea teach nothing. Vary the thing
 that actually decides the page: the layout, the density, what leads, what is cut.
 
+When the user gives a screenshot or link as a reference, write one line on what to take from it
+(density, spacing, type) and what to leave (its layout, its brand), and hold every variant to it.
+Never ask for a reference, because that hands the user a chore.
+
+Compare the variants as static layouts. Add decorative animation only after the user has picked,
+because motion hides a weak layout. Keep feedback that a control needs to work, such as a focus
+ring or a pressed state, and build motion early only when it is the point of the page.
+
 ## Build them on the real page
 
 A blank route is a vacuum. Every variant looks fine in a vacuum.
@@ -48,12 +56,30 @@ Keep `DISABLE_TELEMETRY=1` and leave app and customer names out of the search, b
 otherwise reports searches to Google. The reply does not mention this unless a guide changed what
 the user will see.
 
+## A fresh look before the user sees them
+
+Whoever built a design is the worst judge of it, so a different model looks first. Screenshot each
+variant at 1440 wide and at phone width, then send only the images to the Codex reviewer:
+
+```bash
+codex exec --skip-git-repo-check --sandbox read-only \
+  -c model=gpt-6.1-sol -c model_reasoning_effort=medium \
+  --image /abs/a-desktop.png --image /abs/a-phone.png --image /abs/b-desktop.png \
+  --image /abs/b-phone.png --image /abs/c-desktop.png --image /abs/c-phone.png -- \
+  "<which images are option A, B, C>. <one line on what the page is for>. <the user's reference, if any>. Styles to flag if present: <the list under 'When all three look the same', minus any the brand or owner keeps>. Answer: 1) Which two options look most alike, and what do they share? 2) For each option, the one part that looks generated, where on screen, and what to change. 3) Any listed style present, by option and name. None is a valid answer. Do not pick a winner and give no scores." < /dev/null
+```
+
+Send no code and none of your own opinion, so the review stays independent. Remove any listed style
+it finds. If two options are alike, rebuild one around the fix in "When all three look the same".
+Do this once, with no second review. It never picks a winner; the user does, even if they pick the
+one it criticised. Say in one line what it changed. Empty output means "fresh look: couldn't tell",
+so say that and show the variants anyway. Skip this for a fix inside a direction already picked.
+
 ## Judge, pick, delete
 
 Show all three. The user picks one, or takes parts from each. Delete the rest.
 
-Close your message by saying how to compare them and asking which one the user picks. Ask about
-banning a style only after they have picked.
+Close your message by saying how to compare them and asking which one the user picks.
 
 A variant is throwaway code that answered a question. It is not a deliverable.
 
