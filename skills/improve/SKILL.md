@@ -22,7 +22,9 @@ problem once one is found.
 A named area keeps the work narrow: "make the colors better" uses `better-colors` and nothing
 else. "Make it better", or a feeling ("it's clunky", "zoom sucks"), starts with a walkthrough,
 and what the walkthrough finds decides which checklists run. Words alone are not enough, because
-"the timeline feels off" sounds visual and is usually a behavior bug.
+"the timeline feels off" sounds visual and is usually a behavior bug. When something feels off and
+the walkthrough finds nothing that matches, describe in plain words the three to five parts that
+section is made of, so the user can point at one.
 
 The checklists are skills; load the ones that apply:
 

@@ -136,8 +136,9 @@ not the thing working. If it draws a page, open the page.
 
 **A new page gets the design pass without being asked.** The user will not remember which design
 skill does what, so `/build` carries it. Before writing a page or screen, load `frontend-design`
-for the visual direction, so it does not come out looking like every other generated page. Once
-it runs, run `better-interface` on it and fix every `HIGH` finding, because those are the
+for the visual direction, so it does not come out looking like every other generated page. When
+the user has not settled how the page should look, build it through `site-design`, so they pick
+from three variants; a mockup they already picked skips this. Once it runs, run `better-interface` on it and fix every `HIGH` finding, because those are the
 accessibility and layout failures nobody notices until a reader hits one. A small change to an
 existing page skips both; that is `/improve`'s job when it looks wrong.
 
