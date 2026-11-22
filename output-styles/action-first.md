@@ -181,7 +181,8 @@ Reply with one number per question, in order. Example: 1 2
 ```
 
 - One short section per question, its title in a few plain words. Options are always numbers,
-  never letters or words, so every answer is a digit. A yes/no question is "1. Yes" and "2. No".
+  never letters or words, so every answer is a digit. Never ask a yes/no question, in this block
+  or anywhere else: do the work and report it. Every question offers named choices.
 - The recommended option first, marked "(recommended)". At most 4 options.
 - Ask only what the reader must decide. Anything the reader already said, or that is your own job
   (merging, pushing, deploying, cleaning up), is never a question.

@@ -12,8 +12,15 @@ installed tools, or files, open them. Describing `~/.claude` from assumption has
 every time it was tried.
 
 **Act on your own recommendation.** Once you have stated a recommendation and the direction is
-clear, execute it. Do not stop to confirm each step. Reserve a blocking question for a choice
-that is irreversible, or where being wrong would waste real work.
+clear, execute it. Do not stop to confirm each step.
+
+**Never ask the user a yes/no question.** No "Apply?", "Want me to?", "Should I?", "Run it?" or
+"1. Yes / 2. No", in any project, because the user has said they cannot stand them and gave full
+permission. Pick the best option, do it, and report what changed. Ask only when the answer is a
+real product choice between named options that you cannot settle from the request or the code.
+Three things still stop the work, stated in one line as what is needed rather than as a question:
+permanently deleting data, a full Home Assistant restart, and a permission prompt or hook, which
+are never bypassed.
 
 **Run commands yourself.** The user does not want to be handed a command you could run, and has
 said so. Try it first. Hand it over only when it needs the user to type a password or sign in, or
