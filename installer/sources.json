@@ -27,7 +27,7 @@
     { "name": "better-colors", "repo": "jakubkrehel/skills", "ref": "672ae44ace6aaed65b86cbb1e2fd6fbea0e79578", "licence": "MIT" },
     { "name": "better-ui", "repo": "jakubkrehel/skills", "ref": "672ae44ace6aaed65b86cbb1e2fd6fbea0e79578", "licence": "MIT" },
     { "name": "better-motion", "repo": "jakubkrehel/skills", "ref": "672ae44ace6aaed65b86cbb1e2fd6fbea0e79578", "licence": "MIT" },
-    {"name": "impeccable", "repo": "pbakaus/impeccable", "ref": "acb4cfe14470b1fdf51e855431af618d936b7db8", "licence": "Apache-2.0"},
+    {"name": "impeccable", "repo": "pbakaus/impeccable", "ref": "b49177d32788f2dc585c42831d845dacf1ebed2c", "licence": "Apache-2.0"},
     {"name": "web-design-guidelines", "repo": "vercel-labs/agent-skills", "ref": "5a37a6329fbad3666c3207392a6a7c0110e92efb", "licence": "MIT"}
   ]
 }
