@@ -77,7 +77,7 @@ Type the command and what you want, or just say it in plain words.
 | `/fix the login page throws a 500` | Reproduces the error, shows the cause, fixes it, shows it working |
 | `/build a Save button on the settings page` | Agrees what it should do, has a second AI attack the plan, builds it |
 | `/improve the checkout page feels clunky` | Tests on phone and computer sizes, fixes the worst problems, tests again |
-| `/site-design a landing page for a bakery` | Builds three versions to compare side by side |
+| `/site-design a landing page for a bakery` | Builds three versions, has a second AI check them, then you pick one |
 | `/dashboard-design is the overview clear?` | Gives a verdict, what works, then fixes in order |
 | `/grill-lite should I move my desk upstairs?` | Asks numbered questions, then saves your decisions |
 | `/better make my dashboard look nicer` | Rewrites your request around the result you want |
