@@ -198,7 +198,8 @@ cd ~/no-yolo && ./install.sh --uninstall
 <summary><b>Credits and licences</b></summary>
 
 Outside projects install from their own source at the commit recorded in
-[`installer/sources.json`](installer/sources.json). The Action First style, `/dashboard-design`,
+[`installer/sources.json`](installer/sources.json). Anthropic's official plugin list is the one
+exception, because it follows Anthropic's own branch. The Action First style, `/dashboard-design`,
 `/retro` and `/grill-lite` live in this repo, with credit below.
 
 | Project | Used for | Licence |
