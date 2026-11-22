@@ -2,7 +2,7 @@
 
 [![MIT licence](https://img.shields.io/badge/licence-MIT-blue)](LICENSE)
 ![macOS and Linux](https://img.shields.io/badge/macOS%20%7C%20Linux-supported-green)
-![23 commands](https://img.shields.io/badge/commands-23-8A2BE2)
+![25 commands](https://img.shields.io/badge/commands-25-8A2BE2)
 [![latest release](https://img.shields.io/github/v/release/holland-built/no-yolo)](https://github.com/holland-built/no-yolo/releases)
 ![last commit](https://img.shields.io/github/last-commit/holland-built/no-yolo)
 
@@ -93,6 +93,7 @@ Type the command and what you want, or just say it in plain words.
 | `/writing`, `/humanizer` | Writes rules for an AI, or makes writing sound less like an AI |
 | `/demo-voiceover`, `/archify`, `/diagram-design` | Narrates a demo, draws a system, or makes a branded diagram |
 | `/frontend-design`, `/find-skills` | Gives a page its own look, or finds someone else's skill |
+| `/impeccable`, `/web-design-guidelines` | Designs and polishes a page, or checks it against web design rules |
 
 `/improve` chooses from seven design checklists on its own, so you do not need to remember them.
 
@@ -102,7 +103,7 @@ Type the command and what you want, or just say it in plain words.
 | Path | Holds |
 |---|---|
 | `CLAUDE.md`, `shared/` | The rules Claude follows, and the rules Claude and Codex share |
-| `skills/` | The 17 commands that live in this repo. The other 6 install from their own projects |
+| `skills/` | The 17 commands that live in this repo. The other 8 install from their own projects |
 | `output-styles/` | The Action First reply style |
 | `hooks/` | The secret guard and the Claude Code safety hooks |
 | `tools/` | Risky-change review, session tidy, process cleanup and weekly updaters |
@@ -213,6 +214,8 @@ exception, because it follows Anthropic's own branch. The Action First style, `/
 | [diagram-design](https://github.com/cathrynlavery/diagram-design) | `/diagram-design` | MIT |
 | [vercel-labs/skills](https://github.com/vercel-labs/skills) | `/find-skills`, skill installer | MIT |
 | [anthropics/skills](https://github.com/anthropics/skills) | `/frontend-design` | Apache-2.0 |
+| [impeccable](https://github.com/pbakaus/impeccable) | `/impeccable` | Apache-2.0 |
+| [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills) | `/web-design-guidelines` | MIT |
 | [ecc](https://github.com/affaan-m/ecc) | `ui-demo` | MIT |
 | [jakubkrehel/skills](https://github.com/jakubkrehel/skills) | Seven `better-*` checklists | MIT |
 | [i-have-adhd](https://github.com/ayghri/i-have-adhd) | Adapted into the Action First style | MIT |

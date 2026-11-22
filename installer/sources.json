@@ -25,6 +25,8 @@
     { "name": "better-writing", "repo": "jakubkrehel/skills", "ref": "672ae44ace6aaed65b86cbb1e2fd6fbea0e79578", "licence": "MIT" },
     { "name": "better-typography", "repo": "jakubkrehel/skills", "ref": "672ae44ace6aaed65b86cbb1e2fd6fbea0e79578", "licence": "MIT" },
     { "name": "better-colors", "repo": "jakubkrehel/skills", "ref": "672ae44ace6aaed65b86cbb1e2fd6fbea0e79578", "licence": "MIT" },
-    { "name": "better-ui", "repo": "jakubkrehel/skills", "ref": "672ae44ace6aaed65b86cbb1e2fd6fbea0e79578", "licence": "MIT" }
+    { "name": "better-ui", "repo": "jakubkrehel/skills", "ref": "672ae44ace6aaed65b86cbb1e2fd6fbea0e79578", "licence": "MIT" },
+    {"name": "impeccable", "repo": "pbakaus/impeccable", "ref": "acb4cfe14470b1fdf51e855431af618d936b7db8", "licence": "Apache-2.0"},
+    {"name": "web-design-guidelines", "repo": "vercel-labs/agent-skills", "ref": "53b6e3ddf96b3fa83af97b1783ed805b582ad3a7", "licence": "MIT"}
   ]
 }
