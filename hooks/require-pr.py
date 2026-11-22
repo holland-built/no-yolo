@@ -7,6 +7,7 @@ denied with the way to do it instead. A PR that touches risky code must be revie
 
 Optional extra patterns live in ~/.claude/risky-extra.txt, one per line: `risky: <regex>` adds a
 risky path, `skip: <regex>` adds a path that needs no review. A bare line counts as risky.
+`exempt: <owner>/<repo>` turns off both checks for the repo whose GitHub origin is exactly that.
 This is a guard against ordinary pushes, not a sandbox: `bash -c '...'` and the like get past it.
 """
 import json
@@ -22,6 +23,8 @@ EXTRA_FILE = os.path.expanduser("~/.claude/risky-extra.txt")
 RISKY_WORDS = (r"updat|upgrad|apply|delet|remov|teardown|migrat|auth|login|signin|sso|"
                r"session|passw|secret|token|vault")
 SKIP_WORDS = r"_test\.|\.test\.|\.spec\.|/tests?/|/e2e/|/dist/|\.md$|package-lock\.json$|go\.sum$"
+GITHUB_ORIGIN = re.compile(r"(?:https://(?:[^/@]+@)?github\.com/|ssh://git@github\.com(?::22)?/|git@github\.com:)"
+                           r"([^/\s:]+/[^/\s:]+?)(?:\.git)?/?$", re.I)
 
 
 def extra_patterns():
@@ -33,7 +36,7 @@ def extra_patterns():
     except (OSError, UnicodeDecodeError):
         return risky, skip
     for line in lines:
-        if not line or line.startswith("#") or line.startswith("built:"):
+        if not line or line.startswith(("#", "built:", "exempt:")):
             continue
         kind, _, value = line.partition(":") if line.startswith(("risky:", "skip:")) else ("risky", "", line)
         value = value.strip()
@@ -80,6 +83,18 @@ def git(cwd, *args):
         return ""
 
 
+def is_exempt(repo):
+    """True only when the repo's origin is exactly a GitHub repo named on an `exempt:` line."""
+    try:
+        with open(EXTRA_FILE, encoding="utf-8") as extra:
+            exempt = {line.split(":", 1)[1].strip().lower() for line in extra
+                      if line.strip().startswith("exempt:")}
+    except (OSError, UnicodeDecodeError):
+        return False
+    match = GITHUB_ORIGIN.fullmatch(git(repo, "remote", "get-url", "origin"))
+    return bool(match) and match.group(1).lower() in exempt
+
+
 def require_risky_review(cmd, cwd):
     """Before a PR opens on a risky change, require one Claude review of that exact commit.
 
@@ -93,7 +108,7 @@ def require_risky_review(cmd, cwd):
         cwd = target if os.path.isabs(target) else os.path.join(cwd, target)
     head = git(cwd, "rev-parse", "HEAD")
     base = git(cwd, "symbolic-ref", "--short", "refs/remotes/origin/HEAD")
-    if not head or not base:
+    if not head or not base or is_exempt(cwd):
         return
     risky = [f for f in git(cwd, "diff", "--name-only", f"{base}...HEAD").splitlines()
              if RISKY.search(f) and not NOT_REVIEWED.search(f)]
@@ -150,6 +165,8 @@ def main():
         if i >= len(words) or words[i] != "push":
             continue
 
+        if is_exempt(repo):
+            continue
         opts = words[i + 1:]
         if any(o in ("--all", "--mirror", "--branches") for o in opts):
             deny_push("every branch at once (--all/--mirror), which includes main")
