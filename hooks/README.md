@@ -35,3 +35,5 @@ skip: generated/
 # a machine-built path the review tool should ignore
 built: vendor/**
 ```
+
+A line such as `exempt: <owner>/<repo>` turns off the direct-push block and the risky review for the one repo whose GitHub origin is exactly that name.
