@@ -153,7 +153,7 @@ Pick the tool by what the page needs, because each one fails where another works
 - Anything that needs the user logged in, such as shopping or work sites: the user's own browser,
   with the user typing any password. Claude drives it through Claude in Chrome; Codex uses its own
   Chrome control when it has one, and otherwise hands the task back to Claude. That browser is already the real person on their own
-connection, which is what the anti-detection tools try to fake.
+  connection, which is what the anti-detection tools try to fake.
 
 Never use a service that holds the user's logins or watches their logged-in session for them
 (Browserbase, "Agent Web" and the like), because a third party then has their accounts.
