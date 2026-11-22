@@ -108,6 +108,10 @@ each rather than only at the end.
 The definition of done is also the scope limit: finish it, and stop there. Cleaning up what
 your own change left unused is part of finishing, not scope creep — that is §3.
 
+**Before rebuilding something, collect the corrections it already earned.** Gather the user's
+repeated corrections from saved notes and past chats into a must-have list, and use it as the
+acceptance test in a fresh chat, because a clean start otherwise repeats every old mistake.
+
 ## 7. Design Rules
 
 **Web pages and slides.** Left alone, a model reaches for the same few styles every time, and
