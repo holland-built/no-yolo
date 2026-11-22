@@ -48,6 +48,11 @@ answers, a "don't narrate" line makes the model go quiet mid-task, and thinking 
 whether the skill is reached for at all, and skills under-trigger more often than they
 over-trigger. Name the situations plainly, including the words the user actually uses.
 
+**When the output shape keeps coming out slightly wrong, show it.** Add one to five real examples
+of finished output from runs the user accepted, instead of another rule, because a shape is easier
+to copy than to describe. Make them differ, because a model copies a single example closely. Take
+out names and private details first, because skills here are published.
+
 **Test a skill against no skill.** Run two or three prompts the user would really type, once
 with the skill and once without (for a changed skill, against the old copy), and compare the
 results. A skill whose output is no better than the bare model's is only costing context. When

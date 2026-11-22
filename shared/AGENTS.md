@@ -73,6 +73,10 @@ silently, so the cut goes unnoticed until it costs something.
 Some jobs genuinely need a lot of code, so length is not the test. Before you show it,
 read it back: if it is longer or more complicated than the job requires, simplify it first.
 
+**Count and filter big files with a script.** When a large file only needs moving, filtering or
+counting, write a script and read its result, because reading every row spends context without
+helping the answer. Read the content itself when the job depends on understanding it.
+
 ## 3. Surgical Changes
 
 **Touch only what you must, and clean up only your own mess**, because every extra changed line

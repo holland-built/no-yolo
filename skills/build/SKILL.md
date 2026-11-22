@@ -116,6 +116,12 @@ description opens with the problem in the user's words, then the fix in a senten
 was proved. The user reads it later to remember why the change exists, and a list of renamed
 functions does not answer that.
 
+**"Be ambitious" widens what is asked for, and simplicity still governs how it is built.** When
+the user says be ambitious, go all out, or asks for the full version, finish the thing they named:
+its empty and error states, full flow, keyboard use and polish are no longer speculative. Say in
+one line what that adds, write it into `PLAN.md` as acceptance criteria, and build each with the
+least code that does it. A new product area, such as accounts or sharing, still gets asked first.
+
 **Write the least code that does the job, and touch only what the job needs.** The user
 maintains it later without you, and cannot tell speculative code from needed code. Prefer, in
 order: a pattern the project already uses, the standard library or platform, a dependency
