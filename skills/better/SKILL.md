@@ -12,7 +12,7 @@ Claude gets the goal, the decisions, and the finish line, then runs the better v
 Source: the Claude Code team's own habits, as recapped in
 https://www.youtube.com/watch?v=_NzakzRXzLI.
 
-## The six checks
+## The seven checks
 
 Apply each one only where it fits the ask. Most asks need two or three, and a check that adds
 nothing makes the prompt longer without making it better.
@@ -45,6 +45,16 @@ Claude's own say-so would show the result is right. Then it does the work that w
 to "act like an expert" only changes how it sounds; naming the expert's methods changes the work.
 Skip it for quick fixes, where it only adds length. Source: Felix Rieseberg,
 https://felixrieseberg.com/how-to-be-more-ambitious-a-tutorial-for-humans-with-models/.
+
+**Aim visual asks.** When the ask is about how a page or screen looks, name the skill that fits:
+`site-design` for a new or unsettled look, `improve` for an existing page that feels wrong, and
+`better-ui` when only surfaces and icons need polish. Name the part of the screen and the states
+to check (hover, selected, loading, empty, phone width). If the user gave a screenshot or link,
+say what to take from it (density, spacing, type) and what to leave (its layout, its brand). Settle
+the layout before adding decorative animation, because motion hides a weak layout. If the user
+cannot say what feels off, have Claude describe the three to five parts of that section in plain
+words so the user can point at one. Never ask the user for a reference, because that hands them a
+chore.
 
 **Let Claude design the setup.** When the ask is about speeding up or repeating work, use this
 prompt, adapted to the ask:
