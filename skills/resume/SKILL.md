@@ -54,6 +54,10 @@ Run the `/humanizer` skill on the prose before showing it. Resumes made by AI sh
 
 Keep one master resume with every true fact, and make a shorter version per posting. Reorder and trim the master. Do not add to it. If the posting asks for something the person lacks, say so plainly and suggest how to get it, such as a class project or a free course, instead of stretching the truth.
 
+A reader decides from the top of the page, so put what this posting asks for first: name the role in the summary, order skills by the posting's top requirements, move the most relevant job up with its dates intact, and lead each job with its most relevant bullet. Use the posting's exact term where it truthfully describes the work, because hiring software matches words.
+
+Name each version for its target, such as `Name_Resume_Role_Company.pdf`, and show a short before and after of what changed, so the person can defend every change in an interview and knows which version went where.
+
 ## Done
 
 The work is done when all of these hold, and the reply says which are met:
