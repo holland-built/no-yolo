@@ -6,9 +6,8 @@ description: "Use when the user says write a README, make the github docs simple
 # github-readme
 
 Make a repo that a stranger can use in five minutes and that gives away nothing about where it
-was built. The model is [proxblox](https://github.com/holland-built/proxblox). Match its shape
-before inventing a new one, because the user has already approved that shape and every departure
-costs a review round.
+was built. Follow the shape below before
+inventing a new one, because every departure costs a review round.
 
 Many readers are not programmers. Everyday words, short sentences, one idea each. Say who does
 what.
@@ -67,8 +66,7 @@ Commands, paths, flags and error text are copied exactly. A reader pastes them, 
 becomes their bug.
 
 Never tell people to use root or a shared account. Show a personal login with `sudo`, and say
-what access it needs (which commands, which folders) rather than locking it down. proxblox has
-a worked example under "Proxmox login: use your own user, not root".
+what access it needs (which commands, which folders) rather than locking it down.
 
 After writing, read every code block again and fix any command that has no comment directly
 above it. This is the check that most often fails on the first pass.
@@ -85,7 +83,7 @@ Use obvious placeholders instead:
 | Instead of | Write |
 |---|---|
 | A username or owner | `<you>` or `jsmith` |
-| A Proxmox or other host | `pve1` or `<proxmox-host>` |
+| A server or other host | `server1` or `<host>` |
 | An IP address | `10.0.0.x` |
 | A MAC address | `aa:bb:cc:dd:ee:ff` |
 | A domain | `example.com` |

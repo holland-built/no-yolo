@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """PreToolUse hook (Bash): block a git push straight to main or master.
 
-The user wants every change shipped through a pull request, so CI, the Codex review and the
-merge rule in CLAUDE.md §0 always run. A push of a feature branch passes; a push whose target
-is main/master, or a bare `git push` from main/master, is denied with the way to do it instead.
+Every change ships through a pull request, so CI and review always run. A push of a feature
+branch passes; a push whose target is main/master, or a bare `git push` from main/master, is
+denied with the way to do it instead. A PR that touches risky code must be reviewed first.
 
-Exempt: the public no-yolo mirror (by its origin URL), which a sync script pushes to main.
+Optional extra patterns live in ~/.claude/risky-extra.txt, one per line: `risky: <regex>` adds a
+risky path, `skip: <regex>` adds a path that needs no review. A bare line counts as risky.
 This is a guard against ordinary pushes, not a sandbox: `bash -c '...'` and the like get past it.
 """
 import json
@@ -15,8 +16,39 @@ import shlex
 import subprocess
 import sys
 
-EXEMPT_REPOS = {"no-yolo"}
 PROTECTED = {"main", "master"}
+REVIEW_DIR = os.path.expanduser("~/.claude/state/risky-review")
+EXTRA_FILE = os.path.expanduser("~/.claude/risky-extra.txt")
+RISKY_WORDS = (r"updat|upgrad|apply|delet|remov|teardown|migrat|auth|login|signin|sso|"
+               r"session|passw|secret|token|vault")
+SKIP_WORDS = r"_test\.|\.test\.|\.spec\.|/tests?/|/e2e/|/dist/|\.md$|package-lock\.json$|go\.sum$"
+
+
+def extra_patterns():
+    """Read the optional private list. A pattern that is not valid regex is matched literally."""
+    risky, skip = [], []
+    try:
+        with open(EXTRA_FILE, encoding="utf-8") as extra:
+            lines = [line.strip() for line in extra]
+    except (OSError, UnicodeDecodeError):
+        return risky, skip
+    for line in lines:
+        if not line or line.startswith("#") or line.startswith("built:"):
+            continue
+        kind, _, value = line.partition(":") if line.startswith(("risky:", "skip:")) else ("risky", "", line)
+        value = value.strip()
+        try:
+            re.compile(value)
+        except re.error:
+            value = re.escape(value)
+        if value:
+            (skip if kind == "skip" else risky).append(value)
+    return risky, skip
+
+
+_extra_risky, _extra_skip = extra_patterns()
+RISKY = re.compile("|".join([RISKY_WORDS, *_extra_risky]), re.I)
+NOT_REVIEWED = re.compile("|".join([SKIP_WORDS, *_extra_skip]), re.I)
 
 
 def deny(reason):
@@ -32,19 +64,12 @@ def deny_push(what):
     deny(
         f"Pushing straight to {what} is blocked: every change ships through a pull request. "
         "Create a branch (git switch -c <name>), push it (git push -u origin <name>), open the "
-        "PR (gh pr create --fill), then follow CLAUDE.md §0 to merge."
+        "PR (gh pr create --fill), then follow your merge rules."
     )
 
 
 def strip(text, prefix):
     return text[len(prefix):] if text.startswith(prefix) else text
-
-
-def is_exempt(repo):
-    """The no-yolo mirror, recognised by its GitHub remote, not just its folder name."""
-    url = git(repo, "remote", "get-url", "origin")
-    url = url[:-4] if url.endswith(".git") else url
-    return any(url.endswith("/" + name) for name in EXEMPT_REPOS)
 
 
 def git(cwd, *args):
@@ -55,12 +80,46 @@ def git(cwd, *args):
         return ""
 
 
+def require_risky_review(cmd, cwd):
+    """Before a PR opens on a risky change, require one Claude review of that exact commit.
+
+    A review costs real tokens, so it runs only where a miss is expensive.
+    """
+    if not re.search(r"\bgh\s+pr\s+create\b", cmd):
+        return
+    match = re.search(r"(?:^|[;&|\n]\s*)cd\s+(\"[^\"]+\"|'[^']+'|\S+)", cmd)
+    if match:
+        target = os.path.expanduser(match.group(1).strip("\"'"))
+        cwd = target if os.path.isabs(target) else os.path.join(cwd, target)
+    head = git(cwd, "rev-parse", "HEAD")
+    base = git(cwd, "symbolic-ref", "--short", "refs/remotes/origin/HEAD")
+    if not head or not base:
+        return
+    risky = [f for f in git(cwd, "diff", "--name-only", f"{base}...HEAD").splitlines()
+             if RISKY.search(f) and not NOT_REVIEWED.search(f)]
+    marker = os.path.join(REVIEW_DIR, head)
+    if not risky or os.path.exists(marker):
+        return
+    deny(
+        f"This change touches risky code ({', '.join(risky[:5])}). Before opening the PR, run "
+        f"`python3 ~/.claude/tools/ocr-review.py {base}`, which prints a folder with files.txt and "
+        "rules.json. Then start one fresh read-only Claude reviewer (Agent tool, subagent_type "
+        f"Plan) on `git diff {base}...HEAD`, telling it to review every file in files.txt against "
+        "its rule group in rules.json and report only defects that break the intended case. If "
+        "the script fails or says the network block is unavailable, do not run the tool another "
+        "way: review every changed file by hand and say so. Check each finding against the code and "
+        "fix the real ones, committing the fixes. Then "
+        f"run `mkdir -p {REVIEW_DIR} && touch {REVIEW_DIR}/$(git rev-parse HEAD)` and open the PR."
+    )
+
+
 def main():
     data = json.load(sys.stdin)
     cmd = (data.get("tool_input") or {}).get("command", "")
+    cwd = data.get("cwd") or os.getcwd()
+    require_risky_review(cmd, cwd)
     if "push" not in cmd or "git" not in cmd:
         return
-    cwd = data.get("cwd") or os.getcwd()
 
     # Each piece of a compound command, tracking `cd` so the branch is read in the right repo.
     for part in re.split(r"&&|\|\||;|\n", cmd):
@@ -91,8 +150,6 @@ def main():
         if i >= len(words) or words[i] != "push":
             continue
 
-        if is_exempt(repo):
-            continue
         opts = words[i + 1:]
         if any(o in ("--all", "--mirror", "--branches") for o in opts):
             deny_push("every branch at once (--all/--mirror), which includes main")

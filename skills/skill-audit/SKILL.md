@@ -75,7 +75,6 @@ updates them, and the user will not remember which ones those are. Each has one 
 | Skills | Check | Update, once the user says yes |
 |---|---|---|
 | Everything in `~/.agents/.skill-lock.json` (`better-*`, `frontend-design`, `archify`, `humanizer`, `find-skills`, `ui-demo`, `web-design-guidelines`) | the lock's `updatedAt` dates, and the upstream repo's last commit | `npx -y skills update -g -y` |
-| `impeccable` | `~/.claude/skills/impeccable/scripts/impeccable check` | `~/.claude/skills/impeccable/scripts/impeccable update` |
 | `diagram-design` | upstream `cathrynlavery/diagram-design` against the commit named at the top of its `SKILL.md` | by hand only: it carries a local house skin that an update would overwrite, so merge the upstream changes into it and keep the skin |
 | `retro` | upstream `mattpocock/skills` `skills/engineering/retro/SKILL.md` against the version named at the top of its `SKILL.md` | by hand only: it carries two local edits (named in its header comment), so merge the upstream changes into it, keep those edits, and update the version in the comment |
 | `grill-lite` | upstream `mattpocock/skills` `skills/productivity/grilling/SKILL.md` against the date named at the top of its `SKILL.md` | by hand only: it is a rewrite, not a copy, so carry over only upstream ideas that fit it and update the date in the comment |

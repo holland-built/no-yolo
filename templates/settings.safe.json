@@ -1,0 +1,41 @@
+{
+  "permissions": {
+    "ask": [
+      "Bash(git push*--force*)",
+      "Bash(git push* -f*)",
+      "Bash(git push* +*)",
+      "Bash(gh release delete:*)",
+      "Bash(gh repo delete:*)"
+    ],
+    "deny": [
+      "Read(//**/.env)",
+      "Read(//**/.env.*)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          { "type": "command", "command": "python3 \"$HOME/.claude/hooks/require-pr.py\"" },
+          { "type": "command", "command": "python3 \"$HOME/.claude/hooks/ssh-delete-guard.py\"" }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      { "hooks": [{ "type": "command", "command": "python3 \"$HOME/.claude/hooks/orca-waiting.py\"" }] }
+    ],
+    "Stop": [
+      { "hooks": [{ "type": "command", "command": "python3 \"$HOME/.claude/hooks/orca-waiting.py\"" }] }
+    ],
+    "SessionEnd": [
+      { "hooks": [{ "type": "command", "command": "python3 \"$HOME/.claude/hooks/orca-waiting.py\"" }] }
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "~/.claude/statusline.sh",
+    "padding": 0
+  },
+  "outputStyle": "Action First"
+}

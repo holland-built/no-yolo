@@ -1,0 +1,36 @@
+{
+  "permissions": {
+    "defaultMode": "auto",
+    "allow": [
+      "Bash(gh api -X PATCH repos/*/dependabot/alerts/*)",
+      "Bash(git push origin --delete:*)",
+      "Bash(gh pr merge:*)",
+      "Bash(gh pr:*)",
+      "Bash(gh run:*)",
+      "Bash(gh release:*)",
+      "Bash(gh workflow run:*)",
+      "Bash(git tag:*)",
+      "Bash(git push:*)"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "LOG=\"$HOME/.claude/reap-codex-orphans.log\"; { date -u '+== %Y-%m-%dT%H:%M:%SZ'; \"$HOME/.claude/tools/reap-codex-orphans.sh\"; } >>\"$LOG\" 2>&1 || echo \"reap-codex-orphans failed; see $LOG\" >&2",
+            "timeout": 120,
+            "statusMessage": "Cleaning up unused Codex processes",
+            "async": true
+          }
+        ]
+      },
+      {
+        "hooks": [
+          { "type": "command", "command": "python3 \"$HOME/.claude/tools/session-tidy.py\"", "timeout": 30 }
+        ]
+      }
+    ]
+  }
+}
