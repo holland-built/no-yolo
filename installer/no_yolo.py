@@ -96,14 +96,17 @@ def save_manifest(manifest):
     write_atomic(MANIFEST, (json.dumps(manifest, indent=2, sort_keys=True) + "\n").encode())
 
 
-def back_up(path, name, manifest):
-    """Keep the user's own copy once, the first time this installer replaces it."""
-    if name in manifest["backups"]:
-        return
+def back_up(path, name, manifest, installed_by_us=False):
+    """Save a new copy before overwriting. Uninstall restores only the file from before install."""
     saved = BACKUPS / STAMP / name
+    count = 1
+    while saved.exists():
+        saved = BACKUPS / f"{STAMP}.{count}" / name
+        count += 1
     saved.parent.mkdir(parents=True, exist_ok=True)
     shutil.copy2(path, saved)
-    manifest["backups"][name] = str(saved)
+    if not installed_by_us:
+        manifest["backups"].setdefault(name, str(saved))
 
 
 def restore(path, name, manifest):
@@ -176,12 +179,15 @@ def install_files(full, manifest):
     for name, (data, mode) in wanted.items():
         path = CLAUDE / name
         now = file_digest(path)
-        if now and now != digest(data) and now != manifest["files"].get(name):
-            back_up(path, name, manifest)
+        recorded = manifest["files"].get(name)
+        if now and now != digest(data) and now != recorded:
+            back_up(path, name, manifest, installed_by_us=recorded is not None)
         if now != digest(data):
             write_atomic(path, data, mode)
         else:
             os.chmod(path, mode)
+            if recorded is None:
+                continue  # the user already had this exact file, so uninstall must leave it
         manifest["files"][name] = digest(data)
     say(f"Installed {len(wanted)} files into ~/.claude")
 
@@ -443,7 +449,7 @@ def build_codex_rules(manifest):
         return
     before = CODEX_RULES.read_bytes() if CODEX_RULES.exists() else None
     if before is not None and digest(before) != manifest.get("codex_rules"):
-        back_up(CODEX_RULES, "codex-AGENTS.md", manifest)
+        back_up(CODEX_RULES, "codex-AGENTS.md", manifest, installed_by_us="codex_rules" in manifest)
     code, output = run(str(CLAUDE / "shared/build-codex-agents.sh"))
     if code != 0:
         problem(f"could not build the Codex rules: {output.strip()[:160]}")
