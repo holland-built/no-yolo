@@ -156,6 +156,13 @@ reading and loses the thread across tabs, tiny previews or sideways scrolling.
   The user can paste that answer into the chat or type the same numbers there, and either one
   counts as the pick.
 
+**Design work overwrites in place.** When iterating on a page, mockup, document or button, write
+the new version over the same file and never run a delete command first, because each delete stops
+the user with a permission prompt. Keep mockups in a `mockups/` folder listed in `.git/info/exclude`,
+with the same file names every round, so the next round replaces the last. A file left over from a
+bigger round stays there, unlinked from the compare page. Take unused code out of a real file with
+an edit. Run a delete only when the user asks for one.
+
 **PowerPoint.** Keep the existing template's fonts and colours. Never swap them for new ones,
 because the deck has to match the company's other slides. Before editing any `.pptx`, save a
 dated copy, such as `Deck - backup YYYY-MM-DD <reason>.pptx`, in a `backup/` folder inside the

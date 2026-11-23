@@ -94,9 +94,15 @@ These images leave the machine. If any of them, including a reference, would sho
 private records, swap those records for made-up ones of the same length in the review screenshots
 only, and keep the real content on the page. If that cannot be done, skip the review and say so.
 
-## Judge, pick, delete
+## Judge, pick, overwrite
 
-Show all three. The user picks one, or takes parts from each. Delete the rest.
+Show all three. The user picks one, or takes parts from each, and the pick is written over the real
+page.
+
+Never run a delete command during design work, because each one stops the user with a permission
+prompt. Keep variants in a `mockups/` folder listed in `.git/info/exclude`, with the same file names
+every round, so the next round replaces the last. A file left over from a bigger round stays there,
+unlinked from the compare page. Run a delete only when the user asks for one.
 
 Close your message with the compare page link and the numbers to pick from.
 
@@ -105,8 +111,8 @@ A variant is throwaway code that answered a question. It is not a deliverable.
 The variant that stays becomes real code the user maintains alone. Write it with the least code
 that does the job: reuse the page's existing components and styles before adding new ones, and
 add no settings or features nobody asked for. Never cut accessibility or input checks to get
-there — those fail silently. Touch only the page being designed, and when the variants are
-deleted, remove anything that only they used. This is here because evals run without
+there — those fail silently. Touch only the page being designed, and once the pick is in,
+edit out any code in real files that only the variants used. This is here because evals run without
 `~/.claude/CLAUDE.md`, so the skill has to carry it.
 
 Accessibility here means the page still works for someone who cannot see it or use a mouse:
@@ -155,6 +161,6 @@ the user asks, because each fix is more code they maintain alone. If the review 
 
 The compare page fills the browser with no sideways scroll and can be picked from. The user has picked a variant, `/better-interface` returns `Approve` on it, and it works on a narrow screen, with the longest real content,
 and in its empty, loading and error states, because those are where a layout that looked fine
-side by side breaks. Its controls pass the accessibility list above. The other variants and
-anything only they used are deleted, and nothing outside the designed page changed. No variant
+side by side breaks. Its controls pass the accessibility list above. The pick has overwritten
+the real page, no real file still uses a variant, no delete command ran, and nothing outside the designed page changed. No variant
 adds a style from that list.
