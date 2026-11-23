@@ -145,14 +145,25 @@ matters more than the list. The same list is in the site-design skill. Change bo
 The user adds to the list when they spot a new one. Do not ask after a build whether to ban
 something, because the user said they will say so themselves.
 
+**Mockups, in every skill.** Show each round on one interactive page, because the user compares by
+reading and loses the thread across tabs, tiny previews or sideways scrolling.
+
+- The page fills the whole browser width and never scrolls sideways at any window size.
+- The current version comes first, when one exists. The numbered choices sit beside it only while
+  every one stays readable at normal text size. Otherwise they stack underneath it at full width.
+- Each decision is a numbered section with numbered choices, picked by clicking on the page.
+- The page keeps a visible answer in section order, such as `1 1 1`, with a button that copies it.
+  The user can paste that answer into the chat or type the same numbers there, and either one
+  counts as the pick.
+
 **PowerPoint.** Keep the existing template's fonts and colours. Never swap them for new ones,
 because the deck has to match the company's other slides. Before editing any `.pptx`, save a
 dated copy, such as `Deck - backup YYYY-MM-DD <reason>.pptx`, in a `backup/` folder inside the
 deck's own folder (for a customer deck, that customer's folder), so a bad edit can be undone.
 Keep the 5 newest per deck and move older ones to the Trash, never `rm`.
 
-Done: no listed style was newly added, the brand or template is intact, and any `.pptx` edit has
-its backup.
+Done: no listed style was newly added, the brand or template is intact, any mockup page is readable
+with no sideways scroll and can be picked from, and any `.pptx` edit has its backup.
 
 ## 8. Getting Web Pages
 

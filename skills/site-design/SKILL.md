@@ -29,8 +29,16 @@ ring or a pressed state, and build motion early only when it is the point of the
 A blank route is a vacuum. Every variant looks fine in a vacuum.
 
 Mount the variants inside the page that will really host them, with its real header, real
-navigation, real data, and real density. Switch between them with a `?variant=` URL parameter and
-a floating bar, so the user flips between them in the browser.
+navigation, real data, and real density. Give each one its own `?variant=` URL, then show them
+together on one compare page, because the user compares by reading and loses the thread across tabs
+or sideways scrolling:
+
+- The page fills the whole browser width and never scrolls sideways at any window size.
+- The current version comes first, when one exists. The numbered choices sit beside it only while
+  every one stays readable at normal text size. Otherwise they stack underneath it at full width.
+- Each decision is a numbered section with numbered choices, picked by clicking on the page.
+- The page keeps a visible answer in section order, such as `1 1 1`, with a button that copies it.
+  The user can paste that answer into the chat or type the same numbers there.
 
 Only build a new route when the thing genuinely has no page to live inside. Before you do, check
 again — an empty route hides the faults a populated one exposes.
@@ -59,7 +67,7 @@ the user will see.
 ## A fresh look before the user sees them
 
 Whoever built a design is the worst judge of it, so a different model looks first. Screenshot every
-variant at 1440 and 390 wide into a temp folder, with the variant bar hidden, then send only the
+variant's own `?variant=` URL at 1440 and 390 wide into a temp folder, then send only the
 images to the Codex reviewer. Attach two images per variant. If the user gave a reference, attach
 it too, screenshotting it first if it is a link; otherwise leave out `reference.png`:
 
@@ -90,7 +98,7 @@ only, and keep the real content on the page. If that cannot be done, skip the re
 
 Show all three. The user picks one, or takes parts from each. Delete the rest.
 
-Close your message by saying how to compare them and asking which one the user picks.
+Close your message with the compare page link and the numbers to pick from.
 
 A variant is throwaway code that answered a question. It is not a deliverable.
 
@@ -145,7 +153,7 @@ the user asks, because each fix is more code they maintain alone. If the review 
 
 ## Done
 
-The user has picked a variant, `/better-interface` returns `Approve` on it, and it works on a narrow screen, with the longest real content,
+The compare page fills the browser with no sideways scroll and can be picked from. The user has picked a variant, `/better-interface` returns `Approve` on it, and it works on a narrow screen, with the longest real content,
 and in its empty, loading and error states, because those are where a layout that looked fine
 side by side breaks. Its controls pass the accessibility list above. The other variants and
 anything only they used are deleted, and nothing outside the designed page changed. No variant
