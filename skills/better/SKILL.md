@@ -12,7 +12,7 @@ Claude gets the goal, the decisions, and the finish line, then runs the better v
 Source: the Claude Code team's own habits, as recapped in
 https://www.youtube.com/watch?v=_NzakzRXzLI.
 
-## The eight checks
+## The nine checks
 
 Apply each one only where it fits the ask. Most asks need two or three, and a check that adds
 nothing makes the prompt longer without making it better.
@@ -65,6 +65,13 @@ a page that fell short never reads as finished. Allow 1 round for a small fix, u
 page or document, and up to 5 only when the user says "go all out", because rounds spend their
 usage limit. Skip this for asks with a plain right answer, such as a bug fix or a lookup, where a
 test already says whether it worked. If Codex is unavailable, say the work was not scored.
+
+**Tighten the contract.** Add only the lines the ask needs. When it mixes unrelated jobs, split them
+and run them in order, because each job then gets its own finish line. When the form of the answer
+matters, state it, such as "cause, evidence, smallest safe fix". For a diagnosis, review or
+research, require evidence for each claim, with guesses labeled and unknowns named. Replace "think
+harder" or "be very smart" with a check the result must pass, because a check changes the work.
+Source: the prompting guide in the Codex plugin (`gpt-5-4-prompting`).
 
 **Let Claude design the setup.** When the ask is about speeding up or repeating work, use this
 prompt, adapted to the ask:
