@@ -38,12 +38,13 @@ they had to reconnect by hand almost every week before it was stored. Read
 `~/.claude/shared/brandfetch.md` before fetching a logo: it has the command that keeps the key
 out of output.
 
-**A browser run with a temporary home folder gets a link to the real keychain folder.** On this
-Mac, Chrome started with a changed `HOME` and no keychain opens a "Keychain Not Found" dialog on
-the user's screen, and repeated test runs keep interrupting them. Before the browser starts, make
-`<temp home>/Library` and link only `~/Library/Keychains` inside it. Leave the rest of `~/Library`
-unlinked, because it holds the user's real Chrome profile. Done: a full run starts no
-`SecurityAgent` process in the system log.
+**A browser run with a temporary home folder must not open a keychain dialog.** On this Mac,
+Chrome started with a changed `HOME` and no keychain opens "Keychain Not Found" on the user's
+screen, and repeated test runs keep interrupting them. Pass Chrome `--use-mock-keychain` when the
+test controls its launch, because the test then never touches the real keychain. When the program
+under test launches Chrome itself, make `<temp home>/Library` and link only `~/Library/Keychains`
+inside it. Leave the rest of `~/Library` unlinked, because it holds the user's real Chrome profile.
+Done: a full run starts no `SecurityAgent` process in the system log.
 
 ## 1. Think Before Coding
 
