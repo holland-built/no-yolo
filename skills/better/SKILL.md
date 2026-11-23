@@ -64,7 +64,9 @@ judge of it. The work stops at 8 or when the rounds run out, and the user gets t
 a page that fell short never reads as finished. Allow 1 round for a small fix, up to 3 for a normal
 page or document, and up to 5 only when the user says "go all out", because rounds spend their
 usage limit. Skip this for asks with a plain right answer, such as a bug fix or a lookup, where a
-test already says whether it worked. If Codex is unavailable, say the work was not scored.
+test already says whether it worked. If Codex is unavailable, say the work was not scored. When
+the job compares mockups, scoring starts on the one the user picks, because a score on the options
+would steer a choice that belongs to the user, and the `site-design` review gives none.
 
 **Tighten the contract.** Add only the lines the ask needs. When it mixes unrelated jobs, split them
 and run them in order, because each job then gets its own finish line. When the form of the answer
