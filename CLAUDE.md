@@ -25,6 +25,11 @@ tested, stage and commit only the files you changed for it, so the user never ha
 sessions leave edits in that repo; leave them untouched. Keep the secret check on: if it blocks a commit, take the flagged value out and
 retry. Never bypass it or stage unrelated files.
 
+**Give `rm` and `rmdir` only full, literal paths in Bash.** A path built from a variable or `$(...)`
+sets off Claude Code's built-in removal check, which permission rules cannot allow, so the user
+gets a prompt for a harmless cleanup. For temporary output, write to a new folder each run or let
+the tool overwrite the file, so no delete is needed. Done: no `rm` target contains `$` or a backtick.
+
 **Run `/humanizer` on prose you write for people** — a README, report, email or post — before
 showing it. Never on `CLAUDE.md`, the output style, a `SKILL.md` or a memory note, where sentence
 shape carries the rule.
