@@ -12,7 +12,7 @@ Claude gets the goal, the decisions, and the finish line, then runs the better v
 Source: the Claude Code team's own habits, as recapped in
 https://www.youtube.com/watch?v=_NzakzRXzLI.
 
-## The seven checks
+## The eight checks
 
 Apply each one only where it fits the ask. Most asks need two or three, and a check that adds
 nothing makes the prompt longer without making it better.
@@ -55,6 +55,16 @@ the layout before adding decorative animation, because motion hides a weak layou
 cannot say what feels off, have Claude describe the three to five parts of that section in plain
 words so the user can point at one. Never ask the user for a reference, because that hands them a
 chore.
+
+**Set a score and a round limit.** When the result is judged on quality (a page, design, report,
+deck or piece of writing), add both to the rewrite yourself, because the user has said they cannot
+tell how long a job should run. In each round, Codex scores the work out of 10 and names the
+weakest part, then Claude fixes that part. Codex scores because whoever built the work is a poor
+judge of it. The work stops at 8 or when the rounds run out, and the user gets the final score, so
+a page that fell short never reads as finished. Allow 1 round for a small fix, up to 3 for a normal
+page or document, and up to 5 only when the user says "go all out", because rounds spend their
+usage limit. Skip this for asks with a plain right answer, such as a bug fix or a lookup, where a
+test already says whether it worked. If Codex is unavailable, say the work was not scored.
 
 **Let Claude design the setup.** When the ask is about speeding up or repeating work, use this
 prompt, adapted to the ask:
