@@ -18,6 +18,7 @@ from pathlib import Path
 STATE_DIR = Path.home() / ("Library/Caches" if sys.platform == "darwin" else ".cache") / "orca-waiting"
 DOT = "🔴 "
 SOUND = "/System/Library/Sounds/Glass.aiff"
+VOLUME = "0.3"  # afplay volume, 1 is full; the user found full volume too loud
 BLOCK_LINE = re.compile(r"^-{5,}\s*Waiting on you\s*-{5,}$")
 BANNER_LINE = re.compile(r"^Waiting on you: \S")
 
@@ -74,7 +75,7 @@ def main():
         STATE_DIR.mkdir(parents=True, exist_ok=True)
         if not marker.exists():
             # One chime when a chat starts waiting; no Mac pop-up, by the user's choice.
-            subprocess.Popen(["afplay", SOUND], start_new_session=True,
+            subprocess.Popen(["afplay", "-v", VOLUME, SOUND], start_new_session=True,
                              stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         orca("terminal", "rename", "--terminal", handle, "--title", DOT + tab_title(handle), check=True)
         marker.touch()
