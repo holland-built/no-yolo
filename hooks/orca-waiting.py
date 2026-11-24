@@ -61,10 +61,10 @@ def last_reply(data):
     return reply
 
 
-def orca(*args):
+def orca(*args, check=False):
     binary = os.path.join(os.environ.get("ORCA_CLI_BIN_DIR", ""), "orca")
     done = subprocess.run([binary if os.path.exists(binary) else "orca", *args],
-                          capture_output=True, text=True, timeout=5)
+                          capture_output=True, text=True, timeout=5, check=check)
     return done.stdout
 
 
@@ -101,18 +101,21 @@ def show_dot(worktree):
     if name.startswith(DOT):
         return  # Already marked, and saving this name would bring back a second dot later.
     NAMES_DIR.mkdir(parents=True, exist_ok=True)
+    orca("worktree", "set", "--worktree", f"id:{worktree}", "--display-name", DOT + bold(name),
+         check=True)
     saved.write_text(name, encoding="utf-8")
-    orca("worktree", "set", "--worktree", f"id:{worktree}", "--display-name", DOT + bold(name))
 
 
-def clear_dot(worktree):
+def clear_dot(worktree, marker):
     """Put the real name back once no other chat in this project is waiting."""
-    others = [p for p in STATE_DIR.glob("term_*") if p.read_text(encoding="utf-8") == worktree]
+    others = [p for p in STATE_DIR.glob("term_*")
+              if p != marker and p.read_text(encoding="utf-8") == worktree]
     saved = saved_name(worktree)
     if others or not saved.exists():
         return
+    # Keep the saved name until the rename works, so a failed try is retried on the next reply.
     orca("worktree", "set", "--worktree", f"id:{worktree}",
-         "--display-name", saved.read_text(encoding="utf-8"))
+         "--display-name", saved.read_text(encoding="utf-8"), check=True)
     saved.unlink()
 
 
@@ -132,9 +135,9 @@ def main():
     elif marker.exists():
         orca("terminal", "rename", "--terminal", handle)
         worktree = marker.read_text(encoding="utf-8")
-        marker.unlink()
         if worktree:
-            clear_dot(worktree)
+            clear_dot(worktree, marker)
+        marker.unlink()
 
 
 if __name__ == "__main__":
