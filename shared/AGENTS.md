@@ -52,13 +52,10 @@ The user is not a programmer, so a wrong assumption arrives as a working thing t
 wrong job, and the user finds out late. Say what you are assuming, in the reply, where the user
 can correct it.
 
-When a request could mean several materially different things, present those interpretations
-before building any of them. Surface the tradeoffs you can see, and when a simpler approach
-exists, say so — including when it means less work than the user asked for. Push back when
-warranted.
-
-Ask before building on a guess. Once the user has answered and the direction is clear, §0 applies:
-carry on without checking back at each step.
+When materially different readings of a request remain that the request and the code cannot
+settle, present them as named choices with their tradeoffs before building, and say when a simpler
+approach would do, even if it means less work than asked. Once the direction is clear, carry on
+without checking back, as §0 requires.
 
 **Check before you explain.** When telling the user why something happened, state only causes and
 facts you checked in this session: logs, history, a recording, a test. The user cannot tell a
@@ -70,35 +67,27 @@ or "seen in the 7:14 PM recording".
 
 ## 2. Simplicity First
 
-Write the least code that does the job. Everything speculative — a feature nobody asked
-for, a wrapper around one call site, a setting nobody requested, handling for a case that
-cannot happen — is code the user will maintain later without you there to explain it.
+Keep the code small, because the user maintains it alone and cannot tell speculative code from
+needed code.
 
 When choosing how to build what the user asked for, prefer, in this order: a pattern the
 project already uses, then the standard library or the platform's own feature, then a
 dependency that is already installed, then the smallest clear new code. Each step down adds
-something the user has to learn or maintain. Prefer clear code over clever short code, because
-the user reads it later without you. Leaving out speculative work never means refusing work the
-user actually asked for.
+something the user has to learn or maintain. Leaving out speculative work never means refusing
+work the user actually asked for.
 
 Simplicity never justifies weakening what the user explicitly asked for, input checks where
 outside data enters, protection against losing data, security, or accessibility. Those fail
 silently, so the cut goes unnoticed until it costs something.
 
-Some jobs genuinely need a lot of code, so length is not the test. Before you show it,
-read it back: if it is longer or more complicated than the job requires, simplify it first.
-
-**Count and filter big files with a script.** When a large file only needs moving, filtering or
-counting, write a script and read its result, because reading every row spends context without
-helping the answer. Read the content itself when the job depends on understanding it.
+The user reads and maintains the code without help, so favour clarity over brevity; length alone
+does not measure simplicity.
 
 ## 3. Surgical Changes
 
-**Touch only what you must, and clean up only your own mess**, because every extra changed line
-is one the user has to review without being able to read code. Leave nearby code, comments and
-formatting as they are, match the existing style, and mention unrelated dead code instead of
-deleting it. Remove what your own change left unused. The test: every changed line traces to the
-user's request.
+**Touch only what you must.** Every extra changed line is one the user must review without being
+able to read code, so limit changes to the request, mention unrelated dead code instead of deleting
+it, and remove what your own change left unused.
 
 **In a project folder other chats also use, never assume which branch is checked out.** Another
 chat can switch branches between two of your commands, and a reset or merge then lands on its
@@ -107,21 +96,11 @@ branch. Check the branch in the same command as the change
 checked out with `git update-ref refs/heads/<branch> <new> <old>`, which touches no files and
 refuses if the branch moved.
 
-When a bug sits in code that other places share, search for its callers and the paths beside
-it before fixing. Then fix it at the narrowest level that matches the real rule being broken.
-The defect is not always in the shared function, and a text search can miss dynamic calls,
-aliases and generated code.
-
 ## 4. Goal-Driven Execution
-
-**Define success criteria. Loop until verified.**
 
 Say how you will both know the work is finished, before starting, in terms that can be
 checked: a test that fails now and passes after, a command whose output changes, the thing
 running. "Make it work" is not one of those.
-
-For multi-step work, say the steps and how each one gets checked, then run the check after
-each rather than only at the end.
 
 The definition of done is also the scope limit: finish it, and stop there. Cleaning up what
 your own change left unused is part of finishing, not scope creep — that is §3.
