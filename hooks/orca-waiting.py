@@ -17,6 +17,7 @@ from pathlib import Path
 
 STATE_DIR = Path.home() / ("Library/Caches" if sys.platform == "darwin" else ".cache") / "orca-waiting"
 NAMES_DIR = STATE_DIR / "names"
+TITLES_DIR = STATE_DIR / "titles"
 DOT = "🔴 "
 MAX_NEED = 32
 SOUND = "/System/Library/Sounds/Glass.aiff"
@@ -68,6 +69,27 @@ def orca(*args, check=False):
     done = subprocess.run([binary if os.path.exists(binary) else "orca", *args],
                           capture_output=True, text=True, timeout=5, check=check)
     return done.stdout
+
+
+def save_title(handle):
+    """Keep the tab's own name, so a name the user gave it comes back after the reply."""
+    saved = TITLES_DIR / handle
+    if saved.exists():
+        return
+    for terminal in json.loads(orca("terminal", "list", "--json"))["result"]["terminals"]:
+        if terminal.get("handle") == handle and terminal.get("title"):
+            TITLES_DIR.mkdir(parents=True, exist_ok=True)
+            saved.write_text(terminal["title"], encoding="utf-8")
+
+
+def restore_title(handle):
+    saved = TITLES_DIR / handle
+    if saved.exists():
+        orca("terminal", "rename", "--terminal", handle, "--title", saved.read_text(encoding="utf-8"),
+             check=True)
+        saved.unlink()
+    else:
+        orca("terminal", "rename", "--terminal", handle)
 
 
 def worktree_of(handle):
@@ -135,11 +157,12 @@ def main():
             subprocess.Popen(["afplay", SOUND], start_new_session=True,
                              stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         worktree = worktree_of(handle)
+        save_title(handle)
         orca("terminal", "rename", "--terminal", handle, "--title", short_need(reply))
         marker.write_text(worktree, encoding="utf-8")
         show_dot(worktree)
     elif marker.exists():
-        orca("terminal", "rename", "--terminal", handle)
+        restore_title(handle)
         worktree = marker.read_text(encoding="utf-8")
         if worktree:
             clear_dot(worktree, marker)
