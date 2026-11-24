@@ -3,7 +3,7 @@
 
 Runs on SessionStart. For each git project in Orca:
 - New workspaces start from the branch the Main folder is on, so they hold what the user sees in
-  Main (Wayfinder's redesign once started from the live branch and missed 387 changes).
+  Main (a redesign once started from the live branch and missed 387 changes).
 - The main workspace is called "Main" when it still carries the folder's own name, so the sidebar
   never shows the same name twice. A name the user chose is left alone.
 Private files reach new workspaces through workspace-files.py. Never blocks a chat.
