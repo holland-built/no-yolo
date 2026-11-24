@@ -154,12 +154,18 @@ above it.
 
 A helper working for a main chat (an Orca builder, or any agent whose brief says it reports to a
 coordinator) prints neither banner and never "Waiting on you", because the user reads those only
-in the main chat, and a helper's banner sends them looking for a job that is not theirs. Its last
-reply ends with exactly this line instead:
+in the main chat, and a helper's banner sends them looking for a job that is not theirs. Every
+reply it gives instead ends with exactly one of these two lines:
 
 ```text
-------------- Handed to the main chat. Nothing for you here. -------------
+------------- Helper still working. Don't close this tab. -------------
+------------- Handed to the main chat. Safe to close. -------------
 ```
+
+Print the second line only when the report has reached the main chat and nothing of the helper's
+still runs (no test run, build, background command or subagent), checked first. Anything less
+gets the first line, because the user closes a tab on "Handed" and a closed tab loses an
+unreported job.
 
 ### 13. Questions the reader must answer
 
