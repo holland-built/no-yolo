@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 """Mark a chat's row in Orca's sidebar while it needs the user.
 
-The project name becomes a red dot plus bold capitals, a chime plays once, and the tab name says
-what the chat needs.
-Both go back when the user replies. Runs on Stop, UserPromptSubmit and SessionEnd. A chat counts
-as waiting when its last reply opens with the Action First "Waiting on you" block or ends with
+The project name becomes a red dot plus bold capitals, and a chime plays once. Tab names are left
+alone, so a name the user gives a tab stays. The dot goes back when the user replies. Runs on
+Stop, UserPromptSubmit and SessionEnd. A chat counts as waiting when its last reply opens with the Action First "Waiting on you" block or ends with
 the "Not done yet" banner's waiting line. Never blocks a chat: every failure is ignored.
 """
 import hashlib
@@ -17,9 +16,7 @@ from pathlib import Path
 
 STATE_DIR = Path.home() / ("Library/Caches" if sys.platform == "darwin" else ".cache") / "orca-waiting"
 NAMES_DIR = STATE_DIR / "names"
-TITLES_DIR = STATE_DIR / "titles"
 DOT = "🔴 "
-MAX_NEED = 32
 SOUND = "/System/Library/Sounds/Glass.aiff"
 BLOCK_LINE = re.compile(r"^-{5,}\s*Waiting on you\s*-{5,}$")
 BANNER_LINE = re.compile(r"^Waiting on you: \S")
@@ -30,16 +27,6 @@ def is_waiting(text):
     return bool(lines) and bool(BLOCK_LINE.match(lines[0]) or BANNER_LINE.match(lines[-1]))
 
 
-def short_need(text):
-    """A few words for the tab: the banner's waiting line, or else the first question's title."""
-    lines = [l.strip() for l in text.splitlines() if l.strip() and not l.strip().startswith("```")]
-    need = next((l.split(":", 1)[1].strip() for l in reversed(lines) if BANNER_LINE.match(l)), "")
-    if (not need or "questions above" in need) and BLOCK_LINE.match(lines[0]) and len(lines) > 1:
-        need = lines[1]
-    need = need.split(",")[0].rstrip(" .") or "Needs your reply"
-    if len(need) > MAX_NEED:
-        need = need[:MAX_NEED].rsplit(" ", 1)[0]
-    return need[0].upper() + need[1:]
 
 
 def last_reply(data):
@@ -71,25 +58,8 @@ def orca(*args, check=False):
     return done.stdout
 
 
-def save_title(handle):
-    """Keep the tab's own name, so a name the user gave it comes back after the reply."""
-    saved = TITLES_DIR / handle
-    if saved.exists():
-        return
-    for terminal in json.loads(orca("terminal", "list", "--json"))["result"]["terminals"]:
-        if terminal.get("handle") == handle and terminal.get("title"):
-            TITLES_DIR.mkdir(parents=True, exist_ok=True)
-            saved.write_text(terminal["title"], encoding="utf-8")
 
 
-def restore_title(handle):
-    saved = TITLES_DIR / handle
-    if saved.exists():
-        orca("terminal", "rename", "--terminal", handle, "--title", saved.read_text(encoding="utf-8"),
-             check=True)
-        saved.unlink()
-    else:
-        orca("terminal", "rename", "--terminal", handle)
 
 
 def worktree_of(handle):
@@ -157,12 +127,9 @@ def main():
             subprocess.Popen(["afplay", SOUND], start_new_session=True,
                              stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         worktree = worktree_of(handle)
-        save_title(handle)
-        orca("terminal", "rename", "--terminal", handle, "--title", short_need(reply))
         marker.write_text(worktree, encoding="utf-8")
         show_dot(worktree)
     elif marker.exists():
-        restore_title(handle)
         worktree = marker.read_text(encoding="utf-8")
         if worktree:
             clear_dot(worktree, marker)
