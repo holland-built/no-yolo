@@ -70,18 +70,20 @@ You need macOS or Linux, [Claude Code](https://claude.com/claude-code), Git, Pyt
 
 ## Use cases
 
-Type the command and what you want, or just say it in plain words.
+The only command to remember is `/better`. Type it with what you want in plain words, and it picks
+the right command below for you. Typing one of them directly works too, and so does plain speech
+with no command.
 
 | Type this | What happens |
 |---|---|
+| `/better make my dashboard look nicer` | Rewrites your request, hands it to /build, /fix or /improve, and runs it |
+| `/better prompt rewrite the README in my other project` | Writes a prompt to paste into another chat, without running it |
 | `/fix the login page throws a 500` | Reproduces the error, shows the cause, fixes it, shows it working |
 | `/build a Save button on the settings page` | Agrees what it should do, has a second AI attack the plan, builds it |
 | `/improve the checkout page feels clunky` | Tests on phone and computer sizes, fixes the worst problems, tests again |
 | `/site-design a landing page for a bakery` | Builds three versions, has a second AI check them, then you pick one |
 | `/dashboard-design is the overview clear?` | Gives a verdict, what works, then fixes in order |
 | `/grill-lite should I move my desk upstairs?` | Asks numbered questions, then saves your decisions |
-| `/better make my dashboard look nicer` | Rewrites your request, hands it to /build, /fix or /improve, and runs it |
-| `/better prompt rewrite the README in my other project` | Writes a prompt to paste into another chat, without running it |
 | `/short` | Redoes the last reply shorter, next step first |
 | `/handoff` | Writes down where you got to for the next session |
 | `/retro` | Reviews a session and suggests what to change |
