@@ -1,6 +1,6 @@
 ---
 name: better
-description: "Use when the user types /better followed by any ask (make this better, make the whole site better, do this better, rewrite the interface, build X, fix Y), or says make my prompt better, improve this ask, how should I ask this, rewrite my prompt, or prompt this better. Picks every installed skill and saved lesson that fits, writes them into a sharper ask, shows it, and runs it."
+description: "Use when the user types /better followed by any ask (the login page is broken, make the whole site better, add a dark mode toggle, rewrite the interface), or says make my prompt better, write me a prompt, a prompt to paste into another chat, how should I ask this, or rewrite my prompt. Sharpens the ask, hands it to build, fix or improve when one fits, adds every other skill and saved lesson that fits, and runs it. When the user wants a prompt for another chat, it writes the prompt and does not run it."
 ---
 
 # better
@@ -17,10 +17,47 @@ rewrite names every skill and lesson that job should use.
 Source: the Claude Code team's own habits, as recapped in
 https://www.youtube.com/watch?v=_NzakzRXzLI.
 
+## Where the ask goes
+
+Decide this before rewriting, because it changes what the rewrite is for.
+
+**A prompt for somewhere else is written and not run.** When what the user wants back is a prompt
+(the ask starts with "prompt", says "write me a prompt", "a prompt to paste" or "make this prompt
+better", or names another chat, session, project or tool as the place it will run), the prompt is
+the whole job. Running it here would change files in the wrong project. When it is unclear whether
+they want it run, write it and do not run it, because an unwanted run changes files and an unrun
+prompt costs the user one word to start. "Prompt" as a part of a screen ("the prompt box is
+broken") is an ordinary ask.
+
+**Making, mending or improving something here goes to one workflow skill.** `build`, `fix` and
+`improve` carry checks a rewrite cannot: a failing check before a fix, a second model on the plan
+and the diff, tests at phone and desktop size. Naming one in the rewrite does not load it, so load
+it with the Skill tool before any other work and pass the rewrite as its ask.
+
+| The ask is about | Load |
+|---|---|
+| an error message, a crash, a failing command, something slow, or anything broken that is not a page | `fix` |
+| an existing page or screen that looks, feels or behaves wrong, even when the user says "broken" | `improve` |
+| something that does not exist yet | `build` |
+
+"The login page is broken" with no error named goes to `improve`, which applies the `fix` rule to
+broken behavior itself. This table repeats the three skills' descriptions; when they differ, the
+descriptions in the live skill list win, because those are the ones kept up to date. An ask that
+holds two of these is split and run in order, each under its own skill.
+
+**Everything else is rewritten and run.** A deck, a document, a diagram, research or a question has
+its own skill or none, and the checks below pick it.
+
 ## The ten checks
 
 The first check applies to every ask. Apply the others only where they fit. Most asks need two or
 three, and a check that adds nothing makes the prompt longer without making it better.
+
+When the ask is handed to `build`, `fix` or `improve`, leave out the plan page, the score and round
+limit, and questions to the user, because that skill has its own review rounds and its own way of
+asking, and two sets of rounds spend the usage limit twice. The rewrite then carries what the skill
+cannot work out alone: the goal, the user's idea as one option, the other skills and saved lessons
+that fit, and the finish line.
 
 **Use every skill and lesson that fits.** Read the skill list Claude Code shows this session (names
 and descriptions), and pick every skill whose description fits the job, not only the first one.
@@ -104,7 +141,7 @@ for itself when to stop.
 
 ## Missing information
 
-When the answer to something would change the rewrite, ask with AskUserQuestion: at most two
+When the answer to something would change the rewrite, ask in the output style's Waiting on you block: at most two
 questions, each with a recommended option first. For anything smaller, pick the likely answer and
 state it as an assumption in the rewrite, where the user can correct it.
 
@@ -115,10 +152,22 @@ wastes the user's time.
 
 Lead with the better prompt in a code block, so it can be copied. Under it, one line naming the
 skills it uses, so the user learns them without memorising them, then one line per other change
-saying what changed and why, at most three lines. Then run the better prompt as if the user had
-typed it, without asking, and load each named skill as the work reaches it.
+saying what changed and why, at most three lines.
+
+When it runs here, carry straight on without asking: load the workflow skill if one was picked, and
+each other named skill as the work reaches it.
+
+When it is a prompt for somewhere else, stop after the code block and those lines. The other chat
+has seen none of this conversation, so the prompt says what it needs in full: the goal, the folder
+and files by full path, what is already decided, what to leave alone, and the finish line. Write a
+saved lesson out in its own words rather than by name, and name a skill only when the other chat is
+Claude Code on this machine, because nothing else has them. Read the other project first when it is
+on this disk, so the prompt names real files, and change nothing there. The last line says where to
+paste it, and that replying `run` runs it here instead.
 
 ## Done
 
 Done is a rewritten prompt that leads with the goal, names every installed skill and saved lesson
-that fits, carries only the checks that fit, ends with a checkable finish line, and has run.
+that fits, carries only the checks that fit, and ends with a checkable finish line. Either it has
+run, under `build`, `fix` or `improve` when one fits, or it was asked for as a prompt and is on
+screen, not run.

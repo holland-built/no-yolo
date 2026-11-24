@@ -6,9 +6,10 @@ leave out a skill that would not change the work.
 
 | The user says something like | Skills to name | What each does there |
 |---|---|---|
-| build me X, add a toggle, write a script | `build` | settles what it does, builds it, shows it working |
-| it's broken, this error, it crashed, it's slow | `fix` | reproduces, finds the cause, fixes, proves it |
-| make this page better, it looks off, polish it | `improve`, `impeccable` | `improve` tests and fixes; `impeccable polish` is the final design pass |
+| build me X, add a toggle, write a script | `build`, loaded first | settles what it does, builds it, shows it working |
+| this error, it crashed, a command fails, it's slow | `fix`, loaded first | reproduces, finds the cause, fixes, proves it |
+| make this page better, it looks off, polish it, a page or button is broken with no error | `improve` loaded first, then `impeccable` | `improve` tests and fixes; `impeccable polish` is the final design pass |
+| a prompt to paste into another chat, make this prompt better | none | write the prompt and do not run it |
 | redesign, rewrite the interface, new look, what should it look like | `site-design`, `impeccable`, `better-interface` | `site-design` makes numbered mockups; `impeccable` sets the direction and critiques the pick; `better-interface` reviews the built screens |
 | review the whole app, what's wrong with it | `better-interface`, `impeccable` | one ranked list of problems; `impeccable audit` for design quality |
 | it looks generic, like every AI site | `frontend-design`, `impeccable` | a distinctive direction, then a critique |

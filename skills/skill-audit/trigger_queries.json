@@ -150,5 +150,17 @@
     "ok": [
       "github-readme"
     ]
+  },
+  {
+    "q": "write me a prompt I can paste into another chat to rewrite the README in my other project",
+    "ok": [
+      "better"
+    ]
+  },
+  {
+    "q": "make this prompt better before I send it: summarise the meeting notes",
+    "ok": [
+      "better"
+    ]
   }
 ]
