@@ -1,6 +1,6 @@
 ---
 name: better
-description: "Use when the user types /better followed by an ask, or says make my prompt better, improve this ask, how should I ask this, rewrite my prompt, or prompt this better. Sharpens the ask, shows it, and runs it on their go."
+description: "Use when the user types /better followed by any ask (make this better, make the whole site better, do this better, rewrite the interface, build X, fix Y), or says make my prompt better, improve this ask, how should I ask this, rewrite my prompt, or prompt this better. Picks every installed skill and saved lesson that fits, writes them into a sharper ask, shows it, and runs it."
 ---
 
 # better
@@ -9,13 +9,30 @@ The user is not a programmer, and their asks often arrive as a fix they have alr
 ("make the button blue"). A fix caps the result at their idea. This skill rewrites the ask so
 Claude gets the goal, the decisions, and the finish line, then runs the better version.
 
+/better is the one command the user remembers. They have built many skills and taught Claude
+lessons from videos and past sessions, but they will not remember which slash command does what.
+So the rewrite does the remembering: the user says "/better make the whole site better" and the
+rewrite names every skill and lesson that job should use.
+
 Source: the Claude Code team's own habits, as recapped in
 https://www.youtube.com/watch?v=_NzakzRXzLI.
 
-## The nine checks
+## The ten checks
 
-Apply each one only where it fits the ask. Most asks need two or three, and a check that adds
-nothing makes the prompt longer without making it better.
+The first check applies to every ask. Apply the others only where they fit. Most asks need two or
+three, and a check that adds nothing makes the prompt longer without making it better.
+
+**Use every skill and lesson that fits.** Read the skill list Claude Code shows this session (names
+and descriptions), and pick every skill whose description fits the job, not only the first one.
+Then read the project's saved memory notes and pull in the corrections that apply as must-haves,
+because a fresh run otherwise repeats old mistakes. Name each skill in the rewrite with the part of
+the job it does, such as "`/site-design` makes the 3 mockups, `/impeccable` critiques the pick".
+Pick from the live list, never from memory, because a list from memory left `impeccable`, the
+user's main design skill, out of a full app redesign. Common fits, as a starting point only: build
+something new goes to `build`, something broken to `fix`, a page that looks or feels wrong to
+`improve`, a new or redone look to `site-design` with `impeccable`, a review of a whole screen to
+`better-interface`, a deck to `slide-builder`, and prose for people to `write-doc` with
+`humanizer`. A skill that does not change the work stays out, because each one costs time.
 
 **Goal before fix.** Lead with the outcome the user wants, and keep their idea as one option
 rather than the instruction. Claude can then offer something better while the user's idea stays
@@ -49,9 +66,7 @@ https://felixrieseberg.com/how-to-be-more-ambitious-a-tutorial-for-humans-with-m
 **Aim visual asks.** When the ask is about how a page or screen looks, name the skill that fits:
 `site-design` for a new or unsettled look, `impeccable` for design direction, critique, audit and
 polish of any redesign or build, `improve` for an existing page that feels wrong, and `better-ui`
-when only surfaces and icons need polish. Before a rewrite names any skills, read the installed
-skill list and pick from it, because a list written from memory left out `impeccable`, the user's
-main design skill, from a full app redesign. Name the part of the screen and the states
+when only surfaces and icons need polish. Name the part of the screen and the states
 to check (hover, selected, loading, empty, phone width). If the user gave a screenshot or link,
 say what to take from it (density, spacing, type) and what to leave (its layout, its brand). Settle
 the layout before adding decorative animation, because motion hides a weak layout. If the user
@@ -100,11 +115,12 @@ wastes the user's time.
 
 ## What the user sees
 
-Lead with the better prompt in a code block, so it can be copied. Under it, one line per change
+Lead with the better prompt in a code block, so it can be copied. Under it, one line naming the
+skills it uses, so the user learns them without memorising them, then one line per other change
 saying what changed and why, at most three lines. Then run the better prompt as if the user had
-typed it, without asking.
+typed it, without asking, and load each named skill as the work reaches it.
 
 ## Done
 
-Done is a rewritten prompt that leads with the goal, carries only the checks that fit, ends with a
-checkable finish line, and has run.
+Done is a rewritten prompt that leads with the goal, names every installed skill and saved lesson
+that fits, carries only the checks that fit, ends with a checkable finish line, and has run.
