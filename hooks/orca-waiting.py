@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 """Mark a chat's row in Orca's sidebar while it needs the user.
 
-The project name becomes a red dot plus bold capitals, and a chime plays once. Tab names are left
-alone, so a name the user gives a tab stays. The dot goes back when the user replies. Runs on
-Stop, UserPromptSubmit and SessionEnd. A chat counts as waiting when its last reply opens with the Action First "Waiting on you" block or ends with
-the "Not done yet" banner's waiting line. Never blocks a chat: every failure is ignored.
+The chat's tab name gets a red dot in front, and a chime plays once. When the user replies, the
+tab goes back to Orca's automatic name (a name the user typed is not kept, by the user's choice:
+Orca does not let a script read it). Runs on Stop, UserPromptSubmit and SessionEnd. A chat counts
+as waiting when its last reply opens with the Action First "Waiting on you" block or ends with
+the "Not done yet" banner's waiting line. Helpers never print either, so they never get a dot.
+Never blocks a chat: every failure is ignored.
 """
-import hashlib
 import json
 import os
 import re
@@ -15,7 +16,6 @@ import sys
 from pathlib import Path
 
 STATE_DIR = Path.home() / ("Library/Caches" if sys.platform == "darwin" else ".cache") / "orca-waiting"
-NAMES_DIR = STATE_DIR / "names"
 DOT = "🔴 "
 SOUND = "/System/Library/Sounds/Glass.aiff"
 BLOCK_LINE = re.compile(r"^-{5,}\s*Waiting on you\s*-{5,}$")
@@ -25,8 +25,6 @@ BANNER_LINE = re.compile(r"^Waiting on you: \S")
 def is_waiting(text):
     lines = [l.strip() for l in text.splitlines() if l.strip() and not l.strip().startswith("```")]
     return bool(lines) and bool(BLOCK_LINE.match(lines[0]) or BANNER_LINE.match(lines[-1]))
-
-
 
 
 def last_reply(data):
@@ -58,59 +56,11 @@ def orca(*args, check=False):
     return done.stdout
 
 
-
-
-
-
-def worktree_of(handle):
+def tab_title(handle):
     for terminal in json.loads(orca("terminal", "list", "--json"))["result"]["terminals"]:
         if terminal.get("handle") == handle:
-            return terminal["worktreeId"]
+            return (terminal.get("title") or "Claude").removeprefix(DOT)
     raise LookupError(handle)
-
-
-def bold(text):
-    """Orca has no font setting, so use Unicode's bold capital letters and digits."""
-    out = ""
-    for char in text.upper():
-        if "A" <= char <= "Z":
-            out += chr(0x1D5D4 + ord(char) - ord("A"))
-        elif "0" <= char <= "9":
-            out += chr(0x1D7EC + ord(char) - ord("0"))
-        else:
-            out += char
-    return out
-
-
-def saved_name(worktree):
-    return NAMES_DIR / hashlib.sha256(worktree.encode()).hexdigest()
-
-
-def show_dot(worktree):
-    saved = saved_name(worktree)
-    if saved.exists():
-        return
-    rows = json.loads(orca("worktree", "list", "--json"))["result"]["worktrees"]
-    name = next(row["displayName"] for row in rows if row["id"] == worktree)
-    if name.startswith(DOT):
-        return  # Already marked, and saving this name would bring back a second dot later.
-    NAMES_DIR.mkdir(parents=True, exist_ok=True)
-    orca("worktree", "set", "--worktree", f"id:{worktree}", "--display-name", DOT + bold(name),
-         check=True)
-    saved.write_text(name, encoding="utf-8")
-
-
-def clear_dot(worktree, marker):
-    """Put the real name back once no other chat in this project is waiting."""
-    others = [p for p in STATE_DIR.glob("term_*")
-              if p != marker and p.read_text(encoding="utf-8") == worktree]
-    saved = saved_name(worktree)
-    if others or not saved.exists():
-        return
-    # Keep the saved name until the rename works, so a failed try is retried on the next reply.
-    orca("worktree", "set", "--worktree", f"id:{worktree}",
-         "--display-name", saved.read_text(encoding="utf-8"), check=True)
-    saved.unlink()
 
 
 def main():
@@ -126,13 +76,11 @@ def main():
             # One chime when a chat starts waiting; no Mac pop-up, by the user's choice.
             subprocess.Popen(["afplay", SOUND], start_new_session=True,
                              stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        worktree = worktree_of(handle)
-        marker.write_text(worktree, encoding="utf-8")
-        show_dot(worktree)
+        orca("terminal", "rename", "--terminal", handle, "--title", DOT + tab_title(handle), check=True)
+        marker.touch()
     elif marker.exists():
-        worktree = marker.read_text(encoding="utf-8")
-        if worktree:
-            clear_dot(worktree, marker)
+        # Keep the marker until the rename works, so a failed try is retried on the next reply.
+        orca("terminal", "rename", "--terminal", handle, check=True)
         marker.unlink()
 
 
