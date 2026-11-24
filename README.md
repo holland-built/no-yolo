@@ -86,14 +86,13 @@ Type the command and what you want, or just say it in plain words.
 | `/retro` | Reviews a session and suggests what to change |
 | `/write-doc a quick start for the new laptop` | Writes a guide, report, email or post |
 | `/github-readme` | Tidies a repo and its README for GitHub |
-| `/resume tailor mine to this job post` | Writes or checks a resume without inventing facts |
 | `/last30days Claude Code` | Summarises what people said in the last 30 days |
 | `/claude-video <YouTube link>` | Summarises a video into your notes |
 | `/skill-audit` | Shows which skills you use and which are out of date |
 | `/writing`, `/humanizer` | Writes rules for an AI, or makes writing sound less like an AI |
-| `/demo-voiceover`, `/archify`, `/diagram-design` | Narrates a demo, draws a system, or makes a branded diagram |
+| `/diagram-design` | Makes a branded diagram or chart |
 | `/frontend-design`, `/find-skills` | Gives a page its own look, or finds someone else's skill |
-| `/impeccable`, `/web-design-guidelines` | Designs and polishes a page, or checks it against web design rules |
+| `/impeccable` | Designs, critiques and polishes a page |
 
 `/improve` chooses from eight design checklists on its own, so you do not need to remember them.
 
@@ -210,13 +209,10 @@ exception, because it follows Anthropic's own branch. The Action First style, `/
 | [cc-safety-net](https://github.com/kenryu42/cc-safety-net) | Command safety plugin | MIT |
 | [last30days-skill](https://github.com/mvanhorn/last30days-skill) | `/last30days` | MIT |
 | [humanizer](https://github.com/blader/humanizer) | `/humanizer` | MIT |
-| [archify](https://github.com/tt-a1i/archify) | `/archify` | Apache-2.0 |
 | [diagram-design](https://github.com/cathrynlavery/diagram-design) | `/diagram-design` | MIT |
 | [vercel-labs/skills](https://github.com/vercel-labs/skills) | `/find-skills`, skill installer | MIT |
 | [anthropics/skills](https://github.com/anthropics/skills) | `/frontend-design` | Apache-2.0 |
 | [impeccable](https://github.com/pbakaus/impeccable) | `/impeccable` | Apache-2.0 |
-| [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills) | `/web-design-guidelines` | MIT |
-| [ecc](https://github.com/affaan-m/ecc) | `ui-demo` | MIT |
 | [jakubkrehel/skills](https://github.com/jakubkrehel/skills) | Eight `better-*` checklists | MIT |
 | [i-have-adhd](https://github.com/ayghri/i-have-adhd) | Adapted into the Action First style | MIT |
 | [dashboard-design-skill](https://github.com/abdiraimov-otabek/dashboard-design-skill) | Adapted into `/dashboard-design` | MIT |
