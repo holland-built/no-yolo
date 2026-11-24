@@ -124,7 +124,6 @@ On Linux, each of these prints one "macOS only" line and changes nothing.
 | Risky-change review tool | `sandbox-exec` network block |
 | Weekly updaters | `launchd` |
 | Codex process cleanup | BSD `stat` |
-| Voiceover timing in `/demo-voiceover` | `say`, `afinfo` |
 
 </details>
 
