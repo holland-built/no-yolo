@@ -28,11 +28,9 @@ Then read the project's saved memory notes and pull in the corrections that appl
 because a fresh run otherwise repeats old mistakes. Name each skill in the rewrite with the part of
 the job it does, such as "`/site-design` makes the 3 mockups, `/impeccable` critiques the pick".
 Pick from the live list, never from memory, because a list from memory left `impeccable`, the
-user's main design skill, out of a full app redesign. Common fits, as a starting point only: build
-something new goes to `build`, something broken to `fix`, a page that looks or feels wrong to
-`improve`, a new or redone look to `site-design` with `impeccable`, a review of a whole screen to
-`better-interface`, a deck to `slide-builder`, and prose for people to `write-doc` with
-`humanizer`. A skill that does not change the work stays out, because each one costs time.
+user's main design skill, out of a full app redesign. [ask-to-skill.md](ask-to-skill.md) maps
+common asks to the skills that fit, as a starting point only. A skill that does not change the work
+stays out, because each one costs time.
 
 **Goal before fix.** Lead with the outcome the user wants, and keep their idea as one option
 rather than the instruction. Claude can then offer something better while the user's idea stays

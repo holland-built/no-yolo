@@ -38,6 +38,7 @@ The checklists are skills; load the ones that apply:
 | Corners, shadows, icons | `better-ui` |
 | Animation, transitions, enters and exits | `better-motion` |
 | Not looking generic or templated | `frontend-design` |
+| Design critique, audit and final polish against the project's DESIGN.md | `impeccable` (`critique`, `audit`, `polish`) |
 | All seven `better-*` areas in one ranked report | `better-interface` |
 | A new layout with several real options | `site-design` (variants on the real page, user picks) |
 
@@ -63,7 +64,7 @@ the user will see.
 - **Normal** (the default, including plain "make it better"): walkthrough, the checklists the
   findings call for, agreement on each change as below.
 - **Deep**: only when the user says "every screen", "everything" or similar. Every screen,
-  `better-interface` plus `frontend-design`, both reviewers per screen. Screenshot every screen in
+  `better-interface` plus `frontend-design` and `impeccable critique`, all reviewers per screen. Screenshot every screen in
   every state (phone upright, phone sideways, computer; live, recording, zoomed and so on), give
   Claude and Codex the same screenshots, and merge their findings into one list per screen. A
   screenshot the user took on their own phone beats a headless one. The user asked for this
