@@ -47,8 +47,11 @@ Skip it for quick fixes, where it only adds length. Source: Felix Rieseberg,
 https://felixrieseberg.com/how-to-be-more-ambitious-a-tutorial-for-humans-with-models/.
 
 **Aim visual asks.** When the ask is about how a page or screen looks, name the skill that fits:
-`site-design` for a new or unsettled look, `improve` for an existing page that feels wrong, and
-`better-ui` when only surfaces and icons need polish. Name the part of the screen and the states
+`site-design` for a new or unsettled look, `impeccable` for design direction, critique, audit and
+polish of any redesign or build, `improve` for an existing page that feels wrong, and `better-ui`
+when only surfaces and icons need polish. Before a rewrite names any skills, read the installed
+skill list and pick from it, because a list written from memory left out `impeccable`, the user's
+main design skill, from a full app redesign. Name the part of the screen and the states
 to check (hover, selected, loading, empty, phone width). If the user gave a screenshot or link,
 say what to take from it (density, spacing, type) and what to leave (its layout, its brand). Settle
 the layout before adding decorative animation, because motion hides a weak layout. If the user
