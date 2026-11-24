@@ -64,8 +64,10 @@ Kashef's prompt leaves out, because each of these has caught a wrong call here:
 - **CLAUDE.md lines that restate what the model already does.** List them as trim candidates
   with the reason. Kashef reports that cutting most instructions made models work better.
 
-The verdicts are keep, merge (name the skill it merges into), park (useful but seasonal: move to
-a folder Claude does not load at start-up and read it on request), delete, or fix (a dead link
+The verdicts are keep, merge (name the skill it merges into), park (useful but seasonal: move it to
+`~/.claude/skills-parked`, which Claude does not load at start-up; to use a parked skill, read
+its `SKILL.md` there and follow it; a third-party one is uninstalled with `npx skills remove -g`
+after the copy, so an update cannot put it back), delete, or fix (a dead link
 or a stale reference). Give each one a single-sentence reason the user can check.
 
 ## Are the third-party skills current
@@ -75,7 +77,7 @@ updates them, and the user will not remember which ones those are. Each has one 
 
 | Skills | Check | Update |
 |---|---|---|
-| Everything in `~/.agents/.skill-lock.json` (`better-*`, `frontend-design`, `archify`, `humanizer`, `find-skills`, `ui-demo`, `web-design-guidelines`) | the lock's `updatedAt` dates, and the upstream repo's last commit | `npx -y skills update -g -y` |
+| Everything in `~/.agents/.skill-lock.json` (`better-*`, `frontend-design`, `humanizer`, `find-skills`) | the lock's `updatedAt` dates, and the upstream repo's last commit | `npx -y skills update -g -y` |
 | `diagram-design` | upstream `cathrynlavery/diagram-design` against the commit named at the top of its `SKILL.md` | by hand only: it carries a local house skin that an update would overwrite, so merge the upstream changes into it and keep the skin |
 | `retro` | upstream `mattpocock/skills` `skills/engineering/retro/SKILL.md` against the version named at the top of its `SKILL.md` | by hand only: it carries two local edits (named in its header comment), so merge the upstream changes into it, keep those edits, and update the version in the comment |
 | `grill-lite` | upstream `mattpocock/skills` `skills/productivity/grilling/SKILL.md` against the date named at the top of its `SKILL.md` | by hand only: it is a rewrite, not a copy, so carry over only upstream ideas that fit it and update the date in the comment |

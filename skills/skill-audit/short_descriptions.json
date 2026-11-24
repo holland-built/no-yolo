@@ -1,9 +1,5 @@
 {
   "_why": "Skill updates bring back long upstream descriptions. apply_descriptions.py puts these short ones back when the upstream text is the one recorded in 'upstream' (a fingerprint), and reports the skill when the upstream text is new, so the short version gets rewritten from the latest text. 'upstream': null means not recorded yet; the next update will report it once.",
-  "archify": {
-    "short": "Use when visualizing systems, APIs, pipelines, schemas, histories, timings, or everyday steps, parts, relationships and states as HTML diagrams, from requirements, Mermaid or the repo; checking repo architecture health, coupling or refactor scope; or making a one-page explainer (做成一页, 用页面讲), by default for complex flows, diagnoses, comparisons or test reports unless an [archify explainer: on-demand] rule is set. Also story and video export. Not for dashboards.",
-    "upstream": "57812925f58c84ad"
-  },
   "better-accessibility": {
     "short": "Use when reviewing or fixing accessibility: keyboard and focus behavior, ARIA, accessible names, forms, screen-reader announcements, motion and zoom, against WCAG 2.2.",
     "upstream": "4fe404244eb17850"
@@ -43,14 +39,6 @@
   "humanizer": {
     "short": "Use when editing or reviewing prose for AI tells (not-X-but-Y contrasts, one-line closers, staged openers, forced triads, dashes everywhere, inflated claims, sales language, stock AI words, bold labels, filler). Rewrites it to read like the writer without changing what it says.",
     "upstream": "7a4bf0743c43d193"
-  },
-  "ui-demo": {
-    "short": "Use when the user asks for a demo, walkthrough, screen recording or tutorial video of a web app. Records a WebM with Playwright, a visible cursor and natural pacing.",
-    "upstream": "53e04ab2cf3614b5"
-  },
-  "web-design-guidelines": {
-    "short": "Use when asked to \"review my UI\", \"check accessibility\", \"audit design\", \"review UX\", or \"check my site against best practices\". Reviews UI code against the Web Interface Guidelines.",
-    "upstream": "9fa2a4f2fb6b4efb"
   },
   "orchestration": {
     "short": "Use for /orchestration, Orca workers or supervision (monitor, task DAGs, ask/reply, decision gates), splitting or fanning out code changes across agents, worktrees or branches, or another agent working and reporting back (\"Have Codex review this and report back\"). Also when you are a dispatched worker (Task and Dispatch IDs: ask, worker_done). Not for plain searches and reads, which stay with your own subagents unless Orca or a named agent is asked for. Hand-offs with nothing expected back go to orca-cli.",

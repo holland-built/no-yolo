@@ -17,11 +17,12 @@ leave out a skill that would not change the work.
 | accessibility, keyboard, screen reader | `better-accessibility` | checks against WCAG |
 | interface wording, error messages, labels | `better-writing` | copy that tells people what to do next |
 | diagram, flowchart, architecture, chart for a slide | `diagram-design` | branded static diagrams |
-| interactive diagram or one-page explainer | `archify` | zoomable diagrams and explainers |
+| interactive diagram or one-page explainer | `archify` (parked) | zoomable diagrams and explainers |
 | deck, slides, customer meeting | `slide-builder` | Infoblox decks from the master decks |
 | guide, report, email, summary for people | `write-doc`, `humanizer` | writes it, then strips AI tells |
 | README, get the repo ready for GitHub | `github-readme` | short README and a clean repo |
-| a demo video or walkthrough | `ui-demo`, `demo-voiceover` | records it, adds narration |
+| a demo video or walkthrough | `ui-demo`, `demo-voiceover` (both parked) | records it, adds narration |
+| a resume or CV, tailor it to a job | `resume` (parked) | writes or checks it, never invents facts |
 | a YouTube link | `claude-video` | watches and summarises it |
 | put this on the hub | `hub-add` | adds it to the Cloud Team Hub |
 | think this through, grill me | `grill-lite` | rounds of questions, then a decision note |
@@ -31,6 +32,9 @@ leave out a skill that would not change the work.
 | instructions, a skill, CLAUDE.md, a memory note | `writing` | instruction files that work |
 | research what people say about X lately | `last30days` | recent posts and discussion |
 | install a new skill from outside | `find-skills` | finds and installs it |
+
+Parked skills live in `~/.claude/skills-parked` and are not in the skill list. When one fits, read
+its `SKILL.md` there and follow it, and name it in the rewrite like any other skill.
 
 Typed-only commands never appear in the skill list, so /better cannot pick them: `/retro`, `/ship`,
 `/steward`. Mention one only when the user would type it themselves.
