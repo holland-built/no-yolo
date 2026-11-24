@@ -80,7 +80,8 @@ Type the command and what you want, or just say it in plain words.
 | `/site-design a landing page for a bakery` | Builds three versions, has a second AI check them, then you pick one |
 | `/dashboard-design is the overview clear?` | Gives a verdict, what works, then fixes in order |
 | `/grill-lite should I move my desk upstairs?` | Asks numbered questions, then saves your decisions |
-| `/better make my dashboard look nicer` | Rewrites your request around the result you want |
+| `/better make my dashboard look nicer` | Rewrites your request, hands it to /build, /fix or /improve, and runs it |
+| `/better prompt rewrite the README in my other project` | Writes a prompt to paste into another chat, without running it |
 | `/short` | Redoes the last reply shorter, next step first |
 | `/handoff` | Writes down where you got to for the next session |
 | `/retro` | Reviews a session and suggests what to change |
