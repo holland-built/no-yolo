@@ -18,7 +18,7 @@ from pathlib import Path
 STATE_DIR = Path.home() / ("Library/Caches" if sys.platform == "darwin" else ".cache") / "orca-waiting"
 DOT = "🔴 "
 SOUND = "/System/Library/Sounds/Glass.aiff"
-VOLUME = "0.12"  # afplay volume, 1 is full; the user found full volume and then 0.3 too loud
+VOLUME = "0.05"  # afplay volume, 1 is full; the user found full volume, 0.3 and 0.12 too loud
 BLOCK_LINE = re.compile(r"^-{5,}\s*Waiting on you\s*-{5,}$")
 BANNER_LINE = re.compile(r"^Waiting on you: \S")
 
