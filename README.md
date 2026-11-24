@@ -2,7 +2,7 @@
 
 [![MIT licence](https://img.shields.io/badge/licence-MIT-blue)](LICENSE)
 ![macOS and Linux](https://img.shields.io/badge/macOS%20%7C%20Linux-supported-green)
-![26 commands](https://img.shields.io/badge/commands-26-8A2BE2)
+![28 commands](https://img.shields.io/badge/commands-28-8A2BE2)
 [![latest release](https://img.shields.io/github/v/release/holland-built/no-yolo)](https://github.com/holland-built/no-yolo/releases)
 ![last commit](https://img.shields.io/github/last-commit/holland-built/no-yolo)
 
@@ -102,7 +102,7 @@ Type the command and what you want, or just say it in plain words.
 | Path | Holds |
 |---|---|
 | `CLAUDE.md`, `shared/` | The rules Claude follows, and the rules Claude and Codex share |
-| `skills/` | The 17 commands that live in this repo. The other 9 install from their own projects |
+| `skills/` | The 15 commands that live in this repo. The other 13 install from their own projects |
 | `output-styles/` | The Action First reply style |
 | `hooks/` | The secret guard and the Claude Code safety hooks |
 | `tools/` | Risky-change review, session tidy, process cleanup and weekly updaters |
