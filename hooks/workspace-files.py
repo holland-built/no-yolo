@@ -31,7 +31,10 @@ def main():
         if name.endswith("/") or name.endswith(".bak") or not PRIVATE.search(source.name):
             continue
         target = here / name
-        if source.is_file() and not target.exists():
+        # Copy only what this workspace's git also ignores; otherwise a commit here could take the secret.
+        still_private = subprocess.run(["git", "check-ignore", "-q", "--no-index", name], cwd=here,
+                                       timeout=10).returncode == 0
+        if source.is_file() and not target.exists() and still_private:
             target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(source, target)
             copied.append(name)
