@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Mark a chat's row in Orca's sidebar while it needs the user.
 
-The project name becomes a red dot plus bold capitals, and the tab name says what the chat needs.
+The project name becomes a red dot plus bold capitals, a chime plays once, and the tab name says
+what the chat needs.
 Both go back when the user replies. Runs on Stop, UserPromptSubmit and SessionEnd. A chat counts
 as waiting when its last reply opens with the Action First "Waiting on you" block or ends with
 the "Not done yet" banner's waiting line. Never blocks a chat: every failure is ignored.
@@ -18,6 +19,7 @@ STATE_DIR = Path.home() / ("Library/Caches" if sys.platform == "darwin" else ".c
 NAMES_DIR = STATE_DIR / "names"
 DOT = "🔴 "
 MAX_NEED = 32
+SOUND = "/System/Library/Sounds/Glass.aiff"
 BLOCK_LINE = re.compile(r"^-{5,}\s*Waiting on you\s*-{5,}$")
 BANNER_LINE = re.compile(r"^Waiting on you: \S")
 
@@ -128,6 +130,10 @@ def main():
     reply = last_reply(data) if data.get("hook_event_name") == "Stop" else ""
     if is_waiting(reply):
         STATE_DIR.mkdir(parents=True, exist_ok=True)
+        if not marker.exists():
+            # One chime when a chat starts waiting; no Mac pop-up, by the user's choice.
+            subprocess.Popen(["afplay", SOUND], start_new_session=True,
+                             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         worktree = worktree_of(handle)
         orca("terminal", "rename", "--terminal", handle, "--title", short_need(reply))
         marker.write_text(worktree, encoding="utf-8")
