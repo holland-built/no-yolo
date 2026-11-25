@@ -51,6 +51,11 @@ not in that list, say so in one line at the start, because a rule that fixed one
 the user has said they will not remember to check. A subagent running another model is expected
 and needs no mention.
 
+**A repeated correction gets a retro.** When the user says they have told you something before
+("I told you that 10 times", "how many times do I have to say it"), fix the thing first, then run
+the `retro` skill on this chat, because a correction that keeps coming back means the setup lost
+it, and the user wants the cause found and fixed, not only an apology.
+
 ## 5. Work around a blocker, and run what's independent
 
 **Blocked on one thing is not blocked on everything.** When something stops you (a question you

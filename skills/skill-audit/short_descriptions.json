@@ -61,8 +61,8 @@
     "upstream": "0800113f6a2699c3"
   },
   "retro": {
-    "short": "Use when the user asks for a retro or retrospective on a coding session.",
-    "upstream": null
+    "short": "Use when the user asks for a retro or retrospective, or is frustrated at repeating a correction: I told you that 10 times, how many times do I have to say it, still doing it, again, you keep doing this, why did this take so long, what went wrong. Finds why it happened and the setup change that stops it coming back.",
+    "upstream": "5119c05cc3780645"
   },
   "grill-lite": {
     "short": "Use when the user says grill me, grill-lite, interview me, ask me your questions first, stress-test this plan, or wants to think a plan, purchase or idea through before acting. Asks numbered rounds of questions, then saves the decisions in a short note.",

@@ -1,10 +1,9 @@
 ---
 name: retro
-description: "Use when the user asks for a retro or retrospective on a coding session."
-disable-model-invocation: true
+description: "Use when the user asks for a retro or retrospective, or is frustrated at repeating a correction: I told you that 10 times, how many times do I have to say it, still doing it, again, you keep doing this, why did this take so long, what went wrong. Finds why it happened and the setup change that stops it coming back."
 ---
 
-<!-- Copied from mattpocock/skills (MIT), skills/engineering/retro, v1.3.2, 2026-11-13. Changed: step 1 points at this setup's `writing` skill; step 2 names where session logs live. -->
+<!-- Copied from mattpocock/skills (MIT), skills/engineering/retro, v1.3.2, 2026-11-13. Changed: step 1 points at this setup's `writing` skill; step 2 names where session logs live; the description also fires on repeated corrections ("I told you that 10 times") and Claude may start it unprompted, because the user wants a repeat mistake audited rather than only apologised for. -->
 
 The user has asked for a **retrospective**. You are suggesting improvements to the coding agent's **environment** to improve future runs.
 
