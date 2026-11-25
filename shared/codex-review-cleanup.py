@@ -7,8 +7,10 @@ saves each one. By 2026-11-25 there were 13,761 of them. This runs weekly from l
 touched for KEEP_DAYS, using Codex's own `codex archive <id>` (undo: `codex unarchive <id>`).
 It only reads Codex's database; every change goes through the codex command.
 
-A thread counts as a review only when its first message holds the plugin's fixed review
-instruction, so no thread the user started is touched.
+A thread is cleaned up only when it is one of: a Stop gate review (its first message holds
+the plugin's fixed review instruction), a one-off `codex exec` call, or an auto-review side
+session (thread_source guardian_review). Threads the user started in the Codex app or TUI,
+and /codex:rescue tasks, are never touched.
 
 Usage: python3 -I codex-review-cleanup.py [--dry-run] [--keep-days N] [--max N]
 """
@@ -57,7 +59,8 @@ def old_review_ids(keep_days, limit):
     db = sqlite3.connect(f"file:{STATE_DB}?mode=ro", uri=True, timeout=10)
     rows = db.execute(
         "select id from threads where archived = 0 and is_pinned = 0 and updated_at < ? "
-        "and instr(first_user_message, ?) > 0 order by updated_at limit ?",
+        "and (instr(first_user_message, ?) > 0 or originator = 'codex_exec' "
+        "or thread_source = 'guardian_review') order by updated_at limit ?",
         (cutoff, MARKER, limit),
     ).fetchall()
     db.close()

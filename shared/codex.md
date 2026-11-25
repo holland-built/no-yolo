@@ -88,7 +88,7 @@ stops a read-only `codex exec` at 30 minutes, which reaches the caller as empty 
 `~/.claude/state/codex-watchdog.log`.
 
 `shared/codex-review-cleanup.py` runs Sundays at noon (launchd `local.codex-review-cleanup`) and
-archives Stop gate review threads older than 7 days with `codex archive`, so the Codex app's list
+archives Stop gate reviews, one-off `codex exec` calls and auto-review side sessions older than 7 days with `codex archive`, so the Codex app's list
 does not fill up again. Log: `~/.claude/state/codex-review-cleanup.log`.
 
 The Stop gate reviews only replies that changed files, through a local patch in the plugin's
