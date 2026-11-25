@@ -153,6 +153,15 @@ helpers gone, not piling up as tabs and folders: release it with
 branch, so nothing is lost. Keep a builder only when its work was not merged (it failed, or
 the user is still talking to it in its tab) and name those to the user.
 
+Run the removal as `cd "<main project folder>" && orca worktree rm ...`, never from inside the
+copy being removed. If the session's working folder disappears, the safety hook blocks every
+tool, and only the user can fix it: on 2026-11-25 a removal from inside its own copy stopped
+the final release check and report until the user recreated the folder by hand.
+
+Right after `worker-start --base-branch <b>`, check the new copy with `git -C <copy> log -1`.
+`--base-branch` uses the local branch, which in a shared checkout can be far behind `origin`.
+While the copy has no commits, move it with `git -C <copy> merge --ff-only origin/<b>`.
+
 Each branch already shipped as it came in (above), because the user's done means live, not merged
 on this machine.
 
