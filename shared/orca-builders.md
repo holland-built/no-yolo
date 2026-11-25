@@ -50,17 +50,20 @@ Write the brief to a scratchpad file, because the shell mangles quotes and backt
    test database), because worktrees separate the code, not what the code touches: two
    builders deploying to one test URL overwrite each other. The builder may upload to that
    target and nowhere else.
-4. **The checks that prove it done**, named as the test files for the part it changed plus any
+4. **The picked mockup**, when the job changes how a page looks: its file path and the part this
+   builder must match, with "screenshot your result at the mockup's size beside the mockup and
+   include both in the report; any difference is a bug" (`AGENTS.md` §7).
+5. **The checks that prove it done**, named as the test files for the part it changed plus any
    older tests on the same page, and this line: "Do not run the full test suite; the main chat
    runs it once after merging." Builders ran the whole suite on their own, and the main chat
    ran it again after the merge, so every job paid for it twice: on 2026-11-25 Wayfinder's
    suite took 8 to 13 minutes a run, and each run built its own copy of the app, loading a
    14-core Mac to 17.
-5. **How to ask:** "When you need anything from the user (a choice, a missing fact, a go-ahead),
+6. **How to ask:** "When you need anything from the user (a choice, a missing fact, a go-ahead),
    do not ask in your own tab, because the user watches the main chat, not yours. Send it to the
    coordinator with `orca orchestration ask --question "<one line: what you need>" --options
    "<a,b>"` when there are clear choices, then end your turn; Orca wakes you with the answer."
-6. **The report it must send:** `worker_done` with `--outcome`, `--files-modified`, its branch
+7. **The report it must send:** `worker_done` with `--outcome`, `--files-modified`, its branch
    name, its last commit hash, and the test output.
 
 Jobs that change the same or neighbouring lines go into one builder's brief as steps in order,

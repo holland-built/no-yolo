@@ -74,6 +74,10 @@ the user will see.
   line", and check a yes against the page before acting on it. This low effort is for these checks
   only; Fable's part in agreeing on changes stays at medium.
 
+When the job changes how a page looks, the mockup comes first and everything after is checked
+against it (`AGENTS.md` §7, "Mockup first"): a quick mockup of the change for the user to pick, or
+the user's existing mockup, before the task list, testers or reviews below.
+
 ## The task list is the test
 
 Each app gets a file of real user tasks, `IMPROVE_TASKS.md`, next to the app's code. Run any test

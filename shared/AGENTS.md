@@ -150,6 +150,21 @@ reading and loses the thread across tabs, tiny previews or sideways scrolling.
   The user can paste that answer into the chat or type the same numbers there, and either one
   counts as the pick.
 
+**Mockup first, then build exactly to it.** Any change to how a page looks starts with a mockup
+the user picks, shown within minutes as the first thing in the job (rough is fine), before
+testers, reviews or code, because the user gives feedback by looking, and on 2026-11-25 a day of
+Wayfinder work was built that did not follow the user's mockup. Once picked, the mockup is the
+spec:
+
+- Every helper brief names the mockup file and the part it covers.
+- Before a change with a picked mockup is called done, screenshot the built page at the mockup's size and show it beside
+  the mockup. A difference in layout, order, size, spacing, colour or which controls appear is a
+  bug to fix. Real data in place of sample text and small font-rendering differences are expected.
+- A visual choice the mockup does not show is asked in the "Waiting on you" block, or mocked up
+  and picked, never invented in code. Behaviour and code details stay the builder's call.
+- No mockup is needed for a fix that only changes behaviour, or that restores the look already
+  approved (clipped text, a broken layout, a missing button).
+
 **Design work overwrites in place.** When iterating on a page, mockup, document or button, write
 the new version over the same file and never run a delete command first, because each delete stops
 the user with a permission prompt. Keep mockups in a `mockups/` folder listed in `.git/info/exclude`,
