@@ -124,6 +124,17 @@ and carry on unless they object. You are not one of the two sides, so the pick i
 neither option clearly wins, show both in plain words, park that item, and carry on with the others. A retry of an agreed fix
 needs no new agreement unless the approach changes.
 
+**Fix as findings arrive, one screen at a time.** Do not wait for every tester and reviewer to
+finish before fixing anything: on a Wayfinder run on 2026-11-25 the first finding came in at
+07:20 and the first helper started at 07:43, because everything waited for the last report. As
+each report lands, send its findings straight to agreement, and start a helper on a screen or
+part as soon as its first agreed fix exists. Later fixes for that same part go to the same helper
+with `orca orchestration send`, not to a new one, because two helpers in the same lines conflict.
+Each part ships as its own small pull request when its helper reports, so the user can try
+it while other parts are still being audited. In a deep run, fixing screen 1 starts while
+screen 2 is still being screenshotted. A finding that changes an earlier fix goes to that part's
+helper as a follow-up.
+
 If you are Codex, you cannot start Fable or ask yourself for a second opinion, so stop
 at the agreement step and hand the findings and proposed change to the user for Claude's read.
 
