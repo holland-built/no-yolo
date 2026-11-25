@@ -109,6 +109,7 @@ with no command.
 | `output-styles/` | The Action First reply style |
 | `hooks/` | The secret guard and the Claude Code safety hooks |
 | `tools/` | Risky-change review, session tidy, process cleanup and weekly updaters |
+| Codex helpers in `shared/` | A watchdog every 5 minutes and a weekly clean-up of old Codex reviews. `--full` schedules them on macOS |
 | `templates/` | Settings for each mode and the macOS schedule files |
 | `installer/` | The installer and the recorded version of each outside project |
 | `memory/` | Example notes. The installer does not copy them |
@@ -127,6 +128,7 @@ On Linux, each of these prints one "macOS only" line and changes nothing.
 | Risky-change review tool | `sandbox-exec` network block |
 | Weekly updaters | `launchd` |
 | Codex process cleanup | BSD `stat` |
+| Codex watchdog and weekly review clean-up | `launchd` and Mac notifications |
 
 </details>
 
@@ -134,7 +136,8 @@ On Linux, each of these prints one "macOS only" line and changes nothing.
 <summary><b>Optional add-ons</b></summary>
 
 Codex gives Claude a second opinion. It needs an OpenAI account. Without it, Claude says once that
-it skipped the Codex checks.
+it skipped the Codex checks. With `--full` on macOS, a watchdog alerts the user when a Codex job runs
+over 20 minutes or OpenAI rate-limits Codex, and a weekly job archives old Codex review threads.
 
 ```bash
 # install the Codex command-line tool
