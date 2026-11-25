@@ -4,8 +4,8 @@
 The chat's tab name gets a red dot in front, and a chime plays once. When the user replies, the
 tab goes back to Orca's automatic name (a name the user typed is not kept, by the user's choice:
 Orca does not let a script read it). Runs on Stop, UserPromptSubmit and SessionEnd. A chat counts
-as waiting when its last reply opens with the Action First "Waiting on you" block or ends with
-the "Not done yet" banner's waiting line. Helpers never print either, so they never get a dot.
+as waiting when its last reply opens with the Action First "Waiting on you" question block or
+ends with the "Not done yet" banner line "Waiting on you: see the questions above". Helpers never print either, so they never get a dot.
 Never blocks a chat: every failure is ignored.
 """
 import json
@@ -20,7 +20,9 @@ DOT = "🔴 "
 SOUND = "/System/Library/Sounds/Pop.aiff"  # the user's pick over Glass, Tink, Purr and Bottle
 VOLUME = "0.04"  # afplay volume, 1 is full; the user picked 4% after trying 30%, 12%, 5%, 2% and 3%
 BLOCK_LINE = re.compile(r"^-{5,}\s*Waiting on you\s*-{5,}$")
-BANNER_LINE = re.compile(r"^Waiting on you: \S")
+# Only the banner that points at real questions counts. A chat once ended "Waiting on you: Delta
+# blocked the page", which is news, not a question, and its dot sat there for a day.
+BANNER_LINE = re.compile(r"^Waiting on you: see the questions? above", re.IGNORECASE)
 
 
 def is_waiting(text):
