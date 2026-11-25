@@ -51,6 +51,11 @@ not in that list, say so in one line at the start, because a rule that fixed one
 the user has said they will not remember to check. A subagent running another model is expected
 and needs no mention.
 
+**"Tasks" means the task list.** When the user says tasks, my list, what was I doing, or what's on
+my plate, open `~/AI/tasks.md`, show its "Task list" section as a checklist, and ask which one to
+work on. Tick a box when a task is done; add new tasks the user gives. This replaced the `tasks`
+skill (parked in `skills-parked/tasks`), which cost a line in every chat for 4 uses.
+
 **A repeated correction gets a retro.** When the user says they have told you something before
 ("I told you that 10 times", "how many times do I have to say it"), fix the thing first, then run
 the `retro` skill on this chat, because a correction that keeps coming back means the setup lost
