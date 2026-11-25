@@ -26,14 +26,15 @@ SETTINGS = CLAUDE / "settings.json"
 CODEX_RULES = HOME / ".codex/AGENTS.md"
 AGENTS_DIR = HOME / "Library/LaunchAgents"
 LABELS = ["local.no-yolo.ocr-update", "local.no-yolo.web-guidance-update",
-          "local.no-yolo.codex-watchdog", "local.no-yolo.codex-review-cleanup"]
+          "local.no-yolo.codex-watchdog", "local.no-yolo.codex-review-cleanup",
+          "local.no-yolo.codex-update"]
 STAMP = time.strftime("%Y%m%d-%H%M%S")
 
 COPY_DIRS = ["skills", "output-styles", "shared"]
 HOOKS = ["require-pr.py", "ssh-delete-guard.py", "orca-waiting.py"]
 SAFE_TOOLS = ["astryx-version.py", "ocr-review.py"]
 FULL_TOOLS = ["orca-sweep.py", "session-tidy.py", "test_session_tidy.py", "reap-codex-orphans.sh",
-              "update-ocr.py", "update-web-guidance.py"]
+              "update-ocr.py", "update-web-guidance.py", "update-codex.py"]
 LEFT_OUT = {"__pycache__", ".DS_Store"}
 
 # What older versions of this repo wrote into settings.json before it had a manifest.
