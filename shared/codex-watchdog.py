@@ -18,6 +18,7 @@ time, so a reused pid never inherits an old warning or gets signalled.
 Usage: python3 -I codex-watchdog.py [--dry-run] [--warn-minutes N] [--kill-minutes N]
 """
 import argparse
+import glob
 import json
 import os
 import re
@@ -173,6 +174,23 @@ def check_throttle(state, now, args):
         state["throttle"] = now
 
 
+def check_patch(state, now, args):
+    """Warn when a plugin update replaced the patched Stop gate hook."""
+    hooks = sorted(glob.glob(os.path.join(
+        HOME, ".claude/plugins/cache/openai-codex/codex/*/scripts/stop-review-gate-hook.mjs")),
+        key=os.path.getmtime)
+    if not hooks:
+        return
+    with open(hooks[-1]) as f:
+        patched = "lastTurnChangedFiles" in f.read()
+    if not patched and now - state.get("patch", 0) >= 86400:
+        notify("Codex plugin updated",
+               "The end-of-chat review patch is gone, so every reply is reviewed again. "
+               "Ask Claude to re-apply it (see ~/.claude/shared/codex.md).",
+               args.dry_run)
+        state["patch"] = now
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--dry-run", action="store_true")
@@ -183,9 +201,10 @@ def main():
     now = int(time.time())
     state = load_state()
     # Forget entries older than a day, so the state file stays small.
-    state = {k: v for k, v in state.items() if now - v < 86400}
+    state = {k: v for k, v in state.items() if now - v < 2 * 86400}
     check_jobs(state, now, args)
     check_throttle(state, now, args)
+    check_patch(state, now, args)
     if not args.dry_run:
         save_state(state)
 

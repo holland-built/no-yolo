@@ -92,5 +92,6 @@ archives Stop gate review threads older than 7 days with `codex archive`, so the
 does not fill up again. Log: `~/.claude/state/codex-review-cleanup.log`.
 
 The Stop gate reviews only replies that changed files, through a local patch in the plugin's
-`stop-review-gate-hook.mjs` (`lastTurnChangedFiles`). A plugin update replaces that file, so after
-one, check the function is still there and copy it back if not.
+`stop-review-gate-hook.mjs` (`lastTurnChangedFiles`), and skips when 2 reviews already run in
+other chats (`runningStopReviews`), because bursts of reviews lined up with the 429s. A plugin
+update replaces that file; the watchdog then notifies, and both functions need copying back.
