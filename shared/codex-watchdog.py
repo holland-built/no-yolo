@@ -181,9 +181,15 @@ def check_patch(state, now, args):
         key=os.path.getmtime)
     if not hooks:
         return
-    with open(hooks[-1]) as f:
-        patched = "lastTurnChangedFiles" in f.read()
-    if not patched and now - state.get("patch", 0) >= 86400:
+
+    def patched(path):
+        with open(path) as f:
+            return "lastTurnChangedFiles" in f.read()
+
+    # Warn only when an older plugin version had the patch and the newest lost it, so a
+    # setup that never applied the patch is not nagged.
+    lost = not patched(hooks[-1]) and any(patched(path) for path in hooks[:-1])
+    if lost and now - state.get("patch", 0) >= 86400:
         notify("Codex plugin updated",
                "The end-of-chat review patch is gone, so every reply is reviewed again. "
                "Ask Claude to re-apply it (see ~/.claude/shared/codex.md).",
