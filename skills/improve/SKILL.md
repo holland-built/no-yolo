@@ -110,7 +110,7 @@ Use the reviewer command in `~/.claude/shared/codex.md`, adding the screenshots:
 
 ```bash
 codex exec --ephemeral --skip-git-repo-check --sandbox read-only \
-  -c model=gpt-6.1-sol -c model_reasoning_effort=medium \
+  -c model=gpt-6.2-sol -c model_reasoning_effort=medium \
   --image /abs/path/shot-phone.png --image /abs/path/shot-desktop.png -- \
   "<goal in the user's words>. <task results>. <code excerpt>. Review against these rules: <pasted rule lines>. List problems a user would hit, most serious first." < /dev/null
 ```

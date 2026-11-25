@@ -8,8 +8,8 @@ means editing one file.
 
 | Role | Who | How |
 |---|---|---|
-| Reviewer: routine second opinions, final diff review | `gpt-6.1-sol` | the command below |
-| Structure, speed, computer use, spreadsheets; big-job planner | `gpt-6-astra` | the command below with `-c model=gpt-6-astra` |
+| Reviewer: routine second opinions, final diff review | `gpt-6.2-sol` | the command below |
+| Structure, speed, computer use, spreadsheets; big-job planner | `gpt-6.2-astra` | the command below with `-c model=gpt-6.2-astra` |
 | Thinking a problem through, design; big-job planner; referee | Fable | Agent tool, `subagent_type: "Plan"`, `model: "fable"`, effort as the job says (this rule authorises it) |
 | Cheap read-and-report work (search, check, list) | Haiku | Agent tool, `model: "haiku"`; a stronger model checks its result; never work that writes, never unclear or cut-off work, because a cheaper model guesses at a gap instead of asking |
 
@@ -17,7 +17,7 @@ Treat models as colleagues matched to roles, not a ranking.
 
 ```bash
 codex exec --ephemeral --skip-git-repo-check --sandbox read-only \
-  -c model=gpt-6.1-sol -c model_reasoning_effort=medium "<the prompt>" < /dev/null
+  -c model=gpt-6.2-sol -c model_reasoning_effort=medium "<the prompt>" < /dev/null
 ```
 
 `< /dev/null` is required, or it waits forever for input, and `--skip-git-repo-check` is required
