@@ -53,7 +53,7 @@ def works(version):
     with tempfile.TemporaryDirectory() as folder:
         run(*INSTALL, "--prefix", folder, f"{PACKAGE}@{version}", cwd=folder)
         tool = str(Path(folder) / "node_modules/.bin/codex")
-        return version in run(*NO_NETWORK, tool, "--version", cwd=folder)
+        return run(*NO_NETWORK, tool, "--version", cwd=folder).split()[-1] == version
 
 
 def npm_codex():
@@ -93,11 +93,16 @@ def main():
         return
     try:
         run(*INSTALL, "-g", f"{PACKAGE}@{version}")
-        if version not in installed_version(tool):
+        if installed_version(tool) != version:
             raise RuntimeError("the new copy did not report the new version")
     except Exception as error:
-        # Put the old version back, so a failed update never leaves Codex broken.
-        run(*INSTALL, "-g", f"{PACKAGE}@{current}")
+        # Put the old version back, so a failed update does not leave Codex broken.
+        try:
+            run(*INSTALL, "-g", f"{PACKAGE}@{current}")
+        except Exception as again:
+            log(f"BROKEN: installing {version} failed ({error!r}) and restoring {current} failed "
+                f"({again!r}); run: npm install -g {PACKAGE}@{current}"[:400])
+            return
         log(f"kept {current}: installing {version} failed ({error!r})"[:300])
         return
     log(f"updated {current} to {version}")
