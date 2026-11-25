@@ -25,7 +25,8 @@ BACKUPS = CLAUDE / ".no-yolo-backups"
 SETTINGS = CLAUDE / "settings.json"
 CODEX_RULES = HOME / ".codex/AGENTS.md"
 AGENTS_DIR = HOME / "Library/LaunchAgents"
-LABELS = ["local.no-yolo.ocr-update", "local.no-yolo.web-guidance-update"]
+LABELS = ["local.no-yolo.ocr-update", "local.no-yolo.web-guidance-update",
+          "local.no-yolo.codex-watchdog", "local.no-yolo.codex-review-cleanup"]
 STAMP = time.strftime("%Y%m%d-%H%M%S")
 
 COPY_DIRS = ["skills", "output-styles", "shared"]
@@ -532,7 +533,7 @@ def remove_launch_agents(manifest):
 
 def install_launch_agents(manifest):
     if sys.platform != "darwin":
-        say("macOS only: weekly updaters were not set up on this system.")
+        say("macOS only: scheduled helpers were not set up on this system.")
         return
     python = shutil.which("python3") or sys.executable
     AGENTS_DIR.mkdir(parents=True, exist_ok=True)
@@ -550,7 +551,7 @@ def install_launch_agents(manifest):
         code, output = run("launchctl", "bootstrap", f"gui/{os.getuid()}", str(path))
         if code != 0:
             problem(f"could not start {label}: {output.strip()[:160]}")
-    say("Weekly updaters are set up")
+    say("Scheduled helpers are set up")
 
 
 # ---------- the three commands ----------
