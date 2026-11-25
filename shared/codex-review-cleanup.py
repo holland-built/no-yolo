@@ -83,20 +83,25 @@ def main():
         print(f"would archive {len(ids)} review threads older than {args.keep_days} days")
         return
 
+    # launchd starts with a bare PATH, and an npm-installed codex runs through `env node`,
+    # so put codex's own folder (where node lives under nvm) first on PATH.
+    env = dict(os.environ, PATH=os.path.dirname(codex) + os.pathsep + os.environ.get("PATH", "/usr/bin:/bin"))
     done = failed = 0
+    error = ""
     for thread_id in ids:
         try:
             result = subprocess.run([codex, "archive", thread_id], stdin=subprocess.DEVNULL,
-                                    capture_output=True, text=True, timeout=60)
+                                    capture_output=True, text=True, timeout=60, env=env)
             ok = result.returncode == 0
+            error = (result.stderr or result.stdout).strip()[-200:]
         except subprocess.TimeoutExpired:
-            ok = False
+            ok, error = False, "timed out after 60 s"
         if ok:
             done += 1
         else:
             failed += 1
             if failed >= 20 and done == 0:
-                log(f"stopped: first 20 archives failed (last: {thread_id})")
+                log(f"stopped: first 20 archives failed (last: {thread_id}: {error})")
                 break
     log(f"archived {done}, failed {failed}, of {len(ids)} review threads older than {args.keep_days} days")
 
