@@ -49,7 +49,7 @@ You need macOS or Linux, [Claude Code](https://claude.com/claude-code), Git, Pyt
 | Auto permission mode | No | **Yes** |
 | Tidies branches and copies at session start | No | **Yes** |
 | Stops unused Codex processes | No | **Yes, macOS** |
-| Weekly updaters | No | **Yes, macOS** |
+| Weekly updaters, Codex watchdog and weekly Codex clean-up | No | **Yes, macOS** |
 
 > [!WARNING]
 > `--full` lets Claude push branches, delete remote branches, merge pull requests, create tags and
