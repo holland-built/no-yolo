@@ -52,11 +52,6 @@ The user is not a programmer, so a wrong assumption arrives as a working thing t
 wrong job, and the user finds out late. Say what you are assuming, in the reply, where the user
 can correct it.
 
-When materially different readings of a request remain that the request and the code cannot
-settle, present them as named choices with their tradeoffs before building, and say when a simpler
-approach would do, even if it means less work than asked. Once the direction is clear, carry on
-without checking back, as §0 requires.
-
 **Check before you explain.** When telling the user why something happened, state only causes and
 facts you checked in this session: logs, history, a recording, a test. The user cannot tell a
 plausible guess from a finding, so they act on it, and twice a guessed cause has sent fixes after
@@ -101,9 +96,6 @@ refuses if the branch moved.
 Say how you will both know the work is finished, before starting, in terms that can be
 checked: a test that fails now and passes after, a command whose output changes, the thing
 running. "Make it work" is not one of those.
-
-The definition of done is also the scope limit: finish it, and stop there. Cleaning up what
-your own change left unused is part of finishing, not scope creep — that is §3.
 
 **Cheapest check first.** Run what a machine checks in seconds (unit tests, the tests for the
 files you changed, picture comparisons) before asking a model to look, then spend model review

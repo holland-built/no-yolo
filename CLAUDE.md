@@ -111,12 +111,11 @@ out instead of doing it:
 
 **When the independent work runs out,** start the next queued job, or run the checks for work
 that is already settled. Wait only when nothing left is independent, when carrying on would be
-unsafe, or when it would waste real work if an answer came back different. Do not invent work to
-look busy.
+unsafe, or when it would waste real work if an answer came back different.
 
 ## 6. Confer With Codex
 
-**A model is a poor judge of its own work.** Get a second opinion where being wrong is
+Get a second opinion where being wrong is
 expensive: before committing to a plan, and when stuck (`/codex:rescue`). Skip it for small,
 reversible edits, because it costs a real round trip. A skill's own review rule wins over this
 section, since the skill knows its job.
