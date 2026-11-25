@@ -58,14 +58,15 @@ need answered, a permission you don't have, a build that's running), do every pa
 that does not depend on it, then report.
 
 - Ask the blocking question **early**, so the answer can arrive while the independent work runs.
-- Send independent parts to subagents, in one message so they run together, when each is a
-  substantial reading job, such as a sweep across many files, that would otherwise fill your
-  context with source material. Do a handful of lookups yourself: each subagent costs a
-  briefing, a summary and its own tokens, so it pays only when the reading is large.
-- **A subagent reads and reports. It does not install, write, commit, push, publish or send
-  messages.** Subagents here have twice installed things nobody approved. Bring their findings
-  back and make the change yourself, so one thread owns every edit. The one exception is Orca
-  builders, below.
+- **Speed beats cost.** The user has said usage cost no longer matters and waiting does: a
+  14-day count of their chats found builders running one at a time for most of their 31 busy
+  hours and about 5,200 reads made one after another. So whenever a job has two or more parts
+  that do not depend on each other, run them at the same time: several tool calls in one
+  message, or subagents started in one message. Keep one or two quick lookups in your own turn.
+- **A subagent never installs, pushes, merges, publishes or sends messages.** Subagents here
+  have twice installed things nobody approved. A reading subagent reads and reports. A subagent
+  started with `isolation: "worktree"` may also edit and commit, on its own branch in its own
+  copy, and you merge that branch yourself, so one thread still owns what reaches `main`.
 - End every subagent brief with a "Done means" list, including "stop and report what you could
   not find", so its report can be checked rather than trusted. If the report falls short, ask
   once more, then do the rest of the reading yourself, because a third round costs more than
@@ -75,26 +76,29 @@ that does not depend on it, then report.
 session free to watch, answer and steer, not buried in one task. So by default you hand work
 out instead of doing it:
 
-- **Coding jobs** go to Orca builders. Inside a git repo, in a session running in Orca
-  (`ORCA_TERMINAL_HANDLE` is set), start one builder per job, each in its own copy of the repo,
-  following `~/.claude/shared/orca-builders.md`. Read that file every time: it holds the
-  commands, the limits, the brief every builder gets, and what to do when one asks, fails or
-  reports. This is the one place another agent writes code, and it is safe because each copy is
-  its own folder.
-- **Questions and investigations** that need more than a couple of quick checks go to a
-  subagent, which reads and reports. Answer from what you already know, or one quick check,
-  yourself.
-- **What you do yourself:** talk with the user, write briefs, answer builders, read reports,
-  merge, run the tests after each merge, and report results. Say in one line which helper has
-  which job. A message that arrives mid-task is handled the same way.
-- **When you do the work yourself instead:** a small change in one file, an edit to instruction
-  text (rules, skills, the output style), a folder that is not a git repo, or a session not
-  inside Orca, because a builder costs about a full session of usage. Say so in your first line,
-  with the reason, so it never reads as the request being ignored.
+- **Long coding jobs, or ones the user wants to watch or talk to,** go to Orca builders. Inside
+  a git repo, in a session running in Orca (`ORCA_TERMINAL_HANDLE` is set), start one builder
+  per job, each in its own copy of the repo, following `~/.claude/shared/orca-builders.md`. Read
+  that file every time: it holds the commands, the limits, the brief every builder gets, and
+  what to do when one asks, fails or reports.
+- **Short coding jobs** (a few files, about 15 minutes of work) go to worktree subagents, or you
+  do one yourself, because a builder's start, report and merge took a median of 21 minutes
+  even for small jobs. Never leave the main chat idle while helpers work: take one job yourself.
+- **Questions and investigations** that need more than a couple of quick checks go to reading
+  subagents, several at once when the question splits. Answer from what you already know, or one
+  quick check, yourself.
+- **Always yours:** talking with the user, briefs, answering helpers, merging, the tests after
+  each merge, and the report. Say in one line which helper has which job. A message that arrives
+  mid-task is handled the same way.
+- **Codex has a ceiling that Claude helpers do not.** Every Codex call goes through the queue in
+  `~/.claude/shared/codex.md`, which lets 3 run at once across the Mac, because about 9 at once
+  drew OpenAI's 429 throttling on 2026-11-25 and every call hung. Add helpers freely; a helper
+  that waits for a Codex slot is working as designed.
 
-**Then wait.** Independent work is finite. When it runs out, wait; do not invent work to look
-busy. Waiting is also correct when carrying on would be unsafe, or would waste real work if the
-answer came back different.
+**When the independent work runs out,** start the next queued job, or run the checks for work
+that is already settled. Wait only when nothing left is independent, when carrying on would be
+unsafe, or when it would waste real work if an answer came back different. Do not invent work to
+look busy.
 
 ## 6. Confer With Codex
 

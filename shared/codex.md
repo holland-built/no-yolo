@@ -8,21 +8,25 @@ means editing one file.
 
 | Role | Who | How |
 |---|---|---|
-| Reviewer: routine second opinions, final diff review | `gpt-6.2-sol` | the command below |
-| Structure, speed, computer use, spreadsheets; big-job planner | `gpt-6.2-astra` | the command below with `-c model=gpt-6.2-astra` |
+| Reviewer: routine second opinions, final diff review | `gpt-6.1-sol` | the command below |
+| Structure, speed, computer use, spreadsheets; big-job planner | `gpt-6-astra` | the command below with `-c model=gpt-6-astra` |
 | Thinking a problem through, design; big-job planner; referee | Fable | Agent tool, `subagent_type: "Plan"`, `model: "fable"`, effort as the job says (this rule authorises it) |
 | Cheap read-and-report work (search, check, list) | Haiku | Agent tool, `model: "haiku"`; a stronger model checks its result; never work that writes, never unclear or cut-off work, because a cheaper model guesses at a gap instead of asking |
 
 Treat models as colleagues matched to roles, not a ranking.
 
 ```bash
-codex exec --ephemeral --skip-git-repo-check --sandbox read-only \
-  -c model=gpt-6.2-sol -c model_reasoning_effort=medium "<the prompt>" < /dev/null
+python3 -I ~/.claude/shared/codex-exec.py --skip-git-repo-check --sandbox read-only \
+  -c model=gpt-6.1-sol -c model_reasoning_effort=medium "<the prompt>"
 ```
 
-`< /dev/null` is required, or it waits forever for input, and `--skip-git-repo-check` is required
-outside a git repo; leaving out either is what makes it hang. `--ephemeral` keeps the call out of
-the Codex app's session list, which filled with thousands of one-off reviews without it. **Empty output means it failed**:
+`codex-exec.py` runs `codex exec --ephemeral` with no input attached, through a queue that lets at
+most 3 Codex calls run at once across every chat on this Mac, and stops a call after 15 minutes.
+Call Codex only this way: about 9 chats calling at once drew OpenAI's "429 Too Many Requests" on
+2026-11-25 and every call hung, and `--ephemeral` keeps one-off reviews out of the Codex app's
+list, which had filled with thousands. A call that waits prints "Codex queue: … waiting", which is
+normal. `--skip-git-repo-check` is required outside a git repo. **Empty output, `CODEX TIMED OUT`
+or `CODEX QUEUE FULL` means it failed**:
 report that, not a pass. `codex debug models` lists the Codex models that exist now
 (`~/.codex/models_cache.json` has been wrong before).
 

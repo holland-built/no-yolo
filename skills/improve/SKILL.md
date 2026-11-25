@@ -109,15 +109,15 @@ absolute path. The prompt goes after `--`, or the last image flag reads it as a 
 Use the reviewer command in `~/.claude/shared/codex.md`, adding the screenshots:
 
 ```bash
-codex exec --ephemeral --skip-git-repo-check --sandbox read-only \
-  -c model=gpt-6.2-sol -c model_reasoning_effort=medium \
+python3 -I ~/.claude/shared/codex-exec.py --skip-git-repo-check --sandbox read-only \
+  -c model=gpt-6.1-sol -c model_reasoning_effort=medium \
   --image /abs/path/shot-phone.png --image /abs/path/shot-desktop.png -- \
   "<goal in the user's words>. <task results>. <code excerpt>. Review against these rules: <pasted rule lines>. List problems a user would hit, most serious first." < /dev/null
 ```
 
 The user's rule: no code until Codex and Fable (at medium effort) agree on each change. This
 skill's review rule wins over the general one in `CLAUDE.md` §6. Send all items in one prompt per round and argue only the
-ones they disagree on; at most three rounds on any item. If they still disagree, pick
+ones they disagree on, and build the agreed ones while the rest are argued, because they were never in doubt; at most two rounds on any item. If they still disagree, pick
 against criteria in the user's own words where possible ("easy for anyone at home", "highest quality video",
 "fewer buttons", "works one-handed on an iPhone"): tell the user the pick and the reason in one line
 and carry on unless they object. You are not one of the two sides, so the pick is yours to make. When

@@ -72,8 +72,8 @@ images to the Codex reviewer. Attach two images per variant. If the user gave a 
 it too, screenshotting it first if it is a link; otherwise leave out `reference.png`:
 
 ```bash
-codex exec --ephemeral --skip-git-repo-check --sandbox read-only \
-  -c model=gpt-6.2-sol -c model_reasoning_effort=medium \
+python3 -I ~/.claude/shared/codex-exec.py --skip-git-repo-check --sandbox read-only \
+  -c model=gpt-6.1-sol -c model_reasoning_effort=medium \
   --image /abs/reference.png --image /abs/a-desktop.png --image /abs/a-phone.png \
   --image /abs/b-desktop.png --image /abs/b-phone.png --image /abs/c-desktop.png \
   --image /abs/c-phone.png -- \

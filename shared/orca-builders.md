@@ -25,9 +25,10 @@ instructions say "builder"; anything the user reads says "helper", their word fo
   start of every Claude session and removes any child worktree whose branch is merged (directly or
   as a squash-merged PR), has no unsaved files, and has been idle for an hour. Its log is
   `~/.claude/state/session-tidy.log`.
-- **At most 3 builders at once.** Each costs about a full session of usage, and many at once
-  have overloaded the machine (Orca issue #24058). Queue the rest and start one as each
-  finishes.
+- **Up to 6 builders at once.** Usage cost no longer limits this; the machine does, because many
+  at once have overloaded it before (Orca issue #24058). Before starting a fifth, check the
+  machine (`uptime` load under about 2x the core count, `memory_pressure` not critical) and queue
+  the rest if it is struggling. Their Codex calls queue on their own (`shared/codex.md`).
 
 ## Writing each brief
 
@@ -88,7 +89,7 @@ Say in one line which agent has which job, then end your turn. Orca wakes you; d
 
 - **A question:** answer with `orca orchestration reply --id <message_id> --body "<answer>"`
   when the brief or the user's words settle it. Otherwise relay it to the user, then pass their
-  answer back with the same `reply`. Finish your current edit first; the builder waits.
+  answer back with the same `reply`. Answer before finishing your own edit, unless that edit is one step from done, because a waiting builder is idle.
 - **Anything that waits on the user** (a relayed question, a permission prompt in a builder's
   tab, a decision of your own; never a merge, push or release, which are your job under §0)
   goes in the "Waiting on you" question block from the Action First style (rule 13), at the top
@@ -107,9 +108,10 @@ Say in one line which agent has which job, then end your turn. Orca wakes you; d
 - **A builder waiting on a permission prompt** (`worker-show` reports `agentWait`): a
   question in the "Waiting on you" block naming its tab. Never answer it through its terminal.
 - **A report:** first commit or finish your own current step, so the merge lands on a clean
-  tree. Read the diff, merge that branch, and run the tests before merging the next, so a
-  break points at one branch. A clean merge can still break behaviour, so the tests run every
-  time. A failed outcome is a failure: send the fix with `orca orchestration send`, or tell
+  tree. Read the diff, merge that branch, and run the tests. When several builders have
+  reported, merge them all and run the tests once, because one test run per branch made the
+  waits stack up; if that run fails, test branch by branch to find the bad one. A clean merge
+  can still break behaviour, so the tests run every time. A failed outcome is a failure: send the fix with `orca orchestration send`, or tell
   the user. A merge conflict you resolve yourself.
 - **An escalation, or a builder that exited or was lost:** do not rerun `worker-start`, which
   makes a new task and throws away the builder's commits. Follow the receipt's `next`, else
@@ -132,7 +134,7 @@ file names or jargon, one line each:
 Try: <one thing to do, and where, on phone or computer>
 ``` Builders still never merge or deploy their own
 work: several of them share live files such as `index.html`, and one owner keeps them from
-overwriting each other. Merge and ship one branch at a time, so a break points at one change.
+overwriting each other. Ship each batch of merged, tested branches together; ship a branch alone when it reported alone, so the user can try it while others still work.
 
 ## Done
 
