@@ -56,22 +56,50 @@ def works(version):
         return version in run(*NO_NETWORK, tool, "--version", cwd=folder)
 
 
+def npm_codex():
+    """The codex program npm installed globally, or None."""
+    path = Path(run("npm", "prefix", "-g").strip()) / "bin/codex"
+    return path if path.exists() else None
+
+
+def installed_version(tool):
+    return run(str(tool), "--version").split()[-1]
+
+
+def is_newer(candidate, current):
+    """A stable release beats the same numbers with a suffix, such as 0.172.0-alpha.1."""
+    base = re.match(r"\d+\.\d+\.\d+", current).group()
+    return parse(candidate) > parse(base) or (candidate == base and current != base)
+
+
 def main():
     if sys.platform != "darwin" or not shutil.which("sandbox-exec"):
         print("macOS only: this updater needs the macOS network block, so nothing was changed.")
         return
-    if not shutil.which("codex"):
-        log("skipped: Codex is not installed")
+    tool = npm_codex()
+    if not tool:
+        log("skipped: Codex is not installed with npm")
         return
-    current = run("codex", "--version").split()[-1]
+    on_path = shutil.which("codex")
+    if on_path and Path(on_path).resolve() != tool.resolve():
+        log(f"note: `codex` on PATH is {on_path}, not the npm copy this updates ({tool})")
+    current = installed_version(tool)
     version = newest_safe()
-    if parse(version) <= parse(re.match(r"\d+\.\d+\.\d+", current).group()):
+    if not is_newer(version, current):
         log(f"already on {current}")
         return
     if not works(version):
         log(f"kept {current}, {version} skipped: its --version check failed")
         return
-    run(*INSTALL, "-g", f"{PACKAGE}@{version}")
+    try:
+        run(*INSTALL, "-g", f"{PACKAGE}@{version}")
+        if version not in installed_version(tool):
+            raise RuntimeError("the new copy did not report the new version")
+    except Exception as error:
+        # Put the old version back, so a failed update never leaves Codex broken.
+        run(*INSTALL, "-g", f"{PACKAGE}@{current}")
+        log(f"kept {current}: installing {version} failed ({error!r})"[:300])
+        return
     log(f"updated {current} to {version}")
 
 
