@@ -87,6 +87,10 @@ notification when a Codex job passes 20 minutes or OpenAI answers "429 Too Many 
 stops a read-only `codex exec` at 30 minutes, which reaches the caller as empty output. Its log is
 `~/.claude/state/codex-watchdog.log`.
 
+`shared/codex-review-cleanup.py` runs Sundays at noon (launchd `local.codex-review-cleanup`) and
+archives Stop gate review threads older than 7 days with `codex archive`, so the Codex app's list
+does not fill up again. Log: `~/.claude/state/codex-review-cleanup.log`.
+
 The Stop gate reviews only replies that changed files, through a local patch in the plugin's
 `stop-review-gate-hook.mjs` (`lastTurnChangedFiles`). A plugin update replaces that file, so after
 one, check the function is still there and copy it back if not.
