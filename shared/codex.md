@@ -16,12 +16,13 @@ means editing one file.
 Treat models as colleagues matched to roles, not a ranking.
 
 ```bash
-codex exec --skip-git-repo-check --sandbox read-only \
+codex exec --ephemeral --skip-git-repo-check --sandbox read-only \
   -c model=gpt-6.1-sol -c model_reasoning_effort=medium "<the prompt>" < /dev/null
 ```
 
 `< /dev/null` is required, or it waits forever for input, and `--skip-git-repo-check` is required
-outside a git repo; leaving out either is what makes it hang. **Empty output means it failed**:
+outside a git repo; leaving out either is what makes it hang. `--ephemeral` keeps the call out of
+the Codex app's session list, which filled with thousands of one-off reviews without it. **Empty output means it failed**:
 report that, not a pass. `codex debug models` lists the Codex models that exist now
 (`~/.codex/models_cache.json` has been wrong before).
 
@@ -80,3 +81,12 @@ the second stage's result covers every kept item, each with its evidence.
 
 `/codex:status`, then `/codex:cancel`, then carry on. Two hangs on one task: stop conferring for
 that task.
+
+`shared/codex-watchdog.py` runs every 5 minutes (launchd `local.codex-watchdog`). It posts a Mac
+notification when a Codex job passes 20 minutes or OpenAI answers "429 Too Many Requests", and
+stops a read-only `codex exec` at 30 minutes, which reaches the caller as empty output. Its log is
+`~/.claude/state/codex-watchdog.log`.
+
+The Stop gate reviews only replies that changed files, through a local patch in the plugin's
+`stop-review-gate-hook.mjs` (`lastTurnChangedFiles`). A plugin update replaces that file, so after
+one, check the function is still there and copy it back if not.

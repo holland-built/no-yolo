@@ -67,7 +67,7 @@ the chosen approach even after the two-model step above, because there the two s
 never attack each other:
 
 ```bash
-codex exec --skip-git-repo-check --sandbox read-only \
+codex exec --ephemeral --skip-git-repo-check --sandbox read-only \
   -c model=gpt-6.1-sol -c model_reasoning_effort=medium \
   "<the chosen approach in full>. What would make this the wrong approach? Concrete failure cases, not style." < /dev/null
 ```
@@ -95,7 +95,7 @@ tell" and why, and finish without it — never report a review that did not happ
 ```bash
 git add -N .
 git diff <base> > /tmp/build-review.diff
-codex exec --skip-git-repo-check --sandbox read-only \
+codex exec --ephemeral --skip-git-repo-check --sandbox read-only \
   -c model=gpt-6.1-sol -c model_reasoning_effort=medium \
   "Intent: <one line>. Out of scope: <one line>. Review the diff at /tmp/build-review.diff. Only defects that would crash it or make it do the wrong thing in the intended case, and code the intent does not need. Ignore style. Label each blocker, should or nit. None is a valid answer." < /dev/null
 ```

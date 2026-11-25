@@ -103,7 +103,7 @@ expensive: before committing to a plan, and when stuck (`/codex:rescue`). Skip i
 reversible edits, because it costs a real round trip. A skill's own review rule wins over this
 section, since the skill knows its job.
 
-The Stop gate reviews every session automatically. **Its silence is a pass**; it speaks only
+The Stop gate reviews every reply that changed files. **Its silence is a pass**; it speaks only
 to block.
 
 If `codex` is not installed, skip every Codex step, here and in skills, and say once that the
