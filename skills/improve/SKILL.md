@@ -124,32 +124,20 @@ and carry on unless they object. You are not one of the two sides, so the pick i
 neither option clearly wins, show both in plain words, park that item, and carry on with the others. A retry of an agreed fix
 needs no new agreement unless the approach changes.
 
-**Fix as findings arrive, one screen at a time.** Do not wait for every tester and reviewer to
-finish before fixing anything: on a Wayfinder run on 2026-11-25 the first finding came in at
-07:20 and the first helper started at 07:43, because everything waited for the last report. As
-each report lands, send its findings straight to agreement, and start a helper on a screen or
-part as soon as its first agreed fix exists. Later fixes for that same part go to the same helper
-with `orca orchestration send`, not to a new one, because two helpers in the same lines conflict.
-Each part ships as its own small pull request when its helper reports, so the user can try
-it while other parts are still being audited. In a deep run, fixing screen 1 starts while
-screen 2 is still being screenshotted. A finding that changes an earlier fix goes to that part's
-helper as a follow-up.
+**Fix screen by screen as findings arrive** (`CLAUDE.md` §5). Start a helper on a screen as soon
+as its first agreed fix exists; later fixes reach it with `orca orchestration send`. Screens that
+do not overlap run as separate Orca builders under `~/.claude/shared/orca-builders.md`, each with its own
+test target, and each screen ships as its own pull request when its helper reports, so the user
+can try it while other screens are still being audited. In a deep run, fixing screen 1 starts
+while screen 2 is still being screenshotted.
 
-**Machines check everything; AI looks only at what changed.** When the project has picture checks
-(Playwright `toHaveScreenshot`) or a "changed tests only" script, run those first, because they
-check every screen in seconds while an AI tester takes minutes a page. Claude, Codex and Fable
-then review only the screens whose picture changed, the screens the user named, and the diff.
-The full test suite runs once, before merging. The user wants both fast and thorough, and this
-keeps every screen checked while spending AI time only where something moved.
+**Picture checks before AI eyes** (cheapest check first, `AGENTS.md` §4). When the project has
+Playwright `toHaveScreenshot` checks or a changed-tests-only script, run those first. Claude,
+Codex and Fable then review the screens whose picture changed, the screens the user named, the
+diff, and any screen the change reaches that has no picture check.
 
 If you are Codex, you cannot start Fable or ask yourself for a second opinion, so stop
 at the agreement step and hand the findings and proposed change to the user for Claude's read.
-
-Subagents run in parallel for testing and reviewing when their work does not overlap: different
-screens, different tasks. When two or more agreed fixes touch different parts of the code, build
-them in parallel as Orca builders under `~/.claude/CLAUDE.md` §5 and `~/.claude/shared/orca-builders.md`, each testing on its own test
-target; each fix then goes live once it is merged and tested, not before. Fixes that change the
-same or neighbouring lines stay in this session, one after another, and you say so in one line.
 
 ## Ship live, then test back and forth
 

@@ -51,7 +51,7 @@ not in that list, say so in one line at the start, because a rule that fixed one
 the user has said they will not remember to check. A subagent running another model is expected
 and needs no mention.
 
-## 5. Work around a blocker, then wait
+## 5. Work around a blocker, and run what's independent
 
 **Blocked on one thing is not blocked on everything.** When something stops you (a question you
 need answered, a permission you don't have, a build that's running), do every part of the task
@@ -63,6 +63,10 @@ that does not depend on it, then report.
   hours and about 5,200 reads made one after another. So whenever a job has two or more parts
   that do not depend on each other, run them at the same time: several tool calls in one
   message, or subagents started in one message. Keep one or two quick lookups in your own turn.
+- **Act on findings as they arrive.** When testers, reviewers or readers report one by one, act
+  on each report as it lands instead of waiting for the last one, because on 2026-11-25 a
+  Wayfinder audit's first finding waited 23 minutes for the rest before any fix started. Later
+  work on the same part goes to the helper already on it, so two helpers never edit the same lines.
 - **A subagent never installs, pushes, merges, publishes or sends messages.** Subagents here
   have twice installed things nobody approved. A reading subagent reads and reports. A subagent
   started with `isolation: "worktree"` may also edit and commit, on its own branch in its own
@@ -87,8 +91,8 @@ out instead of doing it:
 - **Questions and investigations** that need more than a couple of quick checks go to reading
   subagents, several at once when the question splits. Answer from what you already know, or one
   quick check, yourself.
-- **Always yours:** talking with the user, briefs, answering helpers, merging, the tests after
-  each merge, and the report. Say in one line which helper has which job. A message that arrives
+- **Always yours:** talking with the user, briefs, answering helpers, combining their
+  work, the one full test run before it ships (`AGENTS.md` §4), and the report. Say in one line which helper has which job. A message that arrives
   mid-task is handled the same way.
 - **Codex has a ceiling that Claude helpers do not.** Every Codex call goes through the queue in
   `~/.claude/shared/codex.md`, which lets 3 run at once across the Mac, because about 9 at once
