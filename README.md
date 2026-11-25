@@ -49,7 +49,7 @@ You need macOS or Linux, [Claude Code](https://claude.com/claude-code), Git, Pyt
 | Auto permission mode | No | **Yes** |
 | Tidies branches and copies at session start | No | **Yes** |
 | Stops unused Codex processes | No | **Yes, macOS** |
-| Weekly updaters, Codex watchdog and weekly Codex clean-up | No | **Yes, macOS** |
+| Weekly updaters (Codex included), Codex watchdog and weekly Codex clean-up | No | **Yes, macOS** |
 
 > [!WARNING]
 > `--full` lets Claude push branches, delete remote branches, merge pull requests, create tags and
@@ -108,7 +108,7 @@ with no command.
 | `skills/` | The 15 commands that live in this repo. The other 13 install from their own projects |
 | `output-styles/` | The Action First reply style |
 | `hooks/` | The secret guard and the Claude Code safety hooks |
-| `tools/` | Risky-change review, session tidy, process cleanup and weekly updaters |
+| `tools/` | Risky-change review, session tidy, process cleanup and weekly updaters, Codex included |
 | Codex helpers in `shared/` | A watchdog every 5 minutes and a weekly clean-up of old Codex reviews. `--full` schedules them on macOS |
 | `templates/` | Settings for each mode and the macOS schedule files |
 | `installer/` | The installer and the recorded version of each outside project |
@@ -126,7 +126,7 @@ On Linux, each of these prints one "macOS only" line and changes nothing.
 | Feature | Needs |
 |---|---|
 | Risky-change review tool | `sandbox-exec` network block |
-| Weekly updaters | `launchd` |
+| Weekly updaters, Codex included | `launchd` |
 | Codex process cleanup | BSD `stat` |
 | Codex watchdog and weekly review clean-up | `launchd` and Mac notifications |
 
@@ -137,7 +137,8 @@ On Linux, each of these prints one "macOS only" line and changes nothing.
 
 Codex gives Claude a second opinion. It needs an OpenAI account. Without it, Claude says once that
 it skipped the Codex checks. With `--full` on macOS, a watchdog alerts the user when a Codex job runs
-over 20 minutes or OpenAI rate-limits Codex, and a weekly job archives old Codex review threads.
+over 20 minutes or OpenAI rate-limits Codex, a weekly job archives old Codex review threads, and a
+weekly updater installs the newest Codex release once it is at least 3 days old and passes a check.
 
 ```bash
 # install the Codex command-line tool
