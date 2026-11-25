@@ -135,6 +135,13 @@ it while other parts are still being audited. In a deep run, fixing screen 1 sta
 screen 2 is still being screenshotted. A finding that changes an earlier fix goes to that part's
 helper as a follow-up.
 
+**Machines check everything; AI looks only at what changed.** When the project has picture checks
+(Playwright `toHaveScreenshot`) or a "changed tests only" script, run those first, because they
+check every screen in seconds while an AI tester takes minutes a page. Claude, Codex and Fable
+then review only the screens whose picture changed, the screens the user named, and the diff.
+The full test suite runs once, before merging. The user wants both fast and thorough, and this
+keeps every screen checked while spending AI time only where something moved.
+
 If you are Codex, you cannot start Fable or ask yourself for a second opinion, so stop
 at the agreement step and hand the findings and proposed change to the user for Claude's read.
 
