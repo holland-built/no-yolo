@@ -53,8 +53,8 @@ You need macOS or Linux, [Claude Code](https://claude.com/claude-code), Git, Pyt
 
 > [!WARNING]
 > `--full` lets Claude push branches, delete remote branches, merge pull requests, create tags and
-> publish releases without asking you. It also deletes merged local branches and finished Orca
-> copies when a session starts. A hook still blocks pushes straight to `main`, and Claude still asks
+> publish releases without asking you. It also deletes merged local branches and finished copies
+> left by Orca when a session starts. A hook still blocks pushes straight to `main`, and Claude still asks
 > before a force push or deleting a repo or release. Use it only on a computer and GitHub account
 > where you accept that.
 
@@ -164,8 +164,9 @@ The TypeScript plugin needs its language server.
 npm install -g typescript-language-server typescript
 ```
 
-[Orca](https://github.com/stablyai/orca) runs several Claude and Codex jobs side by side. Without
-it, Claude does the jobs one at a time.
+[Orca](https://github.com/stablyai/orca) is a terminal app for keeping several chats open side by
+side. With it, a hook marks the chat that is waiting on you. Claude's helpers run in parallel
+without it, because the main chat starts them and calls Codex itself.
 
 </details>
 
