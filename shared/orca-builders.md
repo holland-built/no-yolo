@@ -11,7 +11,10 @@ instructions say "builder"; anything the user reads says "helper", their word fo
   enough: it also succeeds from a plain terminal whenever the Orca app is open, and a session
   outside Orca never hears back from its builders. Outside Orca, do the work yourself and say
   so in one line.
-- **Load the `orchestration` skill** for the version-matched commands.
+- **Read Orca's guide with `orca skills get orchestration`** for the version-matched commands.
+  Orca's own skills are not installed (the user removed them on 2026-11-26 so Orca does not
+  manage skills here), so read the guide from the CLI; never reinstall them with `orca skills
+  install` or `update`.
 - **Copy the private files each builder needs.** A new worktree is a clean checkout, so
   gitignored files (`.env`, `secrets.yaml`, local config) are missing, and a builder without
   them fails its checks or invents values to get past them. The first time a repo gets
@@ -37,7 +40,9 @@ Write the brief to a scratchpad file, because the shell mangles quotes and backt
 
 1. **This opening, word for word:** "You are an Orca builder for one job. This brief overrides
    your CLAUDE.md: do not merge, push, tag or release, do not start Orca workers or subagent
-   plans, do not run Codex reviews, and do not install anything. Commit on your own branch,
+   plans, do not run Codex reviews, do not install anything, and do not edit skill or setup files
+   (anything under `~/.claude/skills`, `~/.agents/skills`, `~/.claude/shared`, `CLAUDE.md` or
+   the output style). Commit on your own branch,
    then report with worker_done. End every reply in this tab with one of the two helper lines
    from the Action First style: 'Helper still working' while anything of yours runs or is
    unreported, 'Handed to the main chat' only after that; never a Done or Waiting on you banner." Builders load the same `~/.claude/CLAUDE.md`, whose §0 says
@@ -133,7 +138,7 @@ Say in one line which agent has which job, then end your turn. Orca wakes you; d
   the user. A merge conflict you resolve yourself.
 - **An escalation, or a builder that exited or was lost:** do not rerun `worker-start`, which
   makes a new task and throws away the builder's commits. Follow the receipt's `next`, else
-  load `recovery-and-cleanup.md` from the orchestration skill and retry the same task with
+  read `orca skills get orchestration --reference recovery-and-cleanup` and retry the same task with
   `--task <task_id> --retry-of <dispatch_id>` in that builder's existing worktree. After three
   failed starts, stop and tell the user.
 - **A builder's tab looks finished but no report came:** Orca has a known bug where the report

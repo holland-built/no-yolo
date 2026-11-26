@@ -176,6 +176,28 @@ class Tidy(unittest.TestCase):
         git(self.repo, "branch", "in-worktree")
         git(self.repo, "worktree", "add", "-q", os.path.join(self.t, "wt"), "in-worktree")
 
+    def test_orca_skills_reinstalled_by_orca_are_parked_again(self):
+        skills = os.path.join(self.home, ".agents/skills")
+        for name in ("orca-cli", "orchestration", "humanizer"):
+            os.makedirs(os.path.join(skills, name))
+            with open(os.path.join(skills, name, "SKILL.md"), "w") as f:
+                f.write(name)
+        claude_skills = os.path.join(self.home, ".claude/skills")
+        os.makedirs(claude_skills)
+        os.symlink("../../.agents/skills/orca-cli", os.path.join(claude_skills, "orca-cli"))
+        os.symlink("../../somewhere/else", os.path.join(claude_skills, "orchestration"))  # user's own
+        parked = os.path.join(self.home, ".claude/skills-parked")
+        os.makedirs(os.path.join(parked, "orchestration"))  # parked by an earlier run
+        self.tidy()
+        self.assertFalse(os.path.exists(os.path.join(skills, "orca-cli")))
+        self.assertTrue(os.path.islink(os.path.join(claude_skills, "orchestration")))
+        again = os.path.join(parked, ".orca-reinstalls")
+        self.assertEqual(len(os.listdir(again)), 1)
+        self.assertFalse(os.path.exists(os.path.join(skills, "orchestration")))
+        self.assertFalse(os.path.lexists(os.path.join(claude_skills, "orca-cli")))
+        self.assertTrue(os.path.isdir(os.path.join(skills, "humanizer")))  # not Orca's: stays
+        self.assertIn("orca skills: parked orca-cli", self.log)
+
     def test_branches_merged_go_rest_stay(self):
         self.make_branch_cases()
         self.assertEqual(self.tidy(), "")
