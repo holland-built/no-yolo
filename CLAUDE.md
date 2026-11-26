@@ -90,14 +90,12 @@ that does not depend on it, then report.
 session free to watch, answer and steer, not buried in one task. So by default you hand work
 out instead of doing it:
 
-- **Long coding jobs, or ones the user wants to watch or talk to,** go to Orca builders. Inside
-  a git repo, in a session running in Orca (`ORCA_TERMINAL_HANDLE` is set), start one builder
-  per job, each in its own copy of the repo, following `~/.claude/shared/orca-builders.md`. Read
-  that file every time: it holds the commands, the limits, the brief every builder gets, and
-  what to do when one asks, fails or reports.
-- **Short coding jobs** (a few files, about 15 minutes of work) go to worktree subagents, or you
-  do one yourself, because a builder's start, report and merge took a median of 21 minutes
-  even for small jobs. Never leave the main chat idle while helpers work: take one job yourself.
+- **Coding jobs** go to helpers: Claude subagents, each in its own copy of the repo, following
+  `~/.claude/shared/helpers.md`. Read that file every time: it holds the limits, the brief every
+  helper gets, and what to do when one asks, fails or reports. You run the show between Claude
+  and Codex yourself; never hand coordination to Orca (`orca orchestration`), because the user
+  wants one chat they can see owning the work, not Orca. A job of a few minutes you may do
+  yourself. Never leave the main chat idle while helpers work: take one job yourself.
 - **Questions and investigations** that need more than a couple of quick checks go to reading
   subagents, several at once when the question splits. Answer from what you already know, or one
   quick check, yourself.

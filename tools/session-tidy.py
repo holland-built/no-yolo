@@ -11,9 +11,9 @@ It does three things and logs every decision to ~/.claude/state/session-tidy.log
      branch tip and whose merge commit is in the default branch), not checked out in any
      worktree, not current, and not main/master. The delete is `git update-ref -d` with the
      commit that was checked, so a branch that moved since then is kept.
-  0. Orca's own skills: the user removed them on 2026-11-26 so Orca does not manage skills here,
-     and Orca has no setting that stops it reinstalling them. Any it put back in ~/.agents/skills
-     are moved to ~/.claude/skills-parked, and their links in ~/.claude/skills removed.
+  0. Orca's own skills: the user removed them on 2026-11-26 and does not want Orca running the
+     work, and Orca has no setting that stops it reinstalling them. Any it put back in
+     ~/.agents/skills are moved to the Trash, and their links in ~/.claude/skills removed.
   3. Catch up with GitHub: `git fetch`, then `git merge --ff-only` when the current branch
      has an upstream, no changed tracked files, and is only behind. When it is ahead or has
      diverged, prints one line to stdout, which Claude sees as session context.
@@ -185,10 +185,10 @@ ORCA_SKILLS = ("orca-cli", "orca-computer-use", "orchestration")
 
 
 def park_orca_skills():
-    """Move Orca's own skills out of the skill folders if Orca reinstalled them. Moves, never deletes."""
+    """Move Orca's own skills to the Trash if Orca reinstalled them. Moves, never deletes."""
     home = Path.home()
     shared, claude = home / ".agents/skills", home / ".claude/skills"
-    parked = home / ".claude/skills-parked"
+    trash = home / ".Trash"
     for name in ORCA_SKILLS:
         link = claude / name
         # Only a link into Orca's copy is Orca's; any other link with this name is the user's.
@@ -198,15 +198,12 @@ def park_orca_skills():
             log(f"orca skills: removed link {link}")
         src = shared / name
         if src.is_dir() and not src.is_symlink():
-            dest = parked / name
             if not DRY:
-                parked.mkdir(parents=True, exist_ok=True)
-                if dest.exists():  # parked before: give this copy its own new folder
-                    again = parked / ".orca-reinstalls"
-                    again.mkdir(exist_ok=True)
-                    dest = Path(tempfile.mkdtemp(prefix=f"{name}-", dir=again)) / name
+                trash.mkdir(exist_ok=True)
+                # a new folder per move, so a second reinstall never collides with the first
+                dest = Path(tempfile.mkdtemp(prefix=f"orca-skill-{name}-", dir=trash)) / name
                 src.rename(dest)
-            log(f"orca skills: parked {name} at {dest}")
+            log(f"orca skills: moved {name} to the Trash")
 
 
 def step(name, fn, *args):

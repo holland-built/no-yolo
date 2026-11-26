@@ -1,197 +1,141 @@
-# Orca builders: parallel coding jobs
+# Helpers: parallel coding jobs
 
-Read by Claude when `~/.claude/CLAUDE.md` §5 sends coding jobs to Orca. A builder is an Orca
-orchestration worker (Claude or Codex) in its own child worktree, a separate copy of the repo.
-The main session starts builders, answers them, merges their work and reports to the user. These
-instructions say "builder"; anything the user reads says "helper", their word for it.
+Read by Claude when `~/.claude/CLAUDE.md` §5 hands coding jobs out. A helper is a Claude
+subagent started with the Agent tool and `isolation: "worktree"`, so it works in its own copy of
+the repo on its own branch. The main chat starts helpers, answers them, calls Codex, merges their
+work and reports to the user. Orca does not coordinate any of this: the user decided on
+2026-11-26 that the main chat runs the show between Claude and Codex, so never start Orca workers
+(`orca orchestration ...`) or install Orca's skills, even inside the Orca app.
 
 ## Before starting
 
-- **Check you are inside Orca.** `ORCA_TERMINAL_HANDLE` must be set. `orca status` is not
-  enough: it also succeeds from a plain terminal whenever the Orca app is open, and a session
-  outside Orca never hears back from its builders. Outside Orca, do the work yourself and say
-  so in one line.
-- **Read Orca's guide with `orca skills get orchestration`** for the version-matched commands.
-  Orca's own skills are not installed (the user removed them on 2026-11-26 so Orca does not
-  manage skills here), so read the guide from the CLI; never reinstall them with `orca skills
-  install` or `update`.
-- **Copy the private files each builder needs.** A new worktree is a clean checkout, so
-  gitignored files (`.env`, `secrets.yaml`, local config) are missing, and a builder without
-  them fails its checks or invents values to get past them. The first time a repo gets
-  builders, list the gitignored files its checks need (`git status --ignored --short` shows
-  them) and add them to `.worktreeinclude` at the repo root, one literal path per line, with
-  `#` comments allowed. Orca copies those into every new worktree. Commit that file. A secret
-  the job must not touch goes in the brief as off-limits instead.
-- **Commit this session's finished changes** (this rule authorises that commit), because each
-  copy is cut from a commit and uncommitted edits are missing from every builder's copy.
-- **Leftover builder copies clear themselves.** `~/.claude/tools/session-tidy.py` runs at the
-  start of every Claude session and removes any child worktree whose branch is merged (directly or
-  as a squash-merged PR), has no unsaved files, and has been idle for an hour. Its log is
-  `~/.claude/state/session-tidy.log`.
-- **Up to 6 builders at once.** Usage cost no longer limits this; the machine does, because many
-  at once have overloaded it before (Orca issue #24058). Before starting a fifth, check the
-  machine (`uptime` load under about 2x the core count, `memory_pressure` not critical) and queue
-  the rest if it is struggling. Their Codex calls queue on their own (`shared/codex.md`).
+- **Commit this chat's finished changes** (this rule authorises that commit), because each copy
+  is cut from a commit and uncommitted edits are missing from every helper's copy.
+- **Name the private files each helper needs.** A new copy is a clean checkout, so gitignored
+  files (`.env`, `secrets.yaml`, local config) are missing, and a helper without them fails its
+  checks or invents values to get past them. List the ones its checks need (`git status
+  --ignored --short` shows them) in the brief, with their full path in the main folder, and tell
+  the helper to copy them in before it starts. A secret the job must not touch goes in the brief
+  as off-limits instead.
+- **Up to 6 helpers at once.** Many at once have overloaded the Mac before. Before starting a
+  fifth, check `uptime` (load under about twice the core count) and `memory_pressure` (not
+  critical), and queue the rest if it is struggling.
+- **Get Codex's check list first** for each job, with the call in `skills/build/SKILL.md`
+  ("Codex writes the checks before the code exists"). Helpers never call Codex themselves, so the
+  main chat makes every Codex call and they all wait in the `shared/codex.md` queue.
 
 ## Writing each brief
 
-Write the brief to a scratchpad file, because the shell mangles quotes and backticks inside
-`--spec`. Every brief contains:
+Write the brief in the Agent call's prompt. Every brief contains:
 
-1. **This opening, word for word:** "You are an Orca builder for one job. This brief overrides
-   your CLAUDE.md: do not merge, push, tag or release, do not start Orca workers or subagent
-   plans, do not run Codex reviews, do not install anything, and do not edit skill or setup files
-   (anything under `~/.claude/skills`, `~/.agents/skills`, `~/.claude/shared`, `CLAUDE.md` or
-   the output style). Commit on your own branch,
-   then report with worker_done. End every reply in this tab with one of the two helper lines
-   from the Action First style: 'Helper still working' while anything of yours runs or is
-   unreported, 'Handed to the main chat' only after that; never a Done or Waiting on you banner." Builders load the same `~/.claude/CLAUDE.md`, whose §0 says
-   to merge and release, so without this line a builder may ship its own work.
+1. **This opening, word for word:** "You are a helper for one job, working in your own copy of
+   the repo. This brief overrides your CLAUDE.md: do not merge, push, tag, release or deploy
+   (uploading to the test target named below is the one exception), do not start subagents or Orca workers, do not run Codex, do not install anything, and do not
+   edit skill or setup files (anything under `~/.claude/skills`, `~/.agents/skills`,
+   `~/.claude/shared`, `CLAUDE.md` or the output style). Commit on your own branch. Print no
+   Done or Waiting on you banner; the main chat talks to the user." Helpers load the same
+   `CLAUDE.md`, whose §0 says to merge and release, so without this line a helper may ship its
+   own work.
 2. **The files, and the part of each file** (function, section, element) the job may change.
    On a single-file page, also where its new CSS and JS go: beside that panel's existing code,
-   not at the end of the style or script block, because two builders adding at the same end
+   not at the end of the style or script block, because two helpers adding at the same end
    always conflict.
 3. **Its own test target** (a test file name on a shared server, a port, an output folder, a
-   test database), because worktrees separate the code, not what the code touches: two
-   builders deploying to one test URL overwrite each other. The builder may upload to that
-   target and nowhere else.
+   test database), because separate copies separate the code, not what the code touches: two
+   helpers deploying to one test URL overwrite each other. The helper may upload to that target
+   and nowhere else; this is the one exception to `CLAUDE.md` §5's rule that subagents never
+   publish.
 4. **The picked mockup**, when the job changes how a page looks: its file path and the part this
-   builder must match, with "screenshot your result at the mockup's size beside the mockup and
+   helper must match, with "screenshot your result at the mockup's size beside the mockup and
    include both in the report; any difference is a bug" (`AGENTS.md` §7).
-5. **The checks that prove it done**, named as the test files for the part it changed plus any
-   older tests on the same page. Builders do not run Codex, so before `worker-start` get Codex's
-   check list for the job yourself, with the call in `skills/build/SKILL.md` ("Codex writes the
-   checks before the code exists"; it waits in the `shared/codex.md` queue like any call), and
-   paste it in with: "Turn each check a new automated test can prove into a test, one at a time, each seen to fail before the code and
-   pass after; where an existing test already proves a check, name it instead; show the rest
-   working. Report which test or proof covers each check." A list from another model catches what the
-   builder would miss in both its code and its tests. Then this line: "Do not run the full test suite; the main chat
-   runs it once after merging." Builders ran the whole suite on their own, and the main chat
-   ran it again after the merge, so every job paid for it twice: on 2026-11-25 Wayfinder's
-   suite took 8 to 13 minutes a run, and each run built its own copy of the app, loading a
-   14-core Mac to 17.
+5. **The checks that prove it done:** the test files for the part it changes, any older tests on
+   the same page, and Codex's check list, with: "Turn each check a new automated test can prove
+   into a test, one at a time, each seen to fail before the code and pass after; where an
+   existing test already proves a check, name it instead; show the rest working. Report which
+   test or proof covers each check." A list from another model catches what the helper would
+   miss in both its code and its tests. Then: "Do not run the full test suite; the main chat runs
+   it once after merging," because helpers running the whole suite and the main chat running it
+   again made every job pay twice (8 to 13 minutes a run on Wayfinder, 2026-11-25).
 6. **How to ask:** "When you need anything from the user (a choice, a missing fact, a go-ahead),
-   do not ask in your own tab, because the user watches the main chat, not yours. Send it to the
-   coordinator with `orca orchestration ask --question "<one line: what you need>" --options
-   "<a,b>"` when there are clear choices, then end your turn; Orca wakes you with the answer."
-7. **The report it must send:** `worker_done` with `--outcome`, `--files-modified`, its branch
-   name, its last commit hash, and the test output.
+   or a permission is refused, stop and report. Put QUESTION: (or BLOCKED: and the refused
+   command) in one line, with the options if there are clear ones, just above your helper status
+   line. The main chat asks the user and sends you the answer."
+7. **The report it ends with:** what it changed, its branch name, its last commit hash, the
+   test output, which test or proof covers each check, and what it could not do, then the helper
+   status line from the Action First style.
+8. **"Done means"**, written by you as the brief's last lines, so the helper is judged against
+   criteria set before the work, including "stop and report what you could not find".
 
-Jobs that change the same or neighbouring lines go into one builder's brief as steps in order,
-not into two builders. Jobs that touch parts of a file well apart can go to separate builders,
+Jobs that change the same or neighbouring lines go into one helper's brief as steps in order,
+not into two helpers. Jobs that touch parts of a file well apart can go to separate helpers,
 because git merges separate parts on its own.
 
 ## Starting
 
-For each job:
+Start every helper for the batch in one message: Agent tool, `subagent_type:
+"general-purpose"`, `isolation: "worktree"`, `run_in_background: true`. Say in one line which
+helper has which job, then take a job yourself or end the turn; a notification arrives when each
+helper finishes, so do not poll. Write each helper's name or agent ID (what SendMessage needs), job, branch, copy path and test target into
+the chat's handoff notes, because a new chat cannot otherwise find unfinished helpers; it finds
+their copies with `git worktree list`.
 
-```text
-orca orchestration worker-start --spec-file <brief-file> --worktree new-child --name <job> \
-  --base-branch <the branch you are on> --agent <claude|codex> --setup skip
-```
+The user cannot watch a helper the way they watched an Orca tab, so give a one-line update in the
+main chat when a helper reports, asks, or fails.
 
-- `claude` unless the user names Codex.
-- Leave out `--model` and `--effort` unless the user names a model; `--effort` is rejected
-  without `--model`.
-- `--setup skip` stops the repo's setup hooks, which can install things.
-- A builder in a new worktree keeps its tab open on its own, so the user can watch it and
-  talk to it.
+## When a helper reports
 
-Then write the Run id, and each builder's dispatch id, worktree, branch and test target, into
-the session's handoff notes, because a new session cannot otherwise find the builders. It
-resumes with `orca orchestration worker-list --run <id>` and
-`orca orchestration inbox --terminal run:<id> --limit 50 --full`.
+- **A question:** answer it with SendMessage to that helper when the brief or the user's words
+  settle it. Otherwise put it in the "Waiting on you" block (Action First rule 13) at the top of
+  your reply, with every waiting question in that one block, and pass the answer back with
+  SendMessage. Ask in that text block, not with the AskUserQuestion dialog, because the dialog
+  freezes this chat until the user answers, and on 2026-11-17 three finished helpers sat
+  unshipped for over an hour behind one question.
+- **Finished work:** first commit or finish your own current step, so the merge lands on a clean
+  tree. Read the diff, merge the helper's branch into yours, and run the tests. Codex's review of
+  that diff gets the brief's check list, names any check or obvious case no test covers, and ends
+  with its Set aside list; an uncovered one goes back to the same helper with SendMessage unless
+  you decline it in one line with a reason. When several helpers have reported, merge them all
+  and run the tests once; if that fails, test branch by branch to find the bad one. A clean merge
+  can still break behaviour, so the tests run every time. A merge conflict you resolve yourself.
+- **A refused permission (BLOCKED:):** it cannot be relayed, so put it in the "Waiting on you"
+  block naming the command and what approving it would allow, or do that step yourself in the
+  main chat when it is yours to do.
+- **A failed coding job:** send the fix to the same helper with SendMessage, so its copy and
+  context are kept. After three failed rounds, stop and tell the user. A reading report that
+  falls short follows `CLAUDE.md` §5 instead: ask once more, then do the rest yourself.
 
-Say in one line which agent has which job, then end your turn. Orca wakes you; do not poll.
-
-## When Orca wakes you
-
-- **A question:** answer with `orca orchestration reply --id <message_id> --body "<answer>"`
-  when the brief or the user's words settle it. Otherwise relay it to the user, then pass their
-  answer back with the same `reply`. Answer before finishing your own edit, unless that edit is one step from done, because a waiting builder is idle.
-- **Anything that waits on the user** (a relayed question, a permission prompt in a builder's
-  tab, a decision of your own; never a merge, push or release, which are your job under §0)
-  goes in the "Waiting on you" question block from the Action First style (rule 13), at the top
-  of your reply, with all waiting questions in that one block, because the user has said they
-  often cannot tell whether a helper needs them or what it is asking.
-
-  A permission prompt cannot be relayed, so its question names the Orca tab to open and what to
-  approve. Also mark the copy it concerns (the helper's, or your own for a decision of yours) in
-  Orca's sidebar, so the user sees it there too: `orca worktree set --worktree <selector>
-  --unread --comment "Waiting on you: <the one thing>"`, cleared with `--read --comment ""` once
-  answered. First finish any work that does not need the answer, such as merging, testing and
-  shipping helpers that already reported (§5), then end your turn with the question block at the
-  top of that reply; Orca sends its notification when your turn ends. Ask in that text block, not
-  with the AskUserQuestion dialog: the dialog freezes this chat until the user answers, and on
-  2026-11-17 three finished builders sat unshipped for over an hour behind one zoom question.
-- **A builder waiting on a permission prompt** (`worker-show` reports `agentWait`): a
-  question in the "Waiting on you" block naming its tab. Never answer it through its terminal.
-- **A report:** first commit or finish your own current step, so the merge lands on a clean
-  tree. Read the diff, merge that branch, and run the tests. Codex's review of that diff gets the
-  brief's check list, names any check, or obvious case, that no test covers, and ends with its
-  Set aside list of what it chose not to judge, so nothing is dropped silently; an uncovered one
-  goes back to the builder with `orca orchestration send` unless you decline it in one line with a
-  reason. When several builders have
-  reported, merge them all and run the tests once, because one test run per branch made the
-  waits stack up; if that run fails, test branch by branch to find the bad one. A clean merge
-  can still break behaviour, so the tests run every time. A failed outcome is a failure: send the fix with `orca orchestration send`, or tell
-  the user. A merge conflict you resolve yourself.
-- **An escalation, or a builder that exited or was lost:** do not rerun `worker-start`, which
-  makes a new task and throws away the builder's commits. Follow the receipt's `next`, else
-  read `orca skills get orchestration --reference recovery-and-cleanup` and retry the same task with
-  `--task <task_id> --retry-of <dispatch_id>` in that builder's existing worktree. After three
-  failed starts, stop and tell the user.
-- **A builder's tab looks finished but no report came:** Orca has a known bug where the report
-  is lost (issue #13364). Check it once with `orca orchestration worker-show`, which is not
-  polling. Silence alone does not prove it failed.
-
-**Ship each branch as soon as it is merged and tested; do not hold it for the others.** Give it its
-own pull request under `~/.claude/CLAUDE.md` §0 and run the project's deploy step right away, then
-tell the user what to test, because the user hates waiting and wants to try each change while the
-other builders are still working. Use this banner, in plain everyday words with no code names,
-file names or jargon, one line each:
+**Ship each branch as soon as it is merged and tested; do not hold it for the others.** Give it
+its own pull request under `CLAUDE.md` §0 and run the project's deploy step right away, because
+the user wants to try each change while other helpers still work. Then tell the user what to
+test, in plain everyday words with no code names or file names:
 
 ```text
 ------------------------- Live: test this -------------------------
 <what changed, as the user would say it>
 Try: <one thing to do, and where, on phone or computer>
-``` Builders still never merge or deploy their own
-work: several of them share live files such as `index.html`, and one owner keeps them from
-overwriting each other. Ship each batch of merged, tested branches together; ship a branch alone when it reported alone, so the user can try it while others still work.
+```
+
+Helpers never merge their work or deploy it live (their own test target aside): several of them share live files such as
+`index.html`, and one owner keeps them from overwriting each other.
 
 ## Done
 
-Each builder goes away once its work is merged and tested, because the user wants finished
-helpers gone, not piling up as tabs and folders: release it with
-`orca orchestration worker-release --dispatch <id>`, then remove its copy and branch with
-`orca worktree rm --worktree branch:<its branch> --delete-branch`. Its work is already in your
-branch, so nothing is lost. Keep a builder only when its work was not merged (it failed, or
-the user is still talking to it in its tab) and name those to the user.
+Each helper's copy goes away once its work is merged and tested, because the user wants finished
+helpers gone, not piling up as folders: remove it with `git worktree remove <its path>` and
+delete its branch with `git branch -d <its branch>`, both run from the main project folder,
+never from inside the copy (a removal from inside its own copy on 2026-11-25 left the chat's
+folder missing and blocked every tool until the user recreated it). Keep a copy only when its
+work was not merged, and name it to the user.
 
-Run the removal as `cd "<main project folder>" && orca worktree rm ...`, never from inside the
-copy being removed. If the session's working folder disappears, the safety hook blocks every
-tool, and only the user can fix it: on 2026-11-25 a removal from inside its own copy stopped
-the final release check and report until the user recreated the folder by hand.
-
-Right after `worker-start --base-branch <b>`, check the new copy with `git -C <copy> log -1`.
-`--base-branch` uses the local branch, which in a shared checkout can be far behind `origin`.
-While the copy has no commits, move it with `git -C <copy> merge --ff-only origin/<b>`.
-
-Each branch already shipped as it came in (above), because the user's done means live, not merged
-on this machine.
-
-**Tell the user about every helper once it is settled**, one line each, in one of two forms,
-because otherwise the user cannot tell whether a helper still needs them:
+Tell the user about every helper once it is settled, one line each:
 
 ```text
-<helper>: done and live. Nothing for you. Its tab closes now.
+<helper>: done and live. Nothing for you.
 <helper>: failed <n> times (<why, in plain words>). See the question above.
 ```
 
-A failed helper's "retry, or drop it" goes in the "Waiting on you" block as a numbered
-question, and a helper already waiting on the user gets no second line.
+A failed helper's "retry, or drop it" goes in the "Waiting on you" block as a numbered question.
+Then close the turn with the Done or Not done yet banner (Action First rule 12).
 
-Then close the turn with the Done or Not done yet banner from the Action First style (rule 12).
-
-Done is every branch merged, tested and shipped live as it came in, each
-builder's test target removed, and every merged builder gone.
+Done is every branch merged, tested and shipped live as it came in, each helper's test target
+removed, and every merged helper's copy and branch gone.

@@ -129,8 +129,8 @@ neither option clearly wins, show both in plain words, park that item, and carry
 needs no new agreement unless the approach changes.
 
 **Fix screen by screen as findings arrive** (`CLAUDE.md` §5). Start a helper on a screen as soon
-as its first agreed fix exists; later fixes reach it with `orca orchestration send`. Screens that
-do not overlap run as separate Orca builders under `~/.claude/shared/orca-builders.md`, each with its own
+as its first agreed fix exists; later fixes reach it with SendMessage. Screens that
+do not overlap run as separate helpers under `~/.claude/shared/helpers.md`, each with its own
 test target, and each screen ships as its own pull request when its helper reports, so the user
 can try it while other screens are still being audited. In a deep run, fixing screen 1 starts
 while screen 2 is still being screenshotted.

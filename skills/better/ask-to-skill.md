@@ -26,7 +26,7 @@ leave out a skill that would not change the work.
 | think this through, grill me | `grill-lite` | rounds of questions, then a decision note |
 | what's on my list | none: open `~/AI/tasks.md` (CLAUDE.md "Tasks") | the saved task list |
 | the chat is long, pick this up later | `handoff` | writes the session down for a fresh chat |
-| work across several helpers or copies | none: follow `~/.claude/shared/orca-builders.md` | Orca helpers that build in parallel |
+| work across several helpers or copies | none: follow `~/.claude/shared/helpers.md` | helpers that build in parallel |
 | instructions, a skill, CLAUDE.md, a memory note | `writing` | instruction files that work |
 | research what people say about X lately | `last30days` | recent posts and discussion |
 | install a new skill from outside | `find-skills` | finds and installs it |
