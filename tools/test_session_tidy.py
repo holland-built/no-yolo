@@ -361,6 +361,32 @@ class Tidy(unittest.TestCase):
         self.assertFalse(os.path.exists(self.orca_rm))
         self.assertIn("orca: keep c-elsewhere: c-elsewhere is not merged", self.log)
 
+    def test_orca_sweep_removes_copy_whose_tip_is_inside_a_merged_pr(self):
+        # The main chat ships c-built from c-built-pr, one commit on top, so the PR's head is
+        # not c-built's tip but c-built's tip is one of the PR's commits.
+        prs = []
+        kids = [self.child("c-built", 90, prs, unmerged=True),
+                self.child("c-other", 90, prs, unmerged=True)]
+        tip = git(self.repo, "rev-parse", "c-built")
+        git(self.repo, "branch", "c-built-pr", "c-built")
+        git(self.repo, "checkout", "-q", "c-built-pr")
+        head = self.commit(self.repo, "c-built-pr fixups")
+        git(self.repo, "checkout", "-q", "main")
+        git(self.repo, "merge", "-q", "--squash", "c-built-pr")
+        git(self.repo, "commit", "-q", "-m", "c-built-pr (squash)")
+        self.prs([{"number": 503, "headRefName": "c-built-pr", "headRefOid": head,
+                   "merge": git(self.repo, "rev-parse", "main"),
+                   "commits": [{"oid": tip}, {"oid": head}]}])
+        self.orca([{"id": "parent", "isMainWorktree": True, "path": self.repo}] + kids)
+        self.tidy("--dry-run")
+        self.assertIn("orca: would remove c-built (c-built, merged: tip in merged PR #503)", self.log)
+        self.tidy()
+        with open(self.orca_rm) as f:
+            removed = f.read()
+        self.assertIn("id:id-c-built ", removed + " ")
+        self.assertNotIn("id-c-other", removed)
+        self.assertIn("orca: keep c-other: c-other is not merged", self.log)
+
     def test_orca_sweep_skips_copy_that_moved_after_the_check(self):
         prs = []
         kids = [self.child("c-moving", 90, prs)]

@@ -54,7 +54,13 @@ Write the brief to a scratchpad file, because the shell mangles quotes and backt
    builder must match, with "screenshot your result at the mockup's size beside the mockup and
    include both in the report; any difference is a bug" (`AGENTS.md` §7).
 5. **The checks that prove it done**, named as the test files for the part it changed plus any
-   older tests on the same page, and this line: "Do not run the full test suite; the main chat
+   older tests on the same page. Builders do not run Codex, so before `worker-start` get Codex's
+   check list for the job yourself, with the call in `skills/build/SKILL.md` ("Codex writes the
+   checks before the code exists"; it waits in the `shared/codex.md` queue like any call), and
+   paste it in with: "Turn each check a new automated test can prove into a test, one at a time, each seen to fail before the code and
+   pass after; where an existing test already proves a check, name it instead; show the rest
+   working. Report which test or proof covers each check." A list from another model catches what the
+   builder would miss in both its code and its tests. Then this line: "Do not run the full test suite; the main chat
    runs it once after merging." Builders ran the whole suite on their own, and the main chat
    ran it again after the merge, so every job paid for it twice: on 2026-11-25 Wayfinder's
    suite took 8 to 13 minutes a run, and each run built its own copy of the app, loading a
@@ -116,7 +122,11 @@ Say in one line which agent has which job, then end your turn. Orca wakes you; d
 - **A builder waiting on a permission prompt** (`worker-show` reports `agentWait`): a
   question in the "Waiting on you" block naming its tab. Never answer it through its terminal.
 - **A report:** first commit or finish your own current step, so the merge lands on a clean
-  tree. Read the diff, merge that branch, and run the tests. When several builders have
+  tree. Read the diff, merge that branch, and run the tests. Codex's review of that diff gets the
+  brief's check list, names any check, or obvious case, that no test covers, and ends with its
+  Set aside list of what it chose not to judge, so nothing is dropped silently; an uncovered one
+  goes back to the builder with `orca orchestration send` unless you decline it in one line with a
+  reason. When several builders have
   reported, merge them all and run the tests once, because one test run per branch made the
   waits stack up; if that run fails, test branch by branch to find the bad one. A clean merge
   can still break behaviour, so the tests run every time. A failed outcome is a failure: send the fix with `orca orchestration send`, or tell

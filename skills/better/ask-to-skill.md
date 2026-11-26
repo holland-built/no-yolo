@@ -24,7 +24,7 @@ leave out a skill that would not change the work.
 | a YouTube link | `claude-video` | watches and summarises it |
 | put this on the hub | `hub-add` | adds it to the Cloud Team Hub |
 | think this through, grill me | `grill-lite` | rounds of questions, then a decision note |
-| what's on my list | `tasks` | the saved task list |
+| what's on my list | none: open `~/AI/tasks.md` (CLAUDE.md "Tasks") | the saved task list |
 | the chat is long, pick this up later | `handoff` | writes the session down for a fresh chat |
 | work across several helpers or copies | `orchestration` | Orca helpers that build in parallel |
 | instructions, a skill, CLAUDE.md, a memory note | `writing` | instruction files that work |
@@ -34,5 +34,5 @@ leave out a skill that would not change the work.
 Parked skills are not in the skill list. List `~/.claude/skills-parked` when it exists, and when one
 there fits the ask, read its `SKILL.md`, follow it, and name it in the rewrite like any other skill.
 
-Typed-only commands never appear in the skill list, so /better cannot pick them: `/retro`, `/ship`,
+Typed-only commands never appear in the skill list, so /better cannot pick them: `/ship`,
 `/steward`. Mention one only when the user would type it themselves.

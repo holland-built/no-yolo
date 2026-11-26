@@ -49,8 +49,8 @@ the chosen approach still runs on a single approach, because it is the safety fl
 `site-design` before the two plans; the variant the user picks is this mockup. The user has
 already chosen what it should look like and do, so skip the two plans and the Codex attack on the approach below: on the
 interview-density build (2026-11-15) the two plans took ten minutes and agreed with the mockup.
-Still run the check on the chosen approach, the after-step checks on a big build, and the final
-review, because those catch how it is built, which the mockup does not settle.
+Still run the check on the chosen approach, Codex's check list, the after-step checks on a big
+build, and the final review, because those catch how it is built, which the mockup does not settle.
 
 **Ask before you assume.** Anything you would otherwise guess at, ask — numbered, with your
 recommended answer on each, so the user can say "all of those" in four words. Find facts
@@ -66,14 +66,37 @@ when you take it.
 the chosen approach even after the two-model step above, because there the two sides propose and
 never attack each other:
 
+Write the chosen approach in full to `/tmp/build-approach.md` with the Write tool first. Free
+text goes in a file, never inside the quoted prompt, because a backtick or `$(...)` in it would run
+in the shell, and `codex-exec.py` gives Codex no stdin to pass it through.
+
 ```bash
 python3 -I ~/.claude/shared/codex-exec.py --skip-git-repo-check --sandbox read-only \
   -c model=gpt-6.1-sol -c model_reasoning_effort=medium \
-  "<the chosen approach in full>. What would make this the wrong approach? Concrete failure cases, not style." < /dev/null
+  "Read the approach at /tmp/build-approach.md. What would make this the wrong approach? Concrete failure cases, not style." < /dev/null
 ```
 
 `< /dev/null` is required. Empty output means it failed, not that it agreed. Use a stronger
 model only when undoing the decision later would mean rewriting rather than editing.
+
+**Codex writes the checks before the code exists**, in the same message as the call above, and
+also when a picked mockup skipped that call (then write the approach to `/tmp/build-approach.md`
+first, as above, so the list is not built from a missing or old file). The model that writes the code also writes its
+tests, so its blind spots land in both; a list from another model, written before the build, is a
+verifier the build did not shape. Skip it on the fast lane, where the rough version is the question.
+
+```bash
+python3 -I ~/.claude/shared/codex-exec.py --skip-git-repo-check --sandbox read-only \
+  -c model=gpt-6.1-sol -c model_reasoning_effort=medium \
+  "Read the approach at /tmp/build-approach.md and the acceptance criteria in <path to PLAN.md>. List the checks this work must pass before it counts as done: behaviours and edge cases, one plain line each, no test code. Mark the ones a runnable check (test, screenshot compare, template render) can prove." < /dev/null
+```
+
+Put the list in `PLAN.md`, then turn each check a new automated test can prove into a test, one at a time:
+one test, seen to fail, then the code that makes it pass, then the next. A screenshot compare or
+template render is its own proof: run it and keep the output. A check an existing test already
+proves needs no new test; name that test instead. Writing every test up front checks imagined behaviour
+rather than the code as it forms. Where a runnable check exists, use it over a model's opinion; a
+check that cannot be made runnable stays on the list as something to show working.
 
 **A big build gets a check after each major step.** Big means more than about five steps or
 about an hour of work, where a mistake found only at the end costs the most. After each major
@@ -83,22 +106,37 @@ then one line." Keep the question that narrow, because a broad review at low eff
 confident pass that means little. Check a yes against the code before acting on it; empty output
 is a failed check, not a pass. These checks never replace the final review.
 
+The same check runs in a build of any size right after a risky step: one that deletes or moves
+data, deploys, changes a shared file several helpers use, or adds an if/else path whose effect
+the tests cannot see. Size alone misses a small risky step, such as a 70-line change that decided
+when worktrees get removed, and a decision is cheapest to fix right after it is made.
+
 **Codex reviews the final diff** — after your last change, not before. If it finds something
 and you change the code, it reviews the new diff too. Tell it the intent and what is out of
 scope, because a reviewer that knows the goal can flag code the goal never needed, and one that
 does not will suggest more.
 
 New files are invisible to `git diff` until marked, so mark them first, and check the diff file
-is not empty before sending it. If `codex` is missing or fails, say "Codex review: couldn't
-tell" and why, and finish without it — never report a review that did not happen.
+is not empty before sending it. Write the intent, what is out of scope and the check list from
+`PLAN.md` (none on the fast lane) to `/tmp/build-review-brief.md` with the Write tool, for the
+same shell reason as above. Over about 400 lines, split the diff by file or by step and send one
+call per part, because a reviewer cannot hold a big diff in one read and misses things. If
+`codex` is missing or fails, say "Codex review: couldn't tell" and why, and finish without it —
+never report a review that did not happen.
 
 ```bash
 git add -N .
 git diff <base> > /tmp/build-review.diff
 python3 -I ~/.claude/shared/codex-exec.py --skip-git-repo-check --sandbox read-only \
   -c model=gpt-6.1-sol -c model_reasoning_effort=medium \
-  "Intent: <one line>. Out of scope: <one line>. Review the diff at /tmp/build-review.diff. Only defects that would crash it or make it do the wrong thing in the intended case, and code the intent does not need. Ignore style. Label each blocker, should or nit. None is a valid answer." < /dev/null
+  "Read the brief at /tmp/build-review-brief.md (intent, out of scope, checks it must pass), then review the diff at /tmp/build-review.diff. Only defects that would crash it or make it do the wrong thing in the intended case, and code the intent does not need. Also name each check in the brief, or obvious case, that no test covers, looking at the tests in the repo, not only those in the diff. Where the plan says nothing, judge by what a reasonable person using it would expect; silence is not permission. Ignore style. Label each blocker, should or nit. None is a valid answer. End with a Set aside list: one line per behaviour you chose not to judge as out of scope." < /dev/null
 ```
+
+The Set aside list is there so nothing is dropped silently; read it, and judge anything on it that
+the user would care about.
+
+A check or obvious case that no test covers is a blocker unless you decline it in one line with a
+reason, because an untested case is where the builder's blind spot hides.
 
 **Check each finding against the code before acting on it.** Review loops grow a change one
 cheap-looking fix at a time, and the user maintains every added line. Judge a finding by what it
@@ -106,7 +144,10 @@ costs if left, not by its label or how rare it is: anything that loses data, exp
 breaks the intended case gets fixed; a guard for a case that does not matter, extra compatibility
 or a small slowdown gets declined in one line and listed as a follow-up. Prefer the fix that
 deletes or narrows code, and if review made the diff bigger, cut before the next round. Agree
-because the finding is right, not to end the loop.
+because the finding is right, not to end the loop. A finding that exists only because the brief
+was unclear gets the brief fixed and the review rerun, not a decline, because a decline leaves the
+misread code unreviewed. If two rounds in a row had real findings and you declined every one, stop
+and tell the user, because that is rubber-stamping, not review.
 
 **Two review rounds, then decide.** A third round rarely finds what the second missed. Settle
 the disputed small findings yourself and say in one line what you overrode. A blocker still open

@@ -39,6 +39,10 @@ because the next session can see the code as it is then but not as it was when y
 With that line it can tell whether someone changed things in between and treat the file as
 context to check, not as proof.
 
+**Name the skills to load.** A "Skills to load" line lists each skill the next session should
+load before it starts (such as `build`, `fix` or `writing`), with a few words on why, because a
+fresh session picks skills from the paste alone and otherwise starts the job without them.
+
 **Never carry a secret across.** Not the value, not a redacted version, not "the one in X".
 Name the file that holds it and stop. Anything typed into a prompt once lives in the session
 log, and a handoff is exactly the kind of file that would copy it somewhere new.
