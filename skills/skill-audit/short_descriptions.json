@@ -40,25 +40,13 @@
     "short": "Use when editing or reviewing prose for AI tells (not-X-but-Y contrasts, one-line closers, staged openers, forced triads, dashes everywhere, inflated claims, sales language, stock AI words, bold labels, filler). Rewrites it to read like the writer without changing what it says.",
     "upstream": "7a4bf0743c43d193"
   },
-  "orchestration": {
-    "short": "Use for /orchestration, Orca workers or supervision (monitor, task DAGs, ask/reply, decision gates), splitting or fanning out code changes across agents, worktrees or branches, or another agent working and reporting back (\"Have Codex review this and report back\"). Also when you are a dispatched worker (Task and Dispatch IDs: ask, worker_done). Not for plain searches and reads, which stay with your own subagents unless Orca or a named agent is asked for. Hand-offs with nothing expected back go to orca-cli.",
-    "upstream": "8f5d188893d7b83c"
-  },
-  "orca-cli": {
-    "short": "Use for \"$orca-cli\", Orca worktrees, child worktrees, spawning codex/claude in a worktree, read/wait/send Orca terminal, handoff/handover, give this to or ask/tell/message another agent (including a paired Orca server), Orca browser, or opening, testing or screenshotting a web page in Orca unless another browser tool is named. Not for plain curl/fetch. Prefer over raw git worktree, ad hoc PTYs or Computer Use when Orca state is involved.",
-    "upstream": "17d5d803264dc9d8"
-  },
-  "orca-computer-use": {
-    "short": "Use only when a local app window needs GUI control a shell, file, git, HTTP or CLI path cannot do: clicks, typing, menus, dialogs and screenshots in native apps, Chrome, Edge, Safari or webviews, in the background through `orca computer`. Not for Orca's embedded browser (orca-cli).",
-    "upstream": "fffa2324f67b2c17"
-  },
   "impeccable": {
     "short": "Use to design, redesign, critique, audit, polish or animate a frontend: websites, landing pages, dashboards, app UI, components, native iOS/Android screens, or a design system (DESIGN.md).",
     "upstream": null
   },
   "diagram-design": {
-    "short": "Branded diagrams and charts as HTML/SVG/PNG. Use when the user asks for an architecture (current-state, delta, deployment), flowchart, sequence, git graph, swimlane, state machine, ER/schema, UML class, timeline, Gantt, org chart, tree, layer stack, axonometric, Venn, pyramid/funnel, quadrant, radar, polar, loop/flywheel, treemap, marimekko, Sankey, fishbone, Wardley map, kanban, user journey, service blueprint, story map, medallion, data flow, dependency graph, event modeling, requirement traceability, schedule network, SBGN, lifecycle phase map, DP integration or DP security matrix diagram, or a bar, line, scatter, heatmap or waterfall chart. Imports .drawio, Mermaid, .excalidraw and PlantUML.",
-    "upstream": "0800113f6a2699c3"
+    "short": "Branded diagrams and charts as HTML/SVG/PNG. Use when the user asks for an architecture (current-state, delta, deployment), flowchart, sequence, git graph, swimlane, state machine, ER/schema, UML class, timeline, Gantt, org chart, tree, layer stack, axonometric, Venn, pyramid/funnel, quadrant, radar, polar, loop/flywheel, treemap, marimekko, Sankey, fishbone, Wardley map, kanban, user journey, service blueprint, story map, medallion, data flow, dependency graph, event modeling, requirement traceability, schedule network, SBGN, lifecycle phase map, DP integration or DP security matrix diagram. Plain bar, line, scatter, heatmap and waterfall charts go to dataviz. Imports .drawio, Mermaid, .excalidraw and PlantUML.",
+    "upstream": "d41417197341c7a8"
   },
   "retro": {
     "short": "Use when the user asks for a retro or retrospective, or is frustrated at repeating a correction: I told you that 10 times, how many times do I have to say it, still doing it, again, you keep doing this, why did this take so long, what went wrong. Finds why it happened and the setup change that stops it coming back.",
