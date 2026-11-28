@@ -177,9 +177,9 @@ with no sideways scroll and can be picked from, and any `.pptx` edit has its bac
 
 Pick the tool by what the page needs, because each one fails where another works:
 
-- A normal public page, or a whole site to crawl: Firecrawl, on a server you run yourself. It is a plain browser with no proxy, so sites behind Cloudflare often block it.
-- Firecrawl comes back blocked or empty ("Just a moment", a 403, a blank page): retry with
-  Scrapling, which gets past Cloudflare checks that block Firecrawl.
+- For a normal public page, start with Scrapling's lightweight HTTP fetch (`make_request`). It
+  avoids launching a browser. Stop when it returns the content the task needs.
+- If Scrapling is blocked or the result is incomplete, retry with Firecrawl, on a server you run yourself. It is also the tool for whole-site crawls.
 - Anything that needs the user logged in, such as shopping or work sites: the user's own browser,
   with the user typing any password. Claude drives it through Claude in Chrome; Codex uses its own
   Chrome control when it has one, and otherwise hands the task back to Claude. That browser is already the real person on their own
